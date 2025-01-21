@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\ProductsController;
@@ -19,15 +20,21 @@ use App\Http\Controllers\Api\ProductCategoriesController;
 
 
 Route::post('/login', [UserController::class, 'login']);
-Route::resource('institutes', InstituteController::class);
 
 
 Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], function(){
    
+   Route::resource('institutes', InstituteController::class);
+   Route::get('/all_institute', [InstituteController::class, 'allInstitute'])->name("institute.all");
+   Route::resource('profiles', ProfileController::class);  
+
+
+ 
    Route::resource('suppliers', SuppliersController::class);    
    Route::resource('departments', DepartmentController::class);  
    Route::get('/all_departments', [DepartmentController::class, 'allDepartments'])->name("departments.all");
    Route::get('/all_suppliers', [SuppliersController::class, 'allSuppliers'])->name("suppliers.all");
+   
    
 
 });
