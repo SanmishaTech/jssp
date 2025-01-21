@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\CreateSuperAdminUserSeeder;
  
  use Database\Seeders\CreateAdminUserSeeder;
  use Database\Seeders\CreateMemberUserSeeder;
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        $this->call(CreateSuperAdminUserSeeder::class);
         $this->call(CreateAdminUserSeeder::class);
         $this->call(CreateMemberUserSeeder::class);
  
