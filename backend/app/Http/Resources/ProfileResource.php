@@ -23,16 +23,17 @@ class ProfileResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'institute_id' => $this->institute_id,
-            'profile_name' => $this->profile_name,
-            'designation' => $this->designation,
+            'contact_name' =>$this->contact_name,
             'email' => $this->email,
             'mobile' => $this->mobile,
             'joining_date' => $this->joining_date,
-            'resignation_date' => $this->resignation_date,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'institute'=>$this->institute  ,
+
             'user'=> $user,
-            'department'=>$this->department,
+
+           
 
         ];
     }

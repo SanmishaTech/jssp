@@ -7,20 +7,21 @@ use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\ProfileResource;
 use App\Http\Controllers\Api\BaseController;
 
-class ProfileController extends BaseController
+class MemberController extends BaseController
 {
      /**
      * Display All Profiles.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Profile::with("profile_name");
+        $query = Profile::query();
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -66,8 +67,7 @@ class ProfileController extends BaseController
         $profiles = new Profile();
         $profiles->user_id = $user->id;
         $profiles->profile_name = $request->input('profile_name');
-        $profiles->designation = $request->input('designation');
-        $profiles->institute_id = $request->input('institute_id');
+         $profiles->institute_id = $request->input('institute_id');
         $profiles->email = $request->input('email');
         $profiles->mobile = $request->input('mobile');
         $profiles->joining_date = $request->input('joining_date');
@@ -105,7 +105,7 @@ class ProfileController extends BaseController
         $user = User::find($profiles->user_id);
         $user->name = $request->input('profile_name');
         $user->email = $request->input('email');
-        $user->active = $request->input('active');
+        $user->active = $request->input('active', 1);
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
@@ -114,9 +114,7 @@ class ProfileController extends BaseController
         $user->assignRole($memberRole);
                        
         $profiles->profile_name = $request->input('profile_name');
-        $profiles->designation = $request->input('designation');
-        $profiles->department_id = $request->input('department_id');
-        $profiles->email = $request->input('email');
+         $profiles->email = $request->input('email');
         $profiles->mobile = $request->input('mobile');
         $profiles->joining_date = $request->input('joining_date');
         // $profiles->resignation_date = $request->input('resignation_date');

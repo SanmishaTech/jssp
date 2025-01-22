@@ -48,9 +48,19 @@ class InstituteController extends BaseController
  public function store(StoreInstituteRequest $request): JsonResponse
  {
     $institutes = new Institute();
-    $institutes->institute_name = $request->input("institute_name");
-    if(!$institutes->save()){
-        dd($institutes); exit;
+
+    $institutes->institute_name = $request->input('institute_name');
+    $institutes->contact_name = $request->input('contact_name');
+    $institutes->contact_mobile = $request->input('contact_mobile');
+    $institutes->street_address = $request->input('street_address');
+    $institutes->area = $request->input('area');
+    $institutes->city = $request->input('city');
+    $institutes->state = $request->input('state');
+    $institutes->pincode = $request->input('pincode');
+    $institutes->country = $request->input('country');  
+      if(!$institutes->save()){
+        dd($institutes); 
+        exit;
     }
     return $this->sendResponse(['Institutes' => new InstituteResource($institutes)], 'Institute Created Successfully');
  }
@@ -79,6 +89,14 @@ class InstituteController extends BaseController
  
      // Update the institute's name
      $institute->institute_name = $request->input('institute_name');
+     $institute->contact_name = $request->input('contact_name');
+     $institute->contact_mobile = $request->input('contact_mobile');
+     $institute->street_address = $request->input('street_address');
+     $institute->area = $request->input('area');
+     $institute->city = $request->input('city');
+     $institute->state = $request->input('state');
+     $institute->pincode = $request->input('pincode');
+     $institute->country = $request->input('country');
  
      // Save the updated institute record
      $institute->save();

@@ -17,6 +17,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'role'=> $this->resource->roles->first()->name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'password' => $this->password,
@@ -24,7 +25,6 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // 'role' => $this->resource->roles->pluck('name')->toArray(), //another way of getting roles
-             'role'=> $this->resource->roles->first(),
         ]; 
 
 

@@ -8,6 +8,7 @@ use App\Models\Profile;
 use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,7 @@ class ProfileController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Profile::with("profile_name");
+        $query = Profile::query();
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -46,9 +47,18 @@ class ProfileController extends BaseController
      */
     public function store(Request $request): JsonResponse
     {
-
-        $institutes = new Institute();
+ 
+         $institutes = new Institute();
         $institutes->institute_name = $request->input("institute_name");
+        $institutes->contact_name = $request->input('contact_name');
+         $institutes->contact_mobile = $request->input('contact_mobile');
+         $institutes->street_address = $request->input('street_address');
+         $institutes->area = $request->input('area');
+          $institutes->city = $request->input('city');
+         $institutes->state = $request->input('state');
+      $institutes->pincode = $request->input('pincode');
+      $institutes->country = $request->input('country');
+        
         if(!$institutes->save()){
             dd($institutes); exit;
         }
@@ -70,8 +80,8 @@ class ProfileController extends BaseController
         $profiles = new Profile();
         $profiles->user_id = $user->id;
         $profiles->profile_name = $request->input('profile_name');
-        $profiles->designation = $request->input('designation');
-        $profiles->institute_id = $institutes->id;
+         $profiles->institute_id = $institutes->id;
+         
         $profiles->email = $request->input('email');
         $profiles->mobile = $request->input('mobile');
         $profiles->joining_date = $request->input('joining_date');
@@ -79,7 +89,7 @@ class ProfileController extends BaseController
 
         $profiles->save();
        
-        return $this->sendResponse(['User'=> new UserResource($user), 'Profile'=>new ProfileResource($profiles)], "Profile stored successfully");
+        return $this->sendResponse([ new ProfileResource($profiles)], "Profile stored successfully");
     }
 
     /**
@@ -92,8 +102,10 @@ class ProfileController extends BaseController
         if(!$profiles){
             return $this->sendError("Profile not found", ['error'=>'Profile not found']);
         }
+
         $user = User::find($profiles->user_id);
-        return $this->sendResponse(['User'=> new UserResource($user), 'Profile'=>new ProfileResource($profiles)], "Profile retrived successfully");
+ 
+        return $this->sendResponse([ new ProfileResource($profiles) ], "Profile retrived successfully");
     }
 
     /**
@@ -103,9 +115,19 @@ class ProfileController extends BaseController
     {
 
         $institutes = new Institute();
+        
         $institutes->institute_name = $request->input("institute_name");
-        if(!$institutes->save()){
-            dd($institutes); exit;
+        $institutes->contact_name = $request->input('contact_name');
+         $institutes->contact_mobile = $request->input('contact_mobile');
+         $institutes->street_address = $request->input('street_address');
+         $institutes->area = $request->input('area');
+          $institutes->city = $request->input('city');
+         $institutes->state = $request->input('state');
+      $institutes->pincode = $request->input('pincode');
+      $institutes->country = $request->input('country'); 
+             if(!$institutes->save()){
+            dd($institutes);
+             exit;
         }
         //
         $profiles = Profile::find($id);
@@ -116,7 +138,7 @@ class ProfileController extends BaseController
         $user = User::find($profiles->user_id);
         $user->name = $request->input('profile_name');
         $user->email = $request->input('email');
-        $user->active = $request->input('active');
+        $user->active = $request->input('active', 1);
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
@@ -125,15 +147,15 @@ class ProfileController extends BaseController
         $user->assignRole($memberRole);
                        
         $profiles->profile_name = $request->input('profile_name');
-        $profiles->designation = $request->input('designation');
-        $profiles->department_id = $request->input('department_id');
-        $profiles->email = $request->input('email');
+         $profiles->institute_id = $institutes->id;
+
+         $profiles->email = $request->input('email');
         $profiles->mobile = $request->input('mobile');
         $profiles->joining_date = $request->input('joining_date');
         // $profiles->resignation_date = $request->input('resignation_date');
         $profiles->save();
        
-        return $this->sendResponse(['User'=> new UserResource($user), 'Profile'=>new ProfileResource($profiles)], "Profile updated successfully");
+        return $this->sendResponse([ new ProfileResource($profiles)], "Profile updated successfully");
 
     }
 
@@ -216,7 +238,7 @@ class ProfileController extends BaseController
             // dd("else working");
         }
     
-        return $this->sendResponse(['User' => new UserResource($user), 'Profile' => new ProfileResource($profiles)], "Profile data updated successfully");
+        return $this->sendResponse(['User' => new UserResource($user), new ProfileResource($profiles)], "Profile data updated successfully");
     }
     
     

@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\ProfileResource;
 use App\Http\Resources\EmployeeResource;
 use App\Http\Controllers\Api\BaseController;
 
@@ -36,7 +37,7 @@ class UserController extends BaseController
             $user = Auth::user();
             $token =  $user->createToken($user->name)->plainTextToken;
             $employee = Employee::where('user_id', $user->id)->first();
-            return $this->sendResponse(['user'=>new UserResource($user), 'employee'=>new EmployeeResource($employee), 'token'=>$token], 'User login successfully.');
+            return $this->sendResponse([ 'User'=>new ProfileResource($employee), 'token'=>$token], 'User login successfully.');
 
         } else{
             return $this->sendError('Invalid Credentials.', ['error'=>'Invalid Credentials']);
