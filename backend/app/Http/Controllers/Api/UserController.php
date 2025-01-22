@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Validator;
 use App\Models\User;
+use App\Models\Profile;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -36,7 +37,7 @@ class UserController extends BaseController
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user = Auth::user();
             $token =  $user->createToken($user->name)->plainTextToken;
-            $employee = Employee::where('user_id', $user->id)->first();
+            $employee = Profile::where('user_id', $user->id)->first();
             return $this->sendResponse([ 'User'=>new ProfileResource($employee), 'token'=>$token], 'User login successfully.');
 
         } else{
