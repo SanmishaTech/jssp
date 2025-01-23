@@ -38,8 +38,9 @@ class UserController extends BaseController
             $user = Auth::user();
             $token =  $user->createToken($user->name)->plainTextToken;
             $employee = Profile::where('user_id', $user->id)->first();
+            // dd($user->id);
             return $this->sendResponse([ 'User'=>new ProfileResource($employee), 'token'=>$token], 'User login successfully.');
-
+            
         } else{
             return $this->sendError('Invalid Credentials.', ['error'=>'Invalid Credentials']);
         }

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Employee;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -36,17 +36,17 @@ class CreateSuperAdminUserSeeder extends Seeder
         $user->syncRoles([$role->id]);
 
         // Update or create the employee profile
-        $profile = Employee::where('user_id', $user->id)->first();
+        $profile = Profile::where('user_id', $user->id)->first();
         if ($profile) {
-            $profile->employee_name = $user->name;
+            $profile->profile_name = $user->name;
             $profile->email = $user->email;
             $profile->save();
             return;
         }
 
-        $profile = new Employee();
+        $profile = new Profile();
         $profile->user_id = $user->id;
-        $profile->employee_name = $user->name;
+        $profile->profile_name = $user->name;
         $profile->email = $user->email;
         $profile->save();
     }
