@@ -46,6 +46,7 @@ interface AddItemProps {
 const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
+  const token = localStorage.getItem("token");
   const [SelectedValue, setSelectedValue] = useState("");
   const [services, setServices] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -57,9 +58,15 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
   const handleAdd = async () => {
     // const service = services.find((s) => s.name === SelectedValue);
     formData.userId = User?._id;
-    await axios.post("/api/institutes", formData).then(() => {
-      window.location.reload();
-    });
+    await axios
+      .post("/api/members", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        window.location.reload();
+      });
     setName("");
     setDate(null);
     // Reset form fields

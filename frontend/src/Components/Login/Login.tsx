@@ -27,12 +27,27 @@ const Login = () => {
   const onSubmit = async (data: Record<string, any>) => {
     console.log(data);
     const user = await axios
-      .post("/api/users/user/login", data)
+      .post("/api/login", data)
       .then((res) => {
         console.log(res.data);
+        const role = res.data.data.User.user.role;
+        localStorage.setItem("token", res.data.data.token);
+        if (role === "admin") {
+          localStorage.setItem("role", role);
+          navigate({
+            to: "/dashboard",
+          });
+        }
+        if (role === "superadmin") {
+          localStorage.setItem("role", role);
+          navigate({
+            to: "/institutes",
+          });
+        }
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("user", JSON.stringify(res.data.user));
+
           navigate({
             to: "/dashboard",
           });

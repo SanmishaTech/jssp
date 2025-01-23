@@ -30,7 +30,7 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/profiles`, {
+      .get(`/api/members`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
