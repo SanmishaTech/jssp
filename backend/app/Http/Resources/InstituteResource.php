@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class InstituteResource extends JsonResource
@@ -14,8 +16,11 @@ class InstituteResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        $user = new UserResource(User::find($this->user_id));
         return [
             "id" => $this->id,
+            
             "institute_name" =>$this->institute_name,
             "contact_name" => $this->contact_name,
             "contact_mobile" => $this->contact_mobile,
@@ -27,6 +32,7 @@ class InstituteResource extends JsonResource
             "country"=>$this->country,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'user'=> $user,
         ];
     }
 }

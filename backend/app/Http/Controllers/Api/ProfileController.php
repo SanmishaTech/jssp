@@ -48,22 +48,22 @@ class ProfileController extends BaseController
     public function store(Request $request): JsonResponse
     {
  
-         $institutes = new Institute();
+        $institutes = new Institute();
         $institutes->institute_name = $request->input("institute_name");
         $institutes->contact_name = $request->input('contact_name');
-         $institutes->contact_mobile = $request->input('contact_mobile');
-         $institutes->street_address = $request->input('street_address');
-         $institutes->area = $request->input('area');
-          $institutes->city = $request->input('city');
-         $institutes->state = $request->input('state');
-      $institutes->pincode = $request->input('pincode');
-      $institutes->country = $request->input('country');
+        $institutes->contact_mobile = $request->input('contact_mobile');
+        $institutes->street_address = $request->input('street_address');
+        $institutes->area = $request->input('area');
+        $institutes->city = $request->input('city');
+        $institutes->state = $request->input('state');
+        $institutes->pincode = $request->input('pincode');
+        $institutes->country = $request->input('country');
         
         if(!$institutes->save()){
             dd($institutes); exit;
         }
 
-        //
+        //P
         $active = 1;
         $user = new User();
         $user->name = $request->input('profile_name');
@@ -72,21 +72,16 @@ class ProfileController extends BaseController
         $user->password = Hash::make($request->input('password'));
         $user->save();
         
-        // $memberRole = $request->input("role");
         $memberRole = Role::where("name","admin")->first();
-       
         $user->assignRole($memberRole);
         
         $profiles = new Profile();
         $profiles->user_id = $user->id;
         $profiles->profile_name = $request->input('profile_name');
-         $profiles->institute_id = $institutes->id;
-         
+        $profiles->institute_id = $institutes->id;
         $profiles->email = $request->input('email');
         $profiles->mobile = $request->input('mobile');
-        $profiles->joining_date = $request->input('joining_date');
-        // $profiles->resignation_date = $request->input('resignation_date');
-
+  
         $profiles->save();
        
         return $this->sendResponse([ new ProfileResource($profiles)], "Profile stored successfully");

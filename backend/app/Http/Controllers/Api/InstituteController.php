@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
+use App\Models\Profile;
 use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\ProfileResource;
 use App\Http\Resources\InstituteResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreInstituteRequest;
@@ -45,25 +51,44 @@ class InstituteController extends BaseController
 
     
 
- public function store(StoreInstituteRequest $request): JsonResponse
- {
-    $institutes = new Institute();
+    public function store(StoreInstituteRequest $request): JsonResponse
+    {
+        $active = 1;
+        $user = new User();
+        $user->name = $request->input('profile_name');
+        $user->email = $request->input('email');
+        $user->active = $active;
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+    
+        $memberRole = Role::where("name", "admin")->first();
+        $user->assignRole($memberRole);
+    
+        $institutes = new Institute();
+        $institutes->institute_name = $request->input('institute_name');
+        $institutes->contact_name = $request->input('contact_name');
+        $institutes->contact_mobile = $request->input('contact_mobile');
+        $institutes->street_address = $request->input('street_address');
+        $institutes->area = $request->input('area');
+        $institutes->city = $request->input('city');
+        $institutes->state = $request->input('state');
+        $institutes->pincode = $request->input('pincode');
+        $institutes->country = $request->input('country');
+        // $profiles->user_id = $user->id;
 
-    $institutes->institute_name = $request->input('institute_name');
-    $institutes->contact_name = $request->input('contact_name');
-    $institutes->contact_mobile = $request->input('contact_mobile');
-    $institutes->street_address = $request->input('street_address');
-    $institutes->area = $request->input('area');
-    $institutes->city = $request->input('city');
-    $institutes->state = $request->input('state');
-    $institutes->pincode = $request->input('pincode');
-    $institutes->country = $request->input('country');  
-      if(!$institutes->save()){
-        dd($institutes); 
-        exit;
+     
+        if (!$institutes->save()) {
+            return response()->json(['error' => 'Institute creation failed'], 500);
+        }
+    
+        return $this->sendResponse(
+            [
+                'Institutes' => new InstituteResource($institutes),
+                'Users' => new UserResource($user),
+            ],
+            'Institute Created Successfully'
+        );
     }
-    return $this->sendResponse(['Institutes' => new InstituteResource($institutes)], 'Institute Created Successfully');
- }
 
  public function show(string $id): JsonResponse
  {
