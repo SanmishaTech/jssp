@@ -74,7 +74,7 @@ class InstituteController extends BaseController
         $institutes->state = $request->input('state');
         $institutes->pincode = $request->input('pincode');
         $institutes->country = $request->input('country');
-        // $profiles->user_id = $user->id;
+        $institutes->user_id = $user->id;
 
      
         if (!$institutes->save()) {
@@ -84,7 +84,7 @@ class InstituteController extends BaseController
         return $this->sendResponse(
             [
                 'Institutes' => new InstituteResource($institutes),
-                'Users' => new UserResource($user),
+                // 'Users' => new UserResource($user),
             ],
             'Institute Created Successfully'
         );
