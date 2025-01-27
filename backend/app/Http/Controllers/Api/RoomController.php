@@ -48,7 +48,7 @@ public function store(Request $request):JsonResponse
 
     return $this->sendResponse(
         [
-            'Rooms' => new RoomResponse($rooms),
+            'Rooms' => new RoomResource($rooms),
         ],
         'Room Created Successfully'
     );
@@ -60,7 +60,7 @@ public function show(string $id):JsonResponse
     if(!$rooms){
         return $this->sendError("Rooms not found", ['error' => 'Room not found']);
     }
-    return $this ->sendResponse(new RoomResponse($rooms), "Room Retrived Successfully");
+    return $this ->sendResponse(new RoomResource($rooms), "Room Retrived Successfully");
 }
 
 public function update(Request $request, string $id):JsonResponse
