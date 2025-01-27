@@ -21,7 +21,7 @@ class SemesterResource extends JsonResource
             "course_id" => $this -> course_id,
             "standard" => $this->standard,
             "semester" => $this->semester,
-            // "course" => $this -> course,
+            "course" => $this -> course,
             
 
         ];

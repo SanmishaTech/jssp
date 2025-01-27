@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
-    public function institute(){
-        return $this->belongsTo(Institute::class, "institude_id");
+    public function institute()
+    
+    {
+        return $this->belongsTo(Institute::class, "institute_id");
     }
 }
