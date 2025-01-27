@@ -21,7 +21,12 @@ class MemberController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Profile::query();
+        $query = Profile::query()
+            ->whereHas('user', function($q) {
+                $q->whereDoesntHave('roles', function($rq) {
+                    $rq->where('name', 'superadmin');
+                });
+            });
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');

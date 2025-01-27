@@ -14,6 +14,11 @@ class Profile extends Model
         return $this->belongsTo(Institute::class, "institute_id");
     }
 
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
    
     
 
