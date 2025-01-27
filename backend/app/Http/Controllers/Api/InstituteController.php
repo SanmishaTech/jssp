@@ -63,6 +63,15 @@ class InstituteController extends BaseController
     
         $memberRole = Role::where("name", "admin")->first();
         $user->assignRole($memberRole);
+
+           
+        $profiles = new Profile();
+        $profiles->user_id = $user->id;
+        $profiles->profile_name = $request->input('profile_name');
+         $profiles->email = $request->input('email');
+        $profiles->mobile = $request->input('mobile');
+  
+        $profiles->save();
     
         $institutes = new Institute();
         $institutes->institute_name = $request->input('institute_name');
@@ -105,30 +114,30 @@ class InstituteController extends BaseController
  public function update(UpdateInstituteRequest $request, string $id): JsonResponse
  {
      // Find the Institute by ID
-     $institute = Institute::find($id);
+     $institutes = Institute::find($id);
  
-     // If the institute is not found, return an error
-     if (!$institute) {
+     // If the institutes is not found, return an error
+     if (!$institutes) {
          return $this->sendError("Institute not found", ['error' => 'Institute not found']);
      }
  
-     // Update the institute's name
-     $institute->institute_name = $request->input('institute_name');
-     $institute->contact_name = $request->input('contact_name');
-     $institute->contact_mobile = $request->input('contact_mobile');
-     $institute->street_address = $request->input('street_address');
-     $institute->area = $request->input('area');
-     $institute->city = $request->input('city');
-     $institute->state = $request->input('state');
-     $institute->pincode = $request->input('pincode');
-     $institute->country = $request->input('country');
+     // Update the institutes name
+     $institutes->institute_name = $request->input('institute_name');
+     $institutes->contact_name = $request->input('contact_name');
+     $institutes->contact_mobile = $request->input('contact_mobile');
+     $institutes->street_address = $request->input('street_address');
+     $institutes->area = $request->input('area');
+     $institutes->city = $request->input('city');
+     $institutes->state = $request->input('state');
+     $institutes->pincode = $request->input('pincode');
+     $institutes->country = $request->input('country');
  
-     // Save the updated institute record
-     $institute->save();
+     // Save the updated institutes record
+     $institutes->save();
  
-     // Return the updated institute data
+     // Return the updated institutes data
      return $this->sendResponse(
-         ["Institute" => new InstituteResource($institute)], 
+         ["Institute" => new InstituteResource($institutes)], 
          "Institute Updated Successfully"
      );
  }
