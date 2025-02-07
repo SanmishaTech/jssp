@@ -19,12 +19,10 @@ return new class extends Migration
             $table->string("institute_name")->nullable();
             $table->string("contact_name")->nullable();
             $table->string("contact_mobile")->nullable();
-            $table->string('street_address')->nullable();
-            $table->string('area')->nullable();
-            $table->string('city')->nullable();
-            $table->string('state')->nullable();
-            $table->string('pincode')->nullable();
-            $table->string('country')->nullable();
+            $table->string('address')->nullable();
+            $table->string('registration_number')->nullable();
+            $table->string('affiliated_university')->nullable();
+             
             $table->timestamps();
         });
     }

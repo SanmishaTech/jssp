@@ -77,12 +77,10 @@ class InstituteController extends BaseController
         $institutes->institute_name = $request->input('institute_name');
         $institutes->contact_name = $request->input('contact_name');
         $institutes->contact_mobile = $request->input('contact_mobile');
-        $institutes->street_address = $request->input('street_address');
-        $institutes->area = $request->input('area');
-        $institutes->city = $request->input('city');
-        $institutes->state = $request->input('state');
-        $institutes->pincode = $request->input('pincode');
-        $institutes->country = $request->input('country');
+        $institutes->address = $request->input('address');
+        $institutes->registration_number = $request->input('registration_number');
+        $institutes->affiliated_university = $request->input('affiliated_university');
+       
         $institutes->user_id = $user->id;
 
      
@@ -125,12 +123,11 @@ class InstituteController extends BaseController
      $institutes->institute_name = $request->input('institute_name');
      $institutes->contact_name = $request->input('contact_name');
      $institutes->contact_mobile = $request->input('contact_mobile');
-     $institutes->street_address = $request->input('street_address');
-     $institutes->area = $request->input('area');
-     $institutes->city = $request->input('city');
-     $institutes->state = $request->input('state');
-     $institutes->pincode = $request->input('pincode');
-     $institutes->country = $request->input('country');
+     $institutes->address = $request->input('address');
+     $institutes->registration_number = $request->input('registration_number');
+     $institutes->affiliated_university = $request->input('affiliated_university');
+
+    
  
      // Save the updated institutes record
      $institutes->save();
