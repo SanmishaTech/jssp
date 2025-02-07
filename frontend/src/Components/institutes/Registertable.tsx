@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Dashboard from "./Dashboardreuse";
-import AddItem from "./Additem";
+// import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
@@ -37,7 +38,7 @@ export default function Dashboardholiday() {
         },
       })
       .then((response) => {
-        setData(response.data.data.Institutes);
+        setData(response.data.data.Profiles.Institutes);
         setLoading(false);
       })
       .catch((err) => {
@@ -48,15 +49,15 @@ export default function Dashboardholiday() {
 
     // Define the dashboard configuration
     setConfig({
-      breadcrumbs: [
-        { label: "Dashboard", href: "/dashboard" },
-        { label: "Parameters" },
-      ],
-      searchPlaceholder: "Search registrations...",
+      // breadcrumbs: [
+      //   { label: "Dashboard", href: "/dashboard" },
+      //   { label: "Institutes" },
+      // ],
+      searchPlaceholder: "Search Institutes...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Parameters",
-        description: "Manage Parameters and view their details.",
+        title: "Institutes",
+        description: "Manage Institutes  and view their details.",
         headers: [
           { label: "institutes", key: "one" },
 
@@ -83,11 +84,13 @@ export default function Dashboardholiday() {
       },
     });
   }, [User?._id]);
+  const navigate = useNavigate();
 
   // Handlers for actions
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
+    navigate({ to: "/institutes/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -147,7 +150,7 @@ export default function Dashboardholiday() {
         onExport={handleExport}
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
-        AddItem={AddItem}
+        // AddItem={AddItem}
         typeofschema={typeofschema}
       />
     </div>

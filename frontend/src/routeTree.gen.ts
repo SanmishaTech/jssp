@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
+import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
 
 // Create/Update Routes
 
@@ -32,6 +33,12 @@ const LoginIndexRoute = LoginIndexImport.update({
 const InstitutesIndexRoute = InstitutesIndexImport.update({
   id: '/institutes/',
   path: '/institutes/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const InstitutesAddIndexRoute = InstitutesAddIndexImport.update({
+  id: '/institutes/add/',
+  path: '/institutes/add/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexImport
       parentRoute: typeof rootRoute
     }
+    '/institutes/add/': {
+      id: '/institutes/add/'
+      path: '/institutes/add'
+      fullPath: '/institutes/add'
+      preLoaderRoute: typeof InstitutesAddIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -69,12 +83,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
+  '/institutes/add': typeof InstitutesAddIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
+  '/institutes/add': typeof InstitutesAddIndexRoute
 }
 
 export interface FileRoutesById {
@@ -82,14 +98,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/institutes/': typeof InstitutesIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/institutes/add/': typeof InstitutesAddIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/institutes' | '/login'
+  fullPaths: '/' | '/institutes' | '/login' | '/institutes/add'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/institutes' | '/login'
-  id: '__root__' | '/' | '/institutes/' | '/login/'
+  to: '/' | '/institutes' | '/login' | '/institutes/add'
+  id: '__root__' | '/' | '/institutes/' | '/login/' | '/institutes/add/'
   fileRoutesById: FileRoutesById
 }
 
@@ -97,12 +114,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
+  InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
+  InstitutesAddIndexRoute: InstitutesAddIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/institutes/",
-        "/login/"
+        "/login/",
+        "/institutes/add/"
       ]
     },
     "/": {
@@ -128,6 +148,9 @@ export const routeTree = rootRoute
     },
     "/login/": {
       "filePath": "login/index.tsx"
+    },
+    "/institutes/add/": {
+      "filePath": "institutes/add/index.tsx"
     }
   }
 }
