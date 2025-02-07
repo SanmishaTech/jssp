@@ -55,7 +55,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
-import Edititem from "./Edititem";
+// import Edititem from "./Edititem";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -64,7 +64,7 @@ export default function Dashboard({
   searchPlaceholder = "Search...",
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
-  AddItem,
+  // AddItem,
   typeofschema,
   tableData = [],
   onAddProduct = () => {},
@@ -212,101 +212,119 @@ export default function Dashboard({
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     Add Product
                   </span>
-                </Button> */}
-                <AddItem typeofschema={typeofschema} />
+                </Button>
+                {/* <AddItem typeofschema={typeofschema} /> */}
               </div>
             </div>
             <TabsContent value="all">
-              <Card className="bg-accent/40">
-                <CardHeader>
-                  <CardTitle>{tableColumns.title}</CardTitle>
-                  <CardDescription>{tableColumns.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        {tableColumns?.headers?.map((header, index) => (
-                          <>
-                            <TableHead
-                              key={index}
-                              className={header.hiddenOn ? header.hiddenOn : ""}
-                            >
-                              {header.label}
-                            </TableHead>
-                          </>
-                        ))}
-                        {/* <TableHead>Services</TableHead> */}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {tableData?.map((row) => (
-                        <React.Fragment key={row._id}>
-                          <TableRow>
-                            {tableColumns?.headers?.map((header, index) => (
-                              <TableCell
+              {console.log(tableData)}
+              {tableData?.totalitems <= 0 ? (
+                <EmptyStateDefault
+                  value="Institutes"
+                  icons={[Building]}
+                  action={{
+                    label: "Add Institutes",
+                    onClick: () => {
+                      console.log("Add Institutes clicked");
+                      navigate({ to: "/institutes/add" });
+                    },
+                  }}
+                />
+              ) : (
+                <Card className="bg-accent/40">
+                  <CardHeader>
+                    <CardTitle>{tableColumns.title}</CardTitle>
+                    <CardDescription>
+                      {tableColumns.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          {tableColumns?.headers?.map((header, index) => (
+                            <>
+                              <TableHead
                                 key={index}
                                 className={
                                   header.hiddenOn ? header.hiddenOn : ""
                                 }
                               >
-                                {header.key === "one" ? (
-                                  row.one
-                                ) : header.key === "action" ? (
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        className="h-8 w-8 p-0"
+                                {header.label}
+                              </TableHead>
+                            </>
+                          ))}
+                          {/* <TableHead>Services</TableHead> */}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {tableData?.map((row) => (
+                          <React.Fragment key={row._id}>
+                            <TableRow>
+                              {tableColumns?.headers?.map((header, index) => (
+                                <TableCell
+                                  key={index}
+                                  className={
+                                    header.hiddenOn ? header.hiddenOn : ""
+                                  }
+                                >
+                                  {header.key === "one" ? (
+                                    row.one
+                                  ) : header.key === "action" ? (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <span className="sr-only">
+                                            Open menu
+                                          </span>
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent
+                                        align="center"
+                                        className="w-full flex-col items-center flex justify-center"
                                       >
-                                        <span className="sr-only">
-                                          Open menu
-                                        </span>
-                                        <MoreHorizontal className="h-4 w-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                      align="center"
-                                      className="w-full flex-col items-center flex justify-center"
-                                    >
-                                      <DropdownMenuLabel>
-                                        Actions
-                                      </DropdownMenuLabel>
-                                      <Edititem
-                                        editid={row?.edit}
-                                        toogleedit={setToggleedit}
-                                        typeofschema={typeofschema}
-                                        setToggleedit={setToggleedit}
-                                        toggleedit={toggleedit}
-                                        editfetch={row?.editfetch}
-                                      />
-                                      <DropdownMenuSeparator />
+                                        <DropdownMenuLabel>
+                                          Actions
+                                        </DropdownMenuLabel>
+                                        <Edititem
+                                          editid={row?.edit}
+                                          toogleedit={setToggleedit}
+                                          typeofschema={typeofschema}
+                                          setToggleedit={setToggleedit}
+                                          toggleedit={toggleedit}
+                                          editfetch={row?.editfetch}
+                                        />
+                                        <DropdownMenuSeparator />
 
-                                      <AlertDialogbox url={row?.delete} />
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                ) : header.key === "two" ? (
-                                  row.two
-                                ) : header.key === "three" ? (
-                                  row.three
-                                ) : header.key === "four" ? (
-                                  row.four
-                                ) : header.key === "five" ? (
-                                  row.five
-                                ) : header.key === "six" ? (
-                                  `₹${row.six}`
-                                ) : (
-                                  row[header.key]
-                                )}
-                              </TableCell>
-                            ))}
+                                        <AlertDialogbox url={row?.delete} />
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  ) : header.key === "two" ? (
+                                    row.two
+                                  ) : header.key === "three" ? (
+                                    row.three
+                                  ) : header.key === "four" ? (
+                                    row.four
+                                  ) : header.key === "five" ? (
+                                    row.five
+                                  ) : header.key === "six" ? (
+                                    `₹${row.six}`
+                                  ) : (
+                                    row[header.key]
+                                  )}
+                                </TableCell>
+                              ))}
 
-                            {/* <TableCell>
+                              {/* <TableCell>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -320,79 +338,80 @@ export default function Dashboard({
                                 Services
                               </Button>
                             </TableCell> */}
-                          </TableRow>
-                          {expandedRows.includes(row._id) && (
-                            <></>
-                            // <TableRow>
-                            //   <TableCell
-                            //     colSpan={tableColumns.headers.length + 1}
-                            //   >
-                            //     <div className="p-4 bg-muted rounded-md">
-                            //       <h4 className="text-sm font-semibold mb-2">
-                            //         Services
-                            //       </h4>
-                            //       {/* Nested Services Table */}
-                            //       <Table className="mb-4">
-                            //         <TableHeader>
-                            //           <TableRow>
-                            //             <TableHead>Service Name</TableHead>
-                            //             <TableHead>Description</TableHead>
-                            //             <TableHead>Price ($)</TableHead>
-                            //             <TableHead>Urgent</TableHead>
-                            //           </TableRow>
-                            //         </TableHeader>
-                            //         <TableBody>
-                            //           {row?.services?.map((service) => (
-                            //             <TableRow key={service._id}>
-                            //               <TableCell>{service.name}</TableCell>
-                            //               <TableCell>
-                            //                 {service.description}
-                            //               </TableCell>
-                            //               <TableCell>
-                            //                 &#x20b9;{service.price}
-                            //               </TableCell>
-                            //               <TableCell>
-                            //                 {service.urgent}
-                            //               </TableCell>
-                            //             </TableRow>
-                            //           ))}
-                            //         </TableBody>
-                            //         <TableFooter>
-                            //           <TableRow>
-                            //             <TableCell colSpan={2}>
-                            //               <strong>Total</strong>
-                            //             </TableCell>
-                            //             <TableCell>
-                            //               &#x20b9;{" "}
-                            //               {row?.services
-                            //                 ?.reduce(
-                            //                   (total, service) =>
-                            //                     total + service.price,
-                            //                   0
-                            //                 )
-                            //                 .toFixed(2)}
-                            //             </TableCell>
-                            //           </TableRow>
-                            //         </TableFooter>
-                            //       </Table>
-                            //     </div>
-                            //   </TableCell>
-                            // </TableRow>
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-                <CardFooter>
-                  <div className="text-xs text-muted-foreground">
-                    Showing <strong>{tableColumns.pagination.from}</strong>-
-                    <strong>{tableColumns.pagination.to}</strong> of{" "}
-                    <strong>{tableColumns.pagination.total}</strong>{" "}
-                    registrations
-                  </div>
-                </CardFooter>
-              </Card>
+                            </TableRow>
+                            {expandedRows.includes(row._id) && (
+                              <></>
+                              // <TableRow>
+                              //   <TableCell
+                              //     colSpan={tableColumns.headers.length + 1}
+                              //   >
+                              //     <div className="p-4 bg-muted rounded-md">
+                              //       <h4 className="text-sm font-semibold mb-2">
+                              //         Services
+                              //       </h4>
+                              //       {/* Nested Services Table */}
+                              //       <Table className="mb-4">
+                              //         <TableHeader>
+                              //           <TableRow>
+                              //             <TableHead>Service Name</TableHead>
+                              //             <TableHead>Description</TableHead>
+                              //             <TableHead>Price ($)</TableHead>
+                              //             <TableHead>Urgent</TableHead>
+                              //           </TableRow>
+                              //         </TableHeader>
+                              //         <TableBody>
+                              //           {row?.services?.map((service) => (
+                              //             <TableRow key={service._id}>
+                              //               <TableCell>{service.name}</TableCell>
+                              //               <TableCell>
+                              //                 {service.description}
+                              //               </TableCell>
+                              //               <TableCell>
+                              //                 &#x20b9;{service.price}
+                              //               </TableCell>
+                              //               <TableCell>
+                              //                 {service.urgent}
+                              //               </TableCell>
+                              //             </TableRow>
+                              //           ))}
+                              //         </TableBody>
+                              //         <TableFooter>
+                              //           <TableRow>
+                              //             <TableCell colSpan={2}>
+                              //               <strong>Total</strong>
+                              //             </TableCell>
+                              //             <TableCell>
+                              //               &#x20b9;{" "}
+                              //               {row?.services
+                              //                 ?.reduce(
+                              //                   (total, service) =>
+                              //                     total + service.price,
+                              //                   0
+                              //                 )
+                              //                 .toFixed(2)}
+                              //             </TableCell>
+                              //           </TableRow>
+                              //         </TableFooter>
+                              //       </Table>
+                              //     </div>
+                              //   </TableCell>
+                              // </TableRow>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                  <CardFooter>
+                    <div className="text-xs text-muted-foreground">
+                      Showing <strong>{tableColumns.pagination.from}</strong>-
+                      <strong>{tableColumns.pagination.to}</strong> of{" "}
+                      <strong>{tableColumns.pagination.total}</strong>{" "}
+                      registrations
+                    </div>
+                  </CardFooter>
+                </Card>
+              )}
             </TabsContent>
             {/* Add more TabsContent as needed */}
           </Tabs>

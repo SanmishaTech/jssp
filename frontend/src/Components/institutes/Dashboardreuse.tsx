@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
+import { EmptyStateDefault } from "../emptyState/emptystate";
 import AlertDialogbox from "./AlertBox";
 import {
   Breadcrumb,
@@ -64,7 +65,7 @@ export default function Dashboard({
   searchPlaceholder = "Search...",
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
-  AddItem,
+  // AddItem,
   typeofschema,
   tableData = [],
   onAddProduct = () => {},
@@ -212,16 +213,18 @@ export default function Dashboard({
                   </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     Add Product
                   </span>
-                </Button> */}
-                <AddItem typeofschema={typeofschema} />
+                </Button>
+                {/* <AddItem typeofschema={typeofschema} /> */}
               </div>
             </div>
             <TabsContent value="all">
+              {console.log(tableData)}
+
               <Card className="bg-accent/40">
                 <CardHeader>
                   <CardTitle>{tableColumns.title}</CardTitle>

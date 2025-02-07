@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -33,64 +34,118 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
-
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_name: z.string().optional(),
-  contact_name: z.string().optional(),
-  contact_mobile: z.string().optional(),
-  street_address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  pincode: z.string().optional(),
-  area: z.string().optional(),
-  profile_name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  mobile: z.string().optional(),
+  associateType: z.string().optional(),
+  salutation: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  organization: z
+    .string()
+    .min(2, {
+      message: "Organization must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Organization must not be longer than 30 characters.",
+    }),
+  country: z
+    .string()
+    .min(2, {
+      message: "Country must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Country must not be longer than 30 characters.",
+    }),
+  state: z
+    .string()
+    .min(2, {
+      message: "State must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "State must not be longer than 30 characters.",
+    }),
+  city: z
+    .string()
+    .min(2, {
+      message: "City must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "City must not be longer than 30 characters.",
+    }),
+  address: z
+    .string()
+    .min(2, {
+      message: "Address must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Address must not be longer than 30 characters.",
+    }),
+  telephone: z
+    .string()
+    .min(2, {
+      message: "Telephone must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Telephone must not be longer than 30 characters.",
+    }),
+  mobile: z
+    .string()
+    .min(2, {
+      message: "Mobile must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Mobile must not be longer than 30 characters.",
+    }),
+  email: z
+    .string()
+    .min(2, {
+      message: "Email must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Email must not be longer than 30 characters.",
+    }),
+  degree: z
+    .string()
+    .min(2, {
+      message: "Degree must be at least 2 characters.",
+    })
+    .max(30, {
+      message: "Degree must not be longer than 30 characters.",
+    }),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {};
 
-function ProfileForm() {
+function ProfileForm({ formData }) {
+  console.log("This is formData", formData);
+  const defaultValues: Partial<ProfileFormValues> = formData;
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
-  const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
-  //     name: "urls",
-  //     control: form.control,
-  //   });
+  const { id } = useParams();
+
+  const { reset } = form;
+
+  // Reset form values when formData changes
+  useEffect(() => {
+    reset(formData);
+  }, [formData, reset]);
+
   const navigate = useNavigate();
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
-    console.log("ppappappa");
-    // Implement actual profile update logic here
-    data.userId = User?._id;
-    await axios
-      .post(`/api/profiles`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        console.log("ppappappa", res.data);
-        toast.success("Associate Master Created Successfully");
-        // navigate("/associatemaster");
-        window.history.back();
-      });
+    await axios.put(`/api/associatemaster/update/${id}`, data).then((res) => {
+      toast.success("Associate Master Updated Successfully");
+      navigate("/associatemaster");
+    });
   }
 
   return (
@@ -104,12 +159,30 @@ function ProfileForm() {
           <FormField
             className="flex-1"
             control={form.control}
-            name="institute_name"
+            name="associateType"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Institute Name</FormLabel>
-                <Input placeholder="Institute Name..." {...field} />
-
+                <FormLabel>Associate Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="w-full"
+                >
+                  <FormControl className="w-full">
+                    <SelectTrigger value={field.value}>
+                      {" "}
+                      <SelectValue placeholder="Select Associate type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="clinic">Clinic</SelectItem>
+                    <SelectItem value="doctor">Doctor</SelectItem>
+                    <SelectItem value="hospital">Hospital</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  This is the type of Associate you are selecting.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -117,43 +190,80 @@ function ProfileForm() {
           <FormField
             className="flex-1"
             control={form.control}
-            name="contact_name"
+            name="salutation"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Contact Name</FormLabel>
-                <Input placeholder="Contact Name..." {...field} />
+                <FormLabel>select Salutation</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  className="w-full"
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a verified email to display" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="baby">Baby</SelectItem>
+                    <SelectItem value="dr">Dr</SelectItem>
+                    <SelectItem value="mr">Mr</SelectItem>
+                    <SelectItem value="mrs">Mrs</SelectItem>
+                    <SelectItem value="ms">Ms</SelectItem>
+                    <SelectItem value="lab">Lab</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>How should we address you?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="contact_mobile"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Contact Mobile</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Contact Mobile..." {...field} />
+                  <Input placeholder="First name..." {...field} />
                 </FormControl>
+                <FormDescription>What is your first name?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="street_address"
+            name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Street Address</FormLabel>
+                <FormLabel>Last Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Last name..." {...field} />
                 </FormControl>
+                <FormDescription>What is your last name?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
+          <FormField
+            control={form.control}
+            name="organization"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Organization</FormLabel>
+                <FormControl>
+                  <Input placeholder="Organization..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  What is your name of organization
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             className="flex-1"
             control={form.control}
@@ -164,11 +274,11 @@ function ProfileForm() {
                 <Select
                   onValueChange={field.onChange}
                   className="w-full"
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a country" />
+                      <SelectValue placeholder="Select a Country" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -179,6 +289,7 @@ function ProfileForm() {
                     <SelectItem value="france">France</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormDescription>What is your country?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -193,7 +304,7 @@ function ProfileForm() {
                 <Select
                   onValueChange={field.onChange}
                   className="w-full"
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -208,6 +319,7 @@ function ProfileForm() {
                     <SelectItem value="telangana">Telangana</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormDescription>What is your State?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -222,11 +334,11 @@ function ProfileForm() {
                 <Select
                   onValueChange={field.onChange}
                   className="w-full"
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a city" />
+                      <SelectValue placeholder="Select a verified email to display" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -237,55 +349,58 @@ function ProfileForm() {
                     <SelectItem value="delhi">Delhi</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>What is your City?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="pincode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pincode</FormLabel>
-                <FormControl>
-                  <Input placeholder="pincode..." {...field} />
-                </FormControl>
+                <FormDescription>What is your country?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
           <FormField
             control={form.control}
-            name="area"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>area</FormLabel>
+                <FormLabel>Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="area..." {...field} />
+                  <Textarea placeholder="Address..." {...field} />
                 </FormControl>
+                <FormDescription>What is your name of Address</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          <FormField
+            control={form.control}
+            name="telephone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telephone</FormLabel>
+                <FormControl>
+                  <Input placeholder="Telephone..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  What is your name of Telephone
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
             control={form.control}
-            name="profile_name"
+            name="mobile"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Profile_name</FormLabel>
+                <FormLabel>Mobile</FormLabel>
                 <FormControl>
-                  <Input placeholder="Profile Name..." {...field} />
+                  <Input placeholder="Mobile..." {...field} />
                 </FormControl>
+                <FormDescription>What is your name of Mobile.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 max-w-full p-4">
           <FormField
             control={form.control}
             name="email"
@@ -302,26 +417,14 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="password"
+            name="degree"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Degree</FormLabel>
                 <FormControl>
-                  <Input placeholder="Password..." {...field} />
+                  <Input placeholder="Degree..." {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Mobile..." {...field} />
-                </FormControl>
+                <FormDescription>What is your name of Degree.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -329,7 +432,7 @@ function ProfileForm() {
         </div>
         <div className="flex justify-end w-full ">
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Update profile
           </Button>
         </div>
       </form>
@@ -339,10 +442,25 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const [formData, setFormData] = useState<any>({});
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(`/api/associatemaster/reference/${id}`);
+      console.log(response.data);
+      setFormData(response.data);
+    };
+    if (id) {
+      fetchData();
+    }
+    return () => {
+      setFormData({});
+    };
+  }, [id]);
   return (
     <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
       <Button
-        onClick={() => window.history.back()}
+        onClick={() => navigate("/associatemaster")}
         className="ml-4 flex gap-2 m-8 mb-4"
       >
         <MoveLeft className="w-5 text-white" />
@@ -350,13 +468,13 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institutes Master</CardTitle>
-        <CardDescription>Institutes master</CardDescription>
+        <CardTitle>Associate Master</CardTitle>
+        <CardDescription>Associate master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
           <Separator />
-          <ProfileForm />
+          <ProfileForm formData={formData} />
         </div>
       </CardContent>
       {/* <CardFooter className="flex justify-between">

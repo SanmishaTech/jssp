@@ -1,8 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import Institutes from "../../Components/institutes/Registertable";
+import Additem from "../../../Components/institutes/TestCard";
+
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/institutes/")({
+export const Route = createFileRoute("/institutes/add/")({
   beforeLoad: async ({ fetch }) => {
     const role = localStorage.getItem("role");
     if (role !== "superadmin") {
@@ -19,5 +20,5 @@ export const Route = createFileRoute("/institutes/")({
 });
 
 function RouteComponent() {
-  return <Institutes />;
+  return <Additem />;
 }
