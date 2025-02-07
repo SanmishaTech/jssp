@@ -31,14 +31,14 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/profiles`, {
+      .get(`/api/institutes`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.Profiles.Institutes);
+        setData(response.data.data.Institutes);
         setLoading(false);
       })
       .catch((err) => {
@@ -59,7 +59,11 @@ export default function Dashboardholiday() {
         title: "Institutes",
         description: "Manage Institutes  and view their details.",
         headers: [
-          { label: "institutes", key: "one" },
+          { label: "Institute Name", key: "one" },
+          { label: "Contact Name", key: "two" },
+          { label: "Mobile", key: "three" },
+          { label: "Registration Number", key: "four" },
+          { label: "Affiliated University", key: "five" },
 
           { label: "Action", key: "action" },
         ],
@@ -135,6 +139,10 @@ export default function Dashboardholiday() {
     return {
       _id: item?._id,
       one: item?.institute_name || "Unknown",
+      two: item?.contact_name || "NA",
+      three: item?.contact_mobile || "NA",
+      four: item?.registration_number || "NA",
+      five: item?.affiliated_university || "NA",
     };
   });
 

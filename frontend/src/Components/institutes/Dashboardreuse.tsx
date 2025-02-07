@@ -56,7 +56,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
-// import Edititem from "./Edititem";
+// import Edititem from "./Edittestcard";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -280,14 +280,14 @@ export default function Dashboard({
                                       <DropdownMenuLabel>
                                         Actions
                                       </DropdownMenuLabel>
-                                      <Edititem
+                                      {/* <Edititem
                                         editid={row?.edit}
                                         toogleedit={setToggleedit}
                                         typeofschema={typeofschema}
                                         setToggleedit={setToggleedit}
                                         toggleedit={toggleedit}
                                         editfetch={row?.editfetch}
-                                      />
+                                      /> */}
                                       <DropdownMenuSeparator />
 
                                       <AlertDialogbox url={row?.delete} />

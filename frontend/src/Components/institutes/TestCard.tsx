@@ -41,12 +41,9 @@ const profileFormSchema = z.object({
   institute_name: z.string().optional(),
   contact_name: z.string().optional(),
   contact_mobile: z.string().optional(),
-  street_address: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-  pincode: z.string().optional(),
-  area: z.string().optional(),
+  address: z.string().optional(),
+  registration_number: z.string().optional(),
+  affiliated_university: z.string().optional(),
   profile_name: z.string().optional(),
   email: z.string().optional(),
   password: z.string().optional(),
@@ -71,24 +68,18 @@ function ProfileForm() {
   //     name: "urls",
   //     control: form.control,
   //   });
-  const navigate = useNavigate();
 
   async function onSubmit(data: ProfileFormValues) {
-    // console.log("Sas", data);
-    console.log("ppappappa");
-    // Implement actual profile update logic here
     data.userId = User?._id;
     await axios
-      .post(`/api/profiles`, data, {
+      .post(`/api/institutes`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        console.log("ppappappa", res.data);
         toast.success("Associate Master Created Successfully");
-        // navigate("/associatemaster");
         window.history.back();
       });
   }
@@ -100,7 +91,7 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
           <FormField
             className="flex-1"
             control={form.control}
@@ -141,10 +132,10 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="street_address"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Street Address</FormLabel>
+                <FormLabel>Address</FormLabel>
                 <FormControl>
                   <Input placeholder="Last name..." {...field} />
                 </FormControl>
@@ -152,125 +143,39 @@ function ProfileForm() {
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>select Country</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  className="w-full"
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a country" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="china">China</SelectItem>
-                    <SelectItem value="india">India</SelectItem>
-                    <SelectItem value="usa">USA</SelectItem>
-                    <SelectItem value="uk">UK</SelectItem>
-                    <SelectItem value="france">France</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="state"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>select State</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  className="w-full"
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a State" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="maharashtra">Maharashtra</SelectItem>
-                    <SelectItem value="gujarat">Gujarat</SelectItem>
-                    <SelectItem value="rajasthan">Rajasthan</SelectItem>
-                    <SelectItem value="tamilnadu">Tamilnadu</SelectItem>
-                    <SelectItem value="telangana">Telangana</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>select City</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  className="w-full"
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a city" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="dombivli">Dombivli</SelectItem>
-                    <SelectItem value="bangalore">Bangalore</SelectItem>
-                    <SelectItem value="mumbai">Mumbai</SelectItem>
-                    <SelectItem value="chennai">Chennai</SelectItem>
-                    <SelectItem value="delhi">Delhi</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>What is your City?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
-            name="pincode"
+            name="registration_number"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pincode</FormLabel>
+                <FormLabel>Registration Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="pincode..." {...field} />
+                  <Input
+                    placeholder="Enter Registration Number..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
           <FormField
             control={form.control}
-            name="area"
+            name="affiliated_university"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>area</FormLabel>
+                <FormLabel>Affiliated University</FormLabel>
                 <FormControl>
-                  <Input placeholder="area..." {...field} />
+                  <Input
+                    placeholder="Enter Affiliated University..."
+                    {...field}
+                  />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="profile_name"
@@ -284,8 +189,6 @@ function ProfileForm() {
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 max-w-full p-4">
           <FormField
             control={form.control}
             name="email"
@@ -295,39 +198,32 @@ function ProfileForm() {
                 <FormControl>
                   <Input placeholder="Email..." {...field} />
                 </FormControl>
-                <FormDescription>What is your name of Email.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Mobile..." {...field} />
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        <div className="flex justify-end w-full ">
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="Password..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end w-full gap-3 ">
+          <Button
+            onClick={() => window.history.back()}
+            className="self-center"
+            type="button"
+          >
+            Cancel
+          </Button>
           <Button className="self-center mr-8" type="submit">
             Add Institutes
           </Button>
@@ -338,7 +234,6 @@ function ProfileForm() {
 }
 
 export default function SettingsProfilePage() {
-  const navigate = useNavigate();
   return (
     <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
       <Button
@@ -351,7 +246,7 @@ export default function SettingsProfilePage() {
 
       <CardHeader>
         <CardTitle>Institutes Master</CardTitle>
-        <CardDescription>Institutes master</CardDescription>
+        <CardDescription>Add Institutes Master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
@@ -359,10 +254,6 @@ export default function SettingsProfilePage() {
           <ProfileForm />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }
