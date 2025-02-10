@@ -14,19 +14,23 @@ export default function Dashboardholiday() {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const typeofschema = {
-    institute_name: "String",
-    contact_name: "String",
-    contact_mobile: "String",
-    street_address: "String",
-    city: "String",
-    state: "String",
-    country: "String",
-    pincode: "String",
-    area: "String",
     profile_name: "String",
+    institute_id: "String",
     email: "String",
-    password: "String",
+    staff_number: "String",
+    first_name: "String",
+    middle_name: "String",
+    last_name: "String",
+    gender: "String",
+    maritial_status: "String",
+    blood_group: "String",
+    data_of_birth: "String",
+    corresponding_address: "String",
+    permanent_address: "String",
+    personal_email: "String",
     mobile: "String",
+    alternate_mobile: "String",
+    landline: "String",
   };
   useEffect(() => {
     // Fetch data from the API
@@ -38,7 +42,7 @@ export default function Dashboardholiday() {
         },
       })
       .then((response) => {
-        setData(response.data.data.Profiles.Institutes);
+        setData(response.data.data.Members);
         setLoading(false);
       })
       .catch((err) => {
@@ -51,16 +55,31 @@ export default function Dashboardholiday() {
     setConfig({
       // breadcrumbs: [
       //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
+      //   { label: "members" },
       // ],
-      searchPlaceholder: "Search Institutes...",
+      searchPlaceholder: "Search members...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Institutes",
-        description: "Manage Institutes  and view their details.",
+        title: "Members",
+        description: "Manage Members  and view their details.",
         headers: [
-          { label: "institutes", key: "one" },
-
+          { label: "Profile Name", key: "one" },
+          // { label: "Institute Id", key: "two" },
+          { label: "Email", key: "three" },
+          { label: "Staff Number", key: "four" },
+          { label: "First Name", key: "five" },
+          // { label: "Middle Name", key: "six" },
+          // { label: "Last Name", key: "seven" },
+          // { label: "Gender", key: "eight" },
+          // { label: "Maritial Status", key: "nine" },
+          // { label: "Blood Group", key: "ten" },
+          // { label: "Data of Birth", key: "eleven" },
+          // { label: "Corresponding Address", key: "twelve" },
+          // { label: "Permanent Address", key: "thirteen" },
+          // { label: "Personal Email", key: "fourteen" },
+          // { label: "Mobile", key: "fifteen" },
+          // { label: "Alternate Mobile", key: "sixteen" },
+          // { label: "Landline", key: "seventeen" },
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -90,7 +109,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/institutes/add" });
+    navigate({ to: "/members/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -132,11 +151,26 @@ export default function Dashboardholiday() {
     // Calculate balance amount based on total service price and paid amount.
     const balanceAmount =
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
-    const totalitems = data?.length || 0;
     return {
-      _id: item?._id,
-      totalitems: totalitems,
-      one: item?.institute_name || "Unknown",
+      id: item?.id,
+      one: item?.profile_name || "Unknown",
+      // two: item?.institute_id || "NA",
+      three: item?.email || "NA",
+      four: item?.staff_number || "NA",
+      five: item?.first_name || "NA",
+      // six: item?.middle_name || "NA",
+      // seven: item?.last_name || "NA",
+      // eight: item?.gender || "NA",
+      // nine: item?.maritial_status || "NA",
+      // ten: item?.blood_group || "NA",
+      // eleven: item?.data_of_birth || "NA",
+      // twelve: item?.corresponding_address || "NA",
+      // thirteen: item?.permanent_address || "NA",
+      // fourteen: item?.personal_email || "NA",
+      // fifteen: item?.mobile || "NA",
+      // sixteen: item?.alternate_mobile || "NA",
+      // seventeen: item?.landline || "NA",
+      delete: "/members/" + item?.id,
     };
   });
 

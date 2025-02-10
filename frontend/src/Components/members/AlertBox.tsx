@@ -32,7 +32,12 @@ export default function AlertDialogbox({ url }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
-              await axios.delete(`/api/${url}`);
+              await axios.delete(`/api/${url}`, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+              });
               window.location.reload();
             }}
           >

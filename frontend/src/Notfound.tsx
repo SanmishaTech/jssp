@@ -1,8 +1,10 @@
 import React from "react";
 import Notfounditem from "./images/404page.png";
 import Newori from "./images/neworig2.png";
+import { useNavigate } from "@tanstack/react-router";
 
 const Notfound = () => {
+  const navigate = useNavigate();
   return (
     <div className="h-[100vh] flex flex-col items-center justify-end ">
       <div className="flex justify-center items-center">
@@ -17,7 +19,7 @@ const Notfound = () => {
         </h5>
         <div className=" flex justify-center">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate({ to: "/members" })}
             className="bg-black/75 text-white font-bold py-3 px-6 rounded-[1rem] mt-6 "
           >
             Back to home

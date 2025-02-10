@@ -56,7 +56,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
-// import Edititem from "./Edittestcard";
+import Edititem from "./Edittestcard";
+import { toast } from "sonner";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -161,7 +162,9 @@ export default function Dashboard({
                 onClick={() => {
                   localStorage.removeItem("token");
                   localStorage.removeItem("user");
-                  navigate("/");
+                  toast.success("Logged Out Sucessfully");
+
+                  navigate({ to: "/" });
                 }}
               >
                 Logout
@@ -216,7 +219,7 @@ export default function Dashboard({
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Product
+                    Add Institutes
                   </span>
                 </Button>
                 {/* <AddItem typeofschema={typeofschema} /> */}
@@ -249,7 +252,7 @@ export default function Dashboard({
                     </TableHeader>
                     <TableBody>
                       {tableData?.map((row) => (
-                        <React.Fragment key={row._id}>
+                        <React.Fragment key={row.id}>
                           <TableRow>
                             {tableColumns?.headers?.map((header, index) => (
                               <TableCell
@@ -288,6 +291,18 @@ export default function Dashboard({
                                         toggleedit={toggleedit}
                                         editfetch={row?.editfetch}
                                       /> */}
+                                      {console.log("row", row)}
+                                      <Button
+                                        onClick={() =>
+                                          navigate({
+                                            to: `/institutes/edit/${row?.id}`,
+                                          })
+                                        }
+                                        className="w-full"
+                                        variant="ghost"
+                                      >
+                                        Edit
+                                      </Button>
                                       <DropdownMenuSeparator />
 
                                       <AlertDialogbox url={row?.delete} />
@@ -324,7 +339,7 @@ export default function Dashboard({
                               </Button>
                             </TableCell> */}
                           </TableRow>
-                          {expandedRows.includes(row._id) && (
+                          {expandedRows.includes(row.id) && (
                             <></>
                             // <TableRow>
                             //   <TableCell

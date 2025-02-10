@@ -30,6 +30,11 @@ const roleBasedItems = {
   ],
   superadmin: [
     {
+      title: "trusties",
+      url: "/trusties",
+      icon: Users,
+    },
+    {
       title: "Institutes",
       url: "/institutes",
       icon: Building,

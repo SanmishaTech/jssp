@@ -39,7 +39,7 @@ import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
   profile_name: z.string().optional(),
-  // institute_id: z.string().optional(),
+  institute_id: z.string().optional(),
   email: z.string().optional(),
   staff_number: z.string().optional(),
   first_name: z.string().optional(),
@@ -79,7 +79,7 @@ function ProfileForm() {
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     await axios
-      .post(`/api/members`, data, {
+      .post(`/api/superadmins`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -97,6 +97,7 @@ function ProfileForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
+        {" "}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
           <FormField
             className="flex-1"
@@ -111,7 +112,7 @@ function ProfileForm() {
               </FormItem>
             )}
           />
-          {/* <FormField
+          <FormField
             className="flex-1"
             control={form.control}
             name="institute_id"
@@ -122,7 +123,7 @@ function ProfileForm() {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
           <FormField
             control={form.control}
             name="email"
@@ -195,7 +196,7 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Gender</FormLabel>
                 <FormControl>
-                  <Input placeholder="Gender..." {...field} />
+                  <Input placeholder="gender..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,7 +209,7 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Maritial Status</FormLabel>
                 <FormControl>
-                  <Input placeholder="Maritial status..." {...field} />
+                  <Input placeholder="Maritial Status..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,7 +235,20 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Date Of Birth</FormLabel>
                 <FormControl>
-                  <Input placeholder="Date Of Birth..." {...field} />
+                  <Input placeholder="Date of birth..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="blood_group"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Blood Group</FormLabel>
+                <FormControl>
+                  <Input placeholder="Blood Group..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -310,9 +324,9 @@ function ProfileForm() {
             name="landline"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Landline</FormLabel>
+                <FormLabel>Landmine</FormLabel>
                 <FormControl>
-                  <Input placeholder="Landline..." {...field} />
+                  <Input placeholder="Landmine..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -328,7 +342,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Members
+            Add Super Admin
           </Button>
         </div>
       </form>
@@ -348,8 +362,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Members Master</CardTitle>
-        <CardDescription>Add Members Master</CardDescription>
+        <CardTitle>Super Admin Master</CardTitle>
+        <CardDescription>Add Super Admin Master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

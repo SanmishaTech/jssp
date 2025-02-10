@@ -1,12 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import Additem from "../../../Components/institutes/TestCard";
-
+import Members from "../../Components/Trusties/Registertable";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/institutes/add/")({
+export const Route = createFileRoute("/trusties/")({
   beforeLoad: async ({ fetch }) => {
     const role = localStorage.getItem("role");
-    console.log("current Role institutes", role);
+    console.log("current Role", role);
     if (role !== "superadmin") {
       toast.error("You are not authorized to access this page.");
       throw redirect({
@@ -21,5 +20,5 @@ export const Route = createFileRoute("/institutes/add/")({
 });
 
 function RouteComponent() {
-  return <Additem />;
+  return <Members />;
 }

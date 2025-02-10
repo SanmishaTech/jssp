@@ -35,7 +35,7 @@ const Login = () => {
         if (role === "admin") {
           localStorage.setItem("role", role);
           navigate({
-            to: "/dashboard",
+            to: "/members",
           });
         }
         if (role === "superadmin") {
@@ -49,7 +49,7 @@ const Login = () => {
           localStorage.setItem("user", JSON.stringify(res.data.user));
 
           navigate({
-            to: "/dashboard",
+            to: "/members",
           });
         }
         toast.success("Successfully Logged In");
