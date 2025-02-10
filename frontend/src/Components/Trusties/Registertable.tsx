@@ -31,14 +31,14 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/institutes`, {
+      .get(`/api/superadmins`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.Institutes);
+        setData(response.data.data.SuperAdmins);
         setLoading(false);
       })
       .catch((err) => {
@@ -53,11 +53,11 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "Institutes" },
       // ],
-      searchPlaceholder: "Search Institutes...",
+      searchPlaceholder: "Search Super Admins...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Institutes",
-        description: "Manage Institutes  and view their details.",
+        title: "Super Admins",
+        description: "Manage Super Admins  and view their details.",
         headers: [
           { label: "Institute Name", key: "one" },
           { label: "Contact Name", key: "two" },

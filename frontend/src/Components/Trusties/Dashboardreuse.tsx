@@ -56,8 +56,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNavigate } from "@tanstack/react-router";
-import Edititem from "./Edittestcard";
 import { toast } from "sonner";
+import Edititem from "./Edittestcard";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -219,7 +219,7 @@ export default function Dashboard({
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Members
+                    Add Super Admins
                   </span>
                 </Button>
                 {/* <AddItem typeofschema={typeofschema} /> */}
@@ -295,7 +295,7 @@ export default function Dashboard({
                                       <Button
                                         onClick={() =>
                                           navigate({
-                                            to: `/members/edit/${row?.id}`,
+                                            to: `/superadmins/edit/${row?.id}`,
                                           })
                                         }
                                         className="w-full"
@@ -318,28 +318,6 @@ export default function Dashboard({
                                   row.five
                                 ) : header.key === "six" ? (
                                   `₹${row.six}`
-                                ) : header.key === "seven" ? (
-                                  row.seven
-                                ) : header.key === "eight" ? (
-                                  row.eight
-                                ) : header.key === "nine" ? (
-                                  row.nine
-                                ) : header.key === "ten" ? (
-                                  row.ten
-                                ) : header.key === "eleven" ? (
-                                  row.eleven
-                                ) : header.key === "twelve" ? (
-                                  row.twelve
-                                ) : header.key === "thirteen" ? (
-                                  row.thirteen
-                                ) : header.key === "fourteen" ? (
-                                  row.fourteen
-                                ) : header.key === "fifteen" ? (
-                                  row.fifteen
-                                ) : header.key === "sixteen" ? (
-                                  row.sixteen
-                                ) : header.key === "seventeen" ? (
-                                  row.seventeen
                                 ) : (
                                   row[header.key]
                                 )}
