@@ -9,8 +9,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\SemesterResource;
 use App\Http\Controllers\Api\BaseController;
 
+
+
+ /**
+     * @group Semester.
+    */
 class SemesterController extends BaseController
 {
+
+    /**
+     * Paginate Semester
+     */
+    
     public function index(Request $request): JsonResponse
     {
         $query = Semester::query();
@@ -34,6 +44,14 @@ class SemesterController extends BaseController
         ]], "Semester retrived successfully");
     }
 
+    /**
+     * Store Semester
+     * @bodyParam institue_id string The id of the Semester.
+     * @bodyParam course_id string The course of the Semester.
+     * @bodyParam semester string The name of the Semester.
+     * @bodyParam standard string The standard of the Semester.
+     */
+
     public function store(Request $request): JsonResponse
     {
         $semesters = new Semester();
@@ -54,6 +72,10 @@ class SemesterController extends BaseController
         );
     }
 
+    /**
+     * Show Semester
+     */
+
     public function show(string $id): JsonResponse
     {
         $semesters = Semester::find($id);
@@ -63,6 +85,15 @@ class SemesterController extends BaseController
         }
         return $this -> sendResponse(new SemesterResponse($semesters), "Semester retrived successfully");
     }
+
+
+    /**
+     * Update Semester
+     * @bodyParam institude_id string The institute of the Semester.
+     * @bodyParam course_id string The course of the Semester.
+     * @bodyParam semester string The name of the Semester.
+     * @bodyParam standard string The standard of the Semester.
+     */
 
     public function update(Request $request, string $id): JsonResponse
     {
@@ -86,6 +117,10 @@ class SemesterController extends BaseController
         );
     }
 
+    /**
+     * Destory Semester
+     */
+
 
     public function destroy(string $id): JsonResponse
     {
@@ -96,6 +131,10 @@ class SemesterController extends BaseController
         $semesters->delete();
         return $this->sendResponse([], "Semesters Deleted Successfully");
     }
+
+    /**
+     * Show All Semester
+     */
 
     public function allSemesters(): Jsonresponse
     {
