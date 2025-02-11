@@ -9,10 +9,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Http\Controllers\Api\BaseController;
 
+
+/**
+ * @group Course
+ */
+
 class CourseController extends BaseController
 {
     /**
-     * All Course.
+     * Show Paginate Course.
      */
     public function index(Request $request): JsonResponse
     {
@@ -37,6 +42,14 @@ class CourseController extends BaseController
         ]],"Courses retrived successfully");
     }
 
+    /**
+     * Store Courses
+     * @bodyParam institute_id string The Insitute id of the Course.
+     * @bodyParam medium_code string The Medium Code of the Course.
+     * @bodyParam medium_title string The Medium Title of the Course.
+     * @bodyParam organization string The Organization of the Course.
+     */
+
     public function store(Request $request): JsonResponse
     {
         $courses = new Course();
@@ -57,6 +70,10 @@ class CourseController extends BaseController
         );
     }
 
+    /**
+     * Show Course
+     */
+
     public function show(string $id): JsonResponse
     {
         $courses = Courses::find($id);
@@ -66,6 +83,14 @@ class CourseController extends BaseController
         }
         return $this -> sendResponse(new CourseResponse($courses), "Course retrived successfully");
     }
+
+    /**
+     * Update Course
+     * @bodyParam institute_id string The Institute id of the Course.
+     * @bodyParam medium_code string The Medium Code of the Course.
+     * @bodyParam medium_title string The Medium Title of the Course.
+     * @bodyParam organization string The Organization of the Course.
+     */
 
     public function update(Request $request, string $id): JsonResponse
     {
@@ -88,6 +113,10 @@ class CourseController extends BaseController
         );
     }
 
+    /**
+     * Destory Course
+     */
+
     public function destroy(string $id): JsonResponse
     {
         $courses = Course::find($id);
@@ -97,6 +126,10 @@ class CourseController extends BaseController
         $courses->delete();
         return $this->sendResponse([], "Courses Deleted Successfully");
     }
+
+    /**
+     * Show all Course
+     */
 
     public function allCourses(): Jsonresponse
     {
