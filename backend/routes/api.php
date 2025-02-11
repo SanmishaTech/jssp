@@ -41,19 +41,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_divisions', [DivisionController::class, 'allDivisions'])->name("divisions.all");
    Route::resource('rooms', RoomController::class);
    Route::get('/all_rooms', [RoomController::class, 'allRooms'])->name("rooms.all");
-
-   
-
-
-
-
  
-   Route::resource('suppliers', SuppliersController::class);    
-   Route::resource('departments', DepartmentController::class);  
-   Route::get('/all_departments', [DepartmentController::class, 'allDepartments'])->name("departments.all");
-   Route::get('/all_suppliers', [SuppliersController::class, 'allSuppliers'])->name("suppliers.all");
-   
-   
+    
 
 });
 
