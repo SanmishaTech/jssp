@@ -245,7 +245,7 @@ function ProfileForm() {
                   >
                     <FormControl className="w-full">
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Associate type" />
+                        <SelectValue placeholder="Select Maritial Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -274,7 +274,7 @@ function ProfileForm() {
                   >
                     <FormControl className="w-full">
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Associate type" />
+                        <SelectValue placeholder="Select Blood Group" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -300,7 +300,7 @@ function ProfileForm() {
                 <FormControl>
                   <DatePicker
                     // className="max-w-[284px]"
-                    label="Date Of Birth"
+                    // label="Date Of Birth"
                     value={field.value}
                     onChange={field.onChange}
                   />

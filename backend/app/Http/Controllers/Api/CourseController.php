@@ -134,7 +134,7 @@ class CourseController extends BaseController
     public function allCourses(): Jsonresponse
     {
         $courses = Course::all();
-        return $this-> sendResponse(["Courses" => CoursesResource::collection($courses)], "Courses retrieved successfully");
+        return $this-> sendResponse(["Courses" => CourseResource::collection($courses)], "Courses retrieved successfully");
     }
 
 
