@@ -33,6 +33,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_institute', [InstituteController::class, 'allInstitute'])->name("institute.all");
    Route::resource('profiles', ProfileController::class);  
    Route::resource('members', MemberController::class);
+   Route::resource('superadmin', SuperAdminController::class);
    Route::resource('courses', CourseController::class);
    Route::get('/all_courses', [CourseController::class, 'allCourses'])->name("courses.all");
    Route::resource('semesters', SemesterController::class);

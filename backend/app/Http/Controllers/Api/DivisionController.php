@@ -10,8 +10,17 @@ use App\Http\Resources\DivisionResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Api\DivisionController;
 
+
+/**
+ * @group Division
+ */
+
 class DivisionController extends BaseController
 {
+
+    /**
+     * Show Paginate Division
+     */
     public function index(Request $request):JsonResponse
     {
         $query = Division::query();
@@ -33,6 +42,15 @@ class DivisionController extends BaseController
         ]], "Division retrived successfully");
 
     }
+
+    /**
+     * Store Division
+     * @bodyParam institute_id string The Institute ID of the Division.
+     * @bodyParam course_id string The Course ID of the Division.
+     * @bodyParam semester_id The Semester ID of the Division.
+     * @bodyParam room_id The Room ID of the Division.
+     * @bodyParam division_name The Division Name of the Division.
+     */
 
 
 
@@ -60,6 +78,10 @@ class DivisionController extends BaseController
 
     }
 
+    /**
+     * Show Division
+     */
+
 
     public function show(string $id): JsonResponse
     {
@@ -70,6 +92,14 @@ class DivisionController extends BaseController
         }
         return $this -> sendResponse(new DivisionResponse($divisions), "Division retrived successfully");
     }
+
+    /**
+     * Update Division
+     * @bodyParam institute_id string The Institue ID of the Division.
+     * @bodyParam course_id string The Course ID of the Division.
+     * @bodyParam semester_id string The Semester ID of the Division.
+     * @bodyParam division_name string The Division Name of the Division.
+     */
 
     public function update(Request $request, string $id): JsonResponse
     {
@@ -93,6 +123,12 @@ class DivisionController extends BaseController
             "Divisions Updated Successfully"
         );
     }
+
+    /**
+     * Destroy Division
+     */
+
+
     public function destroy(string $id): JsonResponse
     {
         $divisions = Division::find($id);
@@ -102,6 +138,11 @@ class DivisionController extends BaseController
         $divisions->delete();
         return $this->sendResponse([], "Divisions Deleted Successfully");
     }
+
+
+    /**
+     * Show All Division
+     */
 
     public function allDivisions(): Jsonresponse
     {
