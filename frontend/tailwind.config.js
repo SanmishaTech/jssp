@@ -1,3 +1,4 @@
+const {heroui} = require('@heroui/theme');
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
@@ -5,6 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/@nextui-org/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|form|popover).js",
+    "./node_modules/@heroui/theme/dist/components/(date-picker|button|ripple|spinner|calendar|date-input|form|popover).js"
   ],
   theme: {
     extend: {
@@ -115,5 +117,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),heroui()],
 };
