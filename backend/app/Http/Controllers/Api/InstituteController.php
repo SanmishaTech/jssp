@@ -18,10 +18,14 @@ use App\Http\Requests\StoreInstituteRequest;
 use App\Http\Requests\UpdateInstituteRequest;
 use App\Http\Controllers\Api\InstituteController;
 
+/**
+ * @group Institutes
+ */
+
 class InstituteController extends BaseController
 {
     /**
-     * All Institutes.
+     * Show Paginate Institutes.
      */
     public function index(Request $request): JsonResponse
     {
@@ -48,8 +52,18 @@ class InstituteController extends BaseController
         
     }
 
-
-    
+    /**
+     * Store Institute
+     * @bodyParam institute_name string The Name of the Institute.
+     * @bodyParam contact_name string The Contact Name of the Institute.
+     * @bodyParam contact_mobile string The Contact Mobile of the Institute.
+     * @bodyParam address string The Address of the Institute.
+     * @bodyParam registration_number string  The Registration Number of the Institute.
+     * @bodyParam affiliated_university  string The Affiliated University of the Institute.
+     * @bodyParam profile_name string The Name of the Profile.
+     * @bodyParam email string The Email of the Profile.
+     * @bodyParam password string The Password of the Profile.
+     */
 
     public function store(StoreInstituteRequest $request): JsonResponse
     {
@@ -97,6 +111,10 @@ class InstituteController extends BaseController
         );
     }
 
+    /**
+     * Show Institutes
+     */
+
  public function show(string $id): JsonResponse
  {
       $institutes = Institute::find($id);
@@ -107,37 +125,70 @@ class InstituteController extends BaseController
  
       return $this->sendResponse(new InstituteResource($institutes), "Institute retrieved successfully");
  }
- 
 
- public function update(UpdateInstituteRequest $request, string $id): JsonResponse
- {
-     // Find the Institute by ID
-     $institutes = Institute::find($id);
  
-     // If the institutes is not found, return an error
-     if (!$institutes) {
-         return $this->sendError("Institute not found", ['error' => 'Institute not found']);
-     }
- 
-     // Update the institutes name
-     $institutes->institute_name = $request->input('institute_name');
-     $institutes->contact_name = $request->input('contact_name');
-     $institutes->contact_mobile = $request->input('contact_mobile');
-     $institutes->address = $request->input('address');
-     $institutes->registration_number = $request->input('registration_number');
-     $institutes->affiliated_university = $request->input('affiliated_university');
+  /**
+   * Update Institute
+   * @bodyParam institute_name string The Name of the Institute.
+   * @boadyParam contact_name string The Contact Name of the Institute.
+   * @bodyParam contact_mobile string The Contact Mobile of the Institute.
+   * @bodyParam address string The Address of the Institute.
+   * @bodyParam registration_number string The Registration Number 
+   */
 
-    
- 
-     // Save the updated institutes record
-     $institutes->save();
- 
-     // Return the updated institutes data
-     return $this->sendResponse(
-         ["Institute" => new InstituteResource($institutes)], 
-         "Institute Updated Successfully"
-     );
- }
+   public function update(UpdateInstituteRequest $request, string $id): JsonResponse
+   {
+       // Find the Institute by ID
+       $institute = Institute::find($id);
+   
+       // If the institute is not found, return an error
+       if (!$institute) {
+           return $this->sendError("Institute not found", ['error' => 'Institute not found']);
+       }
+   
+       // Find the related User and Profile
+       $user = User::find($institute->user_id);
+       $profile = Profile::where('user_id', $institute->user_id)->first();
+   
+       if (!$user || !$profile) {
+           return $this->sendError("Associated User or Profile not found", ['error' => 'User or Profile not found']);
+       }
+   
+       // Update the User data
+       $user->name = $request->input('profile_name', $user->name);
+       $user->email = $request->input('email', $user->email);
+       
+       if ($request->filled('password')) {
+           $user->password = Hash::make($request->input('password'));
+       }
+       $user->save();
+   
+       // Update the Profile data
+       $profile->profile_name = $request->input('profile_name', $profile->profile_name);
+       $profile->email = $request->input('email', $profile->email);
+       $profile->mobile = $request->input('contact_mobile', $profile->mobile);
+       $profile->save();
+   
+       // Update the Institute data
+       $institute->institute_name = $request->input('institute_name', $institute->institute_name);
+       $institute->contact_name = $request->input('contact_name', $institute->contact_name);
+       $institute->contact_mobile = $request->input('contact_mobile', $institute->contact_mobile);
+       $institute->address = $request->input('address', $institute->address);
+       $institute->registration_number = $request->input('registration_number', $institute->registration_number);
+       $institute->affiliated_university = $request->input('affiliated_university', $institute->affiliated_university);
+       $institute->save();
+   
+       // Return the updated Institute data
+       return $this->sendResponse(
+           [
+               "Institute" => new InstituteResource($institute),
+               "User" => new UserResource($user),
+               "Profile" => new ProfileResource($profile),
+           ],
+           "Institute, User, and Profile Updated Successfully"
+       );
+   }
+   
  
 
  public function destroy(string $id): JsonResponse
@@ -153,7 +204,7 @@ class InstituteController extends BaseController
 
  }
 
- public function allInstitutes(): JsonResponse
+ public function allInstitutes(string $id): JsonResponse
  {
     $institutes = Institute::all();
 

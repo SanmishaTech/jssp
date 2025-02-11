@@ -134,9 +134,26 @@ class MemberController extends BaseController
                        
         $profiles->profile_name = $request->input('profile_name');
          $profiles->email = $request->input('email');
-        $profiles->mobile = $request->input('mobile');
-        $profiles->joining_date = $request->input('joining_date');
+         $profiles->joining_date = $request->input('joining_date');
         // $profiles->resignation_date = $request->input('resignation_date');
+         //additional details of member
+        //employee details
+        $profiles->staff_number = $request->input('staff_number');
+        $profiles->first_name = $request->input('first_name');
+        $profiles->middle_name  = $request->input('middle_name');
+        $profiles->last_name = $request->input('last_name');
+        $profiles->gender = $request->input('gender');
+        $profiles->maritial_status = $request->input('maritial_status');
+        $profiles->blood_group = $request->input('blood_group');
+        $profiles->date_of_birth = $request->input('date_of_birth');
+        //address
+        $profiles->corresponding_address = $request-> input('corresponding_address');
+        $profiles->permanent_address = $request-> input('permanent_address');
+        //contact details
+        $profiles->personal_email = $request-> input('personal_email');
+        $profiles->mobile = $request-> input('mobile');
+        $profiles->alternate_mobile = $request-> input('alternate_mobile');
+        $profiles->landline = $request-> input('landline');
         $profiles->save();
        
         return $this->sendResponse(['User'=> new UserResource($user), 'Profile'=>new ProfileResource($profiles)], "Profile updated successfully");
@@ -158,33 +175,7 @@ class MemberController extends BaseController
         return $this->sendResponse([], "Profile deleted successfully");
     }
 
-    /**
-     * resignation.
-     */
-    // public function resignation(Request $request, string $id): JsonResponse
-    // {
-    //     $employee = Employee::find($id);
-    //     if(!$employee){
-    //         return $this->sendError("employee not found", ['error'=>'employee not found']);
-    //     }
-    //     $activeVal = 1;
-    //     $inactiveVal = 0;
-        
-    //     $user = User::find($employee->user_id);
-    //     if(!empty($request->input('resignation_date'))){
-    //         $employee->resignation_date = $request->input('resignation_date');
-    //         $employee->save();
-    //         $user->active = $inactiveVal;
-    //         $user->save();
-    //     }
-    //     else{
-    //         $user->active = $inactiveVal;
-    //         $user->save();
-    //     }
-      
-       
-    //     return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
-    // }
+    
     public function resignation(ResignationRequest $request, string $id): JsonResponse
     {
         $profiles = Profile::find($id);
