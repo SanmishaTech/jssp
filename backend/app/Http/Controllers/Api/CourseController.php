@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\BaseController;
 class CourseController extends BaseController
 {
     /**
-     * Paginate Course.
+     * Show Paginate Course.
      */
     public function index(Request $request): JsonResponse
     {
