@@ -54,12 +54,14 @@ class MemberController extends BaseController
 
         $active = 1;
         $user = new User();
+        
         $user->name = $request->input('profile_name');
         $user->email = $request->input('email');
         $user->active = $active;
         $user->password = Hash::make($request->input('password'));
         $user->save();
-        
+
+        dd($user->id);        
         // $memberRole = $request->input("role");
         $memberRole = Role::where("name","member")->first();
        
@@ -136,7 +138,7 @@ class MemberController extends BaseController
          $profiles->email = $request->input('email');
          $profiles->joining_date = $request->input('joining_date');
         // $profiles->resignation_date = $request->input('resignation_date');
-         //additional details of member
+        //additional details of member
         //employee details
         $profiles->staff_number = $request->input('staff_number');
         $profiles->first_name = $request->input('first_name');

@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\InstituteController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
 
