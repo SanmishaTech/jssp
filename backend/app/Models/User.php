@@ -53,4 +53,9 @@ class User extends Authenticatable
     return $this->hasOne(Profile::class, 'user_id');
    }
 
+   public function institute()
+   {
+       return $this->belongsTo(Institute::class, "institute_id");
+   }
+
 }

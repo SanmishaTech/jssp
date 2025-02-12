@@ -26,7 +26,6 @@ class ProfileResource extends JsonResource
             'contact_name' =>$this->contact_name,
             'email' => $this->email,
             'mobile' => $this->mobile,
-            
             //additional details of members
             //employee details
             'staff_number' => $this->staff_number,
@@ -45,17 +44,10 @@ class ProfileResource extends JsonResource
             'mobile'=> $this->mobile,
             'alternate_mobile' => $this->alternate_mobile,
             'landline'=> $this->landline,
-            
-            
-
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'institute'=>$this->institute  ,
-
+            'institute'=>$this->institute,
             'user'=> $user,
-
-           
-
         ];
     }
 }
