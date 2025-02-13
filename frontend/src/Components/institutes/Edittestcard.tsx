@@ -233,7 +233,7 @@ function ProfileForm({ formData }) {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Update Institutes
           </Button>
         </div>
       </form>

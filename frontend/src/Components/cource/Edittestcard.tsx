@@ -39,16 +39,9 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_name: z.string().optional(),
-  contact_name: z.string().optional(),
-  contact_mobile: z.string().optional(),
-  address: z.string().optional(),
-  registration_number: z.string().optional(),
-  affiliated_university: z.string().optional(),
-  profile_name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  mobile: z.string().optional(),
+  medium_code: z.string().optional(),
+  medium_title: z.string().optional(),
+  organization: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -99,16 +92,15 @@ function ProfileForm({ formData }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        {" "}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
           <FormField
             className="flex-1"
             control={form.control}
-            name="institute_name"
+            name="medium_code"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Institute Name</FormLabel>
-                <Input placeholder="Institute Name..." {...field} />
+                <FormLabel>Profile Name</FormLabel>
+                <Input placeholder="Medium Code..." {...field} />
 
                 <FormMessage />
               </FormItem>
@@ -117,108 +109,25 @@ function ProfileForm({ formData }) {
           <FormField
             className="flex-1"
             control={form.control}
-            name="contact_name"
+            name="medium_title"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Contact Name</FormLabel>
-                <Input placeholder="Contact Name..." {...field} />
+                <FormLabel>Profile Name</FormLabel>
+                <Input placeholder="Medium Title..." {...field} />
+
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
+            className="flex-1"
             control={form.control}
-            name="contact_mobile"
+            name="organization"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Contact Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="registration_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Registration Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Registration Number..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="affiliated_university"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Affiliated University</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Affiliated University..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile_name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Profile Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
+              <FormItem className="w-full">
+                <FormLabel>Profile Name</FormLabel>
+                <Input placeholder="Organization Name..." {...field} />
+
                 <FormMessage />
               </FormItem>
             )}
@@ -226,7 +135,7 @@ function ProfileForm({ formData }) {
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => navigate({ to: "/institutes" })}
+            onClick={() => window.history.back()}
             className="self-center"
             type="button"
           >

@@ -5,6 +5,7 @@ import {
   Search,
   Settings,
   Building,
+  BookText,
   Users,
 } from "lucide-react";
 
@@ -26,6 +27,11 @@ const roleBasedItems = {
       title: "Members",
       url: "/members",
       icon: Users,
+    },
+    {
+      title: "Cources",
+      url: "/cources",
+      icon: BookText,
     },
   ],
   superadmin: [

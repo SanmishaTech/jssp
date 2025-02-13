@@ -204,7 +204,22 @@ function ProfileForm({ formData }) {
               <FormItem>
                 <FormLabel>Gender</FormLabel>
                 <FormControl>
-                  <Input placeholder="Gender..." {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="w-full"
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Associate type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -217,7 +232,23 @@ function ProfileForm({ formData }) {
               <FormItem>
                 <FormLabel>Maritial Status</FormLabel>
                 <FormControl>
-                  <Input placeholder="Maritial status..." {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="w-full"
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Maritial Status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="married">Married</SelectItem>
+                      <SelectItem value="widowed">Widowed</SelectItem>
+                      <SelectItem value="divorced">Divorced</SelectItem>
+                    </SelectContent>
+                  </Select>{" "}
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -337,7 +368,7 @@ function ProfileForm({ formData }) {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Update Institutes
           </Button>
         </div>
       </form>

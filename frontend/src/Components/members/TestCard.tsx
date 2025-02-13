@@ -5,6 +5,7 @@ import { z } from "zod";
 import { MoveLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { DatePicker } from "@heroui/react";
 import {
   Card,
   CardContent,
@@ -41,6 +42,7 @@ const profileFormSchema = z.object({
   profile_name: z.string().optional(),
   // institute_id: z.string().optional(),
   email: z.string().optional(),
+  password: z.string().optional(),
   staff_number: z.string().optional(),
   first_name: z.string().optional(),
   middle_name: z.string().optional(),
@@ -48,7 +50,7 @@ const profileFormSchema = z.object({
   gender: z.string().optional(),
   maritial_status: z.string().optional(),
   blood_group: z.string().optional(),
-  data_of_birth: z.string().optional(),
+  data_of_birth: z.any().optional(),
   corresponding_address: z.string().optional(),
   permanent_address: z.string().optional(),
   personal_email: z.string().optional(),
@@ -138,6 +140,19 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="Password..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="staff_number"
             render={({ field }) => (
               <FormItem>
@@ -195,7 +210,22 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Gender</FormLabel>
                 <FormControl>
-                  <Input placeholder="Gender..." {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="w-full"
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Associate type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,7 +238,23 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Maritial Status</FormLabel>
                 <FormControl>
-                  <Input placeholder="Maritial status..." {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="w-full"
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Maritial Status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="married">Married</SelectItem>
+                      <SelectItem value="widowed">Widowed</SelectItem>
+                      <SelectItem value="divorced">Divorced</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -221,7 +267,25 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Blood Group</FormLabel>
                 <FormControl>
-                  <Input placeholder="Blood Group..." {...field} />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="w-full"
+                  >
+                    <FormControl className="w-full">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Blood Group" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="A+">A+</SelectItem>
+                      <SelectItem value="B+">B+</SelectItem>
+                      <SelectItem value="AB+">AB+</SelectItem>
+                      <SelectItem value="O+">O+</SelectItem>
+                      <SelectItem value="O-">O-</SelectItem>
+                      <SelectItem value="goldenblood">Golden Blood</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,7 +298,12 @@ function ProfileForm() {
               <FormItem>
                 <FormLabel>Date Of Birth</FormLabel>
                 <FormControl>
-                  <Input placeholder="Date Of Birth..." {...field} />
+                  <DatePicker
+                    // className="max-w-[284px]"
+                    // label="Date Of Birth"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

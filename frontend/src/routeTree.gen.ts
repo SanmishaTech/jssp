@@ -16,8 +16,10 @@ import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as MembersIndexImport } from './routes/members/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
+import { Route as CourcesIndexImport } from './routes/cources/index'
 import { Route as MembersAddIndexImport } from './routes/members/add/index'
 import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
+import { Route as CourcesAddIndexImport } from './routes/cources/add/index'
 import { Route as MembersEditIdImport } from './routes/members/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
 
@@ -53,6 +55,12 @@ const InstitutesIndexRoute = InstitutesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CourcesIndexRoute = CourcesIndexImport.update({
+  id: '/cources/',
+  path: '/cources/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const MembersAddIndexRoute = MembersAddIndexImport.update({
   id: '/members/add/',
   path: '/members/add/',
@@ -62,6 +70,12 @@ const MembersAddIndexRoute = MembersAddIndexImport.update({
 const InstitutesAddIndexRoute = InstitutesAddIndexImport.update({
   id: '/institutes/add/',
   path: '/institutes/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CourcesAddIndexRoute = CourcesAddIndexImport.update({
+  id: '/cources/add/',
+  path: '/cources/add/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -86,6 +100,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cources/': {
+      id: '/cources/'
+      path: '/cources'
+      fullPath: '/cources'
+      preLoaderRoute: typeof CourcesIndexImport
       parentRoute: typeof rootRoute
     }
     '/institutes/': {
@@ -130,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembersEditIdImport
       parentRoute: typeof rootRoute
     }
+    '/cources/add/': {
+      id: '/cources/add/'
+      path: '/cources/add'
+      fullPath: '/cources/add'
+      preLoaderRoute: typeof CourcesAddIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/institutes/add/': {
       id: '/institutes/add/'
       path: '/institutes/add'
@@ -151,24 +179,28 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cources': typeof CourcesIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
   '/members': typeof MembersIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/members/edit/$id': typeof MembersEditIdRoute
+  '/cources/add': typeof CourcesAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/members/add': typeof MembersAddIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cources': typeof CourcesIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
   '/members': typeof MembersIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/members/edit/$id': typeof MembersEditIdRoute
+  '/cources/add': typeof CourcesAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/members/add': typeof MembersAddIndexRoute
 }
@@ -176,12 +208,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/cources/': typeof CourcesIndexRoute
   '/institutes/': typeof InstitutesIndexRoute
   '/login/': typeof LoginIndexRoute
   '/members/': typeof MembersIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/members/edit/$id': typeof MembersEditIdRoute
+  '/cources/add/': typeof CourcesAddIndexRoute
   '/institutes/add/': typeof InstitutesAddIndexRoute
   '/members/add/': typeof MembersAddIndexRoute
 }
@@ -190,34 +224,40 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cources'
     | '/institutes'
     | '/login'
     | '/members'
     | '/trusties'
     | '/institutes/edit/$id'
     | '/members/edit/$id'
+    | '/cources/add'
     | '/institutes/add'
     | '/members/add'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cources'
     | '/institutes'
     | '/login'
     | '/members'
     | '/trusties'
     | '/institutes/edit/$id'
     | '/members/edit/$id'
+    | '/cources/add'
     | '/institutes/add'
     | '/members/add'
   id:
     | '__root__'
     | '/'
+    | '/cources/'
     | '/institutes/'
     | '/login/'
     | '/members/'
     | '/trusties/'
     | '/institutes/edit/$id'
     | '/members/edit/$id'
+    | '/cources/add/'
     | '/institutes/add/'
     | '/members/add/'
   fileRoutesById: FileRoutesById
@@ -225,24 +265,28 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CourcesIndexRoute: typeof CourcesIndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MembersIndexRoute: typeof MembersIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
   MembersEditIdRoute: typeof MembersEditIdRoute
+  CourcesAddIndexRoute: typeof CourcesAddIndexRoute
   InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
   MembersAddIndexRoute: typeof MembersAddIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CourcesIndexRoute: CourcesIndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MembersIndexRoute: MembersIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   InstitutesEditIdRoute: InstitutesEditIdRoute,
   MembersEditIdRoute: MembersEditIdRoute,
+  CourcesAddIndexRoute: CourcesAddIndexRoute,
   InstitutesAddIndexRoute: InstitutesAddIndexRoute,
   MembersAddIndexRoute: MembersAddIndexRoute,
 }
@@ -258,18 +302,23 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/cources/",
         "/institutes/",
         "/login/",
         "/members/",
         "/trusties/",
         "/institutes/edit/$id",
         "/members/edit/$id",
+        "/cources/add/",
         "/institutes/add/",
         "/members/add/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/cources/": {
+      "filePath": "cources/index.tsx"
     },
     "/institutes/": {
       "filePath": "institutes/index.tsx"
@@ -288,6 +337,9 @@ export const routeTree = rootRoute
     },
     "/members/edit/$id": {
       "filePath": "members/edit/$id.tsx"
+    },
+    "/cources/add/": {
+      "filePath": "cources/add/index.tsx"
     },
     "/institutes/add/": {
       "filePath": "institutes/add/index.tsx"
