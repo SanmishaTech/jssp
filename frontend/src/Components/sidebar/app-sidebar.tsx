@@ -35,11 +35,11 @@ const roleBasedItems = {
     },
   ],
   superadmin: [
-    {
-      title: "trusties",
-      url: "/trusties",
-      icon: Users,
-    },
+    // {
+    //   title: "trusties",
+    //   url: "/trusties",
+    //   icon: Users,
+    // },
     {
       title: "Institutes",
       url: "/institutes",

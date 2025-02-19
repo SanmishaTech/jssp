@@ -23,6 +23,18 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -80,6 +92,7 @@ export default function Dashboard({
   const [toggledelete, setToggledelete] = useState();
   // State to manage expanded rows (array of _id)
   const [expandedRows, setExpandedRows] = useState([]);
+  const [open, setOpen] = useState(false);
 
   // Handler to toggle row expansion with debug logs
   const toggleRow = (rowId) => {
@@ -107,6 +120,13 @@ export default function Dashboard({
   const handleDelete = (id) => {
     console.log("Delete clicked");
     // Implement delete functionality here
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged Out Successfully");
+    navigate({ to: "/" });
   };
   return (
     <div className="flex min-h-screen w-full flex-col ">
@@ -158,17 +178,29 @@ export default function Dashboard({
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("user");
-                  toast.success("Logged Out Sucessfully");
-
-                  navigate({ to: "/" });
-                }}
-              >
-                Logout
-              </DropdownMenuItem>
+              <AlertDialog open={open} onOpenChange={setOpen}>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Logout
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You will be logged out from your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <Button variant="outline" onClick={() => setOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button variant="destructive" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
