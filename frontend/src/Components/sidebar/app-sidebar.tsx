@@ -24,7 +24,7 @@ import {
 const roleBasedItems = {
   admin: [
     {
-      title: "Members",
+      title: "Staff",
       url: "/members",
       icon: Users,
     },

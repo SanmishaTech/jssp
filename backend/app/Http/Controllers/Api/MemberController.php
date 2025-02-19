@@ -61,7 +61,7 @@ class MemberController extends BaseController
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        dd($user->id);        
+        // dd($user->id);        
         // $memberRole = $request->input("role");
         $memberRole = Role::where("name","member")->first();
        

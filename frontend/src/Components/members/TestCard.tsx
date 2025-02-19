@@ -397,7 +397,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Members
+            Add Staff
           </Button>
         </div>
       </form>
@@ -417,8 +417,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Members Master</CardTitle>
-        <CardDescription>Add Members Master</CardDescription>
+        <CardTitle>Staff Master</CardTitle>
+        <CardDescription>Add Staff Master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
