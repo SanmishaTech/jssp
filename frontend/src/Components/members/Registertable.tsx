@@ -42,7 +42,7 @@ export default function Dashboardholiday() {
         },
       })
       .then((response) => {
-        setData(response.data.data.Members);
+        setData(response.data.data.Profiles);
         setLoading(false);
       })
       .catch((err) => {
@@ -63,11 +63,11 @@ export default function Dashboardholiday() {
         title: "Staff",
         description: "Manage staff  and view their details.",
         headers: [
-          { label: "Profile Name", key: "one" },
+          { label: "First Name", key: "one" },
           // { label: "Institute Id", key: "two" },
           { label: "Email", key: "three" },
           { label: "Staff Number", key: "four" },
-          { label: "First Name", key: "five" },
+          { label: "Role", key: "five" },
           // { label: "Middle Name", key: "six" },
           // { label: "Last Name", key: "seven" },
           // { label: "Gender", key: "eight" },
@@ -153,11 +153,11 @@ export default function Dashboardholiday() {
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.profile_name || "Unknown",
+      one: item?.user.name || "NA",
       // two: item?.institute_id || "NA",
       three: item?.email || "NA",
       four: item?.staff_number || "NA",
-      five: item?.first_name || "NA",
+      five: item?.user.role || "Unknown",
       // six: item?.middle_name || "NA",
       // seven: item?.last_name || "NA",
       // eight: item?.gender || "NA",
