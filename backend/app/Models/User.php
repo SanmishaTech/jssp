@@ -3,11 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Task;
 use App\Models\Profile;
-use App\Models\Project;
-use App\Models\Employee;
-use App\Models\TaskSubmission;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -55,6 +51,11 @@ class User extends Authenticatable
 
    public function profile(){
     return $this->hasOne(Profile::class, 'user_id');
+   }
+
+   public function institute()
+   {
+       return $this->belongsTo(Institute::class, "institute_id");
    }
 
 }

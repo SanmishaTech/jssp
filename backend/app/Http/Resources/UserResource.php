@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'active' => $this->active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'institute'=>$this->institute,
             // 'role' => $this->resource->roles->pluck('name')->toArray(), //another way of getting roles
         ]; 
 

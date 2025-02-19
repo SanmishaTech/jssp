@@ -57,11 +57,11 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "members" },
       // ],
-      searchPlaceholder: "Search members...",
+      searchPlaceholder: "Search staff...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Members",
-        description: "Manage Members  and view their details.",
+        title: "Staff",
+        description: "Manage staff  and view their details.",
         headers: [
           { label: "Profile Name", key: "one" },
           // { label: "Institute Id", key: "two" },

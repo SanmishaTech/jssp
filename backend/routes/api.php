@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\InstituteController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
 
@@ -42,9 +43,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_divisions', [DivisionController::class, 'allDivisions'])->name("divisions.all");
    Route::resource('rooms', RoomController::class);
    Route::get('/all_rooms', [RoomController::class, 'allRooms'])->name("rooms.all");
- 
-    
-
 });
 
 

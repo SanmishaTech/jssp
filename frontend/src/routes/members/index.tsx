@@ -1,3 +1,4 @@
+//ts-nocheck
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import Members from "../../Components/members/Registertable";
 import { toast } from "sonner";
