@@ -136,8 +136,7 @@ class MemberController extends BaseController
                        
         $profiles->profile_name = $request->input('profile_name');
          $profiles->email = $request->input('email');
-         $profiles->joining_date = $request->input('joining_date');
-        // $profiles->resignation_date = $request->input('resignation_date');
+         // $profiles->resignation_date = $request->input('resignation_date');
         //additional details of member
         //employee details
         $profiles->staff_number = $request->input('staff_number');
@@ -158,7 +157,7 @@ class MemberController extends BaseController
         $profiles->landline = $request-> input('landline');
         $profiles->save();
        
-        return $this->sendResponse(['User'=> new UserResource($user), 'Profile'=>new ProfileResource($profiles)], "Profile updated successfully");
+        return $this->sendResponse([ 'Profile'=>new ProfileResource($profiles)], "Profile updated successfully");
 
     }
 
