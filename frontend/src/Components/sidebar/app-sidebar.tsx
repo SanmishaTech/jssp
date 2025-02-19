@@ -29,8 +29,8 @@ const roleBasedItems = {
       icon: Users,
     },
     {
-      title: "Cources",
-      url: "/cources",
+      title: "Courses",
+      url: "/courses",
       icon: BookText,
     },
   ],

@@ -39,11 +39,11 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "members" },
       // ],
-      searchPlaceholder: "Search Cources...",
+      searchPlaceholder: "Search Courses...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Cources",
-        description: "Manage Cources  and view their details.",
+        title: "Courses",
+        description: "Manage Courses  and view their details.",
         headers: [
           { label: "Medium code", key: "one" },
           // { label: "Institute Id", key: "two" },
