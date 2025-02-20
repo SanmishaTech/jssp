@@ -63,7 +63,7 @@ export default function Dashboardholiday() {
           { label: "Contact Name", key: "two" },
           { label: "Mobile", key: "three" },
           { label: "Registration Number", key: "four" },
-          { label: "Affiliated University", key: "five" },
+          { label: "Email", key: "five" },
 
           { label: "Action", key: "action" },
         ],
@@ -142,7 +142,7 @@ export default function Dashboardholiday() {
       two: item?.contact_name || "NA",
       three: item?.contact_mobile || "NA",
       four: item?.registration_number || "NA",
-      five: item?.affiliated_university || "NA",
+      five: item?.user.email || "NA",
       delete: "/institutes/" + item?.id,
     };
   });
