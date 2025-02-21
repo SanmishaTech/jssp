@@ -5,7 +5,7 @@ import { z } from "zod";
 import { MoveLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DatePicker } from "@heroui/react";
+
 import {
   Card,
   CardContent,
@@ -39,19 +39,18 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  staff_number: z.string().optional(),
   name: z.string().optional(),
-
-  gender: z.string().optional(),
-  data_of_birth: z.any().optional(),
+  is_teaching: z.string().optional(),
+  date_of_birth: z.any().optional(),
   address: z.string().optional(),
   personal_email: z.string().optional(),
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
-  // institute_id: z.string().optional(),
   email: z.string().optional(),
   password: z.string().optional(),
+
+  // institute_id: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -83,7 +82,7 @@ function ProfileForm() {
         },
       })
       .then((res) => {
-        toast.success("Institute Master Created Successfully");
+        toast.success("Staff Master Created Successfully");
         window.history.back();
       });
   }
@@ -94,195 +93,188 @@ function ProfileForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          {/* <FormField
-            className="flex-1"
-            control={form.control}
-            name="institute_id"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Institute Id</FormLabel>
-                <Input placeholder="Institute Id..." {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+        <div className="max-w-full p-4 space-y-6">
+          {/* Staff Information Card */}
+          <Card className="w-full">
+            <CardHeader className="flex items-center justify-between">
+              <div>
+                <CardTitle>Staff Information</CardTitle>
+              </div>
+              <div className="flex space-x-4 flex-row-reverse">
+                <FormField
+                  control={form.control}
+                  name="is_teaching"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Staff Type</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="teaching"
+                              {...field}
+                              value="0"
+                              checked={field.value === "0"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="teaching">Teaching</label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="non_teaching"
+                              {...field}
+                              value="1"
+                              checked={field.value === "1"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="non_teaching">Non-Teaching</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personal_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Personal Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Personal Email..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Mobile..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="alternate_mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Alternate Mobile</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Alternate Mobile..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Address..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-          <FormField
-            control={form.control}
-            name="staff_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Staff Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="Staff Number..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="is_teaching"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Staff</FormLabel>
-                <FormControl>
-                  <div className="flex space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="yes"
+          {/* Profile Information Card */}
+          <Card className="w-full ">
+            <CardHeader>
+              <CardTitle>Profile Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <FormField
+                  className="flex-1"
+                  control={form.control}
+                  name="profile_name"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Profile Name</FormLabel>
+                      <Input placeholder="Profile Name..." {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Email..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Password..."
+                        type="password"
                         {...field}
-                        value="0"
-                        checked={field.value === "0"}
-                        className="h-4 w-4"
                       />
-                      <label htmlFor="teaching">Teaching</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        id="no"
-                        {...field}
-                        value="1"
-                        checked={field.value === "1"}
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="non_teaching">Non-teaching</label>
-                    </div>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="personal_email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Personal Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="alternate_mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Alternate Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Alternate Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="data_of_birth"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date Of Birth</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    // className="max-w-[284px]"
-                    // label="Date Of Birth"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Profile Name</FormLabel>
-                <Input placeholder="Profile Name..." {...field} />
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
@@ -317,8 +309,7 @@ export default function SettingsProfilePage() {
         <CardDescription>Add Staff Master</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 ">
-          <Separator />
+        <div className="space-y-3 ">
           <ProfileForm />
         </div>
       </CardContent>

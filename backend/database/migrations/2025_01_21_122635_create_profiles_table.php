@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('email')->nullable();
  
               //employee details
-             $table->string('staff_number')->nullable();
-            $table->string('name')->nullable();
+             $table->string('name')->nullable();
             $table->boolean('is_teaching')->nullable();
             $table->string('date_of_birth')->nullable();
             //address

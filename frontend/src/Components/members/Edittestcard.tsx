@@ -6,6 +6,7 @@ import { z } from "zod";
 import { MoveLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -39,24 +40,16 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  profile_name: z.string().optional(),
-  // institute_id: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  staff_number: z.string().optional(),
-  first_name: z.string().optional(),
-  middle_name: z.string().optional(),
-  last_name: z.string().optional(),
-  gender: z.string().optional(),
-  maritial_status: z.string().optional(),
-  blood_group: z.string().optional(),
-  data_of_birth: z.any().optional(),
-  corresponding_address: z.string().optional(),
-  permanent_address: z.string().optional(),
+  name: z.string().optional(),
+  is_teaching: z.string().optional(),
+  date_of_birth: z.any().optional(),
+  address: z.string().optional(),
   personal_email: z.string().optional(),
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
-  landline: z.string().optional(),
+  profile_name: z.string().optional(),
+  email: z.string().optional(),
+  password: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -64,7 +57,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 // This can come from your database or API.
 
 function ProfileForm({ formData }) {
-  console.log("This is formData", formData);
   const defaultValues: Partial<ProfileFormValues> = formData;
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -72,7 +64,6 @@ function ProfileForm({ formData }) {
     mode: "onChange",
   });
   const { id } = useParams({ from: "/members/edit/$id" });
-  console.log("id", id);
 
   const { reset } = form;
 
@@ -87,7 +78,6 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
-    // console.log("Sas", data);
     await axios
       .put(`/api/members/${id}`, data, {
         headers: {
@@ -96,7 +86,7 @@ function ProfileForm({ formData }) {
         },
       })
       .then((res) => {
-        toast.success("Staff Master Updated Successfully");
+        toast.success("Mamber Master Updated Successfully");
         navigate({ to: "/members" });
       });
   }
@@ -107,269 +97,206 @@ function ProfileForm({ formData }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Profile Name</FormLabel>
-                <Input placeholder="Profile Name..." {...field} />
+        {" "}
+        <div className="max-w-full p-4 space-y-6">
+          {/* Staff Information Card */}
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Staff Information</CardTitle>
+                </div>
+                <div className="flex space-x-4 flex-row-reverse">
+                  <FormField
+                    control={form.control}
+                    name="is_teaching"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        {/* <FormLabel>Staff Type</FormLabel> */}
+                        <FormControl>
+                          <div className="flex space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="teaching"
+                                {...field}
+                                value={0}
+                                checked={Number(field.value) === 0}
+                                // value={0}
+                                // checked={field.value === 0}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="teaching">Teaching</label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="non_teaching"
+                                {...field}
+                                value={1}
+                                checked={Number(field.value) === 1}
+                                // value="1"
+                                // checked={field.value === "1"}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="non_teaching">Non-Teaching</label>
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="personal_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Personal Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Personal Email..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Mobile..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="alternate_mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Alternate Mobile</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Alternate Mobile..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Address..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* <FormField
-          className="flex-1"
-          control={form.control}
-          name="institute_id"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel>Institute Id</FormLabel>
-              <Input placeholder="Institute Id..." {...field} />
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="staff_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Staff Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="Staff Number..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="first_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter First Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="middle_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Middle Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Middle Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="w-full"
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Associate type" />
-                      </SelectTrigger>
+          {/* Profile Information Card */}
+          <Card className="w-full ">
+            <CardHeader>
+              <CardTitle>Staff Login Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <FormField
+                  className="flex-1"
+                  control={form.control}
+                  name="profile_name"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Profile Name</FormLabel>
+                      <Input placeholder="Profile Name..." {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Email..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Password..."
+                        type="password"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maritial_status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Maritial Status</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="w-full"
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Maritial Status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="married">Married</SelectItem>
-                      <SelectItem value="widowed">Widowed</SelectItem>
-                      <SelectItem value="divorced">Divorced</SelectItem>
-                    </SelectContent>
-                  </Select>{" "}
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="blood_group"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blood Group</FormLabel>
-                <FormControl>
-                  <Input placeholder="Blood Group..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="data_of_birth"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date Of Birth</FormLabel>
-                <FormControl>
-                  <Input placeholder="Date Of Birth..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="corresponding_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Corresponding Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Corresponding Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="permanent_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Permanent Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Permanent Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="personal_email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Personal Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="alternate_mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Alternate Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Alternate Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="landline"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Landline</FormLabel>
-                <FormControl>
-                  <Input placeholder="Landline..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => window.history.back()}
+            onClick={() => navigate({ to: "/members" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Staff
+            Update Member
           </Button>
         </div>
       </form>
@@ -390,8 +317,7 @@ export default function SettingsProfilePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
-      setFormData(response.data.data);
+      setFormData(response.data.data.Profile);
     };
     if (id) {
       fetchData();
@@ -412,11 +338,10 @@ export default function SettingsProfilePage() {
 
       <CardHeader>
         <CardTitle>Staff Master</CardTitle>
-        <CardDescription>Staff master</CardDescription>
+        <CardDescription>Edit/Update the Staff</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
-          <Separator />
           <ProfileForm formData={formData} />
         </div>
       </CardContent>

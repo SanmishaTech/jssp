@@ -66,9 +66,8 @@ export default function Dashboardholiday() {
           { label: "First Name", key: "one" },
           // { label: "Institute Id", key: "two" },
           { label: "Email", key: "three" },
-          { label: "Staff Number", key: "four" },
+          { label: "Staff", key: "four" },
           { label: "Role", key: "five" },
-
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -145,7 +144,7 @@ export default function Dashboardholiday() {
       one: item?.user.name || "NA",
       // two: item?.institute_id || "NA",
       three: item?.email || "NA",
-      four: item?.staff_number || "NA",
+      four: item?.is_teaching || "NA",
       five: item?.user.role || "Unknown",
 
       delete: "/members/" + item?.id,
