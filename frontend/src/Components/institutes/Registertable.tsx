@@ -60,9 +60,10 @@ export default function Dashboardholiday() {
         description: "Manage Institutes  and view their details.",
         headers: [
           { label: "Institute Name", key: "one" },
-          { label: "Registration Number", key: "two" },
+           { label: "Registration Number", key: "two" },
           { label: "Affiliated University", key: "three" },
           { label: "Email", key: "four" },
+ 
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -137,9 +138,10 @@ export default function Dashboardholiday() {
     return {
       id: item?.id,
       one: item?.institute_name || "Unknown",
-      two: item?.registration_number || "NA",
+       two: item?.registration_number || "NA",
       three: item?.affiliated_university || "NA",
       four: item?.user.email || "NA",
+ 
       delete: "/institutes/" + item?.id,
     };
   });
