@@ -81,8 +81,7 @@ class MemberController extends BaseController
         //address
         $profiles->address = $request-> input('address');
          //contact details
-        $profiles->personal_email = $request-> input('personal_email');
-        $profiles->mobile = $request-> input('mobile');
+         $profiles->mobile = $request-> input('mobile');
         $profiles->alternate_mobile = $request-> input('alternate_mobile');
 
         

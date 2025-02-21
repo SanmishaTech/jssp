@@ -39,15 +39,18 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  name: z.string().optional(),
+  name: z.string().nonempty("Name is Required"),
   is_teaching: z.string().optional(),
   date_of_birth: z.any().optional(),
-  address: z.string().optional(),
+  address: z.string().nonempty("Address is Required"),
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
+  password: z.string().nonempty("Password is required"),
 
   // institute_id: z.string().optional(),
 });

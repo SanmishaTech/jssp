@@ -31,14 +31,14 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/superadmins`, {
+      .get(`/api/trustees`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.SuperAdmins);
+        setData(response.data.data.Trustees);
         setLoading(false);
       })
       .catch((err) => {
@@ -53,18 +53,17 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "Institutes" },
       // ],
-      searchPlaceholder: "Search Super Admins...",
+      searchPlaceholder: "Search Trustees...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Super Admins",
-        description: "Manage Super Admins  and view their details.",
+        title: "Trustees",
+        description: "Manage Trustees  and view their details.",
         headers: [
-          { label: "Institute Name", key: "one" },
-          { label: "Contact Name", key: "two" },
-          { label: "Mobile", key: "three" },
-          { label: "Registration Number", key: "four" },
-          { label: "Affiliated University", key: "five" },
-
+          { label: "Trustees Name", key: "one" },
+          { label: "Designation", key: "two" },
+          { label: "Email", key: "three" },
+          { label: "Contact Number", key: "four" },
+          { label: "Address", key: "five" },
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -94,7 +93,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/institutes/add" });
+    navigate({ to: "/trusties/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -138,12 +137,12 @@ export default function Dashboardholiday() {
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.institute_name || "Unknown",
-      two: item?.contact_name || "NA",
-      three: item?.contact_mobile || "NA",
-      four: item?.registration_number || "NA",
-      five: item?.affiliated_university || "NA",
-      delete: "/institutes/" + item?.id,
+      one: item?.trustee_name || "Unknown",
+      two: item?.designation || "NA",
+      three: item?.email || "NA",
+      four: item?.contact_mobile || "NA",
+      five: item?.address || "NA",
+      delete: "/trustees/" + item?.id,
     };
   });
 

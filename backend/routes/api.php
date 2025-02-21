@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\DivisionController;
 use App\Http\Controllers\Api\InvoicesController;
@@ -32,6 +33,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('institutes', InstituteController::class);
    Route::get('/all_institute', [InstituteController::class, 'allInstitute'])->name("institute.all");
+   Route::resource('trustees', TrusteeController::class);
+
    Route::resource('profiles', ProfileController::class);  
    Route::resource('members', MemberController::class);
    Route::resource('superadmin', SuperAdminController::class);

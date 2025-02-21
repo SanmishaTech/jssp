@@ -39,16 +39,16 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_name: z.string().optional(),
-  contact_name: z.string().optional(),
-  contact_mobile: z.string().optional(),
-  address: z.string().optional(),
-  registration_number: z.string().optional(),
-  affiliated_university: z.string().optional(),
-  profile_name: z.string().optional(),
-  email: z.string().optional(),
+  trustee_name: z.string().trim().nonempty("Institute Name is Required"),
+  designation: z.string().optional(),
+  contact_mobile: z.string().trim().nonempty("Mobile is Required"),
+  address: z.string().trim().nonempty("Address is Required"),
+  profile_name: z.string().trim().nonempty("Profile Name is Required"),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
   password: z.string().optional(),
-  mobile: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -56,15 +56,13 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 // This can come from your database or API.
 
 function ProfileForm({ formData }) {
-  console.log("This is formData", formData);
   const defaultValues: Partial<ProfileFormValues> = formData;
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/institutes/edit/$id" });
-  console.log("id", id);
+  const { id } = useParams({ from: "/trusties/edit/$id" });
 
   const { reset } = form;
 
@@ -79,17 +77,16 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
-    // console.log("Sas", data);
     await axios
-      .put(`/api/institutes/${id}`, data, {
+      .put(`/api/trustees/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        toast.success("Institute Master Updated Successfully");
-        navigate({ to: "/institutes" });
+        toast.success("Trustees Master Updated Successfully");
+        navigate({ to: "/trusties" });
       });
   }
 
@@ -99,142 +96,149 @@ function ProfileForm({ formData }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        {" "}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="institute_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Institute Name</FormLabel>
-                <Input placeholder="Institute Name..." {...field} />
+        <div className="space-y-6">
+          {/* Trustee Information */}
+          <Card className="p-4">
+            <CardHeader>
+              <CardTitle>Trustee Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="trustee_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Trustee Name <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Trustee Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="designation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Designation..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="contact_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Contact Name</FormLabel>
-                <Input placeholder="Contact Name..." {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="contact_mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Contact Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="registration_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Registration Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Registration Number..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="affiliated_university"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Affiliated University</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Affiliated University..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile_name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Profile Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex justify-end w-full gap-3 ">
-          <Button
-            onClick={() => navigate({ to: "/institutes" })}
-            className="self-center"
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button className="self-center mr-8" type="submit">
-            Update Institutes
-          </Button>
+                <FormField
+                  control={form.control}
+                  name="contact_mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Mobile Number <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Contact"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={10}
+                          value={field.value}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Address <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Address..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Profile Information */}
+          <Card className="p-4">
+            <CardHeader>
+              <CardTitle>
+                Profile Information <span className="text-red-500">*</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="profile_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Profile Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Profile Name..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Email <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Password..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end w-full gap-3">
+            <Button onClick={() => window.history.back()} type="button">
+              Cancel
+            </Button>
+            <Button type="submit">Update Trustee</Button>
+          </div>
         </div>
       </form>
     </Form>
@@ -243,18 +247,17 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/institutes/edit/$id" });
+  const { id } = useParams({ from: "/trusties/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/institutes/${id}`, {
+      const response = await axios.get(`/api/trustees/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       setFormData(response.data.data);
     };
     if (id) {

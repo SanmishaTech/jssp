@@ -47,7 +47,10 @@ const profileFormSchema = z.object({
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
-  email: z.string().optional(),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
   password: z.string().optional(),
 });
 

@@ -38,23 +38,16 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  profile_name: z.string().optional(),
-  institute_id: z.string().optional(),
-  email: z.string().optional(),
-  staff_number: z.string().optional(),
-  first_name: z.string().optional(),
-  middle_name: z.string().optional(),
-  last_name: z.string().optional(),
-  gender: z.string().optional(),
-  maritial_status: z.string().optional(),
-  blood_group: z.string().optional(),
-  data_of_birth: z.string().optional(),
-  corresponding_address: z.string().optional(),
-  permanent_address: z.string().optional(),
-  personal_email: z.string().optional(),
-  mobile: z.string().optional(),
-  alternate_mobile: z.string().optional(),
-  landline: z.string().optional(),
+  trustee_name: z.string().trim().nonempty("Institute Name is Required"),
+  designation: z.string().optional(),
+  contact_mobile: z.string().trim().nonempty("Mobile is Required"),
+  address: z.string().trim().nonempty("Address is Required"),
+  profile_name: z.string().trim().nonempty("Profile Name is Required"),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
+  password: z.string().trim().nonempty("Password is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -79,14 +72,14 @@ function ProfileForm() {
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     await axios
-      .post(`/api/superadmins`, data, {
+      .post(`/api/trustees`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        toast.success("Institute Master Created Successfully");
+        toast.success("Trustee Master Created Successfully");
         window.history.back();
       });
   }
@@ -98,252 +91,149 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Profile Name</FormLabel>
-                <Input placeholder="Profile Name..." {...field} />
+        <div className="space-y-6">
+          {/* Trustee Information */}
+          <Card className="p-4">
+            <CardHeader>
+              <CardTitle>Trustee Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="trustee_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Trustee Name <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Trustee Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="designation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Designation..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="institute_id"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Institute Id</FormLabel>
-                <Input placeholder="Institute Id..." {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="staff_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Staff Number</FormLabel>
-                <FormControl>
-                  <Input placeholder="Staff Number..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="first_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter First Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="middle_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Middle Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Middle Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <FormControl>
-                  <Input placeholder="gender..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maritial_status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Maritial Status</FormLabel>
-                <FormControl>
-                  <Input placeholder="Maritial Status..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="blood_group"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blood Group</FormLabel>
-                <FormControl>
-                  <Input placeholder="Blood Group..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="data_of_birth"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date Of Birth</FormLabel>
-                <FormControl>
-                  <Input placeholder="Date of birth..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="blood_group"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blood Group</FormLabel>
-                <FormControl>
-                  <Input placeholder="Blood Group..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="corresponding_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Corresponding Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Corresponding Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="permanent_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Permanent Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Permanent Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="personal_email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Personal Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Personal Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="alternate_mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Alternate Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Alternate Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="landline"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Landmine</FormLabel>
-                <FormControl>
-                  <Input placeholder="Landmine..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex justify-end w-full gap-3 ">
-          <Button
-            onClick={() => window.history.back()}
-            className="self-center"
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button className="self-center mr-8" type="submit">
-            Add Super Admin
-          </Button>
+                <FormField
+                  control={form.control}
+                  name="contact_mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Mobile Number <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Contact"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={10}
+                          value={field.value}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Address <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Address..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Profile Information */}
+          <Card className="p-4">
+            <CardHeader>
+              <CardTitle>Profile Information</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="profile_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Profile Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Profile Name..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Email <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Password <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Password..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end w-full gap-3">
+            <Button onClick={() => window.history.back()} type="button">
+              Cancel
+            </Button>
+            <Button type="submit">Add Trustee</Button>
+          </div>
         </div>
       </form>
     </Form>
@@ -362,12 +252,11 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Super Admin Master</CardTitle>
-        <CardDescription>Add Super Admin Master</CardDescription>
+        <CardTitle>Trustees Master</CardTitle>
+        <CardDescription>Add Trustees Master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
-          <Separator />
           <ProfileForm />
         </div>
       </CardContent>

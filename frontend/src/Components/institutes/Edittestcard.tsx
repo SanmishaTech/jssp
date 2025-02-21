@@ -49,7 +49,10 @@ const profileFormSchema = z.object({
     .trim()
     .nonempty("Affiliated University is Required"),
   profile_name: z.string().trim().nonempty("Profile Name is Required"),
-  email: z.string().trim().nonempty("Email is Required"),
+  email: z
+    .string()
+    .nonempty("Email is required")
+    .email("Invalid email address"),
   password: z.string().optional(),
 });
 
@@ -119,7 +122,9 @@ function ProfileForm({ formData }) {
                   name="institute_name"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Institute Name</FormLabel>
+                      <FormLabel>
+                        Institute Name <span className="text-red-500">*</span>
+                      </FormLabel>
                       <Input placeholder="Institute Name..." {...field} />
                       <FormMessage />
                     </FormItem>
@@ -130,7 +135,10 @@ function ProfileForm({ formData }) {
                   name="registration_number"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Institute's Registration Number</FormLabel>
+                      <FormLabel>
+                        Institute's Registration Number{" "}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Registration Number..."
@@ -146,7 +154,10 @@ function ProfileForm({ formData }) {
                   name="affiliated_university"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Affiliated University</FormLabel>
+                      <FormLabel>
+                        Affiliated University{" "}
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Affiliated University..."
@@ -176,7 +187,9 @@ function ProfileForm({ formData }) {
                   name="profile_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Profile Name</FormLabel>
+                      <FormLabel>
+                        Profile Name <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Profile Name..." {...field} />
                       </FormControl>
@@ -191,7 +204,9 @@ function ProfileForm({ formData }) {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>
+                        Email <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Email..." {...field} />
                       </FormControl>
