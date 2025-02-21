@@ -8,7 +8,7 @@ import {
   BookText,
   Users,
 } from "lucide-react";
-
+import background from "../../images/Jeevandeep-logo.jpeg";
 import {
   Sidebar,
   SidebarContent,
@@ -35,11 +35,11 @@ const roleBasedItems = {
     // },
   ],
   superadmin: [
-    // {
-    //   title: "trusties",
-    //   url: "/trusties",
-    //   icon: Users,
-    // },
+    {
+      title: "Trusties",
+      url: "/trusties",
+      icon: Users,
+    },
     {
       title: "Institutes",
       url: "/institutes",
@@ -55,7 +55,13 @@ export function AppSidebar({ role }) {
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>JEEVANDEEP</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            {" "}
+            <div className="flex items-center">
+              <img src={background} alt="Logo" className="w-6 h-6 mr-2" />
+              <span>JEEVANDEEP</span>
+            </div>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

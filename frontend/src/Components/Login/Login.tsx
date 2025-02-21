@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/components/ui/button";
 import { UseFormHook } from "@/components/ui/HookFormcomp";
-import background from "../../images/building-1.jpg";
+import background from "../../images/Jeevandeep-library.jpeg";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import axios from "axios";
