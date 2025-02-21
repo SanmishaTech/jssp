@@ -28,11 +28,11 @@ const roleBasedItems = {
       url: "/members",
       icon: Users,
     },
-    {
-      title: "Courses",
-      url: "/courses",
-      icon: BookText,
-    },
+    // {
+    //   title: "Courses",
+    //   url: "/courses",
+    //   icon: BookText,
+    // },
   ],
   superadmin: [
     // {
@@ -55,7 +55,7 @@ export function AppSidebar({ role }) {
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>JEEVANDEEP</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (

@@ -18,7 +18,7 @@ class CreateSuperAdminUserSeeder extends Seeder
     {
         // Create or retrieve the superadmin user
         $user = User::updateOrCreate(
-            ['email' => 'superadmin@gmail.com'],  
+            ['email' => 'superadmin@jevandeep.com'],  
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('abcd123')  

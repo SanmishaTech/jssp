@@ -17,24 +17,19 @@ return new class extends Migration
             $table->unsignedBigInteger('institute_id')->nullable(); 
             $table->string('profile_name')->nullable();
             $table->string('email')->nullable();
+ 
               //employee details
              $table->string('staff_number')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('middle_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('gender')->nullable();
-            $table->string('maritial_status')->nullable();
-            $table->string('blood_group')->nullable();
+            $table->string('name')->nullable();
+            $table->boolean('is_teaching')->nullable();
             $table->string('date_of_birth')->nullable();
             //address
-            $table->string('corresponding_address')->nullable();
-            $table->string('permanent_address')->nullable();
-            //contact details
+            $table->string('address')->nullable();
+             //contact details
             $table->string('personal_email')->nullable();
             $table->string('mobile')->nullable();
             $table->string('alternate_mobile')->nullable();
-            $table->string('landline')->nullable();
-            //attachment
+             //attachment
             // $table->string('bond_attachment')->nullable();
            
             $table->timestamps();

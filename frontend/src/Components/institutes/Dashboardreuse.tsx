@@ -70,6 +70,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import Edititem from "./Edittestcard";
 import { toast } from "sonner";
+
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -78,7 +79,6 @@ export default function Dashboard({
   searchPlaceholder = "Search...",
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
-  // AddItem,
   typeofschema,
   tableData = [],
   onAddProduct = () => {},
@@ -94,8 +94,30 @@ export default function Dashboard({
   const [expandedRows, setExpandedRows] = useState([]);
   const [open, setOpen] = useState(false);
 
+  // State for search term and table data
+  const [search, setSearch] = useState("");
+  const [institutes, setInstitutes] = useState(tableData);
+
+  // Handler to fetch search results
+  const handleSearch = async (query: string) => {
+    setSearch(query);
+    try {
+      const { data: res } = await axios.get("/api/institutes", {
+        params: { search: query },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      // Assuming your API returns the list under res.Institutes
+      setInstitutes(res.Institutes);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
+
   // Handler to toggle row expansion with debug logs
-  const toggleRow = (rowId) => {
+  const toggleRow = (rowId: any) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
         console.log(`Collapsing row with _id: ${rowId}`);
@@ -107,7 +129,7 @@ export default function Dashboard({
     });
   };
 
-  const handleEdit = async (id, url) => {
+  const handleEdit = async (id: any, url: string) => {
     console.log("Edit clicked");
     setToggleedit(true);
     setEditid({
@@ -117,7 +139,7 @@ export default function Dashboard({
     // Implement edit functionality here
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: any) => {
     console.log("Delete clicked");
     // Implement delete functionality here
   };
@@ -128,11 +150,12 @@ export default function Dashboard({
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
   };
+
   return (
     <div className="flex min-h-screen w-full flex-col ">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:px-6">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-end gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Breadcrumb className="hidden md:flex">
             <BreadcrumbList>
               {breadcrumbs?.map((breadcrumb, index) => (
@@ -148,14 +171,7 @@ export default function Dashboard({
               ))}
             </BreadcrumbList>
           </Breadcrumb>
-          <div className="relative ml-auto flex-1 md:grow-0">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={searchPlaceholder}
-              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-            />
-          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -174,9 +190,6 @@ export default function Dashboard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogTrigger asChild>
@@ -205,13 +218,6 @@ export default function Dashboard({
           </DropdownMenu>
         </header>
 
-        {/* {toggleedit && (
-          <Edititem
-            editid={editid}
-            toogleedit={setToggleedit}
-            typeofschema={typeofschema}
-          />
-        )} */}
         {/* Main Content */}
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
@@ -224,7 +230,17 @@ export default function Dashboard({
                 ))}
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
-                <DropdownMenu>
+                <div className="relative ml-auto flex-1 md:grow-0">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder={searchPlaceholder}
+                    value={search}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+                  />
+                </div>
+                {/* <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 gap-1">
                       <ListFilter className="h-3.5 w-3.5" />
@@ -246,7 +262,7 @@ export default function Dashboard({
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuContent>
-                </DropdownMenu>
+                </DropdownMenu> */}
 
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
@@ -254,12 +270,10 @@ export default function Dashboard({
                     Add Institutes
                   </span>
                 </Button>
-                {/* <AddItem typeofschema={typeofschema} /> */}
               </div>
             </div>
             <TabsContent value="all">
-              {console.log(tableData)}
-
+              {console.log(institutes)}
               <Card className="bg-accent/40">
                 <CardHeader>
                   <CardTitle>{tableColumns.title}</CardTitle>
@@ -270,20 +284,17 @@ export default function Dashboard({
                     <TableHeader>
                       <TableRow>
                         {tableColumns?.headers?.map((header, index) => (
-                          <>
-                            <TableHead
-                              key={index}
-                              className={header.hiddenOn ? header.hiddenOn : ""}
-                            >
-                              {header.label}
-                            </TableHead>
-                          </>
+                          <TableHead
+                            key={index}
+                            className={header.hiddenOn ? header.hiddenOn : ""}
+                          >
+                            {header.label}
+                          </TableHead>
                         ))}
-                        {/* <TableHead>Services</TableHead> */}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {tableData?.map((row) => (
+                      {institutes?.map((row) => (
                         <React.Fragment key={row.id}>
                           <TableRow>
                             {tableColumns?.headers?.map((header, index) => (
@@ -315,14 +326,6 @@ export default function Dashboard({
                                       <DropdownMenuLabel>
                                         Actions
                                       </DropdownMenuLabel>
-                                      {/* <Edititem
-                                        editid={row?.edit}
-                                        toogleedit={setToggleedit}
-                                        typeofschema={typeofschema}
-                                        setToggleedit={setToggleedit}
-                                        toggleedit={toggleedit}
-                                        editfetch={row?.editfetch}
-                                      /> */}
                                       {console.log("row", row)}
                                       <Button
                                         onClick={() =>
@@ -336,7 +339,6 @@ export default function Dashboard({
                                         Edit
                                       </Button>
                                       <DropdownMenuSeparator />
-
                                       <AlertDialogbox url={row?.delete} />
                                     </DropdownMenuContent>
                                   </DropdownMenu>
@@ -355,80 +357,7 @@ export default function Dashboard({
                                 )}
                               </TableCell>
                             ))}
-
-                            {/* <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => toggleRow(row._id)}
-                                aria-expanded={expandedRows.includes(row._id)}
-                                aria-controls={`services-${row._id}`}
-                              >
-                                {expandedRows.includes(row._id)
-                                  ? "Hide"
-                                  : "Show"}{" "}
-                                Services
-                              </Button>
-                            </TableCell> */}
                           </TableRow>
-                          {expandedRows.includes(row.id) && (
-                            <></>
-                            // <TableRow>
-                            //   <TableCell
-                            //     colSpan={tableColumns.headers.length + 1}
-                            //   >
-                            //     <div className="p-4 bg-muted rounded-md">
-                            //       <h4 className="text-sm font-semibold mb-2">
-                            //         Services
-                            //       </h4>
-                            //       {/* Nested Services Table */}
-                            //       <Table className="mb-4">
-                            //         <TableHeader>
-                            //           <TableRow>
-                            //             <TableHead>Service Name</TableHead>
-                            //             <TableHead>Description</TableHead>
-                            //             <TableHead>Price ($)</TableHead>
-                            //             <TableHead>Urgent</TableHead>
-                            //           </TableRow>
-                            //         </TableHeader>
-                            //         <TableBody>
-                            //           {row?.services?.map((service) => (
-                            //             <TableRow key={service._id}>
-                            //               <TableCell>{service.name}</TableCell>
-                            //               <TableCell>
-                            //                 {service.description}
-                            //               </TableCell>
-                            //               <TableCell>
-                            //                 &#x20b9;{service.price}
-                            //               </TableCell>
-                            //               <TableCell>
-                            //                 {service.urgent}
-                            //               </TableCell>
-                            //             </TableRow>
-                            //           ))}
-                            //         </TableBody>
-                            //         <TableFooter>
-                            //           <TableRow>
-                            //             <TableCell colSpan={2}>
-                            //               <strong>Total</strong>
-                            //             </TableCell>
-                            //             <TableCell>
-                            //               &#x20b9;{" "}
-                            //               {row?.services
-                            //                 ?.reduce(
-                            //                   (total, service) =>
-                            //                     total + service.price,
-                            //                   0
-                            //                 )
-                            //                 .toFixed(2)}
-                            //             </TableCell>
-                            //           </TableRow>
-                            //         </TableFooter>
-                            //       </Table>
-                            //     </div>
-                            //   </TableCell>
-                            // </TableRow>
-                          )}
                         </React.Fragment>
                       ))}
                     </TableBody>
@@ -444,7 +373,6 @@ export default function Dashboard({
                 </CardFooter>
               </Card>
             </TabsContent>
-            {/* Add more TabsContent as needed */}
           </Tabs>
         </main>
       </div>

@@ -75,22 +75,18 @@ class MemberController extends BaseController
         //additional details of member
         //employee details
         $profiles->staff_number = $request->input('staff_number');
-        $profiles->first_name = $request->input('first_name');
-        $profiles->middle_name  = $request->input('middle_name');
-        $profiles->last_name = $request->input('last_name');
-        $profiles->gender = $request->input('gender');
-        $profiles->maritial_status = $request->input('maritial_status');
-        $profiles->blood_group = $request->input('blood_group');
+        $profiles->name = $request->input('name'); 
+        $profiles->name = $request->input('is_teaching'); 
+        
         $profiles->date_of_birth = $request->input('date_of_birth');
         //address
-        $profiles->corresponding_address = $request-> input('corresponding_address');
-        $profiles->permanent_address = $request-> input('permanent_address');
-        //contact details
+        $profiles->address = $request-> input('address');
+         //contact details
         $profiles->personal_email = $request-> input('personal_email');
         $profiles->mobile = $request-> input('mobile');
         $profiles->alternate_mobile = $request-> input('alternate_mobile');
-        $profiles->landline = $request-> input('landline');
-     
+
+        
 
         $profiles->save();
        
@@ -140,21 +136,17 @@ class MemberController extends BaseController
         //additional details of member
         //employee details
         $profiles->staff_number = $request->input('staff_number');
-        $profiles->first_name = $request->input('first_name');
-        $profiles->middle_name  = $request->input('middle_name');
-        $profiles->last_name = $request->input('last_name');
-        $profiles->gender = $request->input('gender');
-        $profiles->maritial_status = $request->input('maritial_status');
-        $profiles->blood_group = $request->input('blood_group');
+        $profiles->name = $request->input('name'); 
+      
         $profiles->date_of_birth = $request->input('date_of_birth');
         //address
-        $profiles->corresponding_address = $request-> input('corresponding_address');
-        $profiles->permanent_address = $request-> input('permanent_address');
+        $profiles->address = $request-> input('address');
+      
         //contact details
         $profiles->personal_email = $request-> input('personal_email');
         $profiles->mobile = $request-> input('mobile');
         $profiles->alternate_mobile = $request-> input('alternate_mobile');
-        $profiles->landline = $request-> input('landline');
+
         $profiles->save();
        
         return $this->sendResponse([ 'Profile'=>new ProfileResource($profiles)], "Profile updated successfully");
