@@ -25,8 +25,7 @@ return new class extends Migration
             //address
             $table->string('address')->nullable();
              //contact details
-            $table->string('personal_email')->nullable();
-            $table->string('mobile')->nullable();
+             $table->string('mobile')->nullable();
             $table->string('alternate_mobile')->nullable();
              //attachment
             // $table->string('bond_attachment')->nullable();

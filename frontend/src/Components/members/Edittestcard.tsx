@@ -44,7 +44,6 @@ const profileFormSchema = z.object({
   is_teaching: z.string().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
-  personal_email: z.string().optional(),
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
@@ -165,19 +164,7 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="personal_email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Personal Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Personal Email..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="mobile"
@@ -217,20 +204,20 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Address..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Address..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

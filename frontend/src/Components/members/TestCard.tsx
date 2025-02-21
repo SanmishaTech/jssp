@@ -43,7 +43,6 @@ const profileFormSchema = z.object({
   is_teaching: z.string().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
-  personal_email: z.string().optional(),
   mobile: z.string().optional(),
   alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
@@ -96,47 +95,49 @@ function ProfileForm() {
         <div className="max-w-full p-4 space-y-6">
           {/* Staff Information Card */}
           <Card className="w-full">
-            <CardHeader className="flex items-center justify-between">
-              <div>
-                <CardTitle>Staff Information</CardTitle>
-              </div>
-              <div className="flex space-x-4 flex-row-reverse">
-                <FormField
-                  control={form.control}
-                  name="is_teaching"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Staff Type</FormLabel>
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="teaching"
-                              {...field}
-                              value="0"
-                              checked={field.value === "0"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="teaching">Teaching</label>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Staff Information</CardTitle>
+                </div>
+                <div className="flex space-x-4 flex-row-reverse">
+                  <FormField
+                    control={form.control}
+                    name="is_teaching"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        {/* <FormLabel>Staff Type</FormLabel> */}
+                        <FormControl>
+                          <div className="flex space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="teaching"
+                                {...field}
+                                value="0"
+                                checked={field.value === "0"}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="teaching">Teaching</label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="non_teaching"
+                                {...field}
+                                value="1"
+                                checked={field.value === "1"}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="non_teaching">Non-Teaching</label>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="non_teaching"
-                              {...field}
-                              value="1"
-                              checked={field.value === "1"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="non_teaching">Non-Teaching</label>
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -154,19 +155,7 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="personal_email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Personal Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Personal Email..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="mobile"
@@ -206,20 +195,20 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Address..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Address..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

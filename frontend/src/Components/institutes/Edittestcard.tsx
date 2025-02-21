@@ -108,7 +108,7 @@ function ProfileForm({ formData }) {
             <CardHeader>
               <CardTitle>Institute Information</CardTitle>
               <CardDescription>
-                Provide the details of your Institute.
+                Provide the details of Institute.
               </CardDescription>
             </CardHeader>
             <CardContent>

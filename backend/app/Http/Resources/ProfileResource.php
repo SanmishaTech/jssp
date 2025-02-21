@@ -30,8 +30,7 @@ class ProfileResource extends JsonResource
             //employee details
             'is_teaching' => $this->is_teaching,
             'name' => $this->name,
-            'personal_email'=> $this->personal_email,
-            'mobile'=> $this->mobile,
+             'mobile'=> $this->mobile,
             'alternate_mobile' => $this->alternate_mobile,
             'date_of_birth' => $this->date_of_birth,
             'address' =>$this->address,
