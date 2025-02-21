@@ -39,24 +39,19 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
+  staff_number: z.string().optional(),
+  name: z.string().optional(),
+
+  gender: z.string().optional(),
+  data_of_birth: z.any().optional(),
+  address: z.string().optional(),
+  personal_email: z.string().optional(),
+  mobile: z.string().optional(),
+  alternate_mobile: z.string().optional(),
   profile_name: z.string().optional(),
   // institute_id: z.string().optional(),
   email: z.string().optional(),
   password: z.string().optional(),
-  staff_number: z.string().optional(),
-  first_name: z.string().optional(),
-  middle_name: z.string().optional(),
-  last_name: z.string().optional(),
-  gender: z.string().optional(),
-  maritial_status: z.string().optional(),
-  blood_group: z.string().optional(),
-  data_of_birth: z.any().optional(),
-  corresponding_address: z.string().optional(),
-  permanent_address: z.string().optional(),
-  personal_email: z.string().optional(),
-  mobile: z.string().optional(),
-  alternate_mobile: z.string().optional(),
-  landline: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -100,19 +95,6 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Profile Name</FormLabel>
-                <Input placeholder="Profile Name..." {...field} />
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           {/* <FormField
             className="flex-1"
             control={form.control}
@@ -125,32 +107,7 @@ function ProfileForm() {
               </FormItem>
             )}
           /> */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="staff_number"
@@ -166,12 +123,12 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="first_name"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter First Name..." {...field} />
+                  <Input placeholder="Enter Name..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -179,157 +136,49 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="middle_name"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Middle Name</FormLabel>
+                <FormLabel>Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter Middle Name..." {...field} />
+                  <Textarea placeholder="Address..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="last_name"
+            name="is_teaching"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
+              <FormItem className="space-y-3">
+                <FormLabel>Staff</FormLabel>
                 <FormControl>
-                  <Input placeholder="Last Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gender</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="w-full"
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Associate type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="maritial_status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Maritial Status</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="w-full"
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Maritial Status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="married">Married</SelectItem>
-                      <SelectItem value="widowed">Widowed</SelectItem>
-                      <SelectItem value="divorced">Divorced</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="blood_group"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Blood Group</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="w-full"
-                  >
-                    <FormControl className="w-full">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Blood Group" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="A+">A+</SelectItem>
-                      <SelectItem value="B+">B+</SelectItem>
-                      <SelectItem value="AB+">AB+</SelectItem>
-                      <SelectItem value="O+">O+</SelectItem>
-                      <SelectItem value="O-">O-</SelectItem>
-                      <SelectItem value="goldenblood">Golden Blood</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="data_of_birth"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date Of Birth</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    // className="max-w-[284px]"
-                    // label="Date Of Birth"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="corresponding_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Corresponding Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Corresponding Address..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="permanent_address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Permanent Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Permanent Address..." {...field} />
+                  <div className="flex space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="yes"
+                        {...field}
+                        value="0"
+                        checked={field.value === "0"}
+                        className="h-4 w-4"
+                      />
+                      <label htmlFor="teaching">Teaching</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        id="no"
+                        {...field}
+                        value="1"
+                        checked={field.value === "1"}
+                        className="h-4 w-4"
+                      />
+                      <label htmlFor="non_teaching">Non-teaching</label>
+                    </div>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -374,14 +223,61 @@ function ProfileForm() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="landline"
+            name="data_of_birth"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Landline</FormLabel>
+                <FormLabel>Date Of Birth</FormLabel>
                 <FormControl>
-                  <Input placeholder="Landline..." {...field} />
+                  <DatePicker
+                    // className="max-w-[284px]"
+                    // label="Date Of Birth"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            className="flex-1"
+            control={form.control}
+            name="profile_name"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Profile Name</FormLabel>
+                <Input placeholder="Profile Name..." {...field} />
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="Email..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input placeholder="Password..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

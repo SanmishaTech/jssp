@@ -38,16 +38,18 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_name: z.string().optional(),
-  contact_name: z.string().optional(),
-  contact_mobile: z.string().optional(),
-  address: z.string().optional(),
-  registration_number: z.string().optional(),
-  affiliated_university: z.string().optional(),
-  profile_name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  mobile: z.string().optional(),
+  institute_name: z.string().trim().nonempty("Institute Name is Required"),
+  registration_number: z
+    .string()
+    .trim()
+    .nonempty("Registration Number is Required"),
+  affiliated_university: z
+    .string()
+    .trim()
+    .nonempty("Affiliated University is Required"),
+  profile_name: z.string().trim().nonempty("Profile Name is Required"),
+  email: z.string().trim().nonempty("Email is Required"),
+  password: z.string().trim().nonempty("Password is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -91,130 +93,141 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="institute_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Institute Name</FormLabel>
-                <Input placeholder="Institute Name..." {...field} />
+        <div className="space-y-6">
+          {/* Institute Information Section */}
+          <Card className="max-w-full p-4">
+            <CardHeader>
+              <CardTitle>Institute Information</CardTitle>
+              <CardDescription>
+                Provide the details of your Institute.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FormField
+                  className="flex-1"
+                  control={form.control}
+                  name="institute_name"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>
+                        Institute Name
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <Input placeholder="Institute Name..." {...field} />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="registration_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Institute's Registration Number
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Registration Number..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="affiliated_university"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>
+                        Affiliated University
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Affiliated University..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="contact_name"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Contact Name</FormLabel>
-                <Input placeholder="Contact Name..." {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="contact_mobile"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact Mobile</FormLabel>
-                <FormControl>
-                  <Input placeholder="Contact Mobile..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="registration_number"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Registration Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Registration Number..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="affiliated_university"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Affiliated University</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Affiliated University..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="profile_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile_name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Profile Name..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="Password..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* Profile Information Section */}
+          <Card className="max-w-full p-4">
+            <CardHeader>
+              <CardTitle>Profile/Admin Information</CardTitle>
+              <CardDescription>
+                Create the Admin/Principal for this Institute
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-3">
+                <FormField
+                  control={form.control}
+                  name="profile_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Profile Name
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Profile Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Email
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Email..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Password
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Password..."
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
@@ -246,7 +259,7 @@ export default function SettingsProfilePage() {
 
       <CardHeader>
         <CardTitle>Institutes Master</CardTitle>
-        <CardDescription>Add Institutes Master</CardDescription>
+        <CardDescription>Add Institute</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

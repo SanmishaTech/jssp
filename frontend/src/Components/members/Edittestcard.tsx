@@ -42,6 +42,7 @@ const profileFormSchema = z.object({
   profile_name: z.string().optional(),
   // institute_id: z.string().optional(),
   email: z.string().optional(),
+  password: z.string().optional(),
   staff_number: z.string().optional(),
   first_name: z.string().optional(),
   middle_name: z.string().optional(),
@@ -49,7 +50,7 @@ const profileFormSchema = z.object({
   gender: z.string().optional(),
   maritial_status: z.string().optional(),
   blood_group: z.string().optional(),
-  data_of_birth: z.string().optional(),
+  data_of_birth: z.any().optional(),
   corresponding_address: z.string().optional(),
   permanent_address: z.string().optional(),
   personal_email: z.string().optional(),
@@ -70,7 +71,7 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/institutes/edit/$id" });
+  const { id } = useParams({ from: "/members/edit/$id" });
   console.log("id", id);
 
   const { reset } = form;
@@ -88,15 +89,15 @@ function ProfileForm({ formData }) {
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
     await axios
-      .put(`/api/institutes/${id}`, data, {
+      .put(`/api/members/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
-        toast.success("Institute Master Updated Successfully");
-        navigate({ to: "/institutes" });
+        toast.success("Staff Master Updated Successfully");
+        navigate({ to: "/members" });
       });
   }
 
@@ -368,7 +369,7 @@ function ProfileForm({ formData }) {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Institutes
+            Update Staff
           </Button>
         </div>
       </form>
@@ -378,12 +379,12 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/institutes/edit/$id" });
+  const { id } = useParams({ from: "/members/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/institutes/${id}`, {
+      const response = await axios.get(`/api/members/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -410,8 +411,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Institute master</CardDescription>
+        <CardTitle>Staff Master</CardTitle>
+        <CardDescription>Staff master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
