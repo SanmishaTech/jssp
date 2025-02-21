@@ -74,8 +74,7 @@ class MemberController extends BaseController
         $profiles->email = $request->input('email');
         //additional details of member
         //employee details
-        $profiles->staff_number = $request->input('staff_number');
-        $profiles->name = $request->input('name'); 
+         $profiles->name = $request->input('name'); 
         $profiles->name = $request->input('is_teaching'); 
         
         $profiles->date_of_birth = $request->input('date_of_birth');
@@ -134,15 +133,14 @@ class MemberController extends BaseController
          $profiles->email = $request->input('email');
          // $profiles->resignation_date = $request->input('resignation_date');
         //additional details of member
-        //employee details
-        $profiles->staff_number = $request->input('staff_number');
-        $profiles->name = $request->input('name'); 
-      
+         //employee details
+         $profiles->name = $request->input('name'); 
+        $profiles->name = $request->input('is_teaching'); 
+        
         $profiles->date_of_birth = $request->input('date_of_birth');
         //address
         $profiles->address = $request-> input('address');
-      
-        //contact details
+         //contact details
         $profiles->personal_email = $request-> input('personal_email');
         $profiles->mobile = $request-> input('mobile');
         $profiles->alternate_mobile = $request-> input('alternate_mobile');

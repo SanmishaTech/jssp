@@ -263,7 +263,6 @@ export default function SettingsProfilePage() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
-          <Separator />
           <ProfileForm />
         </div>
       </CardContent>

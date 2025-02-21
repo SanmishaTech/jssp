@@ -28,23 +28,14 @@ class ProfileResource extends JsonResource
             'mobile' => $this->mobile,
             //additional details of members
             //employee details
-            'staff_number' => $this->staff_number,
-            'first_name' => $this->first_name,
-            'middle-name' => $this->middle_name,
-            'last_name' => $this->last_name,
-            'gender' => $this->gender,
-            'maritial_status' => $this->maritial_status,
-            'blood_group' => $this->blood_group,
-            'date_of_birth' => $this->date_of_birth,
-            //address 
-            'corresponding_address' =>$this->corresponding_address,
-            'permanent_address' => $this->permanent_address,
-            //contact details
+            'is_teaching' => $this->is_teaching,
+            'name' => $this->name,
             'personal_email'=> $this->personal_email,
             'mobile'=> $this->mobile,
             'alternate_mobile' => $this->alternate_mobile,
-            'landline'=> $this->landline,
-            'created_at' => $this->created_at,
+            'date_of_birth' => $this->date_of_birth,
+            'address' =>$this->address,
+             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'institute'=>$this->institute,
             'user'=> $user,
