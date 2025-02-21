@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/components/ui/button";
 import { UseFormHook } from "@/components/ui/HookFormcomp";
-import background from "@/images/backgroundimage.jpg";
+import background from "../../images/building-1.jpg";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import axios from "axios";
@@ -144,7 +144,9 @@ const Login = () => {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg text-white font-bold">Welcome To Website</p>
-            <footer className="text-sm text-white">Sofia Davis</footer>
+            <footer className="text-sm text-white">
+              JeevanDeep Shaikshanik Sanstha Poi (JSSP)
+            </footer>
           </blockquote>
         </div>
       </div>
