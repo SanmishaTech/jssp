@@ -191,18 +191,24 @@ class InstituteController extends BaseController
    
  
 
- public function destroy(string $id): JsonResponse
- {
-    $institutes = Institute::find($id);
-    if(!$institutes){
-        return $this->sendError("Institutes not found", ['error'=>'Institutes not found']);
+public function destroy(string $id): JsonResponse
+{
+    $institute = Institute::find($id);
+    if (!$institute) {
+        return $this->sendError("Institute not found", ['error' => 'Institute not found']);
     }
 
-    $institutes->delete();
-    
-    return $this->sendResponse([], "Institutes Deleted Successfully");
+    // Delete the associated profile if it exists
+    $profile = Profile::where('user_id', $institute->user_id)->first();
+    if ($profile) {
+        $profile->delete();
+    }
 
- }
+    $institute->delete();
+    
+    return $this->sendResponse([], "Institute and associated Profile deleted successfully");
+}
+
 
  public function allInstitutes(string $id): JsonResponse
  {

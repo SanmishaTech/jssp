@@ -28,21 +28,57 @@ const roleBasedItems = {
       url: "/members",
       icon: Users,
     },
-    // {
-    //   title: "Courses",
-    //   url: "/courses",
-    //   icon: BookText,
-    // },
+    {
+      title: "Courses",
+      url: "#",
+      icon: BookText,
+    },
+    {
+      title: "Division",
+      url: "#",
+      icon: BookText,
+    },
+    {
+      title: "Rooms",
+      url: "#",
+      icon: BookText,
+    },
+    {
+      title: "Commities",
+      url: "#",
+      icon: BookText,
+    },
+    {
+      title: "Attendence Tracking",
+      url: "#",
+      icon: BookText,
+    },
   ],
   superadmin: [
     {
-      title: "Trusties",
+      title: "Trustees",
       url: "/trusties",
       icon: Users,
     },
     {
       title: "Institutes",
       url: "/institutes",
+      icon: Building,
+    },
+    {
+      title: "Complaints",
+      url: "#",
+      icon: Building,
+    },
+    {
+      title: "Institutes Calender",
+      url: "#",
+      icon: Building,
+    },
+
+    {
+      title: "Reports and Analytics",
+      url: "#",
       icon: Building,
     },
   ],

@@ -55,7 +55,7 @@ class User extends Authenticatable
 
    public function institute()
    {
-       return $this->belongsTo(Institute::class, "institute_id");
+       return $this->belongsTo(Institute::class);
    }
 
 }
