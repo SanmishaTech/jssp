@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Models\Profile;
-use App\Models\Institute;
+use App\Models\Staff;
+ use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Resources\ProfileResource;
-use App\Http\Resources\InstituteResource;
+use App\Http\Resources\StaffResource;
+ use App\Http\Resources\InstituteResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreInstituteRequest;
 use App\Http\Requests\UpdateInstituteRequest;
@@ -55,22 +55,19 @@ class InstituteController extends BaseController
     /**
      * Store Institute
      * @bodyParam institute_name string The Name of the Institute.
-     * @bodyParam contact_name string The Contact Name of the Institute.
-     * @bodyParam contact_mobile string The Contact Mobile of the Institute.
-     * @bodyParam address string The Address of the Institute.
-     * @bodyParam registration_number string  The Registration Number of the Institute.
+      * @bodyParam registration_number string  The Registration Number of the Institute.
      * @bodyParam affiliated_university  string The Affiliated University of the Institute.
-     * @bodyParam profile_name string The Name of the Profile.
-     * @bodyParam email string The Email of the Profile.
-     * @bodyParam password string The Password of the Profile.
+      * @bodyParam email string The Email of the Staff.
+     * @bodyParam password string The Password of the Staff.
      */
 
     public function store(StoreInstituteRequest $request): JsonResponse
     {
         $active = 1;
         $user = new User();
-        $user->name = $request->input('profile_name');
-        $user->email = $request->input('email');
+        $user->name = $request->input('name'); // Add this line
+
+         $user->email = $request->input('email');
         $user->active = $active;
         $user->password = Hash::make($request->input('password'));
         $user->save();
@@ -79,19 +76,14 @@ class InstituteController extends BaseController
         $user->assignRole($memberRole);
 
            
-        $profiles = new Profile();
-        $profiles->user_id = $user->id;
-        $profiles->profile_name = $request->input('profile_name');
-         $profiles->email = $request->input('email');
-        $profiles->mobile = $request->input('mobile');
-  
-        $profiles->save();
+        $staff = new Staff();
+        $staff->user_id = $user->id;
+        $staff->email = $request->input('email');
+   
+        $staff->save();
     
         $institutes = new Institute();
         $institutes->institute_name = $request->input('institute_name');
-        $institutes->contact_name = $request->input('contact_name');
-        $institutes->contact_mobile = $request->input('contact_mobile');
-        $institutes->address = $request->input('address');
         $institutes->registration_number = $request->input('registration_number');
         $institutes->affiliated_university = $request->input('affiliated_university');
        
@@ -130,10 +122,8 @@ class InstituteController extends BaseController
   /**
    * Update Institute
    * @bodyParam institute_name string The Name of the Institute.
-   * @boadyParam contact_name string The Contact Name of the Institute.
-   * @bodyParam contact_mobile string The Contact Mobile of the Institute.
-   * @bodyParam address string The Address of the Institute.
-   * @bodyParam registration_number string The Registration Number 
+ 
+    * @bodyParam registration_number string The Registration Number 
    */
 
    public function update(UpdateInstituteRequest $request, string $id): JsonResponse
@@ -146,35 +136,30 @@ class InstituteController extends BaseController
            return $this->sendError("Institute not found", ['error' => 'Institute not found']);
        }
    
-       // Find the related User and Profile
+       // Find the related User and Staff
        $user = User::find($institute->user_id);
-       $profile = Profile::where('user_id', $institute->user_id)->first();
+       $staff = Staff::where('user_id', $institute->user_id)->first();
    
-       if (!$user || !$profile) {
-           return $this->sendError("Associated User or Profile not found", ['error' => 'User or Profile not found']);
+       if (!$user || !$staff) {
+           return $this->sendError("Associated User or Staff not found", ['error' => 'User or Staff not found']);
        }
    
        // Update the User data
-       $user->name = $request->input('profile_name', $user->name);
-       $user->email = $request->input('email', $user->email);
+       $user->name = $request->input('name', $user->name);
+        $user->email = $request->input('email', $user->email);
        
        if ($request->filled('password')) {
            $user->password = Hash::make($request->input('password'));
        }
        $user->save();
    
-       // Update the Profile data
-       $profile->profile_name = $request->input('profile_name', $profile->profile_name);
-       $profile->email = $request->input('email', $profile->email);
-       $profile->mobile = $request->input('contact_mobile', $profile->mobile);
-       $profile->save();
+       // Update the Staff data
+        $staff->email = $request->input('email', $staff->email);
+        $staff->save();
    
        // Update the Institute data
        $institute->institute_name = $request->input('institute_name', $institute->institute_name);
-       $institute->contact_name = $request->input('contact_name', $institute->contact_name);
-       $institute->contact_mobile = $request->input('contact_mobile', $institute->contact_mobile);
-       $institute->address = $request->input('address', $institute->address);
-       $institute->registration_number = $request->input('registration_number', $institute->registration_number);
+        $institute->registration_number = $request->input('registration_number', $institute->registration_number);
        $institute->affiliated_university = $request->input('affiliated_university', $institute->affiliated_university);
        $institute->save();
    
@@ -183,9 +168,9 @@ class InstituteController extends BaseController
            [
                "Institute" => new InstituteResource($institute),
                "User" => new UserResource($user),
-               "Profile" => new ProfileResource($profile),
+               "Staff" => new StaffResource($staff),
            ],
-           "Institute, User, and Profile Updated Successfully"
+           "Institute, User, and Staff Updated Successfully"
        );
    }
    
@@ -198,15 +183,15 @@ public function destroy(string $id): JsonResponse
         return $this->sendError("Institute not found", ['error' => 'Institute not found']);
     }
 
-    // Delete the associated profile if it exists
-    $profile = Profile::where('user_id', $institute->user_id)->first();
-    if ($profile) {
-        $profile->delete();
+    // Delete the associated staff if it exists
+    $staff = Staff::where('user_id', $institute->user_id)->first();
+    if ($staff) {
+        $staff->delete();
     }
 
     $institute->delete();
     
-    return $this->sendResponse([], "Institute and associated Profile deleted successfully");
+    return $this->sendResponse([], "Institute and associated Staff deleted successfully");
 }
 
 

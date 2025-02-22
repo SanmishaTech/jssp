@@ -22,9 +22,6 @@ class InstituteResource extends JsonResource
             "id" => $this->id,
             
             "institute_name" =>$this->institute_name,
-            "contact_name" => $this->contact_name,
-            "contact_mobile" => $this->contact_mobile,
-            "address" => $this->address,
             "registration_number" => $this->registration_number,
             "affiliated_university" => $this->affiliated_university,
             'created_at' => $this->created_at,

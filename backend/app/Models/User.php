@@ -3,8 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Profile;
-use Laravel\Sanctum\HasApiTokens;
+ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,15 +46,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-
-   public function profile(){
-    return $this->hasOne(Profile::class, 'user_id');
-   }
-
-   public function institute()
-   {
-       return $this->belongsTo(Institute::class);
-   }
 
 }

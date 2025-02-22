@@ -109,13 +109,12 @@ function ProfileForm() {
                     name="is_teaching"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        {/* <FormLabel>Staff Type</FormLabel> */}
                         <FormControl>
                           <div className="flex space-x-4">
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="teaching"
+                                id="is_teaching"
                                 {...field}
                                 value="0"
                                 checked={field.value === "0"}
@@ -126,13 +125,13 @@ function ProfileForm() {
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="non_teaching"
+                                id="is_teaching"
                                 {...field}
                                 value="1"
                                 checked={field.value === "1"}
                                 className="h-4 w-4"
                               />
-                              <label htmlFor="non_teaching">Non-Teaching</label>
+                              <label htmlFor="1">Non-Teaching</label>
                             </div>
                           </div>
                         </FormControl>

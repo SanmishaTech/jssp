@@ -40,8 +40,8 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  name: z.string().optional(),
-  is_teaching: z.string().optional(),
+  name: z.string().nonempty("Staff Name Required"),
+  is_teaching: z.any().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
@@ -88,7 +88,7 @@ function ProfileForm({ formData }) {
         },
       })
       .then((res) => {
-        toast.success("Mamber Master Updated Successfully");
+        toast.success("Member Master Updated Successfully");
         navigate({ to: "/members" });
       });
   }

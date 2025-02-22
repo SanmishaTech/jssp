@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Staff;
 use App\Models\Profile;
 use App\Models\Employee;
 use Illuminate\Database\Seeder;
@@ -36,18 +37,16 @@ class CreateAdminUserSeeder extends Seeder
         // Assign the role to the user
         $user->syncRoles([$role->id]); // Use syncRoles to avoid duplication
          
-        $profile = Profile::where('user_id',$user->id)->first();
-         if($profile){
-            $profile->profile_name = $user->name;
-            $profile->email = $user->email;
-            $profile->save();
+        $staff = Staff::where('user_id',$user->id)->first();
+         if($staff){
+             $staff->email = $user->email;
+            $staff->save();
             return;
          }
-        $profile = new Profile();
-        $profile->user_id = $user->id;
-        $profile->profile_name = $user->name;
-        $profile->email = $user->email;
-        $profile->save();
+        $staff = new Staff();
+        $staff->user_id = $user->id;
+         $staff->email = $user->email;
+        $staff->save();
 
     }
 }
