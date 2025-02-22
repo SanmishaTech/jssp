@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
+use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\ClientsController;
@@ -35,7 +36,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_institute', [InstituteController::class, 'allInstitute'])->name("institute.all");
    Route::resource('trustees', TrusteeController::class);
 
-   Route::resource('profiles', ProfileController::class);  
+   Route::resource('staff', StaffController::class);  
    Route::resource('members', MemberController::class);
    Route::resource('superadmin', SuperAdminController::class);
    Route::resource('courses', CourseController::class);

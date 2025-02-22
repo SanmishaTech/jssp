@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Institute extends Model
 {
-    public function profile()
+    public function staff()
     {
-        return $this->hasOne(Profile::class, 'user_id', 'user_id');
+        return $this->hasOne(Staff::class, 'user_id', 'user_id');
     }
 
     public function user()
@@ -21,8 +21,8 @@ class Institute extends Model
     {
         static::deleting(function ($institute) {
             // Delete the associated profile, if it exists.
-            if ($institute->profile) {
-                $institute->profile()->delete();
+            if ($institute->staff) {
+                $institute->staff()->delete();
             }
     
             // Delete the associated user, if it exists.

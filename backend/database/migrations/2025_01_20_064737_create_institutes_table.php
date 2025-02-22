@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('institutes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            // $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string("institute_name")->nullable();
             $table->string('registration_number')->nullable();
             $table->string('affiliated_university')->nullable();

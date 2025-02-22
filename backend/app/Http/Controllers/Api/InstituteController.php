@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use App\Models\Staff;
  use App\Models\Institute;
-use Illuminate\Http\Request;
+ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+ use App\Http\Resources\InstituteResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
- use App\Http\Resources\InstituteResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreInstituteRequest;
 use App\Http\Requests\UpdateInstituteRequest;
@@ -29,6 +30,8 @@ class InstituteController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
+        $user = new UserResource(Auth::user()->load('staff'));
+        dd($user);
         $query = Institute::query();
 
         if($request->query('search')){
@@ -47,7 +50,7 @@ class InstituteController extends BaseController
             'last_page'=> $institutes->lastPage(),
             'per_page'=> $institutes->perPage(),
             'total'=> $institutes->total(),
-        ]], "Department retrived successfully");
+        ]], "Institutes retrived successfully");
 
         
     }
@@ -61,48 +64,47 @@ class InstituteController extends BaseController
      * @bodyParam password string The Password of the Staff.
      */
 
-    public function store(StoreInstituteRequest $request): JsonResponse
-    {
-        $active = 1;
-        $user = new User();
-        $user->name = $request->input('name'); // Add this line
-
+     public function store(StoreInstituteRequest $request): JsonResponse
+     {
+         $active = 1;
+         
+         // Create User
+         $user = new User();
+         $user->name = $request->input('name'); // Ensure name is provided
          $user->email = $request->input('email');
-        $user->active = $active;
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
-    
-        $memberRole = Role::where("name", "admin")->first();
-        $user->assignRole($memberRole);
-
-           
-        $staff = new Staff();
-        $staff->user_id = $user->id;
-        $staff->email = $request->input('email');
-   
-        $staff->save();
-    
-        $institutes = new Institute();
-        $institutes->institute_name = $request->input('institute_name');
-        $institutes->registration_number = $request->input('registration_number');
-        $institutes->affiliated_university = $request->input('affiliated_university');
-       
-        $institutes->user_id = $user->id;
-
+         $user->active = $active;
+         $user->password = Hash::make($request->input('password'));
+         $user->save();
+         
+         $memberRole = Role::where("name", "admin")->first();
+         $user->assignRole($memberRole);
+         
+         // Create Institute record using the user_id
+         $institute = new Institute();
+         $institute->institute_name = $request->input('institute_name');
+         $institute->registration_number = $request->input('registration_number');
+         $institute->affiliated_university = $request->input('affiliated_university');
+         $institute->user_id = $user->id;
+         
+         if (!$institute->save()) {
+             return response()->json(['error' => 'Institute creation failed'], 500);
+         }
+         
+         // Now create Staff record with institute_id available
+         $staff = new Staff();
+         $staff->user_id = $user->id;
+         $staff->institute_id = $institute->id; // Now the institute exists
+         $staff->email = $request->input('email');
+         $staff->save();
+         
+         return $this->sendResponse(
+             [
+                 'Institutes' => new InstituteResource($institute),
+             ],
+             'Institute Created Successfully'
+         );
+     }
      
-        if (!$institutes->save()) {
-            return response()->json(['error' => 'Institute creation failed'], 500);
-        }
-    
-        return $this->sendResponse(
-            [
-                'Institutes' => new InstituteResource($institutes),
-                // 'Users' => new UserResource($user),
-            ],
-            'Institute Created Successfully'
-        );
-    }
-
     /**
      * Show Institutes
      */
@@ -191,7 +193,7 @@ public function destroy(string $id): JsonResponse
 
     $institute->delete();
     
-    return $this->sendResponse([], "Institute and associated Staff deleted successfully");
+    return $this->sendResponse( "Institute and associated Staff deleted successfully");
 }
 
 
