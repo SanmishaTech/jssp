@@ -294,49 +294,43 @@ export default function Dashboard({
                                 {header.key === "one" ? (
                                   row.one
                                 ) : header.key === "action" ? (
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        className="h-8 w-8 p-0"
+                                  row.delete ? (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          className="h-8 w-8 p-0"
+                                        >
+                                          <span className="sr-only">
+                                            Open menu
+                                          </span>
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent
+                                        align="center"
+                                        className="w-full flex-col items-center flex justify-center"
                                       >
-                                        <span className="sr-only">
-                                          Open menu
-                                        </span>
-                                        <MoreHorizontal className="h-4 w-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                      align="center"
-                                      className="w-full flex-col items-center flex justify-center"
-                                    >
-                                      <DropdownMenuLabel>
-                                        Actions
-                                      </DropdownMenuLabel>
-                                      {/* <Edititem
-                                        editid={row?.edit}
-                                        toogleedit={setToggleedit}
-                                        typeofschema={typeofschema}
-                                        setToggleedit={setToggleedit}
-                                        toggleedit={toggleedit}
-                                        editfetch={row?.editfetch}
-                                      /> */}
-                                      <Button
-                                        onClick={() =>
-                                          navigate({
-                                            to: `/staff/edit/${row?.id}`,
-                                          })
-                                        }
-                                        className="w-full"
-                                        variant="ghost"
-                                      >
-                                        Edit
-                                      </Button>
-                                      <DropdownMenuSeparator />
+                                        <DropdownMenuLabel>
+                                          Actions
+                                        </DropdownMenuLabel>
+                                        <Button
+                                          onClick={() =>
+                                            navigate({
+                                              to: `/staff/edit/${row?.id}`,
+                                            })
+                                          }
+                                          className="w-full"
+                                          variant="ghost"
+                                        >
+                                          Edit
+                                        </Button>
+                                        <DropdownMenuSeparator />
 
-                                      <AlertDialogbox url={row?.delete} />
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                                        <AlertDialogbox url={row?.delete} />
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  ) : null
                                 ) : header.key === "two" ? (
                                   row.two
                                 ) : header.key === "three" ? (

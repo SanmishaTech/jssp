@@ -143,8 +143,7 @@ export default function Dashboardholiday() {
       two: capital(item?.email || "NA"),
       three: capital(item?.is_teaching === "0" ? "Yes" : "No"),
       four: capital(item?.role || "Unknown"),
-
-      delete: "/staff/" + item?.id,
+      delete: item?.role?.toLowerCase() !== "admin" ? "/staff/" + item?.id : null,
     };
   });
 
