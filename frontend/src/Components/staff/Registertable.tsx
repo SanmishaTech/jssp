@@ -28,14 +28,14 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/members`, {
+      .get(`/api/staff`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.Profiles);
+        setData(response.data.data.Staff);
         setLoading(false);
       })
       .catch((err) => {
@@ -57,9 +57,9 @@ export default function Dashboardholiday() {
         description: "Manage staff  and view their details.",
         headers: [
           { label: "First Name", key: "one" },
-          // { label: "Institute Id", key: "two" },
+          { label: "Institute Name", key: "two" },
           { label: "Email", key: "three" },
-          { label: "Staff", key: "four" },
+          { label: "Teaching", key: "four" },
           { label: "Role", key: "five" },
           { label: "Action", key: "action" },
         ],
@@ -90,7 +90,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/members/add" });
+    navigate({ to: "/staff/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -132,15 +132,21 @@ export default function Dashboardholiday() {
     // Calculate balance amount based on total service price and paid amount.
     const balanceAmount =
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
+
+    const capital = (str) =>
+      typeof str === "string"
+        ? str.charAt(0).toUpperCase() + str.slice(1)
+        : str;
+
     return {
       id: item?.id,
-      one: item?.user.name || "NA",
-      // two: item?.institute_id || "NA",
-      three: item?.email || "NA",
-      four: item?.is_teaching || "NA",
-      five: item?.user.role || "Unknown",
+      one: capital(item?.staff_name || "NA"),
+      two: capital(item?.institute_name || "NA"),
+      three: capital(item?.email || "NA"),
+      four: capital(item?.is_teaching === "0" ? "Yes" : "No"),
+      five: capital(item?.role || "Unknown"),
 
-      delete: "/members/" + item?.id,
+      delete: "/staff/" + item?.id,
     };
   });
 

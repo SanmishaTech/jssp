@@ -79,7 +79,7 @@ public function index(Request $request): JsonResponse
         $staff->mobile = $request->input('mobile');
         $staff->save();
         
-        return $this->sendResponse([new StaffResource($staff)], "Staff stored successfully");
+        return $this->sendResponse([ "Staff" => new StaffResource($staff)], "Staff stored successfully");
     }
     
 
@@ -96,7 +96,7 @@ public function index(Request $request): JsonResponse
 
         $user = User::find($staff->user_id);
  
-        return $this->sendResponse([ new StaffResource($staff) ], "Staff retrived successfully");
+        return $this->sendResponse([ "Staff" => new StaffResource($staff) ], "Staff retrived successfully");
     }
 
     /**
@@ -129,7 +129,7 @@ public function index(Request $request): JsonResponse
         $staff->mobile = $request->input('mobile');
           $staff->save();
        
-        return $this->sendResponse([ new StaffResource($staff)], "Staff updated successfully");
+        return $this->sendResponse([ "Staff" => new StaffResource($staff)], "Staff updated successfully");
 
     }
 

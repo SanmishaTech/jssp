@@ -323,11 +323,10 @@ export default function Dashboard({
                                         toggleedit={toggleedit}
                                         editfetch={row?.editfetch}
                                       /> */}
-                                      {console.log("row", row)}
                                       <Button
                                         onClick={() =>
                                           navigate({
-                                            to: `/members/edit/${row?.id}`,
+                                            to: `/staff/edit/${row?.id}`,
                                           })
                                         }
                                         className="w-full"

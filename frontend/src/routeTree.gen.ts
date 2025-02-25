@@ -13,16 +13,16 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
-import { Route as MembersIndexImport } from './routes/members/index'
+import { Route as StaffIndexImport } from './routes/staff/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
 import { Route as CourcesIndexImport } from './routes/cources/index'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
-import { Route as MembersAddIndexImport } from './routes/members/add/index'
+import { Route as StaffAddIndexImport } from './routes/staff/add/index'
 import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
 import { Route as CourcesAddIndexImport } from './routes/cources/add/index'
 import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
-import { Route as MembersEditIdImport } from './routes/members/edit/$id'
+import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
 
 // Create/Update Routes
@@ -39,9 +39,9 @@ const TrustiesIndexRoute = TrustiesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const MembersIndexRoute = MembersIndexImport.update({
-  id: '/members/',
-  path: '/members/',
+const StaffIndexRoute = StaffIndexImport.update({
+  id: '/staff/',
+  path: '/staff/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -69,9 +69,9 @@ const TrustiesAddIndexRoute = TrustiesAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const MembersAddIndexRoute = MembersAddIndexImport.update({
-  id: '/members/add/',
-  path: '/members/add/',
+const StaffAddIndexRoute = StaffAddIndexImport.update({
+  id: '/staff/add/',
+  path: '/staff/add/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -93,9 +93,9 @@ const TrustiesEditIdRoute = TrustiesEditIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const MembersEditIdRoute = MembersEditIdImport.update({
-  id: '/members/edit/$id',
-  path: '/members/edit/$id',
+const StaffEditIdRoute = StaffEditIdImport.update({
+  id: '/staff/edit/$id',
+  path: '/staff/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -137,11 +137,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexImport
       parentRoute: typeof rootRoute
     }
-    '/members/': {
-      id: '/members/'
-      path: '/members'
-      fullPath: '/members'
-      preLoaderRoute: typeof MembersIndexImport
+    '/staff/': {
+      id: '/staff/'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffIndexImport
       parentRoute: typeof rootRoute
     }
     '/trusties/': {
@@ -158,11 +158,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstitutesEditIdImport
       parentRoute: typeof rootRoute
     }
-    '/members/edit/$id': {
-      id: '/members/edit/$id'
-      path: '/members/edit/$id'
-      fullPath: '/members/edit/$id'
-      preLoaderRoute: typeof MembersEditIdImport
+    '/staff/edit/$id': {
+      id: '/staff/edit/$id'
+      path: '/staff/edit/$id'
+      fullPath: '/staff/edit/$id'
+      preLoaderRoute: typeof StaffEditIdImport
       parentRoute: typeof rootRoute
     }
     '/trusties/edit/$id': {
@@ -186,11 +186,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InstitutesAddIndexImport
       parentRoute: typeof rootRoute
     }
-    '/members/add/': {
-      id: '/members/add/'
-      path: '/members/add'
-      fullPath: '/members/add'
-      preLoaderRoute: typeof MembersAddIndexImport
+    '/staff/add/': {
+      id: '/staff/add/'
+      path: '/staff/add'
+      fullPath: '/staff/add'
+      preLoaderRoute: typeof StaffAddIndexImport
       parentRoute: typeof rootRoute
     }
     '/trusties/add/': {
@@ -210,14 +210,14 @@ export interface FileRoutesByFullPath {
   '/cources': typeof CourcesIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
-  '/members': typeof MembersIndexRoute
+  '/staff': typeof StaffIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
-  '/members/edit/$id': typeof MembersEditIdRoute
+  '/staff/edit/$id': typeof StaffEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/cources/add': typeof CourcesAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
-  '/members/add': typeof MembersAddIndexRoute
+  '/staff/add': typeof StaffAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
 }
 
@@ -226,14 +226,14 @@ export interface FileRoutesByTo {
   '/cources': typeof CourcesIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/login': typeof LoginIndexRoute
-  '/members': typeof MembersIndexRoute
+  '/staff': typeof StaffIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
-  '/members/edit/$id': typeof MembersEditIdRoute
+  '/staff/edit/$id': typeof StaffEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/cources/add': typeof CourcesAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
-  '/members/add': typeof MembersAddIndexRoute
+  '/staff/add': typeof StaffAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
 }
 
@@ -243,14 +243,14 @@ export interface FileRoutesById {
   '/cources/': typeof CourcesIndexRoute
   '/institutes/': typeof InstitutesIndexRoute
   '/login/': typeof LoginIndexRoute
-  '/members/': typeof MembersIndexRoute
+  '/staff/': typeof StaffIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
-  '/members/edit/$id': typeof MembersEditIdRoute
+  '/staff/edit/$id': typeof StaffEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/cources/add/': typeof CourcesAddIndexRoute
   '/institutes/add/': typeof InstitutesAddIndexRoute
-  '/members/add/': typeof MembersAddIndexRoute
+  '/staff/add/': typeof StaffAddIndexRoute
   '/trusties/add/': typeof TrustiesAddIndexRoute
 }
 
@@ -261,14 +261,14 @@ export interface FileRouteTypes {
     | '/cources'
     | '/institutes'
     | '/login'
-    | '/members'
+    | '/staff'
     | '/trusties'
     | '/institutes/edit/$id'
-    | '/members/edit/$id'
+    | '/staff/edit/$id'
     | '/trusties/edit/$id'
     | '/cources/add'
     | '/institutes/add'
-    | '/members/add'
+    | '/staff/add'
     | '/trusties/add'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -276,14 +276,14 @@ export interface FileRouteTypes {
     | '/cources'
     | '/institutes'
     | '/login'
-    | '/members'
+    | '/staff'
     | '/trusties'
     | '/institutes/edit/$id'
-    | '/members/edit/$id'
+    | '/staff/edit/$id'
     | '/trusties/edit/$id'
     | '/cources/add'
     | '/institutes/add'
-    | '/members/add'
+    | '/staff/add'
     | '/trusties/add'
   id:
     | '__root__'
@@ -291,14 +291,14 @@ export interface FileRouteTypes {
     | '/cources/'
     | '/institutes/'
     | '/login/'
-    | '/members/'
+    | '/staff/'
     | '/trusties/'
     | '/institutes/edit/$id'
-    | '/members/edit/$id'
+    | '/staff/edit/$id'
     | '/trusties/edit/$id'
     | '/cources/add/'
     | '/institutes/add/'
-    | '/members/add/'
+    | '/staff/add/'
     | '/trusties/add/'
   fileRoutesById: FileRoutesById
 }
@@ -308,14 +308,14 @@ export interface RootRouteChildren {
   CourcesIndexRoute: typeof CourcesIndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
-  MembersIndexRoute: typeof MembersIndexRoute
+  StaffIndexRoute: typeof StaffIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
-  MembersEditIdRoute: typeof MembersEditIdRoute
+  StaffEditIdRoute: typeof StaffEditIdRoute
   TrustiesEditIdRoute: typeof TrustiesEditIdRoute
   CourcesAddIndexRoute: typeof CourcesAddIndexRoute
   InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
-  MembersAddIndexRoute: typeof MembersAddIndexRoute
+  StaffAddIndexRoute: typeof StaffAddIndexRoute
   TrustiesAddIndexRoute: typeof TrustiesAddIndexRoute
 }
 
@@ -324,14 +324,14 @@ const rootRouteChildren: RootRouteChildren = {
   CourcesIndexRoute: CourcesIndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
-  MembersIndexRoute: MembersIndexRoute,
+  StaffIndexRoute: StaffIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   InstitutesEditIdRoute: InstitutesEditIdRoute,
-  MembersEditIdRoute: MembersEditIdRoute,
+  StaffEditIdRoute: StaffEditIdRoute,
   TrustiesEditIdRoute: TrustiesEditIdRoute,
   CourcesAddIndexRoute: CourcesAddIndexRoute,
   InstitutesAddIndexRoute: InstitutesAddIndexRoute,
-  MembersAddIndexRoute: MembersAddIndexRoute,
+  StaffAddIndexRoute: StaffAddIndexRoute,
   TrustiesAddIndexRoute: TrustiesAddIndexRoute,
 }
 
@@ -349,14 +349,14 @@ export const routeTree = rootRoute
         "/cources/",
         "/institutes/",
         "/login/",
-        "/members/",
+        "/staff/",
         "/trusties/",
         "/institutes/edit/$id",
-        "/members/edit/$id",
+        "/staff/edit/$id",
         "/trusties/edit/$id",
         "/cources/add/",
         "/institutes/add/",
-        "/members/add/",
+        "/staff/add/",
         "/trusties/add/"
       ]
     },
@@ -372,8 +372,8 @@ export const routeTree = rootRoute
     "/login/": {
       "filePath": "login/index.tsx"
     },
-    "/members/": {
-      "filePath": "members/index.tsx"
+    "/staff/": {
+      "filePath": "staff/index.tsx"
     },
     "/trusties/": {
       "filePath": "trusties/index.tsx"
@@ -381,8 +381,8 @@ export const routeTree = rootRoute
     "/institutes/edit/$id": {
       "filePath": "institutes/edit/$id.tsx"
     },
-    "/members/edit/$id": {
-      "filePath": "members/edit/$id.tsx"
+    "/staff/edit/$id": {
+      "filePath": "staff/edit/$id.tsx"
     },
     "/trusties/edit/$id": {
       "filePath": "trusties/edit/$id.tsx"
@@ -393,8 +393,8 @@ export const routeTree = rootRoute
     "/institutes/add/": {
       "filePath": "institutes/add/index.tsx"
     },
-    "/members/add/": {
-      "filePath": "members/add/index.tsx"
+    "/staff/add/": {
+      "filePath": "staff/add/index.tsx"
     },
     "/trusties/add/": {
       "filePath": "trusties/add/index.tsx"

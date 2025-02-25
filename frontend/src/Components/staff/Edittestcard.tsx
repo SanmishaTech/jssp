@@ -40,13 +40,11 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  name: z.string().nonempty("Staff Name Required"),
+  staff_name: z.string().nonempty("Staff Name Required"),
   is_teaching: z.any().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
-  alternate_mobile: z.string().optional(),
-  profile_name: z.string().optional(),
   email: z
     .string()
     .nonempty("Email is required")
@@ -65,13 +63,13 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/members/edit/$id" });
+  const { id } = useParams({ from: "/staff/edit/$id" });
 
   const { reset } = form;
 
   // Reset form values when formData changes
   useEffect(() => {
-    formData.profile_name = formData?.user?.name;
+    formData.name = formData?.user?.name;
     formData.email = formData?.user?.email;
     reset(formData);
   }, [formData, reset]);
@@ -81,7 +79,7 @@ function ProfileForm({ formData }) {
 
   async function onSubmit(data: ProfileFormValues) {
     await axios
-      .put(`/api/members/${id}`, data, {
+      .put(`/api/staff/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -89,7 +87,7 @@ function ProfileForm({ formData }) {
       })
       .then((res) => {
         toast.success("Member Master Updated Successfully");
-        navigate({ to: "/members" });
+        navigate({ to: "/staff" });
       });
   }
 
@@ -156,7 +154,7 @@ function ProfileForm({ formData }) {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="staff_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
@@ -181,19 +179,7 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="alternate_mobile"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Alternate Mobile</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Alternate Mobile..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="date_of_birth"
@@ -232,18 +218,6 @@ function ProfileForm({ formData }) {
             <CardContent>
               <div className="grid grid-cols-2 gap-3 mb-3">
                 <FormField
-                  className="flex-1"
-                  control={form.control}
-                  name="profile_name"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Profile Name</FormLabel>
-                      <Input placeholder="Profile Name..." {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
@@ -256,30 +230,30 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Password..."
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Password..."
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => navigate({ to: "/members" })}
+            onClick={() => navigate({ to: "/staff" })}
             className="self-center"
             type="button"
           >
@@ -296,18 +270,18 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/members/edit/$id" });
+  const { id } = useParams({ from: "/staff/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/members/${id}`, {
+      const response = await axios.get(`/api/staff/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      setFormData(response.data.data.Profile);
+      setFormData(response.data.data.Staff);
     };
     if (id) {
       fetchData();
@@ -327,7 +301,14 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Staff Master</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>Staff Master</CardTitle>
+          {formData?.institute_name && (
+            <span className="text-muted-foreground">
+              {formData.institute_name}
+            </span>
+          )}
+        </div>
         <CardDescription>Edit/Update the Staff</CardDescription>
       </CardHeader>
       <CardContent>
@@ -335,10 +316,6 @@ export default function SettingsProfilePage() {
           <ProfileForm formData={formData} />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }

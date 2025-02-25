@@ -25,17 +25,15 @@ const Login = () => {
     password: "",
   };
   const onSubmit = async (data: Record<string, any>) => {
-    console.log(data);
     const user = await axios
       .post("/api/login", data)
       .then((res) => {
-        console.log(res.data);
-        const role = res.data.data.User.user.role;
+        const role = res.data.data.User.role;
         localStorage.setItem("token", res.data.data.token);
         if (role === "admin") {
           localStorage.setItem("role", role);
           navigate({
-            to: "/members",
+            to: "/staff",
           });
         }
         if (role === "superadmin") {
@@ -49,7 +47,7 @@ const Login = () => {
           localStorage.setItem("user", JSON.stringify(res.data.user));
 
           navigate({
-            to: "/members",
+            to: "/staff",
           });
         }
         toast.success("Successfully Logged In");

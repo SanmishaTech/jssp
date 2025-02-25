@@ -77,7 +77,7 @@ function ProfileForm() {
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     await axios
-      .post(`/api/members`, data, {
+      .post(`/api/staff`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

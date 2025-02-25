@@ -19,7 +19,7 @@ const Notfound = () => {
         </h5>
         <div className=" flex justify-center">
           <button
-            onClick={() => navigate({ to: "/members" })}
+            onClick={() => navigate({ to: "/staff" })}
             className="bg-black/75 text-white font-bold py-3 px-6 rounded-[1rem] mt-6 "
           >
             Back to home

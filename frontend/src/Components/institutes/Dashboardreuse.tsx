@@ -326,7 +326,6 @@ export default function Dashboard({
                                       <DropdownMenuLabel>
                                         Actions
                                       </DropdownMenuLabel>
-                                      {console.log("row", row)}
                                       <Button
                                         onClick={() =>
                                           navigate({

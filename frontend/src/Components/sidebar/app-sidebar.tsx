@@ -25,7 +25,7 @@ const roleBasedItems = {
   admin: [
     {
       title: "Staff",
-      url: "/members",
+      url: "/staff",
       icon: Users,
     },
     {

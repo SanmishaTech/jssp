@@ -25,6 +25,7 @@ class StaffResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'institute_id' => $this->institute_id,
+            'institute_name' => $this->institute->institute_name,
             'role'         => $role,
             'staff_name' =>$this->staff_name,
             'is_teaching' => $this->is_teaching,
