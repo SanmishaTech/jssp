@@ -39,20 +39,17 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  name: z.string().nonempty("Name is Required"),
+  staff_name: z.string().nonempty("Name is Required"),
   is_teaching: z.string().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().nonempty("Address is Required"),
   mobile: z.string().optional(),
-  alternate_mobile: z.string().optional(),
-  profile_name: z.string().optional(),
+  name: z.string().optional(),
   email: z
     .string()
     .nonempty("Email is required")
     .email("Invalid email address"),
   password: z.string().nonempty("Password is required"),
-
-  // institute_id: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -76,17 +73,22 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
-    await axios
-      .post(`/api/staff`, data, {
+    try {
+      await axios.post(`/api/staff`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        toast.success("Staff Master Created Successfully");
-        window.history.back();
       });
+      toast.success("Staff Master Created Successfully");
+      window.history.back();
+    } catch (error: any) {
+      // Extract error message from response if available, else default to a generic error message.
+      const errorMsg =
+        error?.response?.data?.message ||
+        "Something went wrong, please try again.";
+      toast.error(errorMsg);
+    }
   }
 
   return (
@@ -146,7 +148,7 @@ function ProfileForm() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="staff_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
@@ -171,19 +173,7 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="alternate_mobile"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Alternate Mobile</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Alternate Mobile..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
                 <FormField
                   control={form.control}
                   name="date_of_birth"
@@ -220,33 +210,36 @@ function ProfileForm() {
               <CardTitle>Profile Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <FormField
-                  className="flex-1"
-                  control={form.control}
-                  name="profile_name"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Profile Name</FormLabel>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Name
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
                       <Input placeholder="Profile Name..." {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Email..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Email..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="password"

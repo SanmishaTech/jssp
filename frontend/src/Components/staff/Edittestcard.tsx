@@ -49,7 +49,7 @@ const profileFormSchema = z.object({
     .string()
     .nonempty("Email is required")
     .email("Invalid email address"),
-  password: z.string().optional(),
+  password: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -69,8 +69,6 @@ function ProfileForm({ formData }) {
 
   // Reset form values when formData changes
   useEffect(() => {
-    formData.name = formData?.user?.name;
-    formData.email = formData?.user?.email;
     reset(formData);
   }, [formData, reset]);
 
@@ -86,7 +84,7 @@ function ProfileForm({ formData }) {
         },
       })
       .then((res) => {
-        toast.success("Member Master Updated Successfully");
+        toast.success("Staff Updated Successfully");
         navigate({ to: "/staff" });
       });
   }
@@ -260,7 +258,7 @@ function ProfileForm({ formData }) {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Member
+            Update Staff
           </Button>
         </div>
       </form>

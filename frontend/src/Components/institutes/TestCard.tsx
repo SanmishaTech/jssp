@@ -47,7 +47,7 @@ const profileFormSchema = z.object({
     .string()
     .trim()
     .nonempty("Affiliated University is Required"),
-  profile_name: z.string().trim().nonempty("Profile Name is Required"),
+  name: z.string().trim().nonempty("Profile Name is Required"),
   email: z
     .string()
     .nonempty("Email is required")
@@ -176,11 +176,11 @@ function ProfileForm() {
               <div className="mb-3">
                 <FormField
                   control={form.control}
-                  name="profile_name"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Profile Name
+                        Name
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>

@@ -48,19 +48,18 @@ export default function Dashboardholiday() {
     setConfig({
       // breadcrumbs: [
       //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "members" },
+      //   { label: "staff" },
       // ],
       searchPlaceholder: "Search staff...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Staff",
+        title: `Staff  (${data[0]?.institute_name || "Institute"})`,
         description: "Manage staff  and view their details.",
         headers: [
-          { label: "First Name", key: "one" },
-          { label: "Institute Name", key: "two" },
-          { label: "Email", key: "three" },
-          { label: "Teaching", key: "four" },
-          { label: "Role", key: "five" },
+          { label: "Name", key: "one" },
+          { label: "Email", key: "two" },
+          { label: "Teaching", key: "three" },
+          { label: "Role", key: "four" },
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -141,10 +140,9 @@ export default function Dashboardholiday() {
     return {
       id: item?.id,
       one: capital(item?.staff_name || "NA"),
-      two: capital(item?.institute_name || "NA"),
-      three: capital(item?.email || "NA"),
-      four: capital(item?.is_teaching === "0" ? "Yes" : "No"),
-      five: capital(item?.role || "Unknown"),
+      two: capital(item?.email || "NA"),
+      three: capital(item?.is_teaching === "0" ? "Yes" : "No"),
+      four: capital(item?.role || "Unknown"),
 
       delete: "/staff/" + item?.id,
     };
