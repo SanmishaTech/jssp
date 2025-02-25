@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateInstituteRequest extends FormRequest
+class InstituteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,14 +23,26 @@ class UpdateInstituteRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-          'institute_name' => [
-            'required',
-            'unique:institutes,institute_name,' . $this->route('institute')
-          ]
+        $rules = [
+            'institute_name' => [
+                'required',
+                'unique:institutes,institute_name',
+            ],
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+            ],
         ];
+    
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            $rules['institute_name'][1] = 'unique:institutes,institute_name,' . $this->route('institutes');
+            $rules['email'][2] = 'unique:users,email,' . $this->route('institutes');  
+        }
+    
+        return $rules;
     }
-
+    
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
@@ -38,7 +50,7 @@ class UpdateInstituteRequest extends FormRequest
                 'status' => false,
                 'message' => 'Validation failed',
                 'errors' => $validator->errors(),
-            ],422)
+            ], 422)
         );
     }
 }

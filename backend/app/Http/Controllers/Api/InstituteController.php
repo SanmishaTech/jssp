@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
  use App\Http\Resources\InstituteResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
+use App\Http\Requests\InstituteRequest;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreInstituteRequest;
 use App\Http\Requests\UpdateInstituteRequest;
@@ -64,7 +65,7 @@ class InstituteController extends BaseController
      * @bodyParam password string The Password of the Staff.
      */
 
-     public function store(StoreInstituteRequest $request): JsonResponse
+     public function store(InstituteRequest $request): JsonResponse
      {
          $active = 1;
          
@@ -128,7 +129,7 @@ class InstituteController extends BaseController
     * @bodyParam registration_number string The Registration Number 
    */
 
-   public function update(UpdateInstituteRequest $request, string $id): JsonResponse
+   public function update(InstituteRequest $request, string $id): JsonResponse
    {
        // Find the Institute by ID
        $institute = Institute::find($id);

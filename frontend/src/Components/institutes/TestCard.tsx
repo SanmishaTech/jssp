@@ -76,17 +76,41 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
-    await axios
-      .post(`/api/institutes`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        toast.success("Associate Master Created Successfully");
-        window.history.back();
-      });
+    try {
+      await axios
+        .post(`/api/institutes`, data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          toast.success("Associate Master Created Successfully");
+          window.history.back();
+        });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data;
+        
+        if (errorData.errors) {
+          // Handle validation errors
+          Object.entries(errorData.errors).forEach(([field, messages]) => {
+            // Set form errors
+            form.setError(field as keyof ProfileFormValues, {
+              message: Array.isArray(messages) ? messages[0] : messages,
+            });
+            
+            // Show toast for each validation error
+            toast.error(Array.isArray(messages) ? messages[0] : messages);
+          });
+        } else {
+          // Handle general error message
+          toast.error(errorData.message || "An error occurred");
+        }
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
   }
 
   return (
