@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Calendar,
   Home,
@@ -20,7 +21,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-// Define role-based menu items
+// Define role-based menu items with nested Academic Years for admins
 const roleBasedItems = {
   admin: [
     {
@@ -29,27 +30,38 @@ const roleBasedItems = {
       icon: Users,
     },
     {
-      title: "Courses",
+      title: "Academic Information",
+      icon: Calendar,
+      children: [
+        {
+          title: "Courses",
+          url: "/courses",
+          icon: BookText,
+        },
+        {
+          title: "Semester",
+          url: "/semester",
+          icon: BookText,
+        },
+        {
+          title: "Division",
+          url: "/division",
+          icon: BookText,
+        },
+        {
+          title: "Room Number",
+          url: "/rooms",
+          icon: BookText,
+        },
+      ],
+    },
+    {
+      title: "Committees",
       url: "#",
       icon: BookText,
     },
     {
-      title: "Division",
-      url: "#",
-      icon: BookText,
-    },
-    {
-      title: "Rooms",
-      url: "#",
-      icon: BookText,
-    },
-    {
-      title: "Commities",
-      url: "#",
-      icon: BookText,
-    },
-    {
-      title: "Attendence Tracking",
+      title: "Attendance Tracking",
       url: "#",
       icon: BookText,
     },
@@ -75,7 +87,6 @@ const roleBasedItems = {
       url: "#",
       icon: Building,
     },
-
     {
       title: "Reports and Analytics",
       url: "#",
@@ -85,14 +96,23 @@ const roleBasedItems = {
 };
 
 export function AppSidebar({ role }) {
-  const items = roleBasedItems[role] || []; // Fallback to an empty array if the role doesn't exist
+  const items = roleBasedItems[role] || [];
+
+  // Manage open state for items with dropdown children
+  const [openDropdowns, setOpenDropdowns] = useState({});
+
+  const toggleDropdown = (title) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
 
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>
-            {" "}
             <div className="flex items-center">
               <img src={background} alt="Logo" className="w-6 h-6 mr-2" />
               <span>JEEVANDEEP</span>
@@ -100,16 +120,60 @@ export function AppSidebar({ role }) {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) =>
+                item.children ? (
+                  // Render dropdown parent for items with children
+                  <div key={item.title}>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild>
+                        <button
+                          onClick={() => toggleDropdown(item.title)}
+                          className="flex items-center w-full"
+                        >
+                          <item.icon className="mr-2" />
+                          <span>{item.title}</span>
+                          {/* Dropdown arrow indicator */}
+                          <svg
+                            className={`ml-auto transition-transform duration-200 ${
+                              openDropdowns[item.title] ? "rotate-90" : ""
+                            }`}
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M7 10l5 5 5-5z" />
+                          </svg>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {/* Conditionally render nested items */}
+                    {openDropdowns[item.title] && (
+                      <div className="ml-4">
+                        {item.children.map((child) => (
+                          <SidebarMenuItem key={child.title}>
+                            <SidebarMenuButton asChild>
+                              <a href={child.url} className="flex items-center">
+                                <child.icon className="mr-2" />
+                                <span>{child.title}</span>
+                              </a>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Render regular menu items
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url} className="flex items-center">
+                        <item.icon className="mr-2" />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
