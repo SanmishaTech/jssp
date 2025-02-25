@@ -21,8 +21,7 @@ class DivisionResource extends JsonResource
             'semester_id' => $this -> semester_id,
             'room_id' => $this -> room_id,
             'division' => $this -> division,
-            'courses' => $this -> course,
-            
+             
             
         ];
     }
