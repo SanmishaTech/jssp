@@ -16,14 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id'); 
             $table->unsignedBigInteger('institute_id')->nullable(); 
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
-
             $table->string('staff_name')->nullable();
             $table->string('is_teaching',100)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('address')->nullable();
             $table->string('mobile')->nullable();
             $table->string('email')->nullable();
-             $table->timestamps();
+            $table->timestamps();
         });
     }
 

@@ -31,7 +31,7 @@ class InstituteController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $user = new UserResource(Auth::user()->load('staff'));
-        dd($user);
+        // dd($user);
         $query = Institute::query();
 
         if($request->query('search')){

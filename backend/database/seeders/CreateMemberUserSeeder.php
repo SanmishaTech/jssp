@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Staff;
 use App\Models\Employee;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -39,18 +40,16 @@ class CreateMemberUserSeeder extends Seeder
      
         $user->syncRoles([$role->id]);  //used assign to that multiple role can use asige else use synce
         
-        $profile = Employee::where('user_id',$user->id)->first();
-        if($profile){
-           $profile->employee_name = $user->name;
-           $profile->email = $user->email;
-           $profile->save();
+        $staff = Staff::where('user_id',$user->id)->first();
+        if($staff){
+            $staff->email = $user->email;
+           $staff->save();
            return;
         }
-       $profile = new Employee();
-       $profile->user_id = $user->id;
-       $profile->employee_name = $user->name;
-       $profile->email = $user->email;
-       $profile->save();
+       $staff = new Staff();
+       $staff->user_id = $user->id;
+        $staff->email = $user->email;
+       $staff->save();
 
     }
 }
