@@ -179,23 +179,32 @@ class InstituteController extends BaseController
    
  
 
-public function destroy(string $id): JsonResponse
-{
-    $institute = Institute::find($id);
-    if (!$institute) {
-        return $this->sendError("Institute not found", ['error' => 'Institute not found']);
-    }
-
-    // Delete the associated staff if it exists
-    $staff = Staff::where('user_id', $institute->user_id)->first();
-    if ($staff) {
-        $staff->delete();
-    }
-
-    $institute->delete();
-    
-    return $this->sendResponse( "Institute and associated Staff deleted successfully");
-}
+   public function destroy(string $id): JsonResponse
+   {
+       $institute = Institute::find($id);
+       if (!$institute) {
+           return $this->sendError("Institute not found", ['error' => 'Institute not found']);
+       }
+   
+       // Delete all associated staff records using the institute_id
+       Staff::where('institute_id', $institute->id)->delete();
+   
+       // Store the user ID before deleting the institute
+       $userId = $institute->user_id;
+   
+       // Delete the institute
+       $institute->delete();
+   
+       // Find and delete the associated user
+       $user = User::find($userId);
+       if ($user) {
+           $user->delete();
+       }
+       
+       return $this->sendResponse([], "Institute, associated Staff, and User deleted successfully");
+   }
+   
+   
 
 
  public function allInstitutes(string $id): JsonResponse

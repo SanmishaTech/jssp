@@ -54,16 +54,7 @@ class TrusteeController extends BaseController
     
         $memberRole = Role::where("name", "superadmin")->first();
         $user->assignRole($memberRole);
-
-           
-        $staff = new Staff();
-        $staff->user_id = $user->id;
-        $staff->name = $request->input('name');
-        $staff->email = $request->input('email');
-        $staff->mobile = $request->input('mobile');
-  
-        $staff->save();
-    
+        
         $trustees = new Trustee();
         $trustees->trustee_name = $request->input('trustee_name');
         $trustees->designation = $request->input('designation');
@@ -76,6 +67,14 @@ class TrusteeController extends BaseController
         if (!$trustees->save()) {
             return response()->json(['error' => 'Trustee creation failed'], 500);
         }
+
+        $staff = new Staff();
+        $staff->user_id = $user->id;
+         $staff->email = $request->input('email');
+         
+        $staff->save();
+  
+        $staff->save();
     
         return $this->sendResponse(
             [
@@ -125,11 +124,9 @@ class TrusteeController extends BaseController
         $user->save();
     
         // Update the Staff data
-        $staff->name = $request->input('name', $staff->name);
         $staff->email = $request->input('email', $staff->email);
-        $staff->mobile = $request->input('contact_mobile', $staff->mobile);
         $staff->save();
-    
+        
         // Update the Institute data
         $trustees->trustee_name = $request->input('trustee_name', $trustees->trustee_name);
         $trustees->designation = $request->input('designation', $trustees->designation);
@@ -140,35 +137,39 @@ class TrusteeController extends BaseController
         // Return the updated Institute data
         return $this->sendResponse(
             [
-                "Institute" => new TrusteeResource($trustees),
+                "Trustee" => new TrusteeResource($trustees),
                 "User" => new UserResource($user),
                 "Staff" => new StaffResource($staff),
             ],
-            "Institute, User, and Staff Updated Successfully"
+            "Trustee, User, and Staff Updated Successfully"
         );
     }
 
 
     public function destroy(string $id): JsonResponse
-    {
-       $trustees = Trustee::find($id);
-       if(!$trustees){
-           return $this->sendError("Trustees not found", ['error'=>'Trustees not found']);
-       }
-   
-       $trustees->delete();
-       
-       return $this->sendResponse([], "Trustees Deleted Successfully");
-   
+{
+    $trustee = Trustee::find($id);
+    if (!$trustee) {
+        return $this->sendError("Trustee not found", ['error' => 'Trustee not found']);
     }
 
+    // Retrieve associated User and Staff records
+    $user = User::find($trustee->user_id);
+    $staff = Staff::where('user_id', $trustee->user_id)->first();
 
-    
-    
-   
+    // Delete the Trustee record
+    $trustee->delete();
 
+    // Delete the associated User and Staff records if they exist
+    if ($user) {
+        $user->delete();
+    }
+    if ($staff) {
+        $staff->delete();
+    }
 
-
+    return $this->sendResponse([], "Trustee, User, and Staff Deleted Successfully");
+}
 
 
 }

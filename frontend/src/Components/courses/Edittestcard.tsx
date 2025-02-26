@@ -1,4 +1,5 @@
-import { Link, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+// import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -34,7 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-
+import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
@@ -52,42 +53,47 @@ const profileFormSchema = z.object({
     .string()
     .nonempty("Email is required")
     .email("Invalid email address"),
-  password: z.string().trim().nonempty("Password is Required"),
+  password: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {};
 
-function ProfileForm() {
+function ProfileForm({ formData }) {
+  console.log("This is formData", formData);
+  const defaultValues: Partial<ProfileFormValues> = formData;
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
+  const { id } = useParams({ from: "/institutes/edit/$id" });
+  console.log("id", id);
+
+  const { reset } = form;
+
+  // Reset form values when formData changes
+  useEffect(() => {
+    formData.name = formData?.user?.name;
+    formData.email = formData?.user?.email;
+    reset(formData);
+  }, [formData, reset]);
+
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
-  //     name: "urls",
-  //     control: form.control,
-  //   });
 
   async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
     try {
-      await axios
-        .post(`/api/institutes`, data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          toast.success("Institute Created Successfully");
-          window.history.back();
-        });
+      await axios.put(`/api/institutes/${id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Institute Master Updated Successfully");
+      navigate({ to: "/institutes" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -138,8 +144,7 @@ function ProfileForm() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>
-                        Institute Name
-                        <span className="text-red-500">*</span>
+                        Institute Name <span className="text-red-500">*</span>
                       </FormLabel>
                       <Input placeholder="Institute Name..." {...field} />
                       <FormMessage />
@@ -152,7 +157,7 @@ function ProfileForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Institute's Registration Number
+                        Institute's Registration Number{" "}
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -171,7 +176,7 @@ function ProfileForm() {
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
                       <FormLabel>
-                        Affiliated University
+                        Affiliated University{" "}
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -204,8 +209,7 @@ function ProfileForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Name
-                        <span className="text-red-500">*</span>
+                        Name <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Profile Name..." {...field} />
@@ -222,8 +226,7 @@ function ProfileForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Email
-                        <span className="text-red-500">*</span>
+                        Email <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Email..." {...field} />
@@ -237,10 +240,7 @@ function ProfileForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Password
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Password..."
@@ -258,14 +258,14 @@ function ProfileForm() {
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => window.history.back()}
+            onClick={() => navigate({ to: "/institutes" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Update Institutes
           </Button>
         </div>
       </form>
@@ -274,6 +274,28 @@ function ProfileForm() {
 }
 
 export default function SettingsProfilePage() {
+  const navigate = useNavigate();
+  const { id } = useParams({ from: "/institutes/edit/$id" });
+  const [formData, setFormData] = useState<any>({});
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(`/api/institutes/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      setFormData(response.data.data);
+    };
+    if (id) {
+      fetchData();
+    }
+    return () => {
+      setFormData({});
+    };
+  }, [id]);
   return (
     <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
       <Button
@@ -285,14 +307,18 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institutes Master</CardTitle>
-        <CardDescription>Add Institute</CardDescription>
+        <CardTitle>Institute Master</CardTitle>
+        <CardDescription>Edit/Update the Institute</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
-          <ProfileForm />
+          <ProfileForm formData={formData} />
         </div>
       </CardContent>
+      {/* <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Deploy</Button>
+      </CardFooter> */}
     </Card>
   );
 }
