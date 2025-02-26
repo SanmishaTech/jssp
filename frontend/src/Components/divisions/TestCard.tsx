@@ -42,7 +42,6 @@ const formSchema = z.object({
   course_id: z.string().nonempty("Course is required"),
   room_id: z.string().nonempty("Room is required"),
   semester_id: z.string().nonempty("Semester Title is required"),
-  semester: z.string().nonempty("Semester is required"),
   division: z.string().nonempty("Division is required"),
 });
 
@@ -52,7 +51,6 @@ const defaultValues: FormValues = {
   course_id: "",
   room_id: "",
   semester_id: "",
-  semester: "",
   division: "",
 };
 
@@ -63,7 +61,7 @@ export default function SettingsProfilePage() {
     mode: "onChange",
   });
 
-  // Retrieve user and token from localStorage.
+  // Retrieve user and token from localStorage
   const user = localStorage.getItem("user");
   const User = user ? JSON.parse(user) : {};
   const token = localStorage.getItem("token");
@@ -140,44 +138,23 @@ export default function SettingsProfilePage() {
   }, [token]);
 
   async function onSubmit(data: FormValues) {
-    // Prepare payloads.
+    // Prepare payload with all required fields
     const payloadDivision = {
       course_id: data.course_id,
-      division: data.division,
-      userId: User?._id,
-    };
-    const payloadRoom = {
-      room_id: data.room_id,
-      userId: User?._id,
-    };
-    const payloadSemester = {
       semester_id: data.semester_id,
-      semester: data.semester,
+      room_id: data.room_id,
+      division: data.division,
       userId: User?._id,
     };
 
     try {
-      await Promise.all([
-        axios.post("/api/divisions", payloadDivision, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        axios.post("/api/rooms", payloadRoom, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-        axios.post("/api/semesters", payloadSemester, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }),
-      ]);
-      toast.success("Division, Room and Semester Created Successfully");
+      await axios.post("/api/divisions", payloadDivision, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Division Created Successfully");
       window.history.back();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
@@ -326,10 +303,11 @@ export default function SettingsProfilePage() {
                             >
                               {field.value
                                 ? rooms.find((room) => {
-                                    const roomId = room.room_id ?? room.id;
-                                    return roomId != null
-                                      ? roomId.toString() === field.value
-                                      : false;
+                                    const roomId =
+                                      room.id != null
+                                        ? room.id.toString()
+                                        : "";
+                                    return roomId === field.value;
                                   })?.room_name || "Select Room..."
                                 : "Select Room..."}
                               <ChevronsUpDown className="opacity-50" />
@@ -346,13 +324,14 @@ export default function SettingsProfilePage() {
                                 </CommandEmpty>
                                 <CommandGroup>
                                   {rooms.map((room) => {
-                                    const roomId = room.room_id ?? room.id;
-                                    const roomIdStr =
-                                      roomId != null ? roomId.toString() : "";
+                                    const roomId =
+                                      room.id != null
+                                        ? room.id.toString()
+                                        : "";
                                     return (
                                       <CommandItem
-                                        key={roomIdStr}
-                                        value={roomIdStr}
+                                        key={roomId}
+                                        value={roomId}
                                         onSelect={(currentValue) => {
                                           field.onChange(
                                             currentValue === field.value
@@ -366,7 +345,7 @@ export default function SettingsProfilePage() {
                                         <Check
                                           className={cn(
                                             "ml-auto",
-                                            field.value === roomIdStr
+                                            field.value === roomId
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
@@ -385,7 +364,10 @@ export default function SettingsProfilePage() {
                   );
                 }}
               />
+            </div>
 
+            {/* Row 2: Semester Title */}
+            <div className="flex gap-4">
               {/* Semester Title Field */}
               <FormField
                 control={form.control}
@@ -407,11 +389,12 @@ export default function SettingsProfilePage() {
                               className="w-full justify-between"
                             >
                               {field.value
-                                ? semesters.find((sem) => {
-                                    const semId = sem.semester_id ?? sem.id;
-                                    return semId != null
-                                      ? semId.toString() === field.value
-                                      : false;
+                                ? semesters.find((semester) => {
+                                    const semesterId =
+                                      semester.id != null
+                                        ? semester.id.toString()
+                                        : "";
+                                    return semesterId === field.value;
                                   })?.semester || "Select Semester..."
                                 : "Select Semester..."}
                               <ChevronsUpDown className="opacity-50" />
@@ -427,14 +410,15 @@ export default function SettingsProfilePage() {
                                     : "No semester found."}
                                 </CommandEmpty>
                                 <CommandGroup>
-                                  {semesters.map((sem) => {
-                                    const semId = sem.semester_id ?? sem.id;
-                                    const semIdStr =
-                                      semId != null ? semId.toString() : "";
+                                  {semesters.map((semester) => {
+                                    const semesterId =
+                                      semester.id != null
+                                        ? semester.id.toString()
+                                        : "";
                                     return (
                                       <CommandItem
-                                        key={semIdStr}
-                                        value={semIdStr}
+                                        key={semesterId}
+                                        value={semesterId}
                                         onSelect={(currentValue) => {
                                           field.onChange(
                                             currentValue === field.value
@@ -444,11 +428,11 @@ export default function SettingsProfilePage() {
                                           setOpen(false);
                                         }}
                                       >
-                                        {sem.semester}
+                                        {semester.semester}
                                         <Check
                                           className={cn(
                                             "ml-auto",
-                                            field.value === semIdStr
+                                            field.value === semesterId
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
@@ -469,7 +453,7 @@ export default function SettingsProfilePage() {
               />
             </div>
 
-            {/* Division Field (Below the rows) */}
+            {/* Division Field */}
             <FormField
               control={form.control}
               name="division"

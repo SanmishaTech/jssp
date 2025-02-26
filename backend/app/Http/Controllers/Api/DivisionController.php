@@ -73,7 +73,7 @@ class DivisionController extends BaseController
         }
 
   
-        return $this->sendResponse([ new DivisionResource($division) ], "Division retrived successfully");
+        return $this->sendResponse([ "Division" => new DivisionResource($division) ], "Division retrived successfully");
     }
 
 

@@ -401,7 +401,7 @@ export function Dashboard({
                                       <Button
                                         onClick={() =>
                                           navigate({
-                                            to: `/institutes/edit/${row?.id}`,
+                                            to: `/divisions/edit/${row?.id}`,
                                           })
                                         }
                                         className="w-full"
