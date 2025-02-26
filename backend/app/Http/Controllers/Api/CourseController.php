@@ -6,6 +6,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CourseRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\CourseResource;
 use App\Http\Controllers\Api\BaseController;
@@ -47,7 +48,7 @@ class CourseController extends BaseController
     }
 
 
-    public function store(Request $request): JsonResponse
+    public function store(CourseRequest $request): JsonResponse
     {
         
         
@@ -59,7 +60,7 @@ class CourseController extends BaseController
         $course->organization = $request->input('organization');
         $course->save();
         
-        return $this->sendResponse([new CourseResource($course)], "Course stored successfully");
+        return $this->sendResponse([ "Courses" => new CourseResource($course)], "Course stored successfully");
     }
 
 
@@ -72,11 +73,11 @@ class CourseController extends BaseController
         }
 
   
-        return $this->sendResponse([ new CourseResource($course) ], "Course retrived successfully");
+        return $this->sendResponse([ "Courses" => new CourseResource($course) ], "Course retrived successfully");
     }
 
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(CourseRequest $request, string $id): JsonResponse
     {
  
         $course = Course::find($id);
@@ -92,7 +93,7 @@ class CourseController extends BaseController
         $course->organization = $request->input('organization');
            $course->save();
        
-        return $this->sendResponse([ new CourseResource($course)], "Course updated successfully");
+        return $this->sendResponse([ "Courses" => new CourseResource($course)], "Course updated successfully");
 
     }
 
