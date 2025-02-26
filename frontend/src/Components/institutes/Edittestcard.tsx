@@ -84,18 +84,39 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
-    // console.log("Sas", data);
-    await axios
-      .put(`/api/institutes/${id}`, data, {
+    try {
+      await axios.put(`/api/institutes/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        toast.success("Institute Master Updated Successfully");
-        navigate({ to: "/institutes" });
       });
+
+      toast.success("Institute Master Updated Successfully");
+      navigate({ to: "/institutes" });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data;
+
+        if (errorData.errors) {
+          // Handle validation errors
+          Object.entries(errorData.errors).forEach(([field, messages]) => {
+            // Set form errors
+            form.setError(field as keyof ProfileFormValues, {
+              message: Array.isArray(messages) ? messages[0] : messages,
+            });
+
+            // Show toast for each validation error
+            toast.error(Array.isArray(messages) ? messages[0] : messages);
+          });
+        } else {
+          // Handle general error message
+          toast.error(errorData.message || "An error occurred");
+        }
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
   }
 
   return (

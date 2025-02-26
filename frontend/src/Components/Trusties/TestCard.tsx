@@ -42,7 +42,7 @@ const profileFormSchema = z.object({
   designation: z.string().optional(),
   contact_mobile: z.string().trim().nonempty("Mobile is Required"),
   address: z.string().trim().nonempty("Address is Required"),
-  profile_name: z.string().trim().nonempty("Profile Name is Required"),
+  name: z.string().trim().nonempty("Name is Required"),
   email: z
     .string()
     .nonempty("Email is required")
@@ -178,14 +178,14 @@ function ProfileForm() {
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="profile_name"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Profile Name <span className="text-red-500">*</span>
+                      Name <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Profile Name..." {...field} />
+                      <Input placeholder="Name..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

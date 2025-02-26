@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Models\Profile;
-use App\Models\Trustee;
-use Illuminate\Http\Request;
+ use App\Models\Trustee;
+use App\Models\Staff;
+ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+ use App\Http\Resources\TrusteeResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Resources\ProfileResource;
-use App\Http\Resources\TrusteeResource;
-use App\Http\Controllers\Api\BaseController;
+use App\Http\Resources\StaffResource;
+ use App\Http\Controllers\Api\BaseController;
 
 class TrusteeController extends BaseController
 {
@@ -46,7 +46,7 @@ class TrusteeController extends BaseController
     {
         $active = 1;
         $user = new User();
-        $user->name = $request->input('profile_name');
+        $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->active = $active;
         $user->password = Hash::make($request->input('password'));
@@ -56,13 +56,13 @@ class TrusteeController extends BaseController
         $user->assignRole($memberRole);
 
            
-        $profiles = new Profile();
-        $profiles->user_id = $user->id;
-        $profiles->profile_name = $request->input('profile_name');
-        $profiles->email = $request->input('email');
-        $profiles->mobile = $request->input('mobile');
+        $staff = new Staff();
+        $staff->user_id = $user->id;
+        $staff->name = $request->input('name');
+        $staff->email = $request->input('email');
+        $staff->mobile = $request->input('mobile');
   
-        $profiles->save();
+        $staff->save();
     
         $trustees = new Trustee();
         $trustees->trustee_name = $request->input('trustee_name');
@@ -107,16 +107,16 @@ class TrusteeController extends BaseController
             return $this->sendError("Trustees not found", ['error' => 'Trustees not found']);
         }
     
-        // Find the related User and Profile
+        // Find the related User and Staff
         $user = User::find($trustees->user_id);
-        $profile = Profile::where('user_id', $trustees->user_id)->first();
+        $staff = Staff::where('user_id', $trustees->user_id)->first();
     
-        if (!$user || !$profile) {
-            return $this->sendError("Associated User or Profile not found", ['error' => 'User or Profile not found']);
+        if (!$user || !$staff) {
+            return $this->sendError("Associated User or Staff not found", ['error' => 'User or Staff not found']);
         }
     
         // Update the User data
-        $user->name = $request->input('profile_name', $user->name);
+        $user->name = $request->input('name', $user->name);
         $user->email = $request->input('email', $user->email);
         
         if ($request->filled('password')) {
@@ -124,11 +124,11 @@ class TrusteeController extends BaseController
         }
         $user->save();
     
-        // Update the Profile data
-        $profile->profile_name = $request->input('profile_name', $profile->profile_name);
-        $profile->email = $request->input('email', $profile->email);
-        $profile->mobile = $request->input('contact_mobile', $profile->mobile);
-        $profile->save();
+        // Update the Staff data
+        $staff->name = $request->input('name', $staff->name);
+        $staff->email = $request->input('email', $staff->email);
+        $staff->mobile = $request->input('contact_mobile', $staff->mobile);
+        $staff->save();
     
         // Update the Institute data
         $trustees->trustee_name = $request->input('trustee_name', $trustees->trustee_name);
@@ -142,9 +142,9 @@ class TrusteeController extends BaseController
             [
                 "Institute" => new TrusteeResource($trustees),
                 "User" => new UserResource($user),
-                "Profile" => new ProfileResource($profile),
+                "Staff" => new StaffResource($staff),
             ],
-            "Institute, User, and Profile Updated Successfully"
+            "Institute, User, and Staff Updated Successfully"
         );
     }
 

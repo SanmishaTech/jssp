@@ -6,14 +6,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class InstituteRequest extends FormRequest
+class TrusteeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -24,9 +24,9 @@ class InstituteRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'institute_name' => [
+            'trustee_name' => [
                 'required',
-                'unique:institutes,institute_name',
+                'unique:trustees,trustee_name',
             ],
             'email' => [
                 'required',
@@ -35,12 +35,9 @@ class InstituteRequest extends FormRequest
             ],
         ];
     
-        // if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-        //     $rules['institute_name'][1] = 'unique:institutes,institute_name,' . $this->route('institutes');
-        //     $rules['email'][2] = 'unique:users,email,' . $this->route('institutes');  
-        // }
+         
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['institute_name'] = ['required'];
+            $rules['trustee_name'] = ['required'];
             $rules['email'] = ['required', 'email'];
         }
     

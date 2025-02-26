@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string("trustee_name")->nullable();
             $table->string("designation")->nullable();
-             $table->string("contact_mobile")->nullable();
+            $table->string("contact_mobile")->nullable();
             $table->string('address')->nullable();
             $table->timestamps();
         });
