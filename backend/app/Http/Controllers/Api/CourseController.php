@@ -108,4 +108,13 @@ class CourseController extends BaseController
          return $this->sendResponse([], "Course deleted successfully");
     }
 
+    public function allCourses(): JsonResponse
+    {
+        $course = Course::all();
+
+        return $this->sendResponse(["Course"=>CourseResource::collection($course),
+        ], "Courses retrived successfully");
+
+    }
+
 }

@@ -18,6 +18,7 @@ class SemesterResource extends JsonResource
             'id' => $this->id,
             'institute_id' => $this->institute_id,
             'course_id' => $this->course_id,
+            'course_name' => $this->course->medium_title,
             'standard' => $this->standard,
             'semester'=> $this->semester,
             'course' => $this->course,

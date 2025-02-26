@@ -24,19 +24,9 @@ export default function Dashboardholiday() {
   const [searchQuery, setSearchQuery] = useState("");
   const token = localStorage.getItem("token");
   const typeofschema = {
-    institute_name: "String",
-    contact_name: "String",
-    contact_mobile: "String",
-    street_address: "String",
-    city: "String",
-    state: "String",
-    country: "String",
-    pincode: "String",
-    area: "String",
-    profile_name: "String",
-    email: "String",
-    password: "String",
-    mobile: "String",
+    course_id: "String",
+    semester: "String",
+    standard: "String",
   };
   useEffect(() => {
     // Initial data fetch
@@ -48,7 +38,7 @@ export default function Dashboardholiday() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/institutes${query ? `?search=${query}` : ""}`,
+        `/api/semesters${query ? `?search=${query}` : ""}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -56,7 +46,7 @@ export default function Dashboardholiday() {
           },
         }
       );
-      setData(response.data.data.Institutes);
+      setData(response.data.data.Semester);
 
       // Update pagination in config
       setConfig((prev) => ({
@@ -86,16 +76,15 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "Institutes" },
       // ],
-      searchPlaceholder: "Search Institutes...",
+      searchPlaceholder: "Search Semesters...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Institutes",
-        description: "Manage Institutes and view their details.",
+        title: "Semesters",
+        description: "Manage Semesters and view their details.",
         headers: [
-          { label: "Institute Name", key: "one" },
-          { label: "Registration Number", key: "two" },
-          { label: "Affiliated University", key: "three" },
-          { label: "Email", key: "four" },
+          { label: "Courses", key: "one" },
+          { label: "Semester", key: "two" },
+          { label: "Standard", key: "three" },
 
           { label: "Action", key: "action" },
         ],
@@ -126,7 +115,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/institutes/add" });
+    navigate({ to: "/semester/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -176,12 +165,11 @@ export default function Dashboardholiday() {
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.institute_name || "Unknown",
-      two: item?.registration_number || "NA",
-      three: item?.affiliated_university || "NA",
-      four: item?.user.email || "NA",
+      one: item?.course_name || "Unknown",
+      two: item?.semester || "NA",
+      three: item?.standard || "NA",
 
-      delete: "/institutes/" + item?.id,
+      delete: "/semesters/" + item?.id,
     };
   });
 
