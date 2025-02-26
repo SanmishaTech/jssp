@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   File,
@@ -8,6 +8,7 @@ import {
   Trash,
   MoreHorizontal,
   ListFilter,
+  X,
 } from "lucide-react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +75,32 @@ import { toast } from "sonner";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
-export default function Dashboard({
+export interface DashboardProps {
+  breadcrumbs?: Array<{ label: string; href?: string }>;
+  searchPlaceholder?: string;
+  userAvatar?: string;
+  tableColumns?: {
+    title?: string;
+    description?: string;
+    headers?: Array<{ label: string; key: string; hiddenOn?: string }>;
+    tabs?: Array<{ label: string; value: string }>;
+    actions?: Array<{ label: string; value: string }>;
+    pagination?: {
+      from: number;
+      to: number;
+      total: number;
+    };
+  };
+  typeofschema?: any;
+  tableData?: any[];
+  onAddProduct?: () => void;
+  onExport?: () => void;
+  onFilterChange?: (value: string) => void;
+  onProductAction?: (action: string, product: any) => void;
+  onSearch?: (query: string) => void;
+}
+
+export function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
   userAvatar = "/placeholder-user.jpg",
@@ -85,7 +111,8 @@ export default function Dashboard({
   onExport = () => {},
   onFilterChange = () => {},
   onProductAction = () => {},
-}) {
+  onSearch = () => {},
+}: DashboardProps) {
   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
   const [editid, setEditid] = useState();
@@ -95,12 +122,32 @@ export default function Dashboard({
   const [open, setOpen] = useState(false);
 
   // State for search term and table data
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [institutes, setInstitutes] = useState(tableData);
 
+  // Handler for search input change - just updates the input value
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  // Handler for search button click
+  const handleSearchClick = () => {
+    onSearch(searchInput);
+  };
+
+  // Handler for clear search
+  const handleClearSearch = () => {
+    setSearchInput("");
+    onSearch("");
+  };
+
+  // Update institutes when tableData prop changes
+  useEffect(() => {
+    setInstitutes(tableData);
+  }, [tableData]);
+
   // Handler to fetch search results
-  const handleSearch = async (query: string) => {
-    setSearch(query);
+  const handleSearchResults = async (query: string) => {
     try {
       const { data: res } = await axios.get("/api/institutes", {
         params: { search: query },
@@ -230,15 +277,41 @@ export default function Dashboard({
                 ))}
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
-                <div className="relative ml-auto flex-1 md:grow-0">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder={searchPlaceholder}
-                    value={search}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-                  />
+                <div className="flex flex-1 items-center space-x-2">
+                  <div className="relative w-full flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder={searchPlaceholder}
+                        value={searchInput}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleSearchClick();
+                          }
+                        }}
+                        className="w-full rounded-lg bg-background pl-8"
+                      />
+                      {searchInput && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                          onClick={handleClearSearch}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <Button 
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleSearchClick}
+                      className="h-9"
+                    >
+                      Search
+                    </Button>
+                  </div>
                 </div>
                 {/* <DropdownMenu>
                   <DropdownMenuTrigger asChild>

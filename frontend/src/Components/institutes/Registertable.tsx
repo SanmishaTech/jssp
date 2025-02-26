@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Dashboard from "./Dashboardreuse";
+import { Dashboard } from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
@@ -12,6 +21,7 @@ export default function Dashboardholiday() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const token = localStorage.getItem("token");
   const typeofschema = {
     institute_name: "String",
@@ -29,25 +39,45 @@ export default function Dashboardholiday() {
     mobile: "String",
   };
   useEffect(() => {
-    // Fetch data from the API
-    axios
-      .get(`/api/institutes`, {
+    // Initial data fetch
+    fetchData();
+  }, [token]); // Only re-run when token changes
+
+  // Separate fetchData function that can be reused
+  const fetchData = async (query: string = '') => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`/api/institutes${query ? `?search=${query}` : ''}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((response) => {
-        setData(response.data.data.Institutes);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setError(err);
-        setLoading(false);
       });
+      setData(response.data.data.Institutes);
+      
+      // Update pagination in config
+      setConfig(prev => ({
+        ...prev,
+        tableColumns: {
+          ...prev?.tableColumns,
+          pagination: {
+            from: response.data.data.Pagination.from || 1,
+            to: response.data.data.Pagination.to || 10,
+            total: response.data.data.Pagination.total || 0,
+          }
+        }
+      }));
+      
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err);
+      setLoading(false);
+    }
+  };
 
-    // Define the dashboard configuration
+  // Define the dashboard configuration
+  useEffect(() => {
     setConfig({
       // breadcrumbs: [
       //   { label: "Dashboard", href: "/dashboard" },
@@ -57,7 +87,7 @@ export default function Dashboardholiday() {
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
         title: "Institutes",
-        description: "Manage Institutes  and view their details.",
+        description: "Manage Institutes and view their details.",
         headers: [
           { label: "Institute Name", key: "one" },
           { label: "Registration Number", key: "two" },
@@ -86,7 +116,7 @@ export default function Dashboardholiday() {
         },
       },
     });
-  }, [User?._id]);
+  }, []);
   const navigate = useNavigate();
 
   // Handlers for actions
@@ -114,6 +144,12 @@ export default function Dashboardholiday() {
     } else if (action === "delete") {
       // Implement delete functionality, possibly with confirmation
     }
+  };
+
+  const handleSearch = async (query: string) => {
+    console.log("Searching for:", query);
+    setSearchQuery(query);
+    await fetchData(query);
   };
 
   if (loading) return <div className="p-4">Loading...</div>;
@@ -158,6 +194,7 @@ export default function Dashboardholiday() {
         onExport={handleExport}
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
+        onSearch={handleSearch}
         // AddItem={AddItem}
         typeofschema={typeofschema}
       />
