@@ -82,8 +82,8 @@ export default function Dashboardholiday() {
         title: "Courses",
         description: "Manage Courses and view their details.",
         headers: [
-          { label: "Medium Code", key: "one" },
-          { label: "Medium Title", key: "two" },
+          { label: "Medium Title", key: "one" },
+          { label: "Medium Code", key: "two" },
           { label: "Organization", key: "three" },
 
           { label: "Action", key: "action" },
@@ -165,8 +165,8 @@ export default function Dashboardholiday() {
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.medium_code || "Unknown",
-      two: item?.medium_title || "NA",
+      one: item?.medium_title || "Unknown",
+      two: item?.medium_code || "NA",
       three: item?.organization || "NA",
 
       delete: "/courses/" + item?.id,

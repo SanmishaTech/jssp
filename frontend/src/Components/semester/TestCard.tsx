@@ -40,7 +40,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@/components/ui/popover";
+} from "../../components/ui/popover";
 import {
   Command,
   CommandInput,
@@ -48,7 +48,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "@/components/ui/command";
+} from "../../components/ui/command";
 
 const profileFormSchema = z.object({
   course_id: z.string().trim().nonempty("Course Title is Required"),
@@ -80,7 +80,12 @@ function ProfileForm() {
   React.useEffect(() => {
     setLoading(true);
     axios
-      .get("/allcourses")
+      .get("/api/all_courses", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         const data = Array.isArray(response.data)
           ? response.data
