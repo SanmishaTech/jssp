@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\RoomRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoomResource;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,7 @@ class RoomController extends BaseController
     }
 
 
-    public function store(Request $request): JsonResponse
+    public function store(RoomRequest $request): JsonResponse
     {
         
         
@@ -59,7 +60,7 @@ class RoomController extends BaseController
         $room->room_name = $request->input('room_name');
         $room->save();
         
-        return $this->sendResponse([new RoomResource($room)], "Room stored successfully");
+        return $this->sendResponse([ "Room" => new RoomResource($room)], "Room stored successfully");
     }
 
 
@@ -72,11 +73,11 @@ class RoomController extends BaseController
         }
 
   
-        return $this->sendResponse([ new RoomResource($room) ], "Room retrived successfully");
+        return $this->sendResponse(["Room" => new RoomResource($room) ], "Room retrived successfully");
     }
 
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(RoomRequest $request, string $id): JsonResponse
     {
  
         $room = Room::find($id);
@@ -91,7 +92,7 @@ class RoomController extends BaseController
         $room->room_name = $request->input('room_name');
            $room->save();
        
-        return $this->sendResponse([ new RoomResource($room)], "Room updated successfully");
+        return $this->sendResponse([ "Room" => new RoomResource($room)], "Room updated successfully");
 
     }
 

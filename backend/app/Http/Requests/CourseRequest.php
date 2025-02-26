@@ -28,13 +28,25 @@ class CourseRequest extends FormRequest
                 'required',
                 'unique:courses,medium_code',
             ],
+            'medium_title' => [
+                'required',
+                'unique:courses,medium_title',
+            ],
             
         ];
     
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['medium_code'] = ['required'];
-         }
+        
+         $rules['medium_code'] = [
+            'required',
+            'unique:courses,medium_code,' .$this->route('course'),
+        ];
+        $rules['medium_title'] = [
+            'required',
+            'unique:courses,medium_title,'.$this->route('course') ,
+        ];
+    }
     
         return $rules;
     }

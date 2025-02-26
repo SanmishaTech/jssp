@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class InstituteRequest extends FormRequest
+class RoomRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,29 +24,31 @@ class InstituteRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'institute_name' => [
+            'room_name' => [
                 'required',
-                'unique:institutes,institute_name',
+                'unique:rooms,room_name',
             ],
-            // 'email' => [
-            //     'required',
-            //     'email',
-            //     'unique:users,email',
-            // ],
+            'room_number' => [
+                'required',
+                'unique:rooms,room_number',
+            ],
+           
         ];
     
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-             $rules['institute_name'] = [
+         
+            $rules['room_name'] = [
                 'required',
-                'unique:institutes,institute_name,' .$this->route('institute'),
+                'unique:rooms,room_name,' .$this->route('room'),
             ];
-            // $rules['email'] = [
-            //     'required',
-            //     'unique:users,email,'.$this->route('user'),
-            // ];
-        }
-    
+            $rules['room_number'] = [
+                'required',
+                'unique:rooms,room_number,'.$this->route('room') ,
+            ];
+        
+         }
+        
         return $rules;
     }
     
