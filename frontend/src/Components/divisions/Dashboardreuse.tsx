@@ -149,7 +149,7 @@ export function Dashboard({
   // Handler to fetch search results
   const handleSearchResults = async (query: string) => {
     try {
-      const { data: res } = await axios.get("/api/institutes", {
+      const { data: res } = await axios.get("/api/divisions", {
         params: { search: query },
         headers: {
           "Content-Type": "application/json",
@@ -286,7 +286,7 @@ export function Dashboard({
                         value={searchInput}
                         onChange={handleSearchInputChange}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             handleSearchClick();
                           }
                         }}
@@ -303,7 +303,7 @@ export function Dashboard({
                         </Button>
                       )}
                     </div>
-                    <Button 
+                    <Button
                       variant="secondary"
                       size="sm"
                       onClick={handleSearchClick}
@@ -340,13 +340,12 @@ export function Dashboard({
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Institutes
+                    Add Division
                   </span>
                 </Button>
               </div>
             </div>
             <TabsContent value="all">
-              {console.log(institutes)}
               <Card className="bg-accent/40">
                 <CardHeader>
                   <CardTitle>{tableColumns.title}</CardTitle>

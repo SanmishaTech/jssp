@@ -1,110 +1,94 @@
-import { Link, Navigate } from "react-router-dom";
+import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "../../components/ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "../../components/ui/command";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
-
 import { Separator } from "@/components/ui/separator";
 
-const profileFormSchema = z.object({
-  institute_name: z.string().trim().nonempty("Institute Name is Required"),
-  registration_number: z
-    .string()
-    .trim()
-    .nonempty("Registration Number is Required"),
-  affiliated_university: z
-    .string()
-    .trim()
-    .nonempty("Affiliated University is Required"),
-  name: z.string().trim().nonempty("Profile Name is Required"),
-  email: z
-    .string()
-    .nonempty("Email is required")
-    .email("Invalid email address"),
-  password: z.string().trim().nonempty("Password is Required"),
+// Updated schema to include only fields used in the form.
+const divisionFormSchema = z.object({
+  course_id: z.string().nonempty("Course is required"),
+  division: z.string().nonempty("Division is required"),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type DivisionFormValues = z.infer<typeof divisionFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {};
+const defaultValues: DivisionFormValues = {
+  course_id: "",
+  division: "",
+};
 
-function ProfileForm() {
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+function DivisionForm() {
+  const form = useForm<DivisionFormValues>({
+    resolver: zodResolver(divisionFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
-  const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
-  //     name: "urls",
-  //     control: form.control,
-  //   });
 
-  async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
+  // Retrieve user and token from localStorage.
+  const user = localStorage.getItem("user");
+  const User = user ? JSON.parse(user) : {};
+  const token = localStorage.getItem("token");
+
+  // State for courses and loading status.
+  const [courses, setCourses] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  async function onSubmit(data: DivisionFormValues) {
+    const payload = { ...data, userId: User?._id };
     try {
-      await axios
-        .post(`/api/institutes`, data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          toast.success("Institute Created Successfully");
-          window.history.back();
-        });
+      await axios.post(`/api/divisions`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Division Created Successfully");
+      window.history.back();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
-
         if (errorData.errors) {
-          // Handle validation errors
           Object.entries(errorData.errors).forEach(([field, messages]) => {
-            // Set form errors
-            form.setError(field as keyof ProfileFormValues, {
+            form.setError(field as keyof DivisionFormValues, {
               message: Array.isArray(messages) ? messages[0] : messages,
             });
-
-            // Show toast for each validation error
             toast.error(Array.isArray(messages) ? messages[0] : messages);
           });
         } else {
-          // Handle general error message
           toast.error(errorData.message || "An error occurred");
         }
       } else {
@@ -113,140 +97,126 @@ function ProfileForm() {
     }
   }
 
+  React.useEffect(() => {
+    setLoading(true);
+    axios
+      .get("/api/all_courses", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const coursesData = response.data.data.Course || [];
+        setCourses(coursesData);
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+        toast.error("Failed to fetch courses");
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        {" "}
         <div className="space-y-6">
-          {/* Institute Information Section */}
           <Card className="max-w-full p-4">
             <CardHeader>
-              <CardTitle>Institute Information</CardTitle>
+              <CardTitle>Division Information</CardTitle>
               <CardDescription>
-                Provide the details of Institute.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormField
-                  className="flex-1"
-                  control={form.control}
-                  name="institute_name"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>
-                        Institute Name
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <Input placeholder="Institute Name..." {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="registration_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Institute's Registration Number
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Registration Number..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="affiliated_university"
-                  render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel>
-                        Affiliated University
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Affiliated University..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Profile Information Section */}
-          <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Profile/Admin Information</CardTitle>
-              <CardDescription>
-                Create the Admin/Principal for this Institute
+                Create the Division for this Institute
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-3">
                 <FormField
                   control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Name
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Profile Name..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  name="course_id"
+                  render={({ field }) => {
+                    const [open, setOpen] = React.useState(false);
+                    return (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="mt-[10px]">
+                          Course Title <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-[250px] justify-between"
+                              >
+                                {field.value
+                                  ? courses.find(
+                                      (course: any) =>
+                                        course.id.toString() === field.value
+                                    )?.medium_title
+                                  : "Select Course..."}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[300px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search course..." />
+                                <CommandList>
+                                  <CommandEmpty>
+                                    {loading
+                                      ? "Loading courses..."
+                                      : "No course found."}
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {courses.map((course: any) => (
+                                      <CommandItem
+                                        key={course.id}
+                                        value={course.id.toString()}
+                                        onSelect={(currentValue) => {
+                                          field.onChange(
+                                            currentValue === field.value
+                                              ? ""
+                                              : currentValue
+                                          );
+                                          setOpen(false);
+                                        }}
+                                      >
+                                        {course.medium_title}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            field.value === course.id.toString()
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="division"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Email
-                        <span className="text-red-500">*</span>
+                        Division <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Email..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Password
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Password..."
-                          type="password"
-                          {...field}
-                        />
+                        <Input placeholder="Division..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -256,7 +226,7 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex justify-end w-full gap-3">
           <Button
             onClick={() => window.history.back()}
             className="self-center"
@@ -265,7 +235,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Add Division
           </Button>
         </div>
       </form>
@@ -275,7 +245,7 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
       <Button
         onClick={() => window.history.back()}
         className="ml-4 flex gap-2 m-8 mb-4"
@@ -289,8 +259,8 @@ export default function SettingsProfilePage() {
         <CardDescription>Add Institute</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm />
+        <div className="space-y-6">
+          <DivisionForm />
         </div>
       </CardContent>
     </Card>

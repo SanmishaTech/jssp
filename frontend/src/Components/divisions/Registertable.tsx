@@ -48,7 +48,7 @@ export default function Dashboardholiday() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/institutes${query ? `?search=${query}` : ""}`,
+        `/api/divisions${query ? `?search=${query}` : ""}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default function Dashboardholiday() {
           },
         }
       );
-      setData(response.data.data.Institutes);
+      setData(response.data.data.Division);
 
       // Update pagination in config
       setConfig((prev) => ({
@@ -84,18 +84,18 @@ export default function Dashboardholiday() {
     setConfig({
       // breadcrumbs: [
       //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
+      //   { label: "Divisions" },
       // ],
-      searchPlaceholder: "Search Institutes...",
+      searchPlaceholder: "Search Divisions...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Institutes",
-        description: "Manage Institutes and view their details.",
+        title: "Divisions",
+        description: "Manage Divisions and view their details.",
         headers: [
-          { label: "Institute Name", key: "one" },
-          { label: "Registration Number", key: "two" },
-          { label: "Affiliated University", key: "three" },
-          { label: "Email", key: "four" },
+          { label: "Course", key: "one" },
+          { label: "Semester", key: "two" },
+          { label: "Room", key: "three" },
+          { label: "Division", key: "four" },
 
           { label: "Action", key: "action" },
         ],
@@ -126,7 +126,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/institutes/add" });
+    navigate({ to: "/divisions/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -162,26 +162,14 @@ export default function Dashboardholiday() {
 
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data?.map((item) => {
-    const services = item?.services || [];
-    const paidAmount = item?.paymentMode?.paidAmount || 0;
-
-    // Calculate the total service price based on each service's populated details.
-    const totalServicePrice = services.reduce((acc, service) => {
-      const servicePrice = service?.serviceId?.price || 0; // Replace 'price' with the actual field name for service price
-      return acc + servicePrice;
-    }, 0);
-
-    // Calculate balance amount based on total service price and paid amount.
-    const balanceAmount =
-      totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.institute_name || "Unknown",
-      two: item?.registration_number || "NA",
-      three: item?.affiliated_university || "NA",
-      four: item?.user.email || "NA",
+      one: item?.course_name || "Unknown",
+      two: item?.semester_name || "NA",
+      three: item?.room_name || "NA",
+      four: item?.division || "NA",
 
-      delete: "/institutes/" + item?.id,
+      delete: "/divisions/" + item?.id,
     };
   });
 

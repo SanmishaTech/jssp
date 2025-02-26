@@ -17,9 +17,13 @@ class DivisionResource extends JsonResource
         return [
             'id' => $this->id,
             'institute_id' =>$this->institute_id,
+            'institute_name' => $this->institute->institute_name,
             'courses_id' => $this -> course_id,
+            'course_name' => $this -> course->medium_title,
             'semester_id' => $this -> semester_id,
+            'semester_name'=> $this -> semester->semester,
             'room_id' => $this -> room_id,
+            'room_name' => isset($this->room) ? $this->room->room_name : null,
             'division' => $this -> division,
              
             
