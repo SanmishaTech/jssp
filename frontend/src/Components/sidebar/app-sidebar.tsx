@@ -45,7 +45,7 @@ const roleBasedItems = {
         },
         {
           title: "Division",
-          url: "/division",
+          url: "/divisions",
           icon: BookText,
         },
         {

@@ -28,11 +28,7 @@ class InstituteRequest extends FormRequest
                 'required',
                 'unique:institutes,institute_name',
             ],
-            // 'email' => [
-            //     'required',
-            //     'email',
-            //     'unique:users,email',
-            // ],
+            
         ];
     
        
@@ -41,10 +37,7 @@ class InstituteRequest extends FormRequest
                 'required',
                 'unique:institutes,institute_name,' .$this->route('institute'),
             ];
-            // $rules['email'] = [
-            //     'required',
-            //     'unique:users,email,'.$this->route('user'),
-            // ];
+            
         }
     
         return $rules;

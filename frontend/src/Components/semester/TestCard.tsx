@@ -151,7 +151,7 @@ function ProfileForm() {
             </CardHeader>
             <CardContent>
               {/* Course Combobox Field */}
-              <div className="mb-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <FormField
                   control={form.control}
                   name="course_id"
@@ -225,10 +225,8 @@ function ProfileForm() {
                     );
                   }}
                 />
-              </div>
 
-              {/* Semester and Standard Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Semester and Standard Fields */}
                 <FormField
                   control={form.control}
                   name="semester"
