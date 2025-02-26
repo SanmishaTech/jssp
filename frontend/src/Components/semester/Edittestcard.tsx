@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "../../components/ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "../../components/ui/command";
 import {
   Form,
   FormControl,
@@ -39,44 +53,35 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_name: z.string().trim().nonempty("Institute Name is Required"),
-  registration_number: z
-    .string()
-    .trim()
-    .nonempty("Registration Number is Required"),
-  affiliated_university: z
-    .string()
-    .trim()
-    .nonempty("Affiliated University is Required"),
-  name: z.string().trim().nonempty("Profile Name is Required"),
-  email: z
-    .string()
-    .nonempty("Email is required")
-    .email("Invalid email address"),
-  password: z.string().optional(),
+  course_id: z.any().optional(),
+  standard: z.string().trim().nonempty("Standard is Required"),
+  semester: z.string().trim().nonempty("Semester is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
-
 function ProfileForm({ formData }) {
-  console.log("This is formData", formData);
   const defaultValues: Partial<ProfileFormValues> = formData;
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/institutes/edit/$id" });
-  console.log("id", id);
+  const { id } = useParams({ from: "/semester/edit/$id" });
 
   const { reset } = form;
 
-  // Reset form values when formData changes
+  // Reset form values when formData changes.
+  // (Remove or adjust the following if name/email are not used in your schema.)
   useEffect(() => {
-    formData.name = formData?.user?.name;
-    formData.email = formData?.user?.email;
+    if (formData?.user) {
+      formData.name = formData.user.name;
+      formData.email = formData.user.email;
+    }
     reset(formData);
   }, [formData, reset]);
 
@@ -85,15 +90,15 @@ function ProfileForm({ formData }) {
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/institutes/${id}`, data, {
+      await axios.put(`/api/semesters/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Institute Master Updated Successfully");
-      navigate({ to: "/institutes" });
+      toast.success("Semester Master Updated Successfully");
+      navigate({ to: "/semester" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -101,16 +106,12 @@ function ProfileForm({ formData }) {
         if (errorData.errors) {
           // Handle validation errors
           Object.entries(errorData.errors).forEach(([field, messages]) => {
-            // Set form errors
             form.setError(field as keyof ProfileFormValues, {
               message: Array.isArray(messages) ? messages[0] : messages,
             });
-
-            // Show toast for each validation error
             toast.error(Array.isArray(messages) ? messages[0] : messages);
           });
         } else {
-          // Handle general error message
           toast.error(errorData.message || "An error occurred");
         }
       } else {
@@ -119,117 +120,132 @@ function ProfileForm({ formData }) {
     }
   }
 
+  // Fetch courses from the API.
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("/api/all_courses", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        // Extract courses from the API response.
+        const coursesData = response.data.data.Course || [];
+        setCourses(coursesData);
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+        toast.error("Failed to fetch courses");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        {" "}
         <div className="space-y-6">
-          {/* Institute Information Section */}
+          {/* Semester Information Section */}
           <Card className="max-w-full p-4">
             <CardHeader>
-              <CardTitle>Institute Information</CardTitle>
+              <CardTitle>Semester Information</CardTitle>
               <CardDescription>
-                Provide the details of Institute.
+                Create the Semester for this Institute
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormField
-                  className="flex-1"
-                  control={form.control}
-                  name="institute_name"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>
-                        Institute Name <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <Input placeholder="Institute Name..." {...field} />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="registration_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Institute's Registration Number{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Registration Number..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="affiliated_university"
-                  render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel>
-                        Affiliated University{" "}
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Affiliated University..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Profile Information Section */}
-          <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Profile/Admin Information</CardTitle>
-              <CardDescription>
-                Create the Admin/Principal for this Institute
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              {/* Course Combobox Field */}
               <div className="mb-3">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="course_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Name <span className="text-red-500">*</span>
+                        Course Title <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Profile Name..." {...field} />
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-[200px] justify-between"
+                            >
+                              {field.value
+                                ? courses.find(
+                                    (course) =>
+                                      course.id.toString() === field.value
+                                  )?.medium_title ||
+                                  formData.course_name ||
+                                  "Select Course..."
+                                : "Select Course..."}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandInput placeholder="Search course..." />
+                              <CommandList>
+                                <CommandEmpty>
+                                  {loading
+                                    ? "Loading courses..."
+                                    : "No course found."}
+                                </CommandEmpty>
+                                <CommandGroup>
+                                  {courses.map((course) => (
+                                    <CommandItem
+                                      key={course.id}
+                                      value={course.id.toString()}
+                                      onSelect={(currentValue) => {
+                                        field.onChange(
+                                          currentValue === field.value
+                                            ? ""
+                                            : currentValue
+                                        );
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      {course.medium_title}
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          field.value === course.id.toString()
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
+              {/* Semester and Standard Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="semester"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Email <span className="text-red-500">*</span>
+                        Semester <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Email..." {...field} />
+                        <Input placeholder="Semester..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -237,16 +253,14 @@ function ProfileForm({ formData }) {
                 />
                 <FormField
                   control={form.control}
-                  name="password"
+                  name="standard"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>
+                        Standard <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Password..."
-                          type="password"
-                          {...field}
-                        />
+                        <Input placeholder="Standard..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -258,14 +272,14 @@ function ProfileForm({ formData }) {
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => navigate({ to: "/institutes" })}
+            onClick={() => navigate({ to: "/semester" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Institutes
+            Update Semester
           </Button>
         </div>
       </form>
@@ -275,19 +289,19 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/institutes/edit/$id" });
+  const { id } = useParams({ from: "/semester/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/institutes/${id}`, {
+      const response = await axios.get(`/api/semesters/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
-      setFormData(response.data.data);
+      setFormData(response.data.data.Semester);
     };
     if (id) {
       fetchData();
@@ -296,6 +310,7 @@ export default function SettingsProfilePage() {
       setFormData({});
     };
   }, [id]);
+
   return (
     <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
       <Button

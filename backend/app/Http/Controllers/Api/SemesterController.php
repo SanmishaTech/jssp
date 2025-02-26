@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
  use App\Http\Resources\SemesterResource;
+use App\Http\Requests\SemesterRequest;
 use App\Http\Controllers\Api\BaseController;
 
 class SemesterController extends BaseController
@@ -47,7 +48,7 @@ class SemesterController extends BaseController
     }
 
 
-    public function store(Request $request): JsonResponse
+    public function store(SemesterRequest $request): JsonResponse
     {
         // Create a new staff record and assign the institute_id from the logged-in admin
         $semester = new Semester();
@@ -70,11 +71,11 @@ class SemesterController extends BaseController
         }
 
   
-        return $this->sendResponse([ new SemesterResource($semester) ], "Semester retrived successfully");
+        return $this->sendResponse([ "Semester" => new SemesterResource($semester) ], "Semester retrived successfully");
     }
 
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(SemesterRequest $request, string $id): JsonResponse
     {
  
         $semester = Semester::find($id);

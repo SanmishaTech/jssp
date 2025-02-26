@@ -76,7 +76,7 @@ export default function Dashboardholiday() {
       //   { label: "Dashboard", href: "/dashboard" },
       //   { label: "Institutes" },
       // ],
-      searchPlaceholder: "Search Semesters...",
+      searchPlaceholder: "Search by Semesters...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
         title: "Semesters",

@@ -87,15 +87,15 @@ function ProfileForm() {
         },
       })
       .then((response) => {
-        const data = Array.isArray(response.data)
-          ? response.data
-          : response.data.courses || [];
-        setCourses(data);
+        // Update this line to extract courses from the API response.
+        const coursesData = response.data.data.Course || [];
+        setCourses(coursesData);
       })
       .catch((error) => {
         console.error("Error fetching courses:", error);
         toast.error("Failed to fetch courses");
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   async function onSubmit(data: ProfileFormValues) {
@@ -173,8 +173,9 @@ function ProfileForm() {
                               >
                                 {field.value
                                   ? courses.find(
-                                      (course) => course._id === field.value
-                                    )?.title
+                                      (course) =>
+                                        course.id.toString() === field.value
+                                    )?.medium_title
                                   : "Select Course..."}
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
@@ -191,8 +192,8 @@ function ProfileForm() {
                                   <CommandGroup>
                                     {courses.map((course) => (
                                       <CommandItem
-                                        key={course._id}
-                                        value={course._id}
+                                        key={course.id}
+                                        value={course.id.toString()}
                                         onSelect={(currentValue) => {
                                           field.onChange(
                                             currentValue === field.value
@@ -202,11 +203,11 @@ function ProfileForm() {
                                           setOpen(false);
                                         }}
                                       >
-                                        {course.title}
+                                        {course.medium_title}
                                         <Check
                                           className={cn(
                                             "ml-auto",
-                                            field.value === course._id
+                                            field.value === course.id.toString()
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
