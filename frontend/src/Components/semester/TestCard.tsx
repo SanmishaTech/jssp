@@ -158,8 +158,8 @@ function ProfileForm() {
                   render={({ field }) => {
                     const [open, setOpen] = React.useState(false);
                     return (
-                      <FormItem>
-                        <FormLabel>
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="mt-[10px]">
                           Course Title <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -169,7 +169,7 @@ function ProfileForm() {
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={open}
-                                className="w-[200px] justify-between"
+                                className="w-[250px] justify-between "
                               >
                                 {field.value
                                   ? courses.find(
@@ -180,7 +180,7 @@ function ProfileForm() {
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[200px] p-0">
+                            <PopoverContent className="w-[300px] p-0">
                               <Command>
                                 <CommandInput placeholder="Search course..." />
                                 <CommandList>
