@@ -16,12 +16,10 @@ class InstituteResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $user = new UserResource(User::find($this->user_id));
         return [
             "id" => $this->id,
-            
-            'institute_name' => $this->institute ? $this->institute->institute_name : null,
+            'institute_name' => $this->institute_name,
             "registration_number" => $this->registration_number,
             "affiliated_university" => $this->affiliated_university,
             'created_at' => $this->created_at,

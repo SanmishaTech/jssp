@@ -105,6 +105,7 @@ export interface DashboardProps {
   onFilterChange?: (value: string) => void;
   onProductAction?: (action: string, product: any) => void;
   onSearch?: (query: string) => void;
+  onRowClick?: (row: any) => void;
 }
 
 export function Dashboard({
@@ -119,6 +120,7 @@ export function Dashboard({
   onFilterChange = () => {},
   onProductAction = () => {},
   onSearch = () => {},
+  onRowClick = () => {},
 }: DashboardProps) {
   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
@@ -133,8 +135,9 @@ export function Dashboard({
   const [institutes, setInstitutes] = useState(tableData);
 
   // New state for managing the dialog
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedInstitute, setSelectedInstitute] = useState("");
+  // const [dialogOpen, setDialogOpen] = useState(false);
+  // const [selectedInstitute, setSelectedInstitute] = useState("");
+  const role = localStorage.getItem("role");
 
   // Handler for search input change - just updates the input value
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,12 +210,6 @@ export function Dashboard({
     localStorage.removeItem("user");
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
-  };
-
-  // Handler for row click to show dialog with institute name
-  const handleRowClick = (row: any) => {
-    setSelectedInstitute(row.one); // assuming the institute name is under the key "one"
-    setDialogOpen(true);
   };
 
   return (
@@ -330,12 +327,14 @@ export function Dashboard({
                     </Button>
                   </div>
                 </div>
-                <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Complaints
-                  </span>
-                </Button>
+                {role !== "superadmin" && (
+                  <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Add Complaints
+                    </span>
+                  </Button>
+                )}
               </div>
             </div>
             <TabsContent value="all">
@@ -362,7 +361,7 @@ export function Dashboard({
                       {institutes?.map((row) => (
                         <React.Fragment key={row.id}>
                           <TableRow
-                            onClick={() => handleRowClick(row)}
+                            onClick={() => onRowClick(row)}
                             className="cursor-pointer"
                           >
                             {tableColumns?.headers?.map((header, index) => (
@@ -447,21 +446,6 @@ export function Dashboard({
           </Tabs>
         </main>
       </div>
-
-      {/* Dialog to show institute name when a row is clicked */}
-      {dialogOpen && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Institute Name</DialogTitle>
-            </DialogHeader>
-            <div className="p-4">{selectedInstitute}</div>
-            <DialogFooter>
-              <Button onClick={() => setDialogOpen(false)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }

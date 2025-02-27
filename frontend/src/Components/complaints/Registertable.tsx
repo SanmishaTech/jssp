@@ -38,6 +38,18 @@ export default function Dashboardholiday() {
     organization: "String",
   };
 
+  // Function to format date to dd-mm-yyyy
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "NA";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // Return original string if invalid date
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).replace(/\//g, '-');
+  };
+
   // State for managing the dialog with selected complaint details
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
@@ -60,7 +72,9 @@ export default function Dashboardholiday() {
           },
         }
       );
-      setData(response.data.data.Complaint);
+      console.log("API Response:", response.data.data.Complaint);
+      const complaints = response.data.data.Complaint;
+      setData(complaints);
 
       // Update pagination in config
       setConfig((prev) => ({
@@ -150,8 +164,15 @@ export default function Dashboardholiday() {
 
   // This handler is triggered when a row is clicked.
   const handleRowClick = (rowData) => {
-    // Set the selected complaint to the entire rowData object
-    setSelectedComplaint(rowData);
+    console.log("Row clicked:", rowData);
+    // Store the original data structure
+    setSelectedComplaint({
+      institute_name: rowData.one,
+      complaint_date: rowData.two,
+      complainant_name: rowData.three,
+      nature_of_complaint: rowData.four,
+      description: rowData.description
+    });
     setShowDialog(true);
   };
 
@@ -161,20 +182,12 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format.
-  // Now including a "description" field.
   const mappedTableData = data?.map((item) => {
-    const services = item?.services || [];
-    const paidAmount = item?.paymentMode?.paidAmount || 0;
-    const totalServicePrice = services.reduce((acc, service) => {
-      const servicePrice = service?.serviceId?.price || 0;
-      return acc + servicePrice;
-    }, 0);
-    const balanceAmount =
-      totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
+    console.log("Mapping item:", item);
     return {
       id: item?.id,
       one: item?.institute_name || "Unknown",
-      two: item?.complaint_date || "NA",
+      two: formatDate(item?.complaint_date) || "NA",
       three: item?.complainant_name || "NA",
       four: item?.nature_of_complaint || "NA",
       description: item?.description || "No description available",
@@ -195,7 +208,6 @@ export default function Dashboardholiday() {
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
         onSearch={handleSearch}
-        // Pass the row click handler to your Dashboard component
         onRowClick={handleRowClick}
         typeofschema={typeofschema}
       />
@@ -203,13 +215,33 @@ export default function Dashboardholiday() {
       {/* Dialog that appears when a row is clicked */}
       {showDialog && selectedComplaint && (
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
-          <DialogContent>
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{selectedComplaint.one}</DialogTitle>
+              <DialogTitle>Complaint Details</DialogTitle>
             </DialogHeader>
-            <div className="p-4">
-              <p className="font-semibold">Description:</p>
-              <p>{selectedComplaint.description}</p>
+            <div className="p-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="font-semibold text-gray-600">Institute Name:</p>
+                  <p className="text-lg">{selectedComplaint.institute_name}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-600">Complaint Date:</p>
+                  <p className="text-lg">{selectedComplaint.complaint_date}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-600">Complainant Name:</p>
+                  <p className="text-lg">{selectedComplaint.complainant_name}</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-600">Nature of Complaint:</p>
+                  <p className="text-lg">{selectedComplaint.nature_of_complaint}</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="font-semibold text-gray-600">Description:</p>
+                <p className="text-lg whitespace-pre-wrap">{selectedComplaint.description}</p>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={() => setShowDialog(false)}>Close</Button>

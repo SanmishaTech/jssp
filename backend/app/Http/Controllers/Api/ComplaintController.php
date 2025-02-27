@@ -14,10 +14,16 @@ class ComplaintController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-        // Check if the user is a superadmin
-        
-            $query = Complaint::query();
-        
+        // Initialize the query builder
+        $query = Complaint::query();
+
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Filter complaints based on user's role and institute_id
+        if ($user->role === 'member' || $user->role === 'admin') {
+            $query->where('institute_id', $user->staff->institute_id);
+        }
     
         // If there's a search term, apply additional filtering.
         if ($request->query('search')) {
