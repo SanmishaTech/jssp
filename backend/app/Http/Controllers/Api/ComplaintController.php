@@ -14,40 +14,38 @@ class ComplaintController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $instituteId = Auth::user()->staff->institute_id;
-    
-        // Start the query by filtering staff based on the institute_id.
-        $query = Complaint::where('institute_id', $instituteId);
+        // Check if the user is a superadmin
+        
+            $query = Complaint::query();
+        
     
         // If there's a search term, apply additional filtering.
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('institute_id', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('complainant_name', 'like', '%'.$searchTerm.'%');
+                    ->orWhere('complainant_name', 'like', '%' . $searchTerm . '%');
              });
         }
     
-
-      
         // Paginate the results.
         $complaint = $query->paginate(15);
     
-        // Return the paginated response with staff resources.
+        // Return the paginated response with complaint resources.
         return $this->sendResponse(
             [
-                "Complaint" => ComplaintResource::collection( $complaint),
+                "Complaint" => ComplaintResource::collection($complaint),
                 'Pagination' => [
-                    'current_page' =>  $complaint->currentPage(),
-                    'last_page'    =>  $complaint->lastPage(),
-                    'per_page'     =>  $complaint->perPage(),
-                    'total'        =>  $complaint->total(),
+                    'current_page' => $complaint->currentPage(),
+                    'last_page'    => $complaint->lastPage(),
+                    'per_page'     => $complaint->perPage(),
+                    'total'        => $complaint->total(),
                 ]
             ],
             "Complaint retrieved successfully"
         );
     }
+    
 
 
     public function store(Request $request): JsonResponse

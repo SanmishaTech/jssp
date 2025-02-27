@@ -17,7 +17,7 @@ class ComplaintResource extends JsonResource
         return [
             'id' => $this->id,
             'institute_id' => $this->institute_id,
-            'institute_name' => $this->institute->institute_name,
+            'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'complaint_date' => $this->complaint_date,
             'complainant_name' => $this -> complainant_name,
             'nature_of_complaint' => $this -> nature_of_complaint,

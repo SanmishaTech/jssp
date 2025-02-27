@@ -14,6 +14,15 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+// Import dialog components (assuming these exist in your UI library)
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
@@ -28,6 +37,11 @@ export default function Dashboardholiday() {
     medium_title: "String",
     organization: "String",
   };
+
+  // State for managing the dialog with selected complaint details
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+
   useEffect(() => {
     // Initial data fetch
     fetchData();
@@ -86,18 +100,8 @@ export default function Dashboardholiday() {
           { label: "Complaint Date", key: "two" },
           { label: "Complainant Name", key: "three" },
           { label: "Nature Of Complaint", key: "four" },
-
           { label: "Action", key: "action" },
         ],
-        // tabs: [
-        //   { label: "All", value: "all" },
-        //   { label: "Active", value: "active" },
-        //   { label: "Completed", value: "completed" },
-        // ],
-        // filters: [
-        //   { label: "Active", value: "active", checked: true },
-        //   { label: "Completed", value: "completed", checked: false },
-        // ],
         actions: [
           { label: "Edit", value: "edit" },
           { label: "Delete", value: "delete" },
@@ -110,14 +114,13 @@ export default function Dashboardholiday() {
       },
     });
   }, []);
+
   const navigate = useNavigate();
 
   // Handlers for actions
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
-    console.log("AS");
     navigate({ to: "/complaints/add" });
-    // For example, navigate to an add registration page or open a modal
   };
 
   const handleExport = () => {
@@ -127,7 +130,7 @@ export default function Dashboardholiday() {
 
   const handleFilterChange = (filterValue) => {
     console.log(`Filter changed: ${filterValue}`);
-    // You can implement filtering logic here, possibly refetching data with filters applied
+    // Implement filtering logic here, possibly refetching data with filters applied
   };
 
   const handleProductAction = (action, product) => {
@@ -145,23 +148,27 @@ export default function Dashboardholiday() {
     await fetchData(query);
   };
 
+  // This handler is triggered when a row is clicked.
+  const handleRowClick = (rowData) => {
+    // Set the selected complaint to the entire rowData object
+    setSelectedComplaint(rowData);
+    setShowDialog(true);
+  };
+
   if (loading) return <div className="p-4">Loading...</div>;
   if (error)
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
-  // Map the API data to match the Dashboard component's expected tableData format
+  // Map the API data to match the Dashboard component's expected tableData format.
+  // Now including a "description" field.
   const mappedTableData = data?.map((item) => {
     const services = item?.services || [];
     const paidAmount = item?.paymentMode?.paidAmount || 0;
-
-    // Calculate the total service price based on each service's populated details.
     const totalServicePrice = services.reduce((acc, service) => {
-      const servicePrice = service?.serviceId?.price || 0; // Replace 'price' with the actual field name for service price
+      const servicePrice = service?.serviceId?.price || 0;
       return acc + servicePrice;
     }, 0);
-
-    // Calculate balance amount based on total service price and paid amount.
     const balanceAmount =
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
@@ -170,7 +177,7 @@ export default function Dashboardholiday() {
       two: item?.complaint_date || "NA",
       three: item?.complainant_name || "NA",
       four: item?.nature_of_complaint || "NA",
-
+      description: item?.description || "No description available",
       delete: "/complaints/" + item?.id,
     };
   });
@@ -188,9 +195,28 @@ export default function Dashboardholiday() {
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
         onSearch={handleSearch}
-        // AddItem={AddItem}
+        // Pass the row click handler to your Dashboard component
+        onRowClick={handleRowClick}
         typeofschema={typeofschema}
       />
+
+      {/* Dialog that appears when a row is clicked */}
+      {showDialog && selectedComplaint && (
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{selectedComplaint.one}</DialogTitle>
+            </DialogHeader>
+            <div className="p-4">
+              <p className="font-semibold">Description:</p>
+              <p>{selectedComplaint.description}</p>
+            </div>
+            <DialogFooter>
+              <Button onClick={() => setShowDialog(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

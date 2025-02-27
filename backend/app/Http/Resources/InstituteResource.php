@@ -21,7 +21,7 @@ class InstituteResource extends JsonResource
         return [
             "id" => $this->id,
             
-            "institute_name" =>$this->institute_name,
+            'institute_name' => $this->institute ? $this->institute->institute_name : null,
             "registration_number" => $this->registration_number,
             "affiliated_university" => $this->affiliated_university,
             'created_at' => $this->created_at,

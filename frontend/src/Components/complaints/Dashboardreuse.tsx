@@ -34,7 +34,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
 import {
   Card,
   CardContent,
@@ -71,6 +70,14 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import Edititem from "./Edittestcard";
 import { toast } from "sonner";
+// Import Dialog components from your UI library
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
@@ -124,6 +131,10 @@ export function Dashboard({
   // State for search term and table data
   const [searchInput, setSearchInput] = useState("");
   const [institutes, setInstitutes] = useState(tableData);
+
+  // New state for managing the dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedInstitute, setSelectedInstitute] = useState("");
 
   // Handler for search input change - just updates the input value
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +207,12 @@ export function Dashboard({
     localStorage.removeItem("user");
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
+  };
+
+  // Handler for row click to show dialog with institute name
+  const handleRowClick = (row: any) => {
+    setSelectedInstitute(row.one); // assuming the institute name is under the key "one"
+    setDialogOpen(true);
   };
 
   return (
@@ -313,30 +330,6 @@ export function Dashboard({
                     </Button>
                   </div>
                 </div>
-                {/* <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                      <ListFilter className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {tableColumns?.filters?.map((filter, index) => (
-                      <DropdownMenuCheckboxItem
-                        key={index}
-                        checked={filter.checked}
-                        onCheckedChange={() => onFilterChange(filter.value)}
-                      >
-                        {filter.label}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
-
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -368,7 +361,10 @@ export function Dashboard({
                     <TableBody>
                       {institutes?.map((row) => (
                         <React.Fragment key={row.id}>
-                          <TableRow>
+                          <TableRow
+                            onClick={() => handleRowClick(row)}
+                            className="cursor-pointer"
+                          >
                             {tableColumns?.headers?.map((header, index) => (
                               <TableCell
                                 key={index}
@@ -380,7 +376,11 @@ export function Dashboard({
                                   row.one
                                 ) : header.key === "action" ? (
                                   <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
+                                    <DropdownMenuTrigger
+                                      asChild
+                                      // Prevent the row click when clicking the actions button
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
                                       <Button
                                         variant="ghost"
                                         className="h-8 w-8 p-0"
@@ -447,6 +447,21 @@ export function Dashboard({
           </Tabs>
         </main>
       </div>
+
+      {/* Dialog to show institute name when a row is clicked */}
+      {dialogOpen && (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Institute Name</DialogTitle>
+            </DialogHeader>
+            <div className="p-4">{selectedInstitute}</div>
+            <DialogFooter>
+              <Button onClick={() => setDialogOpen(false)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
