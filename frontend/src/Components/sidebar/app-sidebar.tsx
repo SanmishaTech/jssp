@@ -43,7 +43,7 @@ const roleBasedItems = {
           url: "/semester",
           icon: BookText,
         },
-        
+
         {
           title: "Room Number",
           url: "/rooms",
@@ -76,6 +76,11 @@ const roleBasedItems = {
     {
       title: "Institutes",
       url: "/institutes",
+      icon: Building,
+    },
+    {
+      title: "Inventory",
+      url: "/inventory",
       icon: Building,
     },
     {

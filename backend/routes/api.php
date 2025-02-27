@@ -34,7 +34,7 @@ Route::post('/login', [UserController::class, 'login']);
 Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], function(){
    
    Route::resource('institutes', InstituteController::class);
-   Route::get('/all_institute', [InstituteController::class, 'allInstitute'])->name("institute.all");
+   Route::get('/all_institute', [InstituteController::class, 'allInstitutes'])->name("institutes.all");
    Route::resource('trustees', TrusteeController::class);
 
    Route::resource('staff', StaffController::class);  

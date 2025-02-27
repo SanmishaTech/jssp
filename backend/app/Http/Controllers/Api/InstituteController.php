@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Models\Staff;
- use App\Models\Institute;
- use Illuminate\Http\Request;
+use App\Models\Institute;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\InstituteResource;
 use Illuminate\Support\Facades\Auth;
- use App\Http\Resources\InstituteResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
 use App\Http\Requests\InstituteRequest;
@@ -207,12 +207,14 @@ class InstituteController extends BaseController
    
 
 
- public function allInstitutes(string $id): JsonResponse
+ public function allInstitutes(): JsonResponse
  {
-    $institutes = Institute::all();
+    $institute = Institute::all();
 
-    return $this->sendResponse(["Institutes"=>InstitutesResource::collection($institutes),], "Institutes retrieved successfully");
+    return $this->sendResponse(["Institutes"=>InstituteResource::collection($institute),], "Institutes retrieved successfully");
 
  }
+
+ 
 
 }
