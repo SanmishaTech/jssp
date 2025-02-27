@@ -30,6 +30,11 @@ const roleBasedItems = {
       icon: Users,
     },
     {
+      title: "Complaints",
+      url: "/complaints",
+      icon: Users,
+    },
+    {
       title: "Academic Information",
       icon: Calendar,
       children: [
