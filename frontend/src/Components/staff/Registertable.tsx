@@ -139,7 +139,9 @@ export default function Dashboardholiday() {
 
     return {
       id: item?.id,
-      one: capital(item?.staff_name || "NA"),
+      one: item?.role?.toLowerCase() === "admin" && (item?.staff_name === "NA" || !item?.staff_name) 
+        ? "Admin"
+        : capital(item?.staff_name || "NA"),
       two: capital(item?.email || "NA"),
       three: capital(item?.is_teaching === "0" ? "Yes" : "No"),
       four: capital(item?.role || "Unknown"),
