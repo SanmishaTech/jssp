@@ -278,7 +278,7 @@ function ProfileForm() {
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Remarks..." {...field} />
+                        <Textarea placeholder="Enter Remarks..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

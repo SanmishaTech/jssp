@@ -24,10 +24,13 @@ class ComplaintController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('complainant_name', 'like', '%' . $searchTerm . '%');
-            });
+                $query->where('institute_id', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('complainant_name', 'like', '%'.$searchTerm.'%');
+             });
         }
     
+
+      
         // Paginate the results.
         $complaint = $query->paginate(15);
     
