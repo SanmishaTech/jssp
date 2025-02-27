@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\DivisionController;
 use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\ComplaintController;
 use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
 use App\Http\Controllers\Api\InstituteController;
@@ -51,6 +52,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_rooms', [RoomController::class, 'allRooms'])->name("rooms.all");
 
    Route::resource('inventory', InventoryController::class);
+
+   Route::resource('complaints', ComplaintController::class);
+   Route::get('/all_complaints', [ComplaintController::class, 'allComplaints'])->name("complaints.all");
 
 });
 
