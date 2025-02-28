@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
  use App\Http\Resources\TrusteeResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\TrusteeRequest;
 use App\Http\Resources\StaffResource;
  use App\Http\Controllers\Api\BaseController;
 
@@ -42,7 +43,7 @@ class TrusteeController extends BaseController
         
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(TrusteeRequest $request): JsonResponse
     {
         $active = 1;
         $user = new User();
@@ -97,7 +98,7 @@ class TrusteeController extends BaseController
 
 
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(TrusteeRequest $request, string $id): JsonResponse
     {
          $trustees = Trustee::find($id);
     

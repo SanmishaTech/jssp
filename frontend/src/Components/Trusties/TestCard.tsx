@@ -71,18 +71,37 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
-    await axios
-      .post(`/api/trustees`, data, {
+    try {
+      await axios.post(`/api/trustees`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        toast.success("Trustee Master Created Successfully");
-        window.history.back();
       });
+  
+      toast.success("Trustee Master Created Successfully");
+      window.history.back();
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { errors } = error.response.data; // Extract validation errors
+  
+        // Loop through backend errors and set them in the form
+        Object.keys(errors).forEach((key) => {
+          form.setError(key as keyof ProfileFormValues, {
+            type: "server",
+            message: errors[key][0], // First error message from array
+          });
+  
+          // Show each error as a separate toast notification
+          toast.error(errors[key][0]);
+        });
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }
   }
+  
+  
 
   return (
     <Form {...form}>

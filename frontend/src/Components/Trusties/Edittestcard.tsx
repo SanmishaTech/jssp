@@ -77,18 +77,36 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
-    await axios
-      .put(`/api/trustees/${id}`, data, {
+    try {
+      await axios.put(`/api/trustees/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        toast.success("Trustees Master Updated Successfully");
-        navigate({ to: "/trusties" });
       });
+  
+      toast.success("Trustees Master Updated Successfully");
+      navigate({ to: "/trusties" });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { errors } = error.response.data; // Extract validation errors
+  
+        // Loop through backend errors and set them in the form
+        Object.keys(errors).forEach((key) => {
+          form.setError(key as keyof ProfileFormValues, {
+            type: "server",
+            message: errors[key][0], // First error message from array
+          });
+  
+          // Show each error as a separate toast notification
+          toast.error(errors[key][0]);
+        });
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }
   }
+  
 
   return (
     <Form {...form}>

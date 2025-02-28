@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Models\Institute;
 
 class InstituteRequest extends FormRequest
 {
@@ -28,16 +29,31 @@ class InstituteRequest extends FormRequest
                 'required',
                 'unique:institutes,institute_name',
             ],
-            
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email'
+            ],
+            'name' => ['required'],
+            'password' => $this->isMethod('POST') ? ['required'] : ['nullable'],
         ];
     
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-             $rules['institute_name'] = [
-                'required',
-                'unique:institutes,institute_name,' .$this->route('institute'),
+            $institute = Institute::find($this->route('institute'));
+            $rules = [
+                'institute_name' => [
+                    'required',
+                    'unique:institutes,institute_name,' . $this->route('institute'),
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:users,email,' . $institute->user_id
+                ],
+                'name' => ['required'],
+                'password' => ['nullable'],
             ];
-            
         }
     
         return $rules;

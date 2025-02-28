@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Trustee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -13,7 +14,7 @@ class TrusteeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -31,14 +32,25 @@ class TrusteeRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                'unique:users,email',
+                'unique:users,email'
             ],
-        ];
+         ];
     
          
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['trustee_name'] = ['required'];
-            $rules['email'] = ['required', 'email'];
+            $trustee = Trustee::find($this->route('trustee'));
+            $rules = [
+                'trustee_name' => [
+                    'required',
+                    'unique:trustees,trustee_name,' . $this->route('trustee'),
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:users,email,' . $trustee->user_id
+                ],
+              
+            ];
         }
     
         return $rules;
