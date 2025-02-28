@@ -1,6 +1,8 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
- 
+import store from "./Components/Redux/sessionSlice";
+import { Provider } from "react-redux";
+
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -37,8 +39,10 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+       <Provider store={store}>
+          <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" />
+        </Provider>
 
       </QueryClientProvider>
     </StrictMode>
