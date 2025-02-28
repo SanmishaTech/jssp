@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CommiteeeRequest;
 use App\Http\Resources\CommitteeResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Api\CommitteeController;
@@ -51,7 +52,7 @@ class CommitteeController extends BaseController
 
     
  
-    public function store(Request $request): JsonResponse
+    public function store(CommiteeeRequest $request): JsonResponse
     {
         $staff = $request->input('staff');
         if (!$staff) {
@@ -108,7 +109,7 @@ class CommitteeController extends BaseController
     }
  
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(CommiteeeRequest $request, string $id): JsonResponse
     {
         // Find the committee by ID
         $committee = Commitees::find($id);

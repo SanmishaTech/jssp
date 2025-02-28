@@ -182,6 +182,15 @@ export default function CommitteeForm() {
       window.history.back();
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        const apiErrors = error.response?.data?.errors;
+        if (apiErrors) {
+          // Loop through each field error and apply it to the form.
+          Object.keys(apiErrors).forEach((fieldName) => {
+            form.setError(fieldName as keyof CommitteeFormValues, {
+              message: apiErrors[fieldName][0],
+            });
+          });
+        }
         toast.error(
           error.response?.data?.message || "Error creating committee"
         );
