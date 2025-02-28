@@ -76,18 +76,41 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
-    await axios
-      .put(`/api/staff/${id}`, data, {
+    try {
+      await axios.put(`/api/staff/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((res) => {
-        toast.success("Staff Updated Successfully");
-        navigate({ to: "/staff" });
       });
+  
+      toast.success("Staff Updated Successfully");
+      navigate({ to: "/staff" });
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response) {
+        const { errors, message } = error.response.data; // Extract validation errors
+  
+        if (errors) {
+          // Loop through backend validation errors and set them in the form
+          Object.keys(errors).forEach((key) => {
+            form.setError(key as keyof ProfileFormValues, {
+              type: "server",
+              message: errors[key][0], // First error message from array
+            });
+  
+            // Show each validation error as a separate toast notification
+            toast.error(errors[key][0]);
+          });
+        } else {
+          // If no specific validation errors, show a generic message
+          toast.error(message || "Something went wrong, please try again.");
+        }
+      } else {
+        toast.error("Something went wrong, please try again.");
+      }
+    }
   }
+  
 
   return (
     <Form {...form}>

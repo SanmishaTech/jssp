@@ -7,6 +7,7 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
+use App\Http\Requests\StaffRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -52,7 +53,7 @@ public function index(Request $request): JsonResponse
 }
 
 
-    public function store(Request $request): JsonResponse
+    public function store(StaffRequest $request): JsonResponse
     {
         // Create a new user
         $active = 1;
@@ -102,7 +103,7 @@ public function index(Request $request): JsonResponse
     /**
      * Update Staff.
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(StaffRequest $request, string $id): JsonResponse
     {
  
         $staff = Staff::find($id);

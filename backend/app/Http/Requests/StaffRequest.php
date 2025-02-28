@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Staff;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -26,18 +27,28 @@ class StaffRequest extends FormRequest
         $rules = [
             'staff_name' => [
                 'required',
-                'unique:staffs,staff_name',
+                'unique:staff,staff_name',
             ],
             'email' => [
                 'required',
                 'email',
-                'unique:staffs,email',
+                'unique:users,email'
             ],
-        ];
+         ];
     
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['staff_name'][1] = 'unique:staffs,staff_name,' . $this->route('staff');
-            $rules['email'][2] = 'unique:staffs,email,' . $this->route('staff');  
+            $staff = Staff::find($this->route('staff'));
+            $rules = [
+                'staff_name' => [
+                    'required',
+                    'unique:staff,staff_name,' . $this->route('staff'),
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:users,email,' . $staff->user_id
+                ],
+             ];
         }
     
         return $rules;
@@ -53,5 +64,4 @@ class StaffRequest extends FormRequest
             ], 422)
         );
     }
-    
 }

@@ -80,16 +80,34 @@ function ProfileForm() {
           Authorization: `Bearer ${token}`,
         },
       });
+  
       toast.success("Staff Master Created Successfully");
       window.history.back();
     } catch (error: any) {
-      // Extract error message from response if available, else default to a generic error message.
-      const errorMsg =
-        error?.response?.data?.message ||
-        "Something went wrong, please try again.";
-      toast.error(errorMsg);
+      if (axios.isAxiosError(error) && error.response) {
+        const { errors, message } = error.response.data; // Extract validation errors
+  
+        if (errors) {
+          // Loop through backend validation errors and set them in the form
+          Object.keys(errors).forEach((key) => {
+            form.setError(key as keyof ProfileFormValues, {
+              type: "server",
+              message: errors[key][0], // First error message from array
+            });
+  
+            // Show each validation error as a separate toast notification
+            toast.error(errors[key][0]);
+          });
+        } else {
+          // If no specific validation errors, show a generic message
+          toast.error(message || "Something went wrong, please try again.");
+        }
+      } else {
+        toast.error("Something went wrong, please try again.");
+      }
     }
   }
+  
 
   return (
     <Form {...form}>
