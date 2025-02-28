@@ -118,10 +118,15 @@ class ComplaintController extends BaseController
 
     public function allComplaints(): JsonResponse
     {
-         $complaint = Complaint::all();
-
-        return $this->sendResponse(["Complaint"=>ComplaintResource::collection( $complaint),
-        ], "Complaints retrived successfully");
-
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $complaint = Complaint::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Complaint" => ComplaintResource::collection($complaint)],
+            "Complaint retrieved successfully"
+        );
     }
 }

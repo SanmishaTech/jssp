@@ -106,4 +106,18 @@ class RoomController extends BaseController
          $room->delete();
          return $this->sendResponse([], "Room deleted successfully");
     }
+
+    public function allRooms(): JsonResponse
+    {
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $room = Room::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Room" => RoomResource::collection($room)],
+            "Room retrieved successfully"
+        );
+    }
 }

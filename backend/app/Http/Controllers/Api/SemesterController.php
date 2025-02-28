@@ -106,4 +106,18 @@ class SemesterController extends BaseController
          $semester->delete();
          return $this->sendResponse([], "Semester deleted successfully");
     }
+
+    public function allSemesters(): JsonResponse
+    {
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $semester = Semester::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Semester" => SemesterResource::collection($semester)],
+            "Semester retrieved successfully"
+        );
+    }
 }

@@ -170,14 +170,22 @@ class CommitteeController extends BaseController
         $committee->delete();
         return $this->sendResponse([], "Commitees deleted successfully");
     }
+
+
+
  
-    public function allCommitees(): JsonResponse
+     public function allCommitees(): JsonResponse
     {
-        $committee = Commitees::all();
-
-        return $this->sendResponse(["Commitees"=>CommitteeResource::collection($committee),
-        ], "Commitees retrieved successfully");
-
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $committee = Commitees::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Commitee" => CommitteeResource::collection($committee)],
+            "Commitees retrieved successfully"
+        );
     }
 
  

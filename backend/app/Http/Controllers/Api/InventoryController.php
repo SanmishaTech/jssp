@@ -115,4 +115,6 @@ class InventoryController extends BaseController
 
     return $this->sendResponse([], "Inventory Deleted Successfully");
 }
+
+ 
 }

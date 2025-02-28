@@ -108,4 +108,19 @@ class DivisionController extends BaseController
          $division->delete();
          return $this->sendResponse([], "Division deleted successfully");
     }
+
+
+    public function allDivisions(): JsonResponse
+    {
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $division = Division::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Division" => DivisionResource::collection($division)],
+            "Division retrieved successfully"
+        );
+    }
 }
