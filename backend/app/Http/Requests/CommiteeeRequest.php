@@ -29,10 +29,7 @@ class CommiteeeRequest extends FormRequest
                 'required',
                 'unique:commitees,commitee_name',
             ],
-            // 'designation' => [
-            //     'required',
-            //     'unique:commitee_staff,designation' ,
-            // ],
+            
         ];
     
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
@@ -40,10 +37,7 @@ class CommiteeeRequest extends FormRequest
                 'required',
                 'unique:commitees,commitee_name,' . $this->route('committee'),
              ];
-            //  $rules['designation'] = [
-            //     'required',
-            //     'unique:commitee_staff,designation,' . $this->route('committee'),
-            //  ];
+            
         }
     
         return $rules;

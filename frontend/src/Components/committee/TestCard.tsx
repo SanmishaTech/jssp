@@ -172,33 +172,41 @@ export default function CommitteeForm() {
   async function onSubmit(data: CommitteeFormValues) {
     try {
       const token = localStorage.getItem("token");
+  
       await axios.post("/api/committee", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+  
       toast.success("Committee created successfully");
       window.history.back();
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const apiErrors = error.response?.data?.errors;
-        if (apiErrors) {
-          // Loop through each field error and apply it to the form.
-          Object.keys(apiErrors).forEach((fieldName) => {
-            form.setError(fieldName as keyof CommitteeFormValues, {
-              message: apiErrors[fieldName][0],
+      if (axios.isAxiosError(error) && error.response) {
+        const { errors, message } = error.response.data; // Extract validation errors
+  
+        if (errors) {
+          // Loop through backend validation errors and set them in the form
+          Object.keys(errors).forEach((key) => {
+            form.setError(key as keyof CommitteeFormValues, {
+              type: "server",
+              message: errors[key][0], // First error message from array
             });
+  
+            // Show each validation error as a separate toast notification
+            toast.error(errors[key][0]);
           });
+        } else {
+          // If no specific validation errors, show a generic message
+          toast.error(message || "Error creating committee");
         }
-        toast.error(
-          error.response?.data?.message || "Error creating committee"
-        );
       } else {
         toast.error("Error creating committee");
       }
     }
   }
+  
 
   return (
     <div className="mx-auto p-6">

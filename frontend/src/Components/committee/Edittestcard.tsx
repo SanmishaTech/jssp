@@ -153,26 +153,35 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
           Authorization: `Bearer ${token}`,
         },
       });
+  
       toast.success("Committee Updated Successfully");
       navigate({ to: "/committee" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
-        const errorData = error.response.data;
-        if (errorData.errors) {
-          Object.entries(errorData.errors).forEach(([field, messages]) => {
+        const { errors, message } = error.response.data; // Extract errors
+  
+        if (errors) {
+          Object.entries(errors).forEach(([field, messages]) => {
+            const errorMessage = Array.isArray(messages) ? messages[0] : messages;
+  
+            // Set form validation error
             form.setError(field as keyof ProfileFormValues, {
-              message: Array.isArray(messages) ? messages[0] : messages,
+              type: "server",
+              message: errorMessage,
             });
-            toast.error(Array.isArray(messages) ? messages[0] : messages);
+  
+            // Show toast notification for each error
+            toast.error(errorMessage);
           });
         } else {
-          toast.error(errorData.message || "An error occurred");
+          toast.error(message || "An error occurred while updating the committee.");
         }
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("An unexpected error occurred. Please try again.");
       }
     }
   }
+  
 
   // Fetch staff options from the API (similar to the add form)
   useEffect(() => {
