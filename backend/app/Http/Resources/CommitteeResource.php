@@ -14,6 +14,16 @@ class CommitteeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'commitee_name' => $this->commitee_name,
+            'institute_id'  => $this->institute_id,
+            'staff'         => $this->commiteeStaff->map(function ($staff) {
+                return [
+                    'staff_id'    => $staff->staff_id,
+                    'designation' => $staff->designation,
+                ];
+            })->toArray(),
+        ];
     }
 }
