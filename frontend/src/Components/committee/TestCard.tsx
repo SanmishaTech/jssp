@@ -32,7 +32,20 @@ import {
   TableCell,
   TableFooter,
 } from "@/components/ui/table";
-import { X, ChevronLeft } from "lucide-react";
+import { X, ChevronLeft, ChevronsUpDown, Check } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
 
 // Schema for committee form with staff array
 const committeeSchema = z.object({
@@ -49,12 +62,72 @@ const committeeSchema = z.object({
 
 type CommitteeFormValues = z.infer<typeof committeeSchema>;
 
+interface StaffOption {
+  value: string;
+  label: string;
+}
+
+// Popover component to select a staff option
+function StaffIdPopover({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: StaffOption[];
+}) {
+  const [open, setOpen] = React.useState(false);
+  const selectedOption = options.find((option) => option.value === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {selectedOption ? selectedOption.label : "Select Staff..."}
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search staff..." className="h-9" />
+          <CommandList>
+            {options.length === 0 && (
+              <CommandEmpty>No staff found.</CommandEmpty>
+            )}
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  {option.label}
+                  {value === option.value && <Check className="ml-auto" />}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export default function CommitteeForm() {
   const navigate = useNavigate();
   const form = useForm<CommitteeFormValues>({
     resolver: zodResolver(committeeSchema),
     defaultValues: {
-      committee_name: "",
+      commitee_name: "",
       staff: [{ staff_id: "", designation: "" }],
     },
   });
@@ -63,6 +136,38 @@ export default function CommitteeForm() {
     control: form.control,
     name: "staff",
   });
+
+  // State to hold fetched staff options
+  const [staffOptions, setStaffOptions] = React.useState<StaffOption[]>([]);
+
+  // Fetch staff from the API when the component mounts
+  React.useEffect(() => {
+    async function fetchStaff() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/all_staff", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        // Debug: log the response to verify its structure
+        console.log("Staff API response:", response.data.data.Staff);
+        // Adjust this line based on your actual API response structure:
+        const fetchedStaff =
+          response.data.data?.Staff || response.data.Staff || [];
+        const options = fetchedStaff.map((staff: any) => ({
+          value: staff.id.toString(),
+          // Use staff name or designation as needed
+          label: staff.staff_name || "Admin",
+        }));
+        setStaffOptions(options);
+      } catch (error) {
+        toast.error("Failed to fetch staff");
+      }
+    }
+    fetchStaff();
+  }, []);
 
   async function onSubmit(data: CommitteeFormValues) {
     try {
@@ -131,7 +236,7 @@ export default function CommitteeForm() {
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Staff ID</TableHead>
+                      <TableHead>Staff</TableHead>
                       <TableHead>Designation</TableHead>
                       <TableHead className="text-right">Action</TableHead>
                     </TableRow>
@@ -145,7 +250,11 @@ export default function CommitteeForm() {
                             name={`staff.${index}.staff_id`}
                             render={({ field }) => (
                               <FormControl>
-                                <Input placeholder="Staff ID" {...field} />
+                                <StaffIdPopover
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  options={staffOptions}
+                                />
                               </FormControl>
                             )}
                           />

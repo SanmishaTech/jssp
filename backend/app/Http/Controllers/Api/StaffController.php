@@ -148,6 +148,21 @@ public function index(Request $request): JsonResponse
         return $this->sendResponse([], "Staff deleted successfully");
     }
 
+
+    public function allStaff(): JsonResponse
+    {
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Filter staff based on the institute_id.
+        $staff = Staff::where('institute_id', $instituteId)->get();
+    
+        return $this->sendResponse(
+            ["Staff" => StaffResource::collection($staff)],
+            "Staff retrieved successfully"
+        );
+    }
+    
     
     
 

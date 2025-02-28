@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react";
-// import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
+import { MoveLeft, ChevronsUpDown, Check, X } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,7 +16,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "../../components/ui/popover";
+} from "@/components/ui/popover";
 import {
   Command,
   CommandInput,
@@ -27,11 +24,10 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
-} from "../../components/ui/command";
+} from "@/components/ui/command";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,49 +35,110 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+  Table,
+  TableCaption,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableFooter,
+} from "@/components/ui/table";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
-import { Separator } from "@/components/ui/separator";
 
+// Define a type for staff options
+interface StaffOption {
+  value: string;
+  label: string;
+}
+
+// Staff selection popover component
+function StaffIdPopover({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: StaffOption[];
+}) {
+  const [open, setOpen] = useState(false);
+  const selectedOption = options.find((option) => option.value === value);
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {selectedOption ? selectedOption.label : "Select Staff..."}
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search staff..." className="h-9" />
+          <CommandList>
+            {options.length === 0 && (
+              <CommandEmpty>No staff found.</CommandEmpty>
+            )}
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  {option.label}
+                  {value === option.value && <Check className="ml-auto" />}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// Updated schema to match committee editing (name and staff members)
 const profileFormSchema = z.object({
-  course_id: z.any().optional(),
-  standard: z.string().trim().nonempty("Standard is Required"),
-  semester: z.string().trim().nonempty("Semester is Required"),
+  commitee_name: z.string().trim().nonempty("Committee Name is required"),
+  staff: z
+    .array(
+      z.object({
+        staff_id: z.string().trim().nonempty("Staff ID is required"),
+        designation: z.string().trim().nonempty("Designation is required"),
+      })
+    )
+    .min(1, "At least one staff member is required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-function ProfileForm({ formData }) {
+function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   const defaultValues: Partial<ProfileFormValues> = formData;
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState([]);
+  const [staffOptions, setStaffOptions] = useState<StaffOption[]>([]);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/semester/edit/$id" });
-
-  const { reset } = form;
+  const { id } = useParams({ from: "/committee/edit/$id" });
+  const { reset, control } = form;
 
   // Reset form values when formData changes.
-  // (Remove or adjust the following if name/email are not used in your schema.)
   useEffect(() => {
-    if (formData?.user) {
-      formData.name = formData.user.name;
-      formData.email = formData.user.email;
-    }
     reset(formData);
   }, [formData, reset]);
 
@@ -90,21 +147,18 @@ function ProfileForm({ formData }) {
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/semesters/${id}`, data, {
+      await axios.put(`/api/committee/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-
-      toast.success("Semester Master Updated Successfully");
-      navigate({ to: "/semester" });
+      toast.success("Committee Updated Successfully");
+      navigate({ to: "/committee" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
-
         if (errorData.errors) {
-          // Handle validation errors
           Object.entries(errorData.errors).forEach(([field, messages]) => {
             form.setError(field as keyof ProfileFormValues, {
               message: Array.isArray(messages) ? messages[0] : messages,
@@ -120,188 +174,181 @@ function ProfileForm({ formData }) {
     }
   }
 
-  // Fetch courses from the API.
+  // Fetch staff options from the API (similar to the add form)
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/all_courses", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        // Extract courses from the API response.
-        const coursesData = response.data.data.Course || [];
-        setCourses(coursesData);
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error);
-        toast.error("Failed to fetch courses");
-      })
-      .finally(() => setLoading(false));
+    async function fetchStaff() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/all_staff", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const fetchedStaff =
+          response.data.data?.Staff || response.data.Staff || [];
+        const options = fetchedStaff.map((staff: any) => ({
+          value: staff.id.toString(),
+          label: staff.staff_name || "Admin",
+        }));
+        setStaffOptions(options);
+      } catch (error) {
+        toast.error("Failed to fetch staff");
+      }
+    }
+    fetchStaff();
   }, []);
+
+  useEffect(() => {
+    if (formData && Array.isArray(formData.staff)) {
+      const normalizedData = {
+        ...formData,
+        staff: formData.staff.map((member) => ({
+          ...member,
+          staff_id: String(member.staff_id),
+        })),
+      };
+      console.log("Normalized formData:", normalizedData);
+      reset(normalizedData);
+    } else {
+      reset(formData);
+    }
+  }, [formData, reset]);
+
+  // Use useFieldArray for staff members
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "staff",
+  });
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 pb-[2rem]"
-      >
-        <div className="space-y-6">
-          {/* Semester Information Section */}
-          <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Semester Information</CardTitle>
-              <CardDescription>
-                Create the Semester for this Institute
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {/* Course Combobox Field */}
-              <div className="mb-3">
-                <FormField
-                  control={form.control}
-                  name="course_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Course Title <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Popover open={open} onOpenChange={setOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={open}
-                              className="w-[200px] justify-between"
-                            >
-                              {field.value
-                                ? courses.find(
-                                    (course) =>
-                                      course.id.toString() === field.value
-                                  )?.medium_title ||
-                                  formData.course_name ||
-                                  "Select Course..."
-                                : "Select Course..."}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search course..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  {loading
-                                    ? "Loading courses..."
-                                    : "No course found."}
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {courses.map((course) => (
-                                    <CommandItem
-                                      key={course.id}
-                                      value={course.id.toString()}
-                                      onSelect={(currentValue) => {
-                                        field.onChange(
-                                          currentValue === field.value
-                                            ? ""
-                                            : currentValue
-                                        );
-                                        setOpen(false);
-                                      }}
-                                    >
-                                      {course.medium_title}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          field.value === course.id.toString()
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-8">
+        <Card className="max-w-full p-4">
+          <CardHeader>
+            <CardTitle>Edit Committee</CardTitle>
+            <CardDescription>Edit/Update the Committee details</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FormField
+              control={form.control}
+              name="commitee_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Committee Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter committee name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              {/* Semester and Standard Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="semester"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Semester <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Semester..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="standard"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Standard <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Standard..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="flex justify-end w-full gap-3 ">
-          <Button
-            onClick={() => navigate({ to: "/semester" })}
-            className="self-center"
-            type="button"
-          >
+            {/* Staff Members Table */}
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-2">Staff Members</h3>
+              <Table>
+                <TableCaption>
+                  Enter details for each staff member.
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Staff</TableHead>
+                    <TableHead>Designation</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {fields.map((field, index) => (
+                    <TableRow key={field.id}>
+                      <TableCell>
+                        <FormField
+                          control={form.control}
+                          name={`staff.${index}.staff_id`}
+                          render={({ field }) => (
+                            <FormControl>
+                              <StaffIdPopover
+                                value={field.value}
+                                onChange={field.onChange}
+                                options={staffOptions}
+                              />
+                            </FormControl>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <FormField
+                          control={form.control}
+                          name={`staff.${index}.designation`}
+                          render={({ field }) => (
+                            <FormControl>
+                              <Input placeholder="Designation" {...field} />
+                            </FormControl>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          type="button"
+                          onClick={() => remove(index)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={3}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                          append({ staff_id: "", designation: "" })
+                        }
+                      >
+                        Add Staff Member
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+        <div className="flex justify-end w-full gap-3">
+          <Button onClick={() => navigate({ to: "/committee" })} type="button">
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
-            Update Semester
-          </Button>
+          <Button type="submit">Update Committee</Button>
         </div>
       </form>
     </Form>
   );
 }
 
-export default function SettingsProfilePage() {
+export default function EditCommitteePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/semester/edit/$id" });
+  const { id } = useParams({ from: "/committee/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/semesters/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setFormData(response.data.data.Semester);
+      try {
+        const response = await axios.get(`/api/committee/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        // Assuming the API returns a single committee in "Committee"
+        setFormData(response.data.data.Committee);
+      } catch (error) {
+        toast.error("Failed to fetch committee data");
+      }
     };
     if (id) {
       fetchData();
@@ -312,28 +359,23 @@ export default function SettingsProfilePage() {
   }, [id]);
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
       <Button
         onClick={() => window.history.back()}
         className="ml-4 flex gap-2 m-8 mb-4"
       >
-        <MoveLeft className="w-5 text-white" />
+        <MoveLeft className="w-5" />
         Back
       </Button>
-
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Edit Committee</CardTitle>
+        <CardDescription>Edit/Update the Committee</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 ">
+        <div className="space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }
