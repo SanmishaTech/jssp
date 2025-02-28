@@ -18,6 +18,7 @@ class CommitteeResource extends JsonResource
             'id' => $this->id,
             'commitee_name' => $this->commitee_name,
             'institute_id'  => $this->institute_id,
+            'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'staff'         => $this->commiteeStaff->map(function ($staff) {
                 return [
                     'staff_id'    => $staff->staff_id,

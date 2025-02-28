@@ -63,7 +63,7 @@ const roleBasedItems = {
     },
     {
       title: "Committees",
-      url: "#",
+      url: "/committee",
       icon: BookText,
     },
     {

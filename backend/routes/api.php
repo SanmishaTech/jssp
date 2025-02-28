@@ -58,6 +58,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_complaints', [ComplaintController::class, 'allComplaints'])->name("complaints.all");
 
    Route::resource('committee', CommitteeController::class);
+   Route::get('/all_committee', [CommitteeController::class, 'allCommitees'])->name("committees.all");
+
 
 });
 

@@ -20,29 +20,34 @@ class CommitteeController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $user = new UserResource(Auth::user()->load('staff'));
-        // dd($user);
-        $query = Commitees::query();
-
-        if($request->query('search')){
+    
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+    
+        // Start the query by filtering committees based on the institute_id.
+        $query = Commitees::where('institute_id', $instituteId);
+    
+        if ($request->query('search')) {
             $searchTerm = $request->query('search');
-
-            $query->where(function($query) use ($searchTerm){
-                $query->where('committees_name', 'like', '%' . $searchTerm . '%');
+    
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('commitee_name', 'like', '%' . $searchTerm . '%');
             });
         }
-
-        $commitee = $query->orderBy("id", "DESC")->paginate(5);
-
-        return $this->sendResponse(["Commitees"=>CommitteeResource::collection($commitee),
-        'Pagination' => [
-            'current_page' => $commitee->currentPage(),
-            'last_page'=> $commitee->lastPage(),
-            'per_page'=> $commitee->perPage(),
-            'total'=> $commitee->total(),
-        ]], "Commitees retrived successfully");
-
-        
+    
+        $commitees = $query->orderBy("id", "DESC")->paginate(5);
+    
+        return $this->sendResponse([
+            "Commitees" => CommitteeResource::collection($commitees),
+            'Pagination' => [
+                'current_page' => $commitees->currentPage(),
+                'last_page' => $commitees->lastPage(),
+                'per_page' => $commitees->perPage(),
+                'total' => $commitees->total(),
+            ]
+        ], "Commitees retrieved successfully");
     }
+    
 
     
  
