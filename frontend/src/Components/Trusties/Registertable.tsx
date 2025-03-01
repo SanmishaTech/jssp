@@ -139,7 +139,7 @@ export default function Dashboardholiday() {
       id: item?.id,
       one: item?.trustee_name || "Unknown",
       two: item?.designation || "NA",
-      three: item?.email || "NA",
+      three: item?.user.email || "NA",
       four: item?.contact_mobile || "NA",
       five: item?.address || "NA",
       delete: "/trustees/" + item?.id,
