@@ -250,21 +250,25 @@ function ProfileForm({ formData }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
-                  name="purchase_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Purchase Date
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+  control={form.control}
+  name="purchase_date"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>
+        Purchase Date
+        <span className="text-red-500">*</span>
+      </FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          max={new Date().toISOString().split("T")[0]} // Restrict future dates
+          {...field}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
                 <FormField
                   control={form.control}
                   name="remarks"
@@ -335,8 +339,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Inventory  Master</CardTitle>
+        <CardDescription>Edit/Update the Inventory </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

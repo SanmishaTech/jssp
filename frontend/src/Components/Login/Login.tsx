@@ -141,7 +141,7 @@ const Login = () => {
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
-            <p className="text-lg text-white font-bold">Welcome To Website</p>
+            <p className="text-lg text-white font-bold">Welcome To JSSP</p>
             <footer className="text-sm text-white">
               JeevanDeep Shaikshanik Sanstha Poi (JSSP)
             </footer>
@@ -163,23 +163,7 @@ const Login = () => {
             defaultValues={defaultValues}
             onSubmit={onSubmit}
           />
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{" "}
-            <Link
-              to="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              to="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
-            </Link>
-            .
-          </p>
+           
         </div>
       </div>
     </div>

@@ -178,33 +178,60 @@ function ProfileForm() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="mobile"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Mobile..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+<FormField
+  control={form.control}
+  name="mobile"
+  rules={{
+    required: "Mobile number is required",
+    pattern: {
+      value: /^[0-9]{10}$/, // Ensures exactly 10 numeric digits
+      message: "Mobile number must be exactly 10 digits and contain only numbers",
+    },
+  }}
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Mobile</FormLabel>
+      <FormControl>
+        <Input
+          type="text"
+          placeholder="Enter 10-digit mobile number"
+          maxLength={10} // Prevents input beyond 10 characters
+          onInput={(e) => {
+            e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-numeric characters
+          }}
+          {...field}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
-                <FormField
-                  control={form.control}
-                  name="date_of_birth"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date of Birth</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
+
+
+<FormField
+  control={form.control}
+  name="date_of_birth"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Date of Birth</FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          max={new Date(
+            new Date().setFullYear(new Date().getFullYear() - 18)
+          )
+            .toISOString()
+            .split("T")[0]} // Users must be 18 or older
+          {...field}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
               </div>
               <FormField
                 control={form.control}

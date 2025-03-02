@@ -192,7 +192,7 @@ function ProfileForm() {
           {/* Profile Information */}
           <Card className="p-4">
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle>Login Information</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField

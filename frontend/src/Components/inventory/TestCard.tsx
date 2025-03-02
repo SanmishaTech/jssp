@@ -252,22 +252,27 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="purchase_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Purchase Date
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+               <FormField
+  control={form.control}
+  name="purchase_date"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>
+        Purchase Date
+        <span className="text-red-500">*</span>
+      </FormLabel>
+      <FormControl>
+        <Input
+          type="date"
+          max={new Date().toISOString().split("T")[0]} // Restrict future dates
+          {...field}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
                 <FormField
                   control={form.control}
                   name="remarks"
@@ -297,7 +302,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Institutes
+            Add Inventory
           </Button>
         </div>
       </form>
