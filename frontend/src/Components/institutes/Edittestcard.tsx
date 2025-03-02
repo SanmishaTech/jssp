@@ -212,7 +212,7 @@ function ProfileForm({ formData }) {
                         Name <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Profile Name..." {...field} />
+                        <Input placeholder="Name..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

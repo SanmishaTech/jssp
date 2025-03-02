@@ -44,7 +44,6 @@ const profileFormSchema = z.object({
   date_of_birth: z.any().optional(),
   address: z.string().nonempty("Address is Required"),
   mobile: z.string().optional(),
-  name: z.string().optional(),
   email: z
     .string()
     .nonempty("Email is required")
@@ -52,7 +51,10 @@ const profileFormSchema = z.object({
   password: z.string().nonempty("Password is required"),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema> & {
+  userId?: string;
+  name?: string;
+};
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {};
@@ -73,6 +75,7 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
+    data.name = data.staff_name;
     try {
       await axios.post(`/api/staff`, data, {
         headers: {
@@ -255,22 +258,6 @@ function ProfileForm() {
               <CardTitle>Profile Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Name
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Profile Name..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="email"

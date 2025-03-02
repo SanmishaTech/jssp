@@ -52,7 +52,9 @@ const profileFormSchema = z.object({
   password: z.any().optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = z.infer<typeof profileFormSchema> & {
+  name?: string;
+};
 
 // This can come from your database or API.
 
@@ -76,6 +78,7 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
+    data.name = data.staff_name; // Set name to staff_name value
     try {
       await axios.put(`/api/staff/${id}`, data, {
         headers: {

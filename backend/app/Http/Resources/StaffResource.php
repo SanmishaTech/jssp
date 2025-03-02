@@ -24,6 +24,7 @@ class StaffResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'name' => $user ? $user->name : null,  // Added name from user table
             'institute_id' => $this->institute_id,
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'role'         => $role,
