@@ -43,7 +43,6 @@ const profileFormSchema = z.object({
   designation: z.string().optional(),
   contact_mobile: z.string().trim().nonempty("Mobile is Required"),
   address: z.string().trim().nonempty("Address is Required"),
-  profile_name: z.string().trim().nonempty("Profile Name is Required"),
   email: z
     .string()
     .nonempty("Email is required")
@@ -68,8 +67,9 @@ function ProfileForm({ formData }) {
 
   // Reset form values when formData changes
   useEffect(() => {
-    formData.profile_name = formData?.user?.name;
-    formData.email = formData?.user?.email;
+    if (formData?.user) {
+      formData.email = formData.user.email;
+    }
     reset(formData);
   }, [formData, reset]);
 
@@ -77,8 +77,17 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
+    const submissionData = {
+      ...data,
+      name: data.trustee_name,
+      user: {
+        name: data.trustee_name,
+        email: data.email,
+        password: data.password
+      }
+    };
     try {
-      await axios.put(`/api/trustees/${id}`, data, {
+      await axios.put(`/api/trustees/${id}`, submissionData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -203,21 +212,6 @@ function ProfileForm({ formData }) {
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="profile_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Profile Name <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Profile Name..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -296,8 +290,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Institute master</CardDescription>
+        <CardTitle>Trustee  Master</CardTitle>
+        <CardDescription>Trustee  master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

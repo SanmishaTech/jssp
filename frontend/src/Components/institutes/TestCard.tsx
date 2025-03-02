@@ -47,7 +47,7 @@ const profileFormSchema = z.object({
     .string()
     .trim()
     .nonempty("Affiliated University is Required"),
-  name: z.string().trim().nonempty("Profile Name is Required"),
+  name: z.string().optional(),
   email: z
     .string()
     .nonempty("Email is required")

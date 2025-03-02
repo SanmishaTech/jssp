@@ -34,9 +34,7 @@ class InstituteRequest extends FormRequest
                 'email',
                 'unique:users,email'
             ],
-            'name' => ['required'],
-            'password' => $this->isMethod('POST') ? ['required'] : ['nullable'],
-        ];
+         ];
     
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
@@ -51,8 +49,7 @@ class InstituteRequest extends FormRequest
                     'email',
                     'unique:users,email,' . $institute->user_id
                 ],
-                'name' => ['required'],
-                'password' => ['nullable'],
+                
             ];
         }
     

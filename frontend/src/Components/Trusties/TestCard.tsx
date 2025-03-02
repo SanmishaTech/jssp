@@ -42,7 +42,6 @@ const profileFormSchema = z.object({
   designation: z.string().optional(),
   contact_mobile: z.string().trim().nonempty("Mobile is Required"),
   address: z.string().trim().nonempty("Address is Required"),
-  name: z.string().trim().nonempty("Name is Required"),
   email: z
     .string()
     .nonempty("Email is required")
@@ -70,9 +69,13 @@ function ProfileForm() {
   //   });
 
   async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
+    const submissionData = {
+      ...data,
+      name: data.trustee_name,
+      userId: User?._id
+    };
     try {
-      await axios.post(`/api/trustees`, data, {
+      await axios.post(`/api/trustees`, submissionData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -195,21 +198,6 @@ function ProfileForm() {
               <CardTitle>Login Information</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Name <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Name..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="email"
