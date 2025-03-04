@@ -233,7 +233,7 @@ export function Dashboard({
             </BreadcrumbList>
           </Breadcrumb>
 
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -276,7 +276,7 @@ export function Dashboard({
                 </AlertDialogContent>
               </AlertDialog>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* Main Content */}
@@ -328,7 +328,11 @@ export function Dashboard({
                   </div>
                 </div>
                 {role !== "superadmin" && (
-                  <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                  <Button
+                    size="sm"
+                    className="h-8 gap-1"
+                    onClick={onAddProduct}
+                  >
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Complaints

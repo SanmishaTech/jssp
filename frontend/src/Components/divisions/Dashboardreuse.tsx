@@ -219,7 +219,7 @@ export function Dashboard({
             </BreadcrumbList>
           </Breadcrumb>
 
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -262,7 +262,7 @@ export function Dashboard({
                 </AlertDialogContent>
               </AlertDialog>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* Main Content */}

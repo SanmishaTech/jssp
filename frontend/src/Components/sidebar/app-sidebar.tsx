@@ -15,13 +15,33 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+// Import AlertDialog components from shadcn
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+// Import DropdownMenu and Button components
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
-// Define role-based menu items with nested Academic Years for admins
 const roleBasedItems = {
   admin: [
     {
@@ -29,7 +49,6 @@ const roleBasedItems = {
       url: "/staff",
       icon: Users,
     },
-
     {
       title: "Academic Information",
       icon: Calendar,
@@ -44,7 +63,6 @@ const roleBasedItems = {
           url: "/semester",
           icon: BookText,
         },
-
         {
           title: "Room Number",
           url: "/rooms",
@@ -114,11 +132,13 @@ const roleBasedItems = {
   ],
 };
 
-export function AppSidebar({ role }) {
+export function AppSidebar({ role, userAvatar }) {
   const items = roleBasedItems[role] || [];
 
   // Manage open state for items with dropdown children
   const [openDropdowns, setOpenDropdowns] = useState({});
+  // State to control the AlertDialog in the logo dropdown
+  const [openLogoAlert, setOpenLogoAlert] = useState(false);
 
   const toggleDropdown = (title) => {
     setOpenDropdowns((prev) => ({
@@ -127,16 +147,61 @@ export function AppSidebar({ role }) {
     }));
   };
 
+  // Logout function – replace with your actual logout logic
+  const handleLogout = () => {
+    console.log("User logged out");
+    // e.g., clear tokens, call signOut(), or redirect to login
+  };
+
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent>
+        {/* Always visible logo container */}
+        <div className="flex items-center p-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center cursor-pointer">
+                <img src={background} alt="Logo" className="w-6 h-6" />
+                {/* Optionally show text on larger screens */}
+                <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
+              </div>
+            </DropdownMenuTrigger>
+            {/* Dropdown content positioned relative to the trigger */}
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {/* Wrap the Logout item in an AlertDialog for confirmation */}
+              <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Logout
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You will be logged out from your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setOpenLogoAlert(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button variant="destructive" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* Sidebar navigation items */}
         <SidebarGroup>
-          <SidebarGroupLabel>
-            <div className="flex items-center">
-              <img src={background} alt="Logo" className="w-6 h-6 mr-2" />
-              <span>JEEVANDEEP</span>
-            </div>
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) =>
@@ -165,7 +230,7 @@ export function AppSidebar({ role }) {
                         </button>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    {/* Conditionally render nested items */}
+                    {/* Render nested items if dropdown is open */}
                     {openDropdowns[item.title] && (
                       <div className="ml-4">
                         {item.children.map((child) => (

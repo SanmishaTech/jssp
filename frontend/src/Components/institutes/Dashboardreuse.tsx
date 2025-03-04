@@ -219,7 +219,7 @@ export function Dashboard({
             </BreadcrumbList>
           </Breadcrumb>
 
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -262,7 +262,7 @@ export function Dashboard({
                 </AlertDialogContent>
               </AlertDialog>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* Main Content */}
@@ -286,7 +286,7 @@ export function Dashboard({
                         value={searchInput}
                         onChange={handleSearchInputChange}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             handleSearchClick();
                           }
                         }}
@@ -303,7 +303,7 @@ export function Dashboard({
                         </Button>
                       )}
                     </div>
-                    <Button 
+                    <Button
                       variant="secondary"
                       size="sm"
                       onClick={handleSearchClick}

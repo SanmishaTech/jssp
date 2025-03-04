@@ -148,7 +148,7 @@ export default function Dashboard({
             </BreadcrumbList>
           </Breadcrumb>
 
-          <DropdownMenu className="justify-items:end">
+          {/* <DropdownMenu className="justify-items:end">
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -192,7 +192,7 @@ export default function Dashboard({
                 </AlertDialogContent>
               </AlertDialog>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* {toggleedit && (
