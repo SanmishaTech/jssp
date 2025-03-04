@@ -19,6 +19,7 @@ import { Route as SemesterIndexImport } from './routes/semester/index'
 import { Route as RootdashboardIndexImport } from './routes/rootdashboard/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as MemberdashboardIndexImport } from './routes/memberdashboard/index'
+import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InventoryIndexImport } from './routes/inventory/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
@@ -30,6 +31,7 @@ import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as StaffAddIndexImport } from './routes/staff/add/index'
 import { Route as SemesterAddIndexImport } from './routes/semester/add/index'
 import { Route as RoomsAddIndexImport } from './routes/rooms/add/index'
+import { Route as MeetingsAddIndexImport } from './routes/meetings/add/index'
 import { Route as InventoryAddIndexImport } from './routes/inventory/add/index'
 import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
 import { Route as DivisionsAddIndexImport } from './routes/divisions/add/index'
@@ -40,6 +42,7 @@ import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
 import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
 import { Route as SemesterEditIdImport } from './routes/semester/edit/$id'
 import { Route as RoomsEditIdImport } from './routes/rooms/edit/$id'
+import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
 import { Route as InventoryEditIdImport } from './routes/inventory/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
 import { Route as DivisionsEditIdImport } from './routes/divisions/edit/$id'
@@ -94,6 +97,12 @@ const RoomsIndexRoute = RoomsIndexImport.update({
 const MemberdashboardIndexRoute = MemberdashboardIndexImport.update({
   id: '/memberdashboard/',
   path: '/memberdashboard/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MeetingsIndexRoute = MeetingsIndexImport.update({
+  id: '/meetings/',
+  path: '/meetings/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -163,6 +172,12 @@ const RoomsAddIndexRoute = RoomsAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const MeetingsAddIndexRoute = MeetingsAddIndexImport.update({
+  id: '/meetings/add/',
+  path: '/meetings/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const InventoryAddIndexRoute = InventoryAddIndexImport.update({
   id: '/inventory/add/',
   path: '/inventory/add/',
@@ -220,6 +235,12 @@ const SemesterEditIdRoute = SemesterEditIdImport.update({
 const RoomsEditIdRoute = RoomsEditIdImport.update({
   id: '/rooms/edit/$id',
   path: '/rooms/edit/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MeetingsEditIdRoute = MeetingsEditIdImport.update({
+  id: '/meetings/edit/$id',
+  path: '/meetings/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -319,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexImport
       parentRoute: typeof rootRoute
     }
+    '/meetings/': {
+      id: '/meetings/'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof MeetingsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/memberdashboard/': {
       id: '/memberdashboard/'
       path: '/memberdashboard'
@@ -410,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventoryEditIdImport
       parentRoute: typeof rootRoute
     }
+    '/meetings/edit/$id': {
+      id: '/meetings/edit/$id'
+      path: '/meetings/edit/$id'
+      fullPath: '/meetings/edit/$id'
+      preLoaderRoute: typeof MeetingsEditIdImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/edit/$id': {
       id: '/rooms/edit/$id'
       path: '/rooms/edit/$id'
@@ -480,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventoryAddIndexImport
       parentRoute: typeof rootRoute
     }
+    '/meetings/add/': {
+      id: '/meetings/add/'
+      path: '/meetings/add'
+      fullPath: '/meetings/add'
+      preLoaderRoute: typeof MeetingsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/add/': {
       id: '/rooms/add/'
       path: '/rooms/add'
@@ -522,6 +564,7 @@ export interface FileRoutesByFullPath {
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
   '/login': typeof LoginIndexRoute
+  '/meetings': typeof MeetingsIndexRoute
   '/memberdashboard': typeof MemberdashboardIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/rootdashboard': typeof RootdashboardIndexRoute
@@ -535,6 +578,7 @@ export interface FileRoutesByFullPath {
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
+  '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -545,6 +589,7 @@ export interface FileRoutesByFullPath {
   '/divisions/add': typeof DivisionsAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
+  '/meetings/add': typeof MeetingsAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
@@ -560,6 +605,7 @@ export interface FileRoutesByTo {
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
   '/login': typeof LoginIndexRoute
+  '/meetings': typeof MeetingsIndexRoute
   '/memberdashboard': typeof MemberdashboardIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/rootdashboard': typeof RootdashboardIndexRoute
@@ -573,6 +619,7 @@ export interface FileRoutesByTo {
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
+  '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -583,6 +630,7 @@ export interface FileRoutesByTo {
   '/divisions/add': typeof DivisionsAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
+  '/meetings/add': typeof MeetingsAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
@@ -599,6 +647,7 @@ export interface FileRoutesById {
   '/institutes/': typeof InstitutesIndexRoute
   '/inventory/': typeof InventoryIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/meetings/': typeof MeetingsIndexRoute
   '/memberdashboard/': typeof MemberdashboardIndexRoute
   '/rooms/': typeof RoomsIndexRoute
   '/rootdashboard/': typeof RootdashboardIndexRoute
@@ -612,6 +661,7 @@ export interface FileRoutesById {
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
+  '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -622,6 +672,7 @@ export interface FileRoutesById {
   '/divisions/add/': typeof DivisionsAddIndexRoute
   '/institutes/add/': typeof InstitutesAddIndexRoute
   '/inventory/add/': typeof InventoryAddIndexRoute
+  '/meetings/add/': typeof MeetingsAddIndexRoute
   '/rooms/add/': typeof RoomsAddIndexRoute
   '/semester/add/': typeof SemesterAddIndexRoute
   '/staff/add/': typeof StaffAddIndexRoute
@@ -639,6 +690,7 @@ export interface FileRouteTypes {
     | '/institutes'
     | '/inventory'
     | '/login'
+    | '/meetings'
     | '/memberdashboard'
     | '/rooms'
     | '/rootdashboard'
@@ -652,6 +704,7 @@ export interface FileRouteTypes {
     | '/divisions/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
+    | '/meetings/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -662,6 +715,7 @@ export interface FileRouteTypes {
     | '/divisions/add'
     | '/institutes/add'
     | '/inventory/add'
+    | '/meetings/add'
     | '/rooms/add'
     | '/semester/add'
     | '/staff/add'
@@ -676,6 +730,7 @@ export interface FileRouteTypes {
     | '/institutes'
     | '/inventory'
     | '/login'
+    | '/meetings'
     | '/memberdashboard'
     | '/rooms'
     | '/rootdashboard'
@@ -689,6 +744,7 @@ export interface FileRouteTypes {
     | '/divisions/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
+    | '/meetings/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -699,6 +755,7 @@ export interface FileRouteTypes {
     | '/divisions/add'
     | '/institutes/add'
     | '/inventory/add'
+    | '/meetings/add'
     | '/rooms/add'
     | '/semester/add'
     | '/staff/add'
@@ -713,6 +770,7 @@ export interface FileRouteTypes {
     | '/institutes/'
     | '/inventory/'
     | '/login/'
+    | '/meetings/'
     | '/memberdashboard/'
     | '/rooms/'
     | '/rootdashboard/'
@@ -726,6 +784,7 @@ export interface FileRouteTypes {
     | '/divisions/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
+    | '/meetings/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -736,6 +795,7 @@ export interface FileRouteTypes {
     | '/divisions/add/'
     | '/institutes/add/'
     | '/inventory/add/'
+    | '/meetings/add/'
     | '/rooms/add/'
     | '/semester/add/'
     | '/staff/add/'
@@ -752,6 +812,7 @@ export interface RootRouteChildren {
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   InventoryIndexRoute: typeof InventoryIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
+  MeetingsIndexRoute: typeof MeetingsIndexRoute
   MemberdashboardIndexRoute: typeof MemberdashboardIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
   RootdashboardIndexRoute: typeof RootdashboardIndexRoute
@@ -765,6 +826,7 @@ export interface RootRouteChildren {
   DivisionsEditIdRoute: typeof DivisionsEditIdRoute
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
   InventoryEditIdRoute: typeof InventoryEditIdRoute
+  MeetingsEditIdRoute: typeof MeetingsEditIdRoute
   RoomsEditIdRoute: typeof RoomsEditIdRoute
   SemesterEditIdRoute: typeof SemesterEditIdRoute
   StaffEditIdRoute: typeof StaffEditIdRoute
@@ -775,6 +837,7 @@ export interface RootRouteChildren {
   DivisionsAddIndexRoute: typeof DivisionsAddIndexRoute
   InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
   InventoryAddIndexRoute: typeof InventoryAddIndexRoute
+  MeetingsAddIndexRoute: typeof MeetingsAddIndexRoute
   RoomsAddIndexRoute: typeof RoomsAddIndexRoute
   SemesterAddIndexRoute: typeof SemesterAddIndexRoute
   StaffAddIndexRoute: typeof StaffAddIndexRoute
@@ -790,6 +853,7 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutesIndexRoute: InstitutesIndexRoute,
   InventoryIndexRoute: InventoryIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
+  MeetingsIndexRoute: MeetingsIndexRoute,
   MemberdashboardIndexRoute: MemberdashboardIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
   RootdashboardIndexRoute: RootdashboardIndexRoute,
@@ -803,6 +867,7 @@ const rootRouteChildren: RootRouteChildren = {
   DivisionsEditIdRoute: DivisionsEditIdRoute,
   InstitutesEditIdRoute: InstitutesEditIdRoute,
   InventoryEditIdRoute: InventoryEditIdRoute,
+  MeetingsEditIdRoute: MeetingsEditIdRoute,
   RoomsEditIdRoute: RoomsEditIdRoute,
   SemesterEditIdRoute: SemesterEditIdRoute,
   StaffEditIdRoute: StaffEditIdRoute,
@@ -813,6 +878,7 @@ const rootRouteChildren: RootRouteChildren = {
   DivisionsAddIndexRoute: DivisionsAddIndexRoute,
   InstitutesAddIndexRoute: InstitutesAddIndexRoute,
   InventoryAddIndexRoute: InventoryAddIndexRoute,
+  MeetingsAddIndexRoute: MeetingsAddIndexRoute,
   RoomsAddIndexRoute: RoomsAddIndexRoute,
   SemesterAddIndexRoute: SemesterAddIndexRoute,
   StaffAddIndexRoute: StaffAddIndexRoute,
@@ -837,6 +903,7 @@ export const routeTree = rootRoute
         "/institutes/",
         "/inventory/",
         "/login/",
+        "/meetings/",
         "/memberdashboard/",
         "/rooms/",
         "/rootdashboard/",
@@ -850,6 +917,7 @@ export const routeTree = rootRoute
         "/divisions/edit/$id",
         "/institutes/edit/$id",
         "/inventory/edit/$id",
+        "/meetings/edit/$id",
         "/rooms/edit/$id",
         "/semester/edit/$id",
         "/staff/edit/$id",
@@ -860,6 +928,7 @@ export const routeTree = rootRoute
         "/divisions/add/",
         "/institutes/add/",
         "/inventory/add/",
+        "/meetings/add/",
         "/rooms/add/",
         "/semester/add/",
         "/staff/add/",
@@ -889,6 +958,9 @@ export const routeTree = rootRoute
     },
     "/login/": {
       "filePath": "login/index.tsx"
+    },
+    "/meetings/": {
+      "filePath": "meetings/index.tsx"
     },
     "/memberdashboard/": {
       "filePath": "memberdashboard/index.tsx"
@@ -929,6 +1001,9 @@ export const routeTree = rootRoute
     "/inventory/edit/$id": {
       "filePath": "inventory/edit/$id.tsx"
     },
+    "/meetings/edit/$id": {
+      "filePath": "meetings/edit/$id.tsx"
+    },
     "/rooms/edit/$id": {
       "filePath": "rooms/edit/$id.tsx"
     },
@@ -958,6 +1033,9 @@ export const routeTree = rootRoute
     },
     "/inventory/add/": {
       "filePath": "inventory/add/index.tsx"
+    },
+    "/meetings/add/": {
+      "filePath": "meetings/add/index.tsx"
     },
     "/rooms/add/": {
       "filePath": "rooms/add/index.tsx"

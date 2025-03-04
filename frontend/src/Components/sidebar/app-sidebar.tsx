@@ -97,6 +97,11 @@ const roleBasedItems = {
       url: "/committee",
       icon: UserCheck,
     },
+    {
+      title: "Meetings",
+      url: "/meetings",
+      icon: UserCheck,
+    },
   ],
   superadmin: [
     {
