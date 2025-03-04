@@ -62,6 +62,11 @@ const roleBasedItems = {
       icon: Users,
     },
     {
+      title: "Calender",
+      url: "/calender",
+      icon: Users,
+    },
+    {
       title: "Academic Information",
       icon: BookOpen,
       children: [
