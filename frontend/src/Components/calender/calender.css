@@ -146,7 +146,7 @@
   padding: 2px 6px;
   margin: 1px 0;
   border-radius: 3px;
-  background-color: #039be5;
+  background-color: #dc3545;
   color: white;
   white-space: nowrap;
   overflow: hidden;
@@ -155,7 +155,16 @@
 }
 
 .meeting-title {
+  font-size: 11px;
+  padding: 2px 6px;
+  margin: 1px 0;
+  border-radius: 3px;
   background-color: #7986cb;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .more-events {
@@ -171,7 +180,7 @@
 }
 
 .has-event {
-  background-color: #e8f5e9 !important;
+  background-color: #ffebee !important;
 }
 
 .has-meeting {
@@ -179,7 +188,7 @@
 }
 
 .has-event-and-meeting {
-  background: linear-gradient(135deg, #e8f5e9 50%, #e8eaf6 50%) !important;
+  background: linear-gradient(135deg, #ffebee 50%, #e8eaf6 50%) !important;
 }
 
 .selected-date-events {
@@ -199,6 +208,34 @@
   font-weight: 500;
   padding-bottom: 12px;
   border-bottom: 1px solid #e0e0e0;
+}
+
+/* Tabs styling */
+.selected-date-events [role="tablist"] {
+  background-color: #f1f3f4;
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.selected-date-events [role="tab"] {
+  font-size: 13px;
+  color: #5f6368;
+  transition: all 0.2s;
+}
+
+.selected-date-events [role="tab"][data-state="active"] {
+  background-color: white;
+  color: #1a73e8;
+  font-weight: 500;
+}
+
+.selected-date-events [role="tabpanel"] {
+  padding: 8px 0;
+}
+
+.text-muted-foreground {
+  color: #5f6368;
 }
 
 .event-details {
@@ -228,7 +265,7 @@
 }
 
 .event-details.event-details {
-  border-left: 4px solid #039be5;
+  border-left: 4px solid #dc3545;
 }
 
 .event-details.meeting-details {
