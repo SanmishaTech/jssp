@@ -41,6 +41,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 const roleBasedItems = {
   admin: [
@@ -87,6 +89,11 @@ const roleBasedItems = {
     },
   ],
   superadmin: [
+    {
+      title: "Dashboard",
+      url: "/rootdashboard",
+      icon: Users,
+    },
     {
       title: "Trustees",
       url: "/trusties",
@@ -139,6 +146,7 @@ export function AppSidebar({ role, userAvatar }) {
   const [openDropdowns, setOpenDropdowns] = useState({});
   // State to control the AlertDialog in the logo dropdown
   const [openLogoAlert, setOpenLogoAlert] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = (title) => {
     setOpenDropdowns((prev) => ({
@@ -149,6 +157,10 @@ export function AppSidebar({ role, userAvatar }) {
 
   // Logout function – replace with your actual logout logic
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged Out Successfully");
+    navigate({ to: "/" });
     console.log("User logged out");
     // e.g., clear tokens, call signOut(), or redirect to login
   };
@@ -161,7 +173,7 @@ export function AppSidebar({ role, userAvatar }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="flex items-center cursor-pointer">
-                <img src={background} alt="Logo" className="w-6 h-6" />
+                <img src={background} alt="Logo" className="w-7 h-7" />
                 {/* Optionally show text on larger screens */}
                 <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
               </div>

@@ -13,9 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
+import { Route as StaffdashboardIndexImport } from './routes/staffdashboard/index'
 import { Route as StaffIndexImport } from './routes/staff/index'
 import { Route as SemesterIndexImport } from './routes/semester/index'
+import { Route as RootdashboardIndexImport } from './routes/rootdashboard/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
+import { Route as MemberdashboardIndexImport } from './routes/memberdashboard/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InventoryIndexImport } from './routes/inventory/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
@@ -58,6 +61,12 @@ const TrustiesIndexRoute = TrustiesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const StaffdashboardIndexRoute = StaffdashboardIndexImport.update({
+  id: '/staffdashboard/',
+  path: '/staffdashboard/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const StaffIndexRoute = StaffIndexImport.update({
   id: '/staff/',
   path: '/staff/',
@@ -70,9 +79,21 @@ const SemesterIndexRoute = SemesterIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const RootdashboardIndexRoute = RootdashboardIndexImport.update({
+  id: '/rootdashboard/',
+  path: '/rootdashboard/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const RoomsIndexRoute = RoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MemberdashboardIndexRoute = MemberdashboardIndexImport.update({
+  id: '/memberdashboard/',
+  path: '/memberdashboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -298,11 +319,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexImport
       parentRoute: typeof rootRoute
     }
+    '/memberdashboard/': {
+      id: '/memberdashboard/'
+      path: '/memberdashboard'
+      fullPath: '/memberdashboard'
+      preLoaderRoute: typeof MemberdashboardIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/': {
       id: '/rooms/'
       path: '/rooms'
       fullPath: '/rooms'
       preLoaderRoute: typeof RoomsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/rootdashboard/': {
+      id: '/rootdashboard/'
+      path: '/rootdashboard'
+      fullPath: '/rootdashboard'
+      preLoaderRoute: typeof RootdashboardIndexImport
       parentRoute: typeof rootRoute
     }
     '/semester/': {
@@ -317,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/staff'
       preLoaderRoute: typeof StaffIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/staffdashboard/': {
+      id: '/staffdashboard/'
+      path: '/staffdashboard'
+      fullPath: '/staffdashboard'
+      preLoaderRoute: typeof StaffdashboardIndexImport
       parentRoute: typeof rootRoute
     }
     '/trusties/': {
@@ -480,9 +522,12 @@ export interface FileRoutesByFullPath {
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
   '/login': typeof LoginIndexRoute
+  '/memberdashboard': typeof MemberdashboardIndexRoute
   '/rooms': typeof RoomsIndexRoute
+  '/rootdashboard': typeof RootdashboardIndexRoute
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
+  '/staffdashboard': typeof StaffdashboardIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -515,9 +560,12 @@ export interface FileRoutesByTo {
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
   '/login': typeof LoginIndexRoute
+  '/memberdashboard': typeof MemberdashboardIndexRoute
   '/rooms': typeof RoomsIndexRoute
+  '/rootdashboard': typeof RootdashboardIndexRoute
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
+  '/staffdashboard': typeof StaffdashboardIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -551,9 +599,12 @@ export interface FileRoutesById {
   '/institutes/': typeof InstitutesIndexRoute
   '/inventory/': typeof InventoryIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/memberdashboard/': typeof MemberdashboardIndexRoute
   '/rooms/': typeof RoomsIndexRoute
+  '/rootdashboard/': typeof RootdashboardIndexRoute
   '/semester/': typeof SemesterIndexRoute
   '/staff/': typeof StaffIndexRoute
+  '/staffdashboard/': typeof StaffdashboardIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -588,9 +639,12 @@ export interface FileRouteTypes {
     | '/institutes'
     | '/inventory'
     | '/login'
+    | '/memberdashboard'
     | '/rooms'
+    | '/rootdashboard'
     | '/semester'
     | '/staff'
+    | '/staffdashboard'
     | '/trusties'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -622,9 +676,12 @@ export interface FileRouteTypes {
     | '/institutes'
     | '/inventory'
     | '/login'
+    | '/memberdashboard'
     | '/rooms'
+    | '/rootdashboard'
     | '/semester'
     | '/staff'
+    | '/staffdashboard'
     | '/trusties'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -656,9 +713,12 @@ export interface FileRouteTypes {
     | '/institutes/'
     | '/inventory/'
     | '/login/'
+    | '/memberdashboard/'
     | '/rooms/'
+    | '/rootdashboard/'
     | '/semester/'
     | '/staff/'
+    | '/staffdashboard/'
     | '/trusties/'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -692,9 +752,12 @@ export interface RootRouteChildren {
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   InventoryIndexRoute: typeof InventoryIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
+  MemberdashboardIndexRoute: typeof MemberdashboardIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
+  RootdashboardIndexRoute: typeof RootdashboardIndexRoute
   SemesterIndexRoute: typeof SemesterIndexRoute
   StaffIndexRoute: typeof StaffIndexRoute
+  StaffdashboardIndexRoute: typeof StaffdashboardIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   CommitteeEditIdRoute: typeof CommitteeEditIdRoute
   ComplaintsEditIdRoute: typeof ComplaintsEditIdRoute
@@ -727,9 +790,12 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutesIndexRoute: InstitutesIndexRoute,
   InventoryIndexRoute: InventoryIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
+  MemberdashboardIndexRoute: MemberdashboardIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
+  RootdashboardIndexRoute: RootdashboardIndexRoute,
   SemesterIndexRoute: SemesterIndexRoute,
   StaffIndexRoute: StaffIndexRoute,
+  StaffdashboardIndexRoute: StaffdashboardIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   CommitteeEditIdRoute: CommitteeEditIdRoute,
   ComplaintsEditIdRoute: ComplaintsEditIdRoute,
@@ -771,9 +837,12 @@ export const routeTree = rootRoute
         "/institutes/",
         "/inventory/",
         "/login/",
+        "/memberdashboard/",
         "/rooms/",
+        "/rootdashboard/",
         "/semester/",
         "/staff/",
+        "/staffdashboard/",
         "/trusties/",
         "/committee/edit/$id",
         "/complaints/edit/$id",
@@ -821,14 +890,23 @@ export const routeTree = rootRoute
     "/login/": {
       "filePath": "login/index.tsx"
     },
+    "/memberdashboard/": {
+      "filePath": "memberdashboard/index.tsx"
+    },
     "/rooms/": {
       "filePath": "rooms/index.tsx"
+    },
+    "/rootdashboard/": {
+      "filePath": "rootdashboard/index.tsx"
     },
     "/semester/": {
       "filePath": "semester/index.tsx"
     },
     "/staff/": {
       "filePath": "staff/index.tsx"
+    },
+    "/staffdashboard/": {
+      "filePath": "staffdashboard/index.tsx"
     },
     "/trusties/": {
       "filePath": "trusties/index.tsx"

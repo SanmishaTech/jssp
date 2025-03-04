@@ -33,19 +33,19 @@ const Login = () => {
         if (role === "admin") {
           localStorage.setItem("role", role);
           navigate({
-            to: "/staff",
+            to: "/staffdashboard",
           });
         }
         if (role === "superadmin") {
           localStorage.setItem("role", role);
           navigate({
-            to: "/institutes",
+            to: "/rootdashboard",
           });
         }
         if (role === "member") {
           localStorage.setItem("role", role);
           navigate({
-            to: "/complaints",
+            to: "/memberdashboard",
           });
         }
         if (res.data.token) {
