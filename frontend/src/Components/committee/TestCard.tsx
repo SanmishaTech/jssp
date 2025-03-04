@@ -159,7 +159,7 @@ export default function CommitteeForm() {
         const options = fetchedStaff.map((staff: any) => ({
           value: staff.id.toString(),
           // Use staff name or designation as needed
-          label: staff.staff_name || "Admin",
+          label: staff.staff_name || staff.name,
         }));
         setStaffOptions(options);
       } catch (error) {
@@ -172,20 +172,20 @@ export default function CommitteeForm() {
   async function onSubmit(data: CommitteeFormValues) {
     try {
       const token = localStorage.getItem("token");
-  
+
       await axios.post("/api/committee", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       toast.success("Committee created successfully");
       window.history.back();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { errors, message } = error.response.data; // Extract validation errors
-  
+
         if (errors) {
           // Loop through backend validation errors and set them in the form
           Object.keys(errors).forEach((key) => {
@@ -193,7 +193,7 @@ export default function CommitteeForm() {
               type: "server",
               message: errors[key][0], // First error message from array
             });
-  
+
             // Show each validation error as a separate toast notification
             toast.error(errors[key][0]);
           });
@@ -206,7 +206,6 @@ export default function CommitteeForm() {
       }
     }
   }
-  
 
   return (
     <div className="mx-auto p-6">

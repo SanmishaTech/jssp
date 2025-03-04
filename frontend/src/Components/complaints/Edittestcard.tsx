@@ -142,6 +142,7 @@ function ProfileForm({ formData }) {
                         <FormControl>
                           <Input
                             type="date"
+                            max={new Date().toISOString().split("T")[0]} // Restrict future dates
                             placeholder="Complaint Date..."
                             {...field}
                           />
