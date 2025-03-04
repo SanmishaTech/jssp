@@ -149,7 +149,7 @@ export function Dashboard({
   // Handler to fetch search results
   const handleSearchResults = async (query: string) => {
     try {
-      const { data: res } = await axios.get("/api/meetings", {
+      const { data: res } = await axios.get("/api/events", {
         params: { search: query },
         headers: {
           "Content-Type": "application/json",
@@ -340,7 +340,7 @@ export function Dashboard({
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Meeting
+                    Add Event
                   </span>
                 </Button>
               </div>
@@ -401,7 +401,7 @@ export function Dashboard({
                                       <Button
                                         onClick={() =>
                                           navigate({
-                                            to: `/meetings/edit/${row?.id}`,
+                                            to: `/events/edit/${row?.id}`,
                                           })
                                         }
                                         className="w-full"

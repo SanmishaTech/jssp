@@ -67,14 +67,14 @@ function ProfileForm() {
     data.userId = User?._id;
     try {
       await axios
-        .post(`/api/meetings`, data, {
+        .post(`/api/events`, data, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         })
         .then((res) => {
-          toast.success("Meeting Created Successfully");
+          toast.success("Events Created Successfully");
           window.history.back();
         });
     } catch (error) {
@@ -192,7 +192,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Meeting
+            Add Event
           </Button>
         </div>
       </form>
@@ -212,8 +212,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Meeting Master</CardTitle>
-        <CardDescription>Add Meeting</CardDescription>
+        <CardTitle>Events Master</CardTitle>
+        <CardDescription>Add Events</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

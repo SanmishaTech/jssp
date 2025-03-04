@@ -63,7 +63,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_meetings', [MeetingController::class, 'allMeetings'])->name("meetings.all");
 
    Route::resource('events', EventController::class);
-   Route::get('/all_events', [EventController::class, 'allEventss'])->name("events.all");
+   Route::get('/all_events', [EventController::class, 'allEvents'])->name("events.all");
 
    Route::resource('inventory', InventoryController::class); 
  

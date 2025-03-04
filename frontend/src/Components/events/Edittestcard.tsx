@@ -56,31 +56,26 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/meetings/edit/$id" });
+  const { id } = useParams({ from: "/events/edit/$id" });
 
   const { reset } = form;
 
-  // Reset form values when formData changes
-  useEffect(() => {
-    formData.name = formData?.user?.name;
-    formData.email = formData?.user?.email;
-    reset(formData);
-  }, [formData, reset]);
+  
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/meetings/${id}`, data, {
+      await axios.put(`/api/events/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Meetings Master Updated Successfully");
-      navigate({ to: "/meetings" });
+      toast.success("Events Master Updated Successfully");
+      navigate({ to: "/events" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -117,9 +112,9 @@ function ProfileForm({ formData }) {
           {/* Institute Information Section */}
           <Card className="max-w-full p-4">
             <CardHeader>
-              <CardTitle>Meetings Information</CardTitle>
+              <CardTitle>Events Information</CardTitle>
               <CardDescription>
-                Create the Meetings for this Institute
+                Create the Events for this Institute
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -194,14 +189,14 @@ function ProfileForm({ formData }) {
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => navigate({ to: "/meetings" })}
+            onClick={() => navigate({ to: "/events" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Meetings
+            Update Events
           </Button>
         </div>
       </form>
@@ -211,18 +206,18 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/meetings/edit/$id" });
+  const { id } = useParams({ from: "/events/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/meetings/${id}`, {
+      const response = await axios.get(`/api/Events/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      setFormData(response.data.data.Meeting);
+      setFormData(response.data.data.Event);
     };
     if (id) {
       fetchData();
@@ -242,8 +237,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Event Master</CardTitle>
+        <CardDescription>Edit/Update the Event</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
