@@ -190,12 +190,12 @@ function ProfileForm({ formData }: { formData: FormValues }) {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorData = error.response?.data;
-        
+
         if (errorData?.errors) {
           Object.entries(errorData.errors).forEach(([field, messages]) => {
             const message = Array.isArray(messages) ? messages[0] : messages;
             form.setError(field as keyof FormValues, {
-              type: 'server',
+              type: "server",
               message: message as string,
             });
             toast.error(message as string);
@@ -212,14 +212,15 @@ function ProfileForm({ formData }: { formData: FormValues }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-[2rem]">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 pb-[2rem]"
+      >
         <div className="space-y-6">
           <Card className="max-w-full p-4">
             <CardHeader>
               <CardTitle>Division Information</CardTitle>
-              <CardDescription>
-                Update division details
-              </CardDescription>
+              <CardDescription>Update division details</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex gap-4">
@@ -241,7 +242,10 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               className="w-full justify-between"
                             >
                               {field.value
-                                ? courses.find((course) => course.id.toString() === field.value)?.medium_title || "Select Course..."
+                                ? courses.find(
+                                    (course) =>
+                                      course.id.toString() === field.value
+                                  )?.medium_title || "Select Course..."
                                 : "Select Course..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -251,7 +255,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               <CommandInput placeholder="Search course..." />
                               <CommandList>
                                 <CommandEmpty>
-                                  {loadingCourses ? "Loading courses..." : "No course found."}
+                                  {loadingCourses
+                                    ? "Loading courses..."
+                                    : "No course found."}
                                 </CommandEmpty>
                                 <CommandGroup>
                                   {courses.map((course) => (
@@ -259,14 +265,18 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                       key={course.id}
                                       value={course.id.toString()}
                                       onSelect={(value) => {
-                                        field.onChange(value === field.value ? "" : value);
+                                        field.onChange(
+                                          value === field.value ? "" : value
+                                        );
                                       }}
                                     >
                                       {course.medium_title}
                                       <Check
                                         className={cn(
                                           "ml-auto",
-                                          field.value === course.id.toString() ? "opacity-100" : "opacity-0"
+                                          field.value === course.id.toString()
+                                            ? "opacity-100"
+                                            : "opacity-0"
                                         )}
                                       />
                                     </CommandItem>
@@ -300,7 +310,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               className="w-full justify-between"
                             >
                               {field.value
-                                ? rooms.find((room) => room.id.toString() === field.value)?.room_name || "Select Room..."
+                                ? rooms.find(
+                                    (room) => room.id.toString() === field.value
+                                  )?.room_name || "Select Room..."
                                 : "Select Room..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -310,7 +322,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               <CommandInput placeholder="Search room..." />
                               <CommandList>
                                 <CommandEmpty>
-                                  {loadingRooms ? "Loading rooms..." : "No room found."}
+                                  {loadingRooms
+                                    ? "Loading rooms..."
+                                    : "No room found."}
                                 </CommandEmpty>
                                 <CommandGroup>
                                   {rooms.map((room) => (
@@ -318,14 +332,18 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                       key={room.id}
                                       value={room.id.toString()}
                                       onSelect={(value) => {
-                                        field.onChange(value === field.value ? "" : value);
+                                        field.onChange(
+                                          value === field.value ? "" : value
+                                        );
                                       }}
                                     >
                                       {room.room_name}
                                       <Check
                                         className={cn(
                                           "ml-auto",
-                                          field.value === room.id.toString() ? "opacity-100" : "opacity-0"
+                                          field.value === room.id.toString()
+                                            ? "opacity-100"
+                                            : "opacity-0"
                                         )}
                                       />
                                     </CommandItem>
@@ -340,10 +358,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* Semester Title Field */}
-              <div className="flex gap-4 mt-4">
                 <FormField
                   control={form.control}
                   name="semester_id"
@@ -361,7 +376,10 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               className="w-full justify-between"
                             >
                               {field.value
-                                ? semesters.find((semester) => semester.id.toString() === field.value)?.semester || "Select Semester..."
+                                ? semesters.find(
+                                    (semester) =>
+                                      semester.id.toString() === field.value
+                                  )?.semester || "Select Semester..."
                                 : "Select Semester..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -371,7 +389,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                               <CommandInput placeholder="Search semester..." />
                               <CommandList>
                                 <CommandEmpty>
-                                  {loadingSemesters ? "Loading semesters..." : "No semester found."}
+                                  {loadingSemesters
+                                    ? "Loading semesters..."
+                                    : "No semester found."}
                                 </CommandEmpty>
                                 <CommandGroup>
                                   {semesters.map((semester) => (
@@ -379,14 +399,18 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                       key={semester.id}
                                       value={semester.id.toString()}
                                       onSelect={(value) => {
-                                        field.onChange(value === field.value ? "" : value);
+                                        field.onChange(
+                                          value === field.value ? "" : value
+                                        );
                                       }}
                                     >
                                       {semester.semester}
                                       <Check
                                         className={cn(
                                           "ml-auto",
-                                          field.value === semester.id.toString() ? "opacity-100" : "opacity-0"
+                                          field.value === semester.id.toString()
+                                            ? "opacity-100"
+                                            : "opacity-0"
                                         )}
                                       />
                                     </CommandItem>
@@ -464,7 +488,7 @@ export default function SettingsProfilePage() {
             Authorization: `Bearer ${token}`,
           },
         });
-        
+
         const divisionData = response.data.data.Division;
         console.log("Raw API Response:", response.data); // Debug log
         console.log("Division Data:", divisionData); // Debug log

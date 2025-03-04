@@ -146,13 +146,11 @@ function ProfileForm() {
           {/* Institute Information Section */}
           <Card className="max-w-full p-4">
             <CardHeader>
-              <CardTitle>Inventory Information</CardTitle>
-              <CardDescription>
-                Provide the details of Inventory.
-              </CardDescription>
+              <CardTitle>Asset Information</CardTitle>
+              <CardDescription>Provide the details of Asset.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <FormField
                   control={form.control}
                   name="institute_id"
@@ -252,44 +250,43 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-               <FormField
-  control={form.control}
-  name="purchase_date"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>
-        Purchase Date
-        <span className="text-red-500">*</span>
-      </FormLabel>
-      <FormControl>
-        <Input
-          type="date"
-          max={new Date().toISOString().split("T")[0]} // Restrict future dates
-          {...field}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
                 <FormField
                   control={form.control}
-                  name="remarks"
+                  name="purchase_date"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Remarks
+                        Purchase Date
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Enter Remarks..." {...field} />
+                        <Input
+                          type="date"
+                          max={new Date().toISOString().split("T")[0]} // Restrict future dates
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Remarks
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Enter Remarks..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
         </div>
@@ -323,7 +320,6 @@ export default function SettingsProfilePage() {
 
       <CardHeader>
         <CardTitle>Inventory Master</CardTitle>
-        <CardDescription>Add Inventory</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

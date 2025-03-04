@@ -117,7 +117,7 @@ function ProfileForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="room_name"

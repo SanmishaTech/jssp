@@ -86,13 +86,13 @@ function ProfileForm({ formData }) {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       toast.success("Staff Updated Successfully");
       navigate({ to: "/staff" });
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
         const { errors, message } = error.response.data; // Extract validation errors
-  
+
         if (errors) {
           // Loop through backend validation errors and set them in the form
           Object.keys(errors).forEach((key) => {
@@ -100,7 +100,7 @@ function ProfileForm({ formData }) {
               type: "server",
               message: errors[key][0], // First error message from array
             });
-  
+
             // Show each validation error as a separate toast notification
             toast.error(errors[key][0]);
           });
@@ -113,7 +113,6 @@ function ProfileForm({ formData }) {
       }
     }
   }
-  
 
   return (
     <Form {...form}>
@@ -175,12 +174,12 @@ function ProfileForm({ formData }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3 space-y-3">
                 <FormField
                   control={form.control}
                   name="staff_name"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col justify-center min-h-[100px]">
                       <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Name..." {...field} />
@@ -190,58 +189,61 @@ function ProfileForm({ formData }) {
                   )}
                 />
 
-<FormField
-  control={form.control}
-  name="mobile"
-  rules={{
-    required: "Mobile number is required",
-    pattern: {
-      value: /^[0-9]{10}$/, // Ensures exactly 10 numeric digits
-      message: "Mobile number must be exactly 10 digits and contain only numbers",
-    },
-  }}
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Mobile</FormLabel>
-      <FormControl>
-        <Input
-          type="text"
-          placeholder="Enter 10-digit mobile number"
-          maxLength={10} // Prevents input beyond 10 characters
-          onInput={(e) => {
-            e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-numeric characters
-          }}
-          {...field}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                <FormField
+                  control={form.control}
+                  name="mobile"
+                  rules={{
+                    required: "Mobile number is required",
+                    pattern: {
+                      value: /^[0-9]{10}$/, // Ensures exactly 10 numeric digits
+                      message:
+                        "Mobile number must be exactly 10 digits and contain only numbers",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter 10-digit mobile number"
+                          maxLength={10} // Prevents input beyond 10 characters
+                          onInput={(e) => {
+                            e.target.value = e.target.value.replace(/\D/g, ""); // Removes non-numeric characters
+                          }}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-
-
-<FormField
-  control={form.control}
-  name="date_of_birth"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Date of Birth</FormLabel>
-      <FormControl>
-        <Input
-          type="date"
-          max={new Date(
-            new Date().setFullYear(new Date().getFullYear() - 18)
-          )
-            .toISOString()
-            .split("T")[0]} // Users must be 18 or older
-          {...field}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          max={
+                            new Date(
+                              new Date().setFullYear(
+                                new Date().getFullYear() - 18
+                              )
+                            )
+                              .toISOString()
+                              .split("T")[0]
+                          } // Users must be 18 or older
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <FormField
                 control={form.control}

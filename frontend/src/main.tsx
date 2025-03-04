@@ -39,11 +39,13 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-       <Provider store={store}>
+        <Provider store={store}>
           <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-right" />
+          <ReactQueryDevtools
+            initialIsOpen={false}
+            buttonPosition="bottom-right"
+          />
         </Provider>
-
       </QueryClientProvider>
     </StrictMode>
   );

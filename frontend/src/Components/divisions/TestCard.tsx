@@ -185,9 +185,7 @@ export default function SettingsProfilePage() {
       </Button>
       <CardHeader>
         <CardTitle>Division Master</CardTitle>
-        <CardDescription>
-          Add Institute Division, Room & Semester
-        </CardDescription>
+        <CardDescription>Add Division</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -304,9 +302,7 @@ export default function SettingsProfilePage() {
                               {field.value
                                 ? rooms.find((room) => {
                                     const roomId =
-                                      room.id != null
-                                        ? room.id.toString()
-                                        : "";
+                                      room.id != null ? room.id.toString() : "";
                                     return roomId === field.value;
                                   })?.room_name || "Select Room..."
                                 : "Select Room..."}
@@ -325,9 +321,7 @@ export default function SettingsProfilePage() {
                                 <CommandGroup>
                                   {rooms.map((room) => {
                                     const roomId =
-                                      room.id != null
-                                        ? room.id.toString()
-                                        : "";
+                                      room.id != null ? room.id.toString() : "";
                                     return (
                                       <CommandItem
                                         key={roomId}
@@ -364,11 +358,7 @@ export default function SettingsProfilePage() {
                   );
                 }}
               />
-            </div>
 
-            {/* Row 2: Semester Title */}
-            <div className="flex gap-4">
-              {/* Semester Title Field */}
               <FormField
                 control={form.control}
                 name="semester_id"

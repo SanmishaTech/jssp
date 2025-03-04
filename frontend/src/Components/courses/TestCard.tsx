@@ -118,25 +118,25 @@ function ProfileForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-3">
-                <FormField
-                  control={form.control}
-                  name="medium_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Medium Title
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Medium Title..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="mb-3">
+                  <FormField
+                    control={form.control}
+                    name="medium_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Medium Title
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Medium Title..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="medium_code"

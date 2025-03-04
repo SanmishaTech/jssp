@@ -42,6 +42,12 @@ const Login = () => {
             to: "/institutes",
           });
         }
+        if (role === "member") {
+          localStorage.setItem("role", role);
+          navigate({
+            to: "/complaints",
+          });
+        }
         if (res.data.token) {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -163,7 +169,6 @@ const Login = () => {
             defaultValues={defaultValues}
             onSubmit={onSubmit}
           />
-           
         </div>
       </div>
     </div>

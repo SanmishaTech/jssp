@@ -29,11 +29,7 @@ const roleBasedItems = {
       url: "/staff",
       icon: Users,
     },
-    {
-      title: "Complaints",
-      url: "/complaints",
-      icon: Users,
-    },
+
     {
       title: "Academic Information",
       icon: Calendar,
@@ -62,13 +58,13 @@ const roleBasedItems = {
       ],
     },
     {
-      title: "Committees",
-      url: "/committee",
-      icon: BookText,
+      title: "Complaints",
+      url: "/complaints",
+      icon: Users,
     },
     {
-      title: "Attendance Tracking",
-      url: "#",
+      title: "Committees",
+      url: "/committee",
       icon: BookText,
     },
   ],
@@ -93,13 +89,25 @@ const roleBasedItems = {
       url: "/complaints",
       icon: Building,
     },
+  ],
+  member: [
     {
-      title: "Institutes Calender",
+      title: "Inventory",
+      url: "/inventory",
+      icon: Building,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: Building,
+    },
+    {
+      title: "Calender",
       url: "",
       icon: Building,
     },
     {
-      title: "Reports and Analytics",
+      title: "Leave Application",
       url: "",
       icon: Building,
     },
