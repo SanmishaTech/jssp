@@ -134,6 +134,9 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
     defaultValues,
     mode: "onChange",
   });
+  // Watch the staff array to determine selected values
+  const watchedStaff = form.watch("staff");
+
   const { id } = useParams({ from: "/committee/edit/$id" });
   const { reset, control } = form;
 
@@ -153,35 +156,38 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       toast.success("Committee Updated Successfully");
       navigate({ to: "/committee" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const { errors, message } = error.response.data; // Extract errors
-  
+
         if (errors) {
           Object.entries(errors).forEach(([field, messages]) => {
-            const errorMessage = Array.isArray(messages) ? messages[0] : messages;
-  
+            const errorMessage = Array.isArray(messages)
+              ? messages[0]
+              : messages;
+
             // Set form validation error
             form.setError(field as keyof ProfileFormValues, {
               type: "server",
               message: errorMessage,
             });
-  
+
             // Show toast notification for each error
             toast.error(errorMessage);
           });
         } else {
-          toast.error(message || "An error occurred while updating the committee.");
+          toast.error(
+            message || "An error occurred while updating the committee."
+          );
         }
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
     }
   }
-  
 
   // Fetch staff options from the API (similar to the add form)
   useEffect(() => {
@@ -268,45 +274,57 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {fields.map((field, index) => (
-                    <TableRow key={field.id}>
-                      <TableCell>
-                        <FormField
-                          control={form.control}
-                          name={`staff.${index}.staff_id`}
-                          render={({ field }) => (
-                            <FormControl>
-                              <StaffIdPopover
-                                value={field.value}
-                                onChange={field.onChange}
-                                options={staffOptions}
-                              />
-                            </FormControl>
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <FormField
-                          control={form.control}
-                          name={`staff.${index}.designation`}
-                          render={({ field }) => (
-                            <FormControl>
-                              <Input placeholder="Designation" {...field} />
-                            </FormControl>
-                          )}
-                        />
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => remove(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {fields.map((field, index) => {
+                    // Get the list of selected staff IDs from all rows
+                    const selectedStaffIds = watchedStaff.map(
+                      (s) => s.staff_id
+                    );
+                    // Filter options: include the current row's value, but exclude others already selected
+                    const filteredOptions = staffOptions.filter(
+                      (option) =>
+                        option.value === watchedStaff[index]?.staff_id ||
+                        !selectedStaffIds.includes(option.value)
+                    );
+                    return (
+                      <TableRow key={field.id}>
+                        <TableCell>
+                          <FormField
+                            control={form.control}
+                            name={`staff.${index}.staff_id`}
+                            render={({ field }) => (
+                              <FormControl>
+                                <StaffIdPopover
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  options={filteredOptions}
+                                />
+                              </FormControl>
+                            )}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <FormField
+                            control={form.control}
+                            name={`staff.${index}.designation`}
+                            render={({ field }) => (
+                              <FormControl>
+                                <Input placeholder="Designation" {...field} />
+                              </FormControl>
+                            )}
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => remove(index)}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
                 <TableFooter>
                   <TableRow>

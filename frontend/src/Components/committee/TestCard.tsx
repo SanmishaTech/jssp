@@ -137,6 +137,9 @@ export default function CommitteeForm() {
     name: "staff",
   });
 
+  // Watch the current staff array to determine selected staff IDs
+  const watchedStaff = form.watch("staff");
+
   // State to hold fetched staff options
   const [staffOptions, setStaffOptions] = React.useState<StaffOption[]>([]);
 
@@ -258,45 +261,57 @@ export default function CommitteeForm() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {fields.map((field, index) => (
-                      <TableRow key={field.id}>
-                        <TableCell>
-                          <FormField
-                            control={form.control}
-                            name={`staff.${index}.staff_id`}
-                            render={({ field }) => (
-                              <FormControl>
-                                <StaffIdPopover
-                                  value={field.value}
-                                  onChange={field.onChange}
-                                  options={staffOptions}
-                                />
-                              </FormControl>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <FormField
-                            control={form.control}
-                            name={`staff.${index}.designation`}
-                            render={({ field }) => (
-                              <FormControl>
-                                <Input placeholder="Designation" {...field} />
-                              </FormControl>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            type="button"
-                            onClick={() => remove(index)}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {fields.map((field, index) => {
+                      // Get the list of selected staff IDs from all rows
+                      const selectedStaffIds = watchedStaff.map(
+                        (s) => s.staff_id
+                      );
+                      // Filter options: include the current row's value, but exclude others already selected
+                      const filteredOptions = staffOptions.filter(
+                        (option) =>
+                          option.value === watchedStaff[index]?.staff_id ||
+                          !selectedStaffIds.includes(option.value)
+                      );
+                      return (
+                        <TableRow key={field.id}>
+                          <TableCell>
+                            <FormField
+                              control={form.control}
+                              name={`staff.${index}.staff_id`}
+                              render={({ field }) => (
+                                <FormControl>
+                                  <StaffIdPopover
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    options={filteredOptions}
+                                  />
+                                </FormControl>
+                              )}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <FormField
+                              control={form.control}
+                              name={`staff.${index}.designation`}
+                              render={({ field }) => (
+                                <FormControl>
+                                  <Input placeholder="Designation" {...field} />
+                                </FormControl>
+                              )}
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              onClick={() => remove(index)}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                   <TableFooter>
                     <TableRow>
