@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import {
   Calendar,
   Home,
-  Inbox,
-  Search,
-  Settings,
   Building,
   BookText,
+  BookOpen,
   Users,
+  MessageCircle,
+  UserCheck,
+  Package,
+  FileText,
+  User,
+  MapPin,
+  Grid,
 } from "lucide-react";
 import background from "../../images/Jeevandeep-logo.jpeg";
 import {
@@ -47,13 +52,18 @@ import { toast } from "sonner";
 const roleBasedItems = {
   admin: [
     {
+      title: "Dashboard",
+      url: "/staffdashboard",
+      icon: Home,
+    },
+    {
       title: "Staff",
       url: "/staff",
       icon: Users,
     },
     {
       title: "Academic Information",
-      icon: Calendar,
+      icon: BookOpen,
       children: [
         {
           title: "Courses",
@@ -63,41 +73,41 @@ const roleBasedItems = {
         {
           title: "Semester",
           url: "/semester",
-          icon: BookText,
+          icon: Calendar,
         },
         {
           title: "Room Number",
           url: "/rooms",
-          icon: BookText,
+          icon: MapPin,
         },
         {
           title: "Division",
           url: "/divisions",
-          icon: BookText,
+          icon: Grid,
         },
       ],
     },
     {
       title: "Complaints",
       url: "/complaints",
-      icon: Users,
+      icon: MessageCircle,
     },
     {
       title: "Committees",
       url: "/committee",
-      icon: BookText,
+      icon: UserCheck,
     },
   ],
   superadmin: [
     {
       title: "Dashboard",
       url: "/rootdashboard",
-      icon: Users,
+      icon: Home,
     },
     {
       title: "Trustees",
       url: "/trusties",
-      icon: Users,
+      icon: User,
     },
     {
       title: "Institutes",
@@ -107,34 +117,40 @@ const roleBasedItems = {
     {
       title: "Inventory",
       url: "/inventory",
-      icon: Building,
+      icon: Package,
     },
     {
       title: "Complaints",
       url: "/complaints",
-      icon: Building,
+      icon: MessageCircle,
     },
   ],
   member: [
     {
+      title: "Dashboard",
+      url: "/memberdashboard",
+      icon: Home,
+    },
+    {
       title: "Inventory",
       url: "/inventory",
-      icon: Building,
+      icon: Package,
     },
+
     {
       title: "Complaints",
       url: "/complaints",
-      icon: Building,
+      icon: MessageCircle,
     },
     {
-      title: "Calender",
-      url: "",
-      icon: Building,
+      title: "Calendar",
+      url: "/calendar",
+      icon: Calendar,
     },
     {
       title: "Leave Application",
-      url: "",
-      icon: Building,
+      url: "/leave",
+      icon: FileText,
     },
   ],
 };
