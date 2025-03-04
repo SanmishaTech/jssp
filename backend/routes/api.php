@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
@@ -60,6 +61,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('meetings', MeetingController::class);
    Route::get('/all_meetings', [MeetingController::class, 'allMeetings'])->name("meetings.all");
+
+   Route::resource('events', EventController::class);
+   Route::get('/all_events', [EventController::class, 'allEventss'])->name("events.all");
 
    Route::resource('inventory', InventoryController::class); 
  
