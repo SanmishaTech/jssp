@@ -120,6 +120,11 @@ const roleBasedItems = {
       icon: Home,
     },
     {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    },
+    {
       title: "Trustees",
       url: "/trusties",
       icon: User,
@@ -145,6 +150,11 @@ const roleBasedItems = {
       title: "Dashboard",
       url: "/memberdashboard",
       icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
     },
     {
       title: "Inventory",
