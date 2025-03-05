@@ -25,17 +25,22 @@ class StaffRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'staff_name' => [
-                'required',
-                'unique:staff,staff_name',
-            ],
-            'email' => [
-                'required',
-                'email',
-                'unique:users,email'
-            ],
-         ];
-    
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'staff_name' => 'required|string|max:255',
+            'is_teaching' => 'required|string|max:100',
+            'date_of_birth' => 'required|date',
+            'address' => 'required|string',
+            'mobile' => 'required|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Max 2MB per image
+            'images' => 'array|max:5', // Maximum 5 images allowed
+        ];
+
+        // Add password requirement only for new staff creation
+        if ($this->isMethod('POST')) {
+            $rules['password'] = 'required|string|min:6';
+        }
+
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $staff = Staff::find($this->route('staff'));
             $rules = [
@@ -54,6 +59,16 @@ class StaffRequest extends FormRequest
         return $rules;
     }
     
+    public function messages(): array
+    {
+        return [
+            'images.*.image' => 'Each file must be an image',
+            'images.*.mimes' => 'Allowed image formats are: jpeg, png, jpg',
+            'images.*.max' => 'Each image must not exceed 2MB',
+            'images.max' => 'You cannot upload more than 5 images',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(

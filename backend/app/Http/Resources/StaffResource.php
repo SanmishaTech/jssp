@@ -35,6 +35,12 @@ class StaffResource extends JsonResource
             'mobile' => $this->mobile,
             'email' => $this->email,
             'password' => $this->password,
+            'images' => $this->images->map(function($image) {
+                return [
+                    'id' => $image->id,
+                    'url' => asset('storage/' . $image->image_path)
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // 'user'=> $user,

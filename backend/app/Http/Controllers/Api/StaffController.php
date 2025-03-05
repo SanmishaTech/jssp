@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Models\Staff;
+use App\Models\StaffImage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
  
  
@@ -58,7 +60,7 @@ public function index(Request $request): JsonResponse
         // Create a new user
         $active = 1;
         $user = new User();
-        $user->name = $request->input('name'); // Ensure 'name' is passed in the request
+        $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->active = $active;
         $user->password = Hash::make($request->input('password'));
@@ -68,10 +70,10 @@ public function index(Request $request): JsonResponse
         $memberRole = Role::where("name", "member")->first();
         $user->assignRole($memberRole);
         
-        // Create a new staff record and assign the institute_id from the logged-in admin
+        // Create a new staff record
         $staff = new Staff();
         $staff->user_id = $user->id;
-        $staff->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
+        $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
         $staff->is_teaching = $request->input('is_teaching');
         $staff->date_of_birth = $request->input('date_of_birth');
@@ -79,6 +81,18 @@ public function index(Request $request): JsonResponse
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
         $staff->save();
+
+        // Handle multiple image uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('staff_images', 'public');
+                
+                StaffImage::create([
+                    'staff_id' => $staff->id,
+                    'image_path' => $path
+                ]);
+            }
+        }
         
         return $this->sendResponse([ "Staff" => new StaffResource($staff)], "Staff stored successfully");
     }
@@ -105,33 +119,54 @@ public function index(Request $request): JsonResponse
      */
     public function update(StaffRequest $request, string $id): JsonResponse
     {
- 
         $staff = Staff::find($id);
 
         if(!$staff){
             return $this->sendError("Staff not found", ['error'=>'Staff not found']);
         }
+
         $user = User::find($staff->user_id);
-        $user->name = $request->input('name', $user->name); // Use the existing name if not provided
+        $user->name = $request->input('name', $user->name);
         $user->email = $request->input('email');
         $user->active = $request->input('active', 1);
-        $user->password = Hash::make($request->input('password'));
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->input('password'));
+        }
         $user->save();
 
-         $memberRole = Role::where("name","member")->first();
+        $memberRole = Role::where("name","member")->first();
         $user->assignRole($memberRole);
                        
-        $staff->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
+        $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
         $staff->is_teaching = $request->input('is_teaching');
         $staff->date_of_birth = $request->input('date_of_birth');
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
-          $staff->save();
+        $staff->save();
+
+        // Handle multiple image uploads
+        if ($request->hasFile('images')) {
+            // Delete existing images if requested
+            if ($request->input('delete_existing_images', false)) {
+                foreach ($staff->images as $image) {
+                    Storage::disk('public')->delete($image->image_path);
+                    $image->delete();
+                }
+            }
+
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('staff_images', 'public');
+                
+                StaffImage::create([
+                    'staff_id' => $staff->id,
+                    'image_path' => $path
+                ]);
+            }
+        }
        
         return $this->sendResponse([ "Staff" => new StaffResource($staff)], "Staff updated successfully");
-
     }
 
     /**
@@ -143,6 +178,13 @@ public function index(Request $request): JsonResponse
         if(!$staff){
             return $this->sendError("Staff not found", ['error'=> 'Staff not found']);
         }
+
+        // Delete associated images
+        foreach ($staff->images as $image) {
+            Storage::disk('public')->delete($image->image_path);
+            $image->delete();
+        }
+
         $user = User::find($staff->user_id);
         $staff->delete();
         $user->delete();

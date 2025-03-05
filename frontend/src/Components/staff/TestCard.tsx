@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 
 import { Separator } from "@/components/ui/separator";
+import { useState, useEffect } from "react";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Name is Required"),
@@ -49,6 +50,7 @@ const profileFormSchema = z.object({
     .nonempty("Email is required")
     .email("Invalid email address"),
   password: z.string().nonempty("Password is required"),
+  images: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema> & {
@@ -73,13 +75,58 @@ function ProfileForm() {
   //     control: form.control,
   //   });
 
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      // Limit to 5 images
+      const newFiles = files.slice(0, 5 - selectedImages.length);
+      setSelectedImages([...selectedImages, ...newFiles]);
+      
+      // Create preview URLs
+      const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+      setPreviewUrls([...previewUrls, ...newPreviewUrls]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+    setPreviewUrls(prevUrls => {
+      // Revoke the URL to prevent memory leaks
+      URL.revokeObjectURL(prevUrls[index]);
+      return prevUrls.filter((_, i) => i !== index);
+    });
+  };
+
+  // Cleanup preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     data.name = data.staff_name;
+
     try {
-      await axios.post(`/api/staff`, data, {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (key !== 'images') {
+          formData.append(key, data[key]);
+        }
+      });
+
+      // Append each selected image to the FormData
+      selectedImages.forEach(image => {
+        formData.append('images[]', image);
+      });
+
+      await axios.post(`/api/staff`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -248,6 +295,44 @@ function ProfileForm() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Staff Images Card */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Staff Images</CardTitle>
+              <CardDescription>Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  multiple
+                  onChange={handleImageChange}
+                  disabled={selectedImages.length >= 5}
+                />
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
+                  {previewUrls.map((url, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
 

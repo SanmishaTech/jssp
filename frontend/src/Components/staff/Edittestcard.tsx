@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -50,6 +50,8 @@ const profileFormSchema = z.object({
     .nonempty("Email is required")
     .email("Invalid email address"),
   password: z.any().optional(),
+  images: z.any().optional(),
+  delete_existing_images: z.boolean().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema> & {
@@ -67,22 +69,78 @@ function ProfileForm({ formData }) {
   });
   const { id } = useParams({ from: "/staff/edit/$id" });
 
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [deleteExisting, setDeleteExisting] = useState(false);
+
   const { reset } = form;
 
   // Reset form values when formData changes
   useEffect(() => {
     reset(formData);
+    if (formData?.images) {
+      setExistingImages(formData.images);
+    }
   }, [formData, reset]);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      // Limit to 5 images total (existing + new)
+      const totalAllowed = 5 - existingImages.length;
+      const newFiles = files.slice(0, totalAllowed);
+      setSelectedImages([...selectedImages, ...newFiles]);
+      
+      // Create preview URLs
+      const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+      setPreviewUrls([...previewUrls, ...newPreviewUrls]);
+    }
+  };
+
+  const removeNewImage = (index: number) => {
+    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+    setPreviewUrls(prevUrls => {
+      URL.revokeObjectURL(prevUrls[index]);
+      return prevUrls.filter((_, i) => i !== index);
+    });
+  };
+
+  const removeExistingImage = (imageId: number) => {
+    setExistingImages(existingImages.filter(img => img.id !== imageId));
+  };
+
+  // Cleanup preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   async function onSubmit(data: ProfileFormValues) {
-    data.name = data.staff_name; // Set name to staff_name value
+    data.name = data.staff_name;
     try {
-      await axios.put(`/api/staff/${id}`, data, {
+      const formData = new FormData();
+      Object.keys(data).forEach(key => {
+        if (key !== 'images') {
+          formData.append(key, data[key]);
+        }
+      });
+
+      // Append each selected image to the FormData
+      selectedImages.forEach(image => {
+        formData.append('images[]', image);
+      });
+
+      // Add flag to delete existing images if requested
+      formData.append('delete_existing_images', deleteExisting.toString());
+
+      await axios.post(`/api/staff/${id}?_method=PUT`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -258,6 +316,82 @@ function ProfileForm({ formData }) {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Add this before the Profile Information Card */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Staff Images</CardTitle>
+              <CardDescription>Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {existingImages.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="deleteExisting"
+                        checked={deleteExisting}
+                        onChange={(e) => setDeleteExisting(e.target.checked)}
+                        className="h-4 w-4"
+                      />
+                      <label htmlFor="deleteExisting">Replace all existing images</label>
+                    </div>
+                    
+                    {!deleteExisting && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        {existingImages.map((image) => (
+                          <div key={image.id} className="relative">
+                            <img
+                              src={image.url}
+                              alt="Staff"
+                              className="w-full h-32 object-cover rounded-md"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeExistingImage(image.id)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <Input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  multiple
+                  onChange={handleImageChange}
+                  disabled={selectedImages.length + existingImages.length >= 5}
+                />
+                
+                {selectedImages.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {previewUrls.map((url, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeNewImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
