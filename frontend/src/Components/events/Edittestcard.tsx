@@ -60,7 +60,12 @@ function ProfileForm({ formData }) {
 
   const { reset } = form;
 
-  
+  // Reset form values when formData changes
+  useEffect(() => {
+    formData.name = formData?.user?.name;
+    formData.email = formData?.user?.email;
+    reset(formData);
+  }, [formData, reset]);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -211,7 +216,7 @@ export default function SettingsProfilePage() {
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/Events/${id}`, {
+      const response = await axios.get(`/api/events/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -237,8 +242,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Event Master</CardTitle>
-        <CardDescription>Edit/Update the Event</CardDescription>
+        <CardTitle>Institute Master</CardTitle>
+        <CardDescription>Edit/Update the Institute</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
