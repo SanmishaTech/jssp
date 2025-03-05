@@ -61,11 +61,11 @@ const roleBasedItems = {
       url: "/staff",
       icon: Users,
     },
-    // {
-    //   title: "Calender",
-    //   url: "/calender",
-    //   icon: Users,
-    // },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    },
     {
       title: "Academic Information",
       icon: BookOpen,
@@ -105,12 +105,12 @@ const roleBasedItems = {
     {
       title: "Meetings",
       url: "/meetings",
-      icon: UserCheck,
+      icon: Users,
     },
     {
       title: "Events",
       url: "/events",
-      icon: UserCheck,
+      icon: Calendar,
     },
   ],
   superadmin: [
