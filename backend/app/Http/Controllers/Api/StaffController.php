@@ -150,7 +150,7 @@ public function index(Request $request): JsonResponse
     }
 
 
-    public function allStaff(): JsonResponse
+    public function allStaffs(): JsonResponse
     {
         // Get the institute ID from the logged-in user's staff details.
         $instituteId = Auth::user()->staff->institute_id;

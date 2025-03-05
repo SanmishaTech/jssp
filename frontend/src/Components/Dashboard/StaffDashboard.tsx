@@ -44,35 +44,35 @@ const recentTests = [
   {
     id: "T001",
     contact_person: "John Doe",
-    follow_up_remark: "Blood Panel",
+    follow_up_remark: "Schedule Meetings",
     status: "Completed",
     follow_up_type: "High",
   },
   {
     id: "T002",
     contact_person: "Jane Smith",
-    follow_up_remark: "Urinalysis",
+    follow_up_remark: "Maintain Records",
     status: "Completed",
     follow_up_type: "Medium",
   },
   {
     id: "T003",
     contact_person: "Bob Johnson",
-    follow_up_remark: "Lipid Panel",
+    follow_up_remark: "Campus Cleanliness",
     status: "In Progress",
     follow_up_type: "Low",
   },
   {
     id: "T004",
     contact_person: "Alice Brown",
-    follow_up_remark: "Thyroid Function",
+    follow_up_remark: "Assist Students",
     status: "Completed",
     follow_up_type: "Medium",
   },
   {
     id: "T005",
     contact_person: "Charlie Davis",
-    follow_up_remark: "Liver Function",
+    follow_up_remark: "Organize Events",
     status: "Completed",
     follow_up_type: "High",
   },
@@ -93,20 +93,22 @@ export default function ResponsiveLabDashboard() {
   const User = JSON.parse(user);
   const navigate = useNavigate();
   const [leads, setLeads] = useState([]);
+  const [meetings, setMeetings] = useState([]);
 
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
   const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
 
+  // Fetch staff leads
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/all_leads`, {
+        const response = await axios.get(`/api/all_staff`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         });
-        const leads = response.data.data.Lead;
+        const leads = response.data.data.Staff;
         setLeads(leads);
         const openLeads = leads.filter((lead) => lead.lead_status === "Open");
         setMyLeads(leads.length);
@@ -123,6 +125,40 @@ export default function ResponsiveLabDashboard() {
     fetchData();
   }, []);
 
+  // Fetch meetings
+
+  const [teachingCount, setTeachingCount] = useState(0);
+  const [nonTeachingCount, setNonTeachingCount] = useState(0);
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        const response = await axios.get(`/api/all_meetings`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        if (response.data.status) {
+          const meetingsData = response.data.data.Meeting;
+          setMeetings(meetingsData);
+          // Filter based on the staff_type property
+          setTeachingCount(
+            leads.filter((lead) => lead.staff_type === "Teaching").length
+          );
+          setNonTeachingCount(
+            leads.filter((lead) => lead.staff_type === "Non-Teaching").length
+          );
+        } else {
+          console.error("Failed to fetch meetings:", response.data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching meetings:", error);
+      }
+    };
+
+    fetchMeetings();
+  }, []);
+
   return (
     <div className="flex h-screen ">
       {/* Sidebar for larger screens */}
@@ -131,36 +167,37 @@ export default function ResponsiveLabDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold ">Welcome,(Admin)</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Welcome,(Admin)</h1>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                My Open Deals
+                Teaching Staff
               </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{openLeadsCount}</div>
+              <div className="text-2xl font-bold">{teachingCount}</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                My Untouched Deals
+                Non-Teaching Staff
               </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{openLeadsCount}</div>
+              <div className="text-2xl font-bold">{nonTeachingCount}</div>
             </CardContent>
           </Card>
+
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                My Calls Today
+                My Meetings Today
               </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -170,7 +207,7 @@ export default function ResponsiveLabDashboard() {
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">My Leads</CardTitle>
+              <CardTitle className="text-sm font-medium">My Events</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -190,7 +227,7 @@ export default function ResponsiveLabDashboard() {
                   <TableRow>
                     <TableHead className="w-[100px]">Task ID</TableHead>
                     <TableHead>Contact Name</TableHead>
-                    <TableHead>Follow-Up Remark</TableHead>
+                    <TableHead>Task</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Priority</TableHead>
                   </TableRow>
@@ -238,49 +275,29 @@ export default function ResponsiveLabDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {leads.slice(0, 5).map((test) => (
-                  <div key={test.id} className="flex items-center">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {test.contact.contact_person}
-                      </p>
+                {meetings.slice(0, 5).map((meeting) => (
+                  <div
+                    key={meeting.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{meeting.venue}</p>
                       <p className="text-sm text-muted-foreground">
-                        {test.follow_up_remark}
+                        {meeting.synopsis}
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">
-                      <Badge
-                        variant={
-                          test.follow_up_type === "High"
-                            ? "destructive"
-                            : test.follow_up_type === "Medium"
-                              ? "default"
-                              : "secondary"
-                        }
-                      >
-                        {test.follow_up_type}
-                      </Badge>
-                      <p className="text-xs text-muted-foreground">
-                        {test.lead_follow_up_date
-                          ? `${new Date(test.lead_follow_up_date)
-                              .getDate()
-                              .toString()
-                              .padStart(2, "0")}/${(
-                              new Date(test.lead_follow_up_date).getMonth() + 1
-                            )
-                              .toString()
-                              .padStart(2, "0")}/${new Date(
-                              test.lead_follow_up_date
-                            ).getFullYear()}`
-                          : "DD/MM/YYYY"}
+                    <div className="text-right">
+                      <p className="text-sm font-medium">
+                        {new Date(meeting.date).toLocaleDateString()}
                       </p>
+                      <p className="text-sm">{meeting.time}</p>
                     </div>
                   </div>
                 ))}
-                {leads.length >= 5 && (
+                {meetings.length >= 5 && (
                   <div className="mt-4 text-right">
                     <button
-                      onClick={() => navigate("/leads")}
+                      onClick={() => navigate("/meetings")}
                       className="text-xs hover:text-blue-500"
                     >
                       See More...

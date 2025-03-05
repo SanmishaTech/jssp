@@ -42,7 +42,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('trustees', TrusteeController::class);
 
    Route::resource('staff', StaffController::class);  
-   Route::get('/all_staff', [StaffController::class, 'allStaff'])->name("staffs.all");
+   Route::get('/all_staff', [StaffController::class, 'allStaffs'])->name("staffs.all");
 
    Route::resource('members', MemberController::class);
    Route::resource('superadmin', SuperAdminController::class);
