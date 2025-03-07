@@ -146,16 +146,29 @@ public function index(Request $request): JsonResponse
         $staff->mobile = $request->input('mobile');
         $staff->save();
 
-        // Handle multiple image uploads
-        if ($request->hasFile('images')) {
-            // Delete existing images if requested
-            if ($request->input('delete_existing_images', false)) {
+        // Handle image uploads and deletions
+        // Case 1: Delete all existing images if requested
+        if ($request->input('delete_existing_images') === 'true') {
+            foreach ($staff->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+                $image->delete();
+            }
+        } 
+        // Case 2: Delete only specific images by ID
+        elseif ($request->has('deleted_image_ids')) {
+            $deletedImageIds = json_decode($request->input('deleted_image_ids'), true);
+            if (is_array($deletedImageIds) && count($deletedImageIds) > 0) {
                 foreach ($staff->images as $image) {
-                    Storage::disk('public')->delete($image->image_path);
-                    $image->delete();
+                    if (in_array($image->id, $deletedImageIds)) {
+                        Storage::disk('public')->delete($image->image_path);
+                        $image->delete();
+                    }
                 }
             }
+        }
 
+        // Add new images
+        if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('staff_images', 'public');
                 

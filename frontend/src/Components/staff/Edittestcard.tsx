@@ -73,6 +73,7 @@ function ProfileForm({ formData }) {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<any[]>([]);
   const [deleteExisting, setDeleteExisting] = useState(false);
+  const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
 
   const { reset } = form;
 
@@ -81,6 +82,7 @@ function ProfileForm({ formData }) {
     reset(formData);
     if (formData?.images) {
       setExistingImages(formData.images);
+      setDeletedImageIds([]);
     }
   }, [formData, reset]);
 
@@ -111,6 +113,7 @@ function ProfileForm({ formData }) {
 
   const removeExistingImage = (imageId: number) => {
     setExistingImages(existingImages.filter(img => img.id !== imageId));
+    setDeletedImageIds([...deletedImageIds, imageId]);
   };
 
   // Cleanup preview URLs when component unmounts
@@ -137,6 +140,11 @@ function ProfileForm({ formData }) {
 
       // Add flag to delete existing images if requested
       formData.append('delete_existing_images', deleteExisting.toString());
+      
+      // Send the list of image IDs to delete
+      if (deletedImageIds.length > 0 && !deleteExisting) {
+        formData.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+      }
 
       await axios.post(`/api/staff/${id}?_method=PUT`, formData, {
         headers: {
