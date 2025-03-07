@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,21 +60,90 @@ function ProfileForm({ formData }) {
 
   const { reset } = form;
 
+  // State for image handling
+  const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
+
   // Reset form values when formData changes
   useEffect(() => {
     formData.name = formData?.user?.name;
     formData.email = formData?.user?.email;
     reset(formData);
+
+    // Set existing images when formData changes
+    if (formData.images && Array.isArray(formData.images)) {
+      setExistingImages(formData.images);
+    }
   }, [formData, reset]);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Handle image selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      
+      // Check for maximum 10 images
+      const totalImages = existingImages.length - imagesToDelete.length + selectedImages.length + filesArray.length;
+      if (totalImages > 10) {
+        toast.error("You can upload a maximum of 10 images");
+        return;
+      }
+
+      // Create preview URLs for the selected images
+      const newPreviewUrls = filesArray.map(file => URL.createObjectURL(file));
+      
+      setSelectedImages(prevImages => [...prevImages, ...filesArray]);
+      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+    }
+  };
+
+  // Remove new image from selection
+  const removeNewImage = (index: number) => {
+    // Revoke object URL to prevent memory leaks
+    URL.revokeObjectURL(previewUrls[index]);
+    
+    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+    setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+  };
+
+  // Mark existing image for deletion
+  const markImageForDeletion = (imageId: number) => {
+    setImagesToDelete(prev => [...prev, imageId]);
+  };
+
+  // Restore image that was marked for deletion
+  const restoreImage = (imageId: number) => {
+    setImagesToDelete(prev => prev.filter(id => id !== imageId));
+  };
+
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/events/${id}`, data, {
+      // Create FormData for file uploads
+      const formData = new FormData();
+      
+      // Add form fields to FormData
+      formData.append('venue', data.venue);
+      formData.append('date', data.date);
+      formData.append('time', data.time);
+      formData.append('synopsis', data.synopsis);
+      
+      // Add new images to FormData
+      selectedImages.forEach(image => {
+        formData.append('images[]', image);
+      });
+      
+      // Add images to delete
+      imagesToDelete.forEach(imageId => {
+        formData.append('delete_images[]', imageId.toString());
+      });
+
+      await axios.post(`/api/events/${id}?_method=PUT`, formData, {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -189,6 +258,117 @@ function ProfileForm({ formData }) {
                   </FormItem>
                 )}
               />
+              
+              {/* Existing Images Section */}
+              {existingImages.length > 0 && (
+                <div className="mt-6">
+                  <FormLabel>
+                    Current Event Images
+                  </FormLabel>
+                  <div className="grid grid-cols-5 gap-4 mt-2">
+                    {existingImages.map((image, index) => (
+                      <div key={image.id} className="relative group">
+                        <img
+                          src={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`}
+                          alt={`Event image ${index + 1}`}
+                          className={`h-24 w-24 object-cover rounded-md ${imagesToDelete.includes(image.id) ? 'opacity-30' : ''}`}
+                          onError={(e) => {
+                            console.error("Image failed to load:", image.image_path);
+                            e.currentTarget.src = '/placeholder-image.jpg'; // Fallback image
+                          }}
+                        />
+                        {!imagesToDelete.includes(image.id) ? (
+                          <button
+                            type="button"
+                            onClick={() => markImageForDeletion(image.id)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => restoreImage(image.id)}
+                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white rounded-full p-1 shadow-md"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {imagesToDelete.length > 0 && (
+                    <p className="text-xs text-red-500 mt-2">
+                      {imagesToDelete.length} image(s) marked for deletion. Changes will be applied after saving.
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              {/* New Image Upload Section */}
+              <div className="mt-6">
+                <FormLabel>
+                  Add New Images <span className="text-xs text-gray-500">(Max 10 images total)</span>
+                </FormLabel>
+                <div className="mt-2">
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="imageUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 2MB
+                        </p>
+                      </div>
+                      <Input
+                        id="imageUpload"
+                        type="file"
+                        multiple
+                        accept="image/png, image/jpeg, image/jpg, image/gif"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+                
+                {/* New Image Previews */}
+                {previewUrls.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium mb-2">New Images to Upload</h4>
+                    <div className="grid grid-cols-5 gap-4">
+                      {previewUrls.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Preview ${index}`}
+                            className="h-24 w-24 object-cover rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeNewImage(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Image Count Information */}
+                <p className="text-xs text-gray-500 mt-2">
+                  Total images after changes: {existingImages.length - imagesToDelete.length + selectedImages.length}/10
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -242,18 +422,14 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Events Master</CardTitle>
+        <CardDescription>Edit/Update the Event</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }

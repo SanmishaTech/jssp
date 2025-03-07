@@ -22,6 +22,12 @@ class EventResource extends JsonResource
             'date' => $this->date,
             'time' => $this->time,
             'synopsis' => $this->synopsis,
+            'images' => $this->images->map(function($image) {
+                return [
+                    'id' => $image->id,
+                    'image_path' => $image->image_path
+                ];
+            })
         ];
     }
 }

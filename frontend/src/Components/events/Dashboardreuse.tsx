@@ -34,7 +34,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Card,
   CardContent,
@@ -115,15 +123,17 @@ export function Dashboard({
 }: DashboardProps) {
   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
-  const [editid, setEditid] = useState();
+  const [editid, setEditid] = useState({ id: null, url: "" });
   const [toggledelete, setToggledelete] = useState();
-  // State to manage expanded rows (array of _id)
-  const [expandedRows, setExpandedRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
-
-  // State for search term and table data
   const [searchInput, setSearchInput] = useState("");
   const [institutes, setInstitutes] = useState(tableData);
+  
+  // Add new state for the event detail dialog
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [eventDialogOpen, setEventDialogOpen] = useState(false);
+  const [eventImages, setEventImages] = useState<any[]>([]);
 
   // Handler for search input change - just updates the input value
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -196,6 +206,28 @@ export function Dashboard({
     localStorage.removeItem("user");
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
+  };
+
+  // New function to handle row click and open dialog
+  const handleRowClick = async (event: any) => {
+    try {
+      // Fetch detailed event information including images
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`/api/events/${event.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      const eventData = response.data.data.Event;
+      setSelectedEvent(eventData);
+      setEventImages(eventData.images || []);
+      setEventDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching event details:", error);
+      toast.error("Failed to load event details");
+    }
   };
 
   return (
@@ -368,7 +400,16 @@ export function Dashboard({
                     <TableBody>
                       {institutes?.map((row) => (
                         <React.Fragment key={row.id}>
-                          <TableRow>
+                          <TableRow 
+                            onClick={(e) => {
+                              // Don't open dialog if clicking on dropdown menu
+                              if (e.target.closest('[data-dropdown-trigger]')) {
+                                return;
+                              }
+                              handleRowClick(row);
+                            }}
+                            className="cursor-pointer hover:bg-accent"
+                          >
                             {tableColumns?.headers?.map((header, index) => (
                               <TableCell
                                 key={index}
@@ -384,6 +425,7 @@ export function Dashboard({
                                       <Button
                                         variant="ghost"
                                         className="h-8 w-8 p-0"
+                                        data-dropdown-trigger
                                       >
                                         <span className="sr-only">
                                           Open menu
@@ -447,6 +489,78 @@ export function Dashboard({
           </Tabs>
         </main>
       </div>
+
+      {/* Event details dialog */}
+      <Dialog open={eventDialogOpen} onOpenChange={setEventDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Event Details</DialogTitle>
+            <DialogDescription>
+              View detailed information about this event
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedEvent && (
+            <div className="space-y-6">
+              {/* Event details section */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <h4 className="font-semibold text-sm">Venue</h4>
+                  <p>{selectedEvent.venue}</p>
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-semibold text-sm">Date & Time</h4>
+                  <p>{selectedEvent.date} - {selectedEvent.time}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-1">
+                <h4 className="font-semibold text-sm">Synopsis</h4>
+                <p className="text-sm">{selectedEvent.synopsis}</p>
+              </div>
+              
+              {/* Image gallery section */}
+              {eventImages && eventImages.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold">Event Images</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    {eventImages.map((image, index) => (
+                      <div key={image.id} className="relative group">
+                        <a 
+                          href={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`}
+                            alt={`Event image ${index + 1}`}
+                            className="h-40 w-full object-cover rounded-md hover:opacity-90 transition-opacity"
+                            onError={(e) => {
+                              console.error("Image failed to load:", image.image_path);
+                              e.currentTarget.src = '/placeholder-image.jpg';
+                            }}
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                              View Full Size
+                            </span>
+                          </div>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEventDialogOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

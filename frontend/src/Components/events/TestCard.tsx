@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-
+import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
@@ -58,25 +58,69 @@ function ProfileForm() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
-  //     name: "urls",
-  //     control: form.control,
-  //   });
+
+  // State for image uploads
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+
+  // Handle image selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      
+      // Check for maximum 10 images
+      if (filesArray.length + selectedImages.length > 10) {
+        toast.error("You can upload a maximum of 10 images");
+        return;
+      }
+
+      // Create preview URLs for the selected images
+      const newPreviewUrls = filesArray.map(file => URL.createObjectURL(file));
+      
+      setSelectedImages(prevImages => [...prevImages, ...filesArray]);
+      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+    }
+  };
+
+  // Remove image from selection
+  const removeImage = (index: number) => {
+    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+    
+    // Revoke object URL to prevent memory leaks
+    URL.revokeObjectURL(previewUrls[index]);
+    setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+  };
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
+
+    // Create FormData for file uploads
+    const formData = new FormData();
+    
+    // Add form fields to FormData
+    formData.append('venue', data.venue);
+    formData.append('date', data.date);
+    formData.append('time', data.time);
+    formData.append('synopsis', data.synopsis);
+    if (data.userId) {
+      formData.append('userId', data.userId);
+    }
+    
+    // Add images to FormData
+    selectedImages.forEach(image => {
+      formData.append('images[]', image);
+    });
+
     try {
-      await axios
-        .post(`/api/events`, data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          toast.success("Events Created Successfully");
-          window.history.back();
-        });
+      await axios.post(`/api/events`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((res) => {
+        toast.success("Events Created Successfully");
+        window.history.back();
+      });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -180,6 +224,64 @@ function ProfileForm() {
                   </FormItem>
                 )}
               />
+              
+              {/* Image Upload Section */}
+              <div className="mt-6">
+                <FormLabel>
+                  Event Images <span className="text-xs text-gray-500">(Max 10 images)</span>
+                </FormLabel>
+                <div className="mt-2">
+                  <div className="flex items-center justify-center w-full">
+                    <label
+                      htmlFor="imageUpload"
+                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+                    >
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG, GIF up to 2MB
+                        </p>
+                      </div>
+                      <Input
+                        id="imageUpload"
+                        type="file"
+                        multiple
+                        accept="image/png, image/jpeg, image/jpg, image/gif"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+                  </div>
+                </div>
+                
+                {/* Image Previews */}
+                {previewUrls.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium mb-2">Selected Images ({previewUrls.length}/10)</h4>
+                    <div className="grid grid-cols-5 gap-4">
+                      {previewUrls.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Preview ${index}`}
+                            className="h-24 w-24 object-cover rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>

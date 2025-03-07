@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Event;
+use App\Models\EventImage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\EventResource;
 use App\Http\Controllers\Api\BaseController;
 
@@ -49,9 +51,17 @@ class EventController extends BaseController
 
     public function store(Request $request): JsonResponse
     {
+        // Validate the request
+        $request->validate([
+            'venue' => 'required|string|max:255',
+            'date' => 'required|string|max:255',
+            'time' => 'required|string|max:255',
+            'synopsis' => 'nullable|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
+            'images' => 'array|max:10', // Maximum 10 images
+        ]);
         
-        
-        // Create a new staff record and assign the institute_id from the logged-in admin
+        // Create a new event record and assign the institute_id from the logged-in admin
         $event = new Event();
         $event->institute_id = Auth::user()->staff->institute_id;  
         $event->venue = $request->input('venue');
@@ -59,6 +69,20 @@ class EventController extends BaseController
         $event->time = $request->input('time');
         $event->synopsis = $request->input('synopsis');
         $event->save();
+        
+        // Handle image uploads if present
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                // Store the image
+                $path = $image->store('events', 'public');
+                
+                // Create EventImage record
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image_path' => $path
+                ]);
+            }
+        }
         
         return $this->sendResponse([ "Event" => new EventResource($event)], "Event stored successfully");
     }
@@ -79,23 +103,69 @@ class EventController extends BaseController
 
     public function update(Request $request, string $id): JsonResponse
     {
+        // Validate the request
+        $request->validate([
+            'venue' => 'required|string|max:255',
+            'date' => 'required|string|max:255',
+            'time' => 'required|string|max:255',
+            'synopsis' => 'nullable|string',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
+            'images' => 'nullable|array|max:10', // Maximum 10 images
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer|exists:event_images,id'
+        ]);
  
         $event = Event::find($id);
 
         if(!$event){
             return $this->sendError("Event not found", ['error'=>'Event not found']);
         }
-       
                        
-        $event->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
+        $event->institute_id = Auth::user()->staff->institute_id;
         $event->venue = $request->input('venue');
         $event->date = $request->input('date');
         $event->time = $request->input('time');
         $event->synopsis = $request->input('synopsis');
-           $event->save();
+        $event->save();
+        
+        // Handle deletion of images if requested
+        if ($request->has('delete_images')) {
+            foreach ($request->input('delete_images') as $imageId) {
+                $image = EventImage::find($imageId);
+                if ($image && $image->event_id == $event->id) {
+                    // Delete the file from storage
+                    if (Storage::disk('public')->exists($image->image_path)) {
+                        Storage::disk('public')->delete($image->image_path);
+                    }
+                    // Delete the record
+                    $image->delete();
+                }
+            }
+        }
+        
+        // Handle new image uploads if present
+        if ($request->hasFile('images')) {
+            // Check if adding these new images exceeds the limit of 10
+            $currentImageCount = $event->images()->count();
+            $newImagesCount = count($request->file('images'));
+            
+            if ($currentImageCount + $newImagesCount > 10) {
+                return $this->sendError("Too many images", ['error' => 'Maximum 10 images allowed per event. Please delete some existing images first.']);
+            }
+            
+            foreach ($request->file('images') as $image) {
+                // Store the image
+                $path = $image->store('events', 'public');
+                
+                // Create EventImage record
+                EventImage::create([
+                    'event_id' => $event->id,
+                    'image_path' => $path
+                ]);
+            }
+        }
        
         return $this->sendResponse([ "Event" => new EventResource($event)], "Event updated successfully");
-
     }
 
 
