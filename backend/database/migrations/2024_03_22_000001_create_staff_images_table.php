@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('staff_id');
             $table->string('image_path');
+         
             $table->timestamps();
             
-            $table->foreign('staff_id')
-                  ->references('id')
-                  ->on('staff')
-                  ->onDelete('cascade');
+           
         });
     }
 
