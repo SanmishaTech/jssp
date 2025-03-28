@@ -84,16 +84,16 @@ function ProfileForm() {
       // Limit to 5 images
       const newFiles = files.slice(0, 5 - selectedImages.length);
       setSelectedImages([...selectedImages, ...newFiles]);
-      
+
       // Create preview URLs
-      const newPreviewUrls = newFiles.map(file => URL.createObjectURL(file));
+      const newPreviewUrls = newFiles.map((file) => URL.createObjectURL(file));
       setPreviewUrls([...previewUrls, ...newPreviewUrls]);
     }
   };
 
   const removeImage = (index: number) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
-    setPreviewUrls(prevUrls => {
+    setPreviewUrls((prevUrls) => {
       // Revoke the URL to prevent memory leaks
       URL.revokeObjectURL(prevUrls[index]);
       return prevUrls.filter((_, i) => i !== index);
@@ -103,7 +103,7 @@ function ProfileForm() {
   // Cleanup preview URLs when component unmounts
   useEffect(() => {
     return () => {
-      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
@@ -113,15 +113,15 @@ function ProfileForm() {
 
     try {
       const formData = new FormData();
-      Object.keys(data).forEach(key => {
-        if (key !== 'images') {
+      Object.keys(data).forEach((key) => {
+        if (key !== "images") {
           formData.append(key, data[key]);
         }
       });
 
       // Append each selected image to the FormData
-      selectedImages.forEach(image => {
-        formData.append('images[]', image);
+      selectedImages.forEach((image) => {
+        formData.append("images[]", image);
       });
 
       await axios.post(`/api/staff`, formData, {
@@ -302,7 +302,9 @@ function ProfileForm() {
           <Card className="w-full">
             <CardHeader>
               <CardTitle>Staff Images</CardTitle>
-              <CardDescription>Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)</CardDescription>
+              <CardDescription>
+                Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -313,7 +315,7 @@ function ProfileForm() {
                   onChange={handleImageChange}
                   disabled={selectedImages.length >= 5}
                 />
-                
+
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
                   {previewUrls.map((url, index) => (
                     <div key={index} className="relative">

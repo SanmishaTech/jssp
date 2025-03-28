@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Dashboard from "./Dashboardreuse";
-// import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
@@ -12,7 +21,11 @@ export default function Dashboardholiday() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const token = localStorage.getItem("token");
+
   const typeofschema = {
     institute_name: "String",
     contact_name: "String",
@@ -28,36 +41,63 @@ export default function Dashboardholiday() {
     password: "String",
     mobile: "String",
   };
-  useEffect(() => {
-    // Fetch data from the API
-    axios
-      .get(`/api/trustees`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setData(response.data.data.Trustees);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setError(err);
-        setLoading(false);
-      });
 
-    // Define the dashboard configuration
+  const fetchData = async (query: string = "", page: number = 1) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `/api/trustees${query ? `?search=${query}&` : "?"}page=${page}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setData(response.data.data.Trustees);
+
+      // Update pagination state
+      const pagination = response.data.data.Pagination;
+      setCurrentPage(pagination.current_page);
+      setTotalPages(pagination.last_page);
+
+      setConfig((prev) => ({
+        ...prev,
+        tableColumns: {
+          ...prev?.tableColumns,
+          pagination: {
+            currentPage: pagination.current_page,
+            lastPage: pagination.last_page,
+            perPage: pagination.per_page,
+            total: pagination.total,
+            from: (pagination.current_page - 1) * pagination.per_page + 1,
+            to: Math.min(
+              pagination.current_page * pagination.per_page,
+              pagination.total
+            ),
+          },
+        },
+      }));
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
     setConfig({
-      // breadcrumbs: [
-      //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
-      // ],
       searchPlaceholder: "Search Trustees...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
         title: "Trustees",
-        description: "Manage Trustees  and view their details.",
+        description: "Manage Trustees and view their details.",
         headers: [
           { label: "Trustees Name", key: "one" },
           { label: "Designation", key: "two" },
@@ -66,27 +106,43 @@ export default function Dashboardholiday() {
           { label: "Address", key: "five" },
           { label: "Action", key: "action" },
         ],
-        // tabs: [
-        //   { label: "All", value: "all" },
-        //   { label: "Active", value: "active" },
-        //   { label: "Completed", value: "completed" },
-        // ],
-        // filters: [
-        //   { label: "Active", value: "active", checked: true },
-        //   { label: "Completed", value: "completed", checked: false },
-        // ],
         actions: [
           { label: "Edit", value: "edit" },
           { label: "Delete", value: "delete" },
         ],
         pagination: {
+          currentPage: 1,
+          lastPage: 1,
+          perPage: 5,
+          total: 0,
           from: 1,
-          to: 10,
-          total: 32,
+          to: 5,
         },
       },
     });
-  }, [User?._id]);
+  }, []);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    await fetchData(query);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchData(searchQuery, nextPage);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      fetchData(searchQuery, prevPage);
+    }
+  };
+
   const navigate = useNavigate();
 
   // Handlers for actions
@@ -143,23 +199,29 @@ export default function Dashboardholiday() {
       four: item?.contact_mobile || "NA",
       five: item?.address || "NA",
       delete: "/trustees/" + item?.id,
+      action: "actions",
     };
   });
 
   return (
     <div className="p-4">
       <Dashboard
-        breadcrumbs={config.breadcrumbs}
-        searchPlaceholder={config.searchPlaceholder}
+        breadcrumbs={config?.breadcrumbs}
+        searchPlaceholder={config?.searchPlaceholder}
         userAvatar={userAvatar}
-        tableColumns={config.tableColumns}
+        tableColumns={config?.tableColumns}
         tableData={mappedTableData}
         onAddProduct={handleAddProduct}
         onExport={handleExport}
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
-        // AddItem={AddItem}
+        onSearch={handleSearch}
         typeofschema={typeofschema}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );

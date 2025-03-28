@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Dashboard from "./Dashboardreuse";
-// import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
@@ -25,31 +34,80 @@ export default function Dashboardholiday() {
     alternate_mobile: "String",
     password: "String",
   };
-  useEffect(() => {
-    // Fetch data from the API
-    axios
-      .get(`/api/staff`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setData(response.data.data.Staff);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setError(err);
-        setLoading(false);
-      });
 
-    // Define the dashboard configuration
+  const [paginationState, setPaginationState] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    perPage: 10,
+    total: 0,
+  });
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const fetchData = async (query: string = "", page: number = 1) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `/api/staff${query ? `?search=${query}&` : "?"}page=${page}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.data) {
+        setData(response.data.data.Staff);
+
+        // Update pagination state
+        const pagination = response.data.data.Pagination;
+        setPaginationState({
+          currentPage: Number(pagination.current_page),
+          totalPages: Number(pagination.last_page),
+          perPage: Number(pagination.per_page),
+          total: Number(pagination.total),
+        });
+      }
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(searchQuery, paginationState.currentPage);
+  }, [token]); // Keep token as the only dependency
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    setPaginationState((prev) => ({ ...prev, currentPage: 1 }));
+    await fetchData(query, 1);
+  };
+
+  const handleNextPage = () => {
+    if (paginationState.currentPage < paginationState.totalPages) {
+      handlePageChange(paginationState.currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (paginationState.currentPage > 1) {
+      handlePageChange(paginationState.currentPage - 1);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= paginationState.totalPages) {
+      setPaginationState((prev) => ({ ...prev, currentPage: page }));
+      fetchData(searchQuery, page);
+    }
+  };
+
+  useEffect(() => {
     setConfig({
-      // breadcrumbs: [
-      //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "staff" },
-      // ],
       searchPlaceholder: "Search staff...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
@@ -62,27 +120,25 @@ export default function Dashboardholiday() {
           { label: "Role", key: "four" },
           { label: "Action", key: "action" },
         ],
-        // tabs: [
-        //   { label: "All", value: "all" },
-        //   { label: "Active", value: "active" },
-        //   { label: "Completed", value: "completed" },
-        // ],
-        // filters: [
-        //   { label: "Active", value: "active", checked: true },
-        //   { label: "Completed", value: "completed", checked: false },
-        // ],
         actions: [
           { label: "Edit", value: "edit" },
           { label: "Delete", value: "delete" },
         ],
         pagination: {
-          from: 1,
-          to: 10,
-          total: 32,
+          currentPage: paginationState.currentPage,
+          lastPage: paginationState.totalPages,
+          perPage: paginationState.perPage,
+          total: paginationState.total,
+          from: (paginationState.currentPage - 1) * paginationState.perPage + 1,
+          to: Math.min(
+            paginationState.currentPage * paginationState.perPage,
+            paginationState.total
+          ),
         },
       },
     });
-  }, [User?._id]);
+  }, [data, paginationState]); // Update dependencies to include data
+
   const navigate = useNavigate();
 
   // Handlers for actions
@@ -143,7 +199,8 @@ export default function Dashboardholiday() {
       two: capital(item?.email || "NA"),
       three: capital(item?.is_teaching === "0" ? "Yes" : "No"),
       four: capital(item?.role || "Unknown"),
-      delete: item?.role?.toLowerCase() !== "admin" ? "/staff/" + item?.id : null,
+      delete:
+        item?.role?.toLowerCase() !== "admin" ? "/staff/" + item?.id : null,
     };
   });
 
@@ -159,7 +216,13 @@ export default function Dashboardholiday() {
         onExport={handleExport}
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
-        // AddItem={AddItem}
+        onSearch={handleSearch}
+        currentPage={paginationState.currentPage}
+        totalPages={paginationState.totalPages}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        setCurrentPage={(page) => handlePageChange(page)}
+        handlePageChange={handlePageChange}
         typeofschema={typeofschema}
       />
     </div>

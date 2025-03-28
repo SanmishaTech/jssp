@@ -30,7 +30,7 @@ class SemesterController extends BaseController
         }
     
         // Paginate the results.
-        $semester = $query->paginate(15);
+        $semester = $query->paginate(1);
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(
