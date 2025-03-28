@@ -16,20 +16,26 @@ export default function AlertDialogbox({
   url,
   backdrop = "blur",
   isOpen,
+  fetchData,
   onOpen,
 }) {
   const onClose = () => {
     onOpen();
   };
-
+  const token = localStorage.getItem("token");
   console.log("This is Delete url", url);
   const queryClient = useQueryClient();
   const DeleteApi = async () => {
     console.log("This is Delete url", `/api/${url}`);
-    await axios.delete(`/api/patientmaster/delete/${url}`);
+    await axios.delete(`/api/semesters/${url}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     // window.location.reload();
     onClose();
-    queryClient.invalidateQueries({ queryKey: ["patientmaster"] });
+    fetchData();
   };
 
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function AlertDialogbox({
 
   return (
     <>
-      <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
             <>

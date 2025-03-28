@@ -44,8 +44,9 @@ export default function AlertDialogbox({
 
   return (
     <>
-      <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
-        <ModalContent closeButton={false} className="w-[500px]">
+       <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+ 
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">

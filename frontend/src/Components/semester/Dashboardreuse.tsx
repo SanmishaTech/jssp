@@ -102,6 +102,7 @@ export default function Dashboard({
   handleNextPage,
   totalPages,
   setSearch,
+  fetchData,
   setCurrentPage,
   Searchitem,
   currentPage,
@@ -207,7 +208,7 @@ export default function Dashboard({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                  {tableColumns.title || "Institutes Dashboard"}
+                  {tableColumns.title || "semester Dashboard"}
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {tableColumns.description ||
@@ -238,7 +239,7 @@ export default function Dashboard({
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/institutes/add" })}
+                  onPress={() => navigate({ to: "/semester/add" })}
                   className="h-9"
                 >
                   Add New Institute
@@ -259,6 +260,7 @@ export default function Dashboard({
                 backdrop="blur"
                 url={editid}
                 isOpen={toggleopen}
+                fetchData={fetchData}
                 onOpen={setToggleopen}
               />
 
@@ -273,7 +275,7 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No Institutes Available"
+                  title="No semester Available"
                   description="You can add a new institute to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
@@ -336,8 +338,7 @@ export default function Dashboard({
                                             description="Edit institute details"
                                             onPress={() =>
                                               navigate({
-                                                to:
-                                                  "/institutes/edit/" + row?.id,
+                                                to: "/semester/edit/" + row?.id,
                                               })
                                             }
                                             startContent={

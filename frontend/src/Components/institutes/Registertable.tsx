@@ -212,7 +212,7 @@ export default function Dashboardholiday() {
       one: item?.institute_name || "Unknown",
       two: item?.registration_number || "NA",
       three: item?.affiliated_university || "NA",
-      four: item?.user.email || "NA",
+      four: item?.user?.email || "NA",
 
       delete: "/institutes/" + item?.id,
       action: "actions", // Placeholder for action buttons

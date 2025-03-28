@@ -104,6 +104,7 @@ export default function Dashboard({
   setSearch,
   setCurrentPage,
   Searchitem,
+  fetchData,
   currentPage,
   handlePrevPage,
   tableData = [],
@@ -258,6 +259,7 @@ export default function Dashboard({
               <AlertDialogbox
                 backdrop="blur"
                 url={editid}
+                fetchData={fetchData}
                 isOpen={toggleopen}
                 onOpen={setToggleopen}
               />
