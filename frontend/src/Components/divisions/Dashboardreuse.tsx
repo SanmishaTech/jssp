@@ -104,6 +104,7 @@ export default function Dashboard({
   setSearch,
   setCurrentPage,
   Searchitem,
+  fetchData,
   currentPage,
   handlePrevPage,
   tableData = [],
@@ -259,6 +260,7 @@ export default function Dashboard({
                 backdrop="blur"
                 url={editid}
                 isOpen={toggleopen}
+                fetchData={fetchData}
                 onOpen={setToggleopen}
               />
 

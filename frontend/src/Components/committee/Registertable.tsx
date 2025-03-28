@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Dashboard } from "./Dashboardreuse";
+import Dashboard from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
@@ -184,6 +184,7 @@ export default function Dashboardholiday() {
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
         onSearch={handleSearch}
+        fetchData={fetchData}
         // AddItem={AddItem}
         typeofschema={typeofschema}
       />

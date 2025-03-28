@@ -226,6 +226,7 @@ export default function Dashboardholiday() {
         handlePrevPage={handlePrevPage}
         setCurrentPage={setCurrentPage}
         setSearch={setSearchQuery}
+        fetchData={fetchData}
         Searchitem={searchQuery}
       />
     </div>

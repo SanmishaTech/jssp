@@ -137,12 +137,25 @@ export default function Dashboardholiday() {
     // You can implement filtering logic here, possibly refetching data with filters applied
   };
 
-  const handleProductAction = (action, product) => {
-    console.log(`Action: ${action} on registration:`, product);
+  const handleProductAction = async (action, product) => {
     if (action === "edit") {
-      // Navigate to edit page or open edit modal
+      navigate({ to: `/courses/edit/${product.id}` });
     } else if (action === "delete") {
-      // Implement delete functionality, possibly with confirmation
+      try {
+        const response = await axios.delete(`/api/courses/${product.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          // Refetch the data after successful deletion
+          await fetchData(searchQuery, paginationState.currentPage);
+        }
+      } catch (err) {
+        console.error("Error deleting course:", err);
+        // Optionally add error handling UI feedback here
+      }
     }
   };
 
@@ -222,6 +235,7 @@ export default function Dashboardholiday() {
         handlePrevPage={handlePrevPage}
         setCurrentPage={(page) => handlePageChange(page)}
         handlePageChange={handlePageChange}
+        fetchData={fetchData}
       />
     </div>
   );

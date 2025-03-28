@@ -99,6 +99,7 @@ export default function Dashboard({
   Edititem,
   filterValue,
   typeofschema,
+  fetchData,
   handleNextPage,
   totalPages,
   setSearch,
@@ -259,6 +260,7 @@ export default function Dashboard({
                 backdrop="blur"
                 url={editid}
                 isOpen={toggleopen}
+                fetchData={fetchData}
                 onOpen={setToggleopen}
               />
 

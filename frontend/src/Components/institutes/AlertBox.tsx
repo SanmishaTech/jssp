@@ -28,8 +28,7 @@ export default function AlertDialogbox({
     console.log("This is Delete url", `/api/${url}`);
     await axios.delete(`/api/patientmaster/delete/${url}`);
     // window.location.reload();
-    onClose();
-    queryClient.invalidateQueries({ queryKey: ["patientmaster"] });
+    fetchData();
   };
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export default function AlertDialogbox({
 
   return (
     <>
-      <Modal backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
             <>
