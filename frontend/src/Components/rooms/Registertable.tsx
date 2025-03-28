@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Dashboard } from "./Dashboardreuse";
+import Dashboard from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
@@ -27,17 +27,23 @@ export default function Dashboardholiday() {
     room_name: "String",
     room_number: "String",
   };
+
+  // Add these new state variables
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
+
   useEffect(() => {
     // Initial data fetch
     fetchData();
   }, [token]); // Only re-run when token changes
 
-  // Separate fetchData function that can be reused
-  const fetchData = async (query: string = "") => {
+  // Update the fetchData function to correctly handle the pagination response
+  const fetchData = async (query: string = "", page: number = 1) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/rooms${query ? `?search=${query}` : ""}`,
+        `/api/rooms?page=${page}&limit=${itemsPerPage}${query ? `&search=${query}` : ""}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -45,17 +51,26 @@ export default function Dashboardholiday() {
           },
         }
       );
+
+      // Update data from response
       setData(response.data.data.Room);
 
-      // Update pagination in config
+      // Update pagination info from the actual response structure
+      const pagination = response.data.data.Pagination;
+      setTotalPages(pagination.last_page);
+
+      // Update config with correct pagination values
       setConfig((prev) => ({
         ...prev,
         tableColumns: {
           ...prev?.tableColumns,
           pagination: {
-            from: response.data.data.Pagination.from || 1,
-            to: response.data.data.Pagination.to || 10,
-            total: response.data.data.Pagination.total || 0,
+            from: (pagination.current_page - 1) * pagination.per_page + 1,
+            to: Math.min(
+              pagination.current_page * pagination.per_page,
+              pagination.total
+            ),
+            total: pagination.total,
           },
         },
       }));
@@ -136,10 +151,29 @@ export default function Dashboardholiday() {
     }
   };
 
+  // Update the handleNextPage function to use the correct page number
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchData(searchQuery, nextPage);
+    }
+  };
+
+  // Update the handlePrevPage function to use the correct page number
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      fetchData(searchQuery, prevPage);
+    }
+  };
+
+  // Update the search handler to reset pagination
   const handleSearch = async (query: string) => {
-    console.log("Searching for:", query);
     setSearchQuery(query);
-    await fetchData(query);
+    setCurrentPage(1);
+    await fetchData(query, 1);
   };
 
   if (loading) return <div className="p-4">Loading...</div>;
@@ -185,6 +219,14 @@ export default function Dashboardholiday() {
         onSearch={handleSearch}
         // AddItem={AddItem}
         typeofschema={typeofschema}
+        // Add these new props
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        setCurrentPage={setCurrentPage}
+        setSearch={setSearchQuery}
+        Searchitem={searchQuery}
       />
     </div>
   );

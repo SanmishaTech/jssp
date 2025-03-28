@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Dashboard } from "./Dashboardreuse";
+import Dashboard from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
@@ -28,17 +28,23 @@ export default function Dashboardholiday() {
     medium_title: "String",
     organization: "String",
   };
+  const [paginationState, setPaginationState] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    perPage: 10,
+    total: 0,
+  });
   useEffect(() => {
     // Initial data fetch
     fetchData();
   }, [token]); // Only re-run when token changes
 
   // Separate fetchData function that can be reused
-  const fetchData = async (query: string = "") => {
+  const fetchData = async (query: string = "", page: number = 1) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/courses${query ? `?search=${query}` : ""}`,
+        `/api/courses${query ? `?search=${query}&` : "?"}page=${page}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -48,18 +54,14 @@ export default function Dashboardholiday() {
       );
       setData(response.data.data.Course);
 
-      // Update pagination in config
-      setConfig((prev) => ({
-        ...prev,
-        tableColumns: {
-          ...prev?.tableColumns,
-          pagination: {
-            from: response.data.data.Pagination.from || 1,
-            to: response.data.data.Pagination.to || 10,
-            total: response.data.data.Pagination.total || 0,
-          },
-        },
-      }));
+      // Update pagination state
+      const pagination = response.data.data.Pagination;
+      setPaginationState({
+        currentPage: Number(pagination.current_page),
+        totalPages: Number(pagination.last_page),
+        perPage: Number(pagination.per_page),
+        total: Number(pagination.total),
+      });
 
       setLoading(false);
     } catch (err) {
@@ -102,13 +104,19 @@ export default function Dashboardholiday() {
           { label: "Delete", value: "delete" },
         ],
         pagination: {
-          from: 1,
-          to: 10,
-          total: 32,
+          currentPage: paginationState.currentPage,
+          lastPage: paginationState.totalPages,
+          perPage: paginationState.perPage,
+          total: paginationState.total,
+          from: (paginationState.currentPage - 1) * paginationState.perPage + 1,
+          to: Math.min(
+            paginationState.currentPage * paginationState.perPage,
+            paginationState.total
+          ),
         },
       },
     });
-  }, []);
+  }, [data, paginationState]); // Update dependencies to include data and paginationState
   const navigate = useNavigate();
 
   // Handlers for actions
@@ -138,10 +146,30 @@ export default function Dashboardholiday() {
     }
   };
 
+  const handleNextPage = () => {
+    if (paginationState.currentPage < paginationState.totalPages) {
+      handlePageChange(paginationState.currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (paginationState.currentPage > 1) {
+      handlePageChange(paginationState.currentPage - 1);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= paginationState.totalPages) {
+      setPaginationState((prev) => ({ ...prev, currentPage: page }));
+      fetchData(searchQuery, page);
+    }
+  };
+
+  // Update handleSearch to reset pagination
   const handleSearch = async (query: string) => {
-    console.log("Searching for:", query);
     setSearchQuery(query);
-    await fetchData(query);
+    setPaginationState((prev) => ({ ...prev, currentPage: 1 }));
+    await fetchData(query, 1);
   };
 
   if (loading) return <div className="p-4">Loading...</div>;
@@ -188,6 +216,12 @@ export default function Dashboardholiday() {
         onSearch={handleSearch}
         // AddItem={AddItem}
         typeofschema={typeofschema}
+        currentPage={paginationState.currentPage}
+        totalPages={paginationState.totalPages}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        setCurrentPage={(page) => handlePageChange(page)}
+        handlePageChange={handlePageChange}
       />
     </div>
   );

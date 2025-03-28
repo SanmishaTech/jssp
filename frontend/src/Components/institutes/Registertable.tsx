@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Dashboard } from "./Dashboardreuse";
+import Dashboard from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
@@ -38,17 +38,23 @@ export default function Dashboardholiday() {
     password: "String",
     mobile: "String",
   };
+
+  // Add these state variables at the top of your component
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     // Initial data fetch
     fetchData();
   }, [token]); // Only re-run when token changes
 
   // Separate fetchData function that can be reused
-  const fetchData = async (query: string = "") => {
+  // Update the fetchData function to accept page parameter
+  const fetchData = async (query: string = "", page: number = 1) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/institutes${query ? `?search=${query}` : ""}`,
+        `/api/institutes${query ? `?search=${query}&` : "?"}page=${page}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -58,15 +64,25 @@ export default function Dashboardholiday() {
       );
       setData(response.data.data.Institutes);
 
-      // Update pagination in config
+      // Update pagination state
+      const pagination = response.data.data.Pagination;
+      setCurrentPage(pagination.current_page);
+      setTotalPages(pagination.last_page);
+
       setConfig((prev) => ({
         ...prev,
         tableColumns: {
           ...prev?.tableColumns,
           pagination: {
-            from: response.data.data.Pagination.from || 1,
-            to: response.data.data.Pagination.to || 10,
-            total: response.data.data.Pagination.total || 0,
+            currentPage: pagination.current_page,
+            lastPage: pagination.last_page,
+            perPage: pagination.per_page,
+            total: pagination.total,
+            from: (pagination.current_page - 1) * pagination.per_page + 1,
+            to: Math.min(
+              pagination.current_page * pagination.per_page,
+              pagination.total
+            ),
           },
         },
       }));
@@ -113,9 +129,12 @@ export default function Dashboardholiday() {
           { label: "Delete", value: "delete" },
         ],
         pagination: {
+          currentPage: 1,
+          lastPage: 1,
+          perPage: 5,
+          total: 0,
           from: 1,
-          to: 10,
-          total: 32,
+          to: 5,
         },
       },
     });
@@ -155,6 +174,23 @@ export default function Dashboardholiday() {
     await fetchData(query);
   };
 
+  // Add pagination handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      fetchData(searchQuery, nextPage);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const prevPage = currentPage - 1;
+      setCurrentPage(prevPage);
+      fetchData(searchQuery, prevPage);
+    }
+  };
+
   if (loading) return <div className="p-4">Loading...</div>;
   if (error)
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
@@ -171,9 +207,6 @@ export default function Dashboardholiday() {
       return acc + servicePrice;
     }, 0);
 
-    // Calculate balance amount based on total service price and paid amount.
-    const balanceAmount =
-      totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
       one: item?.institute_name || "Unknown",
@@ -182,6 +215,7 @@ export default function Dashboardholiday() {
       four: item?.user.email || "NA",
 
       delete: "/institutes/" + item?.id,
+      action: "actions", // Placeholder for action buttons
     };
   });
 
@@ -200,6 +234,11 @@ export default function Dashboardholiday() {
         onSearch={handleSearch}
         // AddItem={AddItem}
         typeofschema={typeofschema}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handleNextPage={handleNextPage}
+        handlePrevPage={handlePrevPage}
+        setCurrentPage={setCurrentPage}
       />
     </div>
   );
