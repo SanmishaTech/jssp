@@ -179,27 +179,6 @@ export default function Dashboard({
               ))}
             </BreadcrumbList>
           </Breadcrumb>
-
-          <div className="flex items-center gap-3 ml-auto">
-            <div className="relative flex-1 md:w-[300px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={searchPlaceholder}
-                className="w-full rounded-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                value={Searchitem}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              {searchTerm && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                  onClick={() => setsearchTerm("")}
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          </div>
         </header>
 
         <main className="grid flex-1 items-start gap-6">
@@ -216,7 +195,7 @@ export default function Dashboard({
               </div>
 
               <div className="flex items-center gap-3 self-end">
-                <Button
+                {/* <Button
                   color="default"
                   variant="flat"
                   startContent={<Filter size={16} />}
@@ -232,7 +211,27 @@ export default function Dashboard({
                   className="h-9"
                 >
                   Export
-                </Button>
+                </Button> */}
+                <div className="flex items-center gap-3 ml-auto">
+                  <div className="relative flex-1 md:w-[300px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder={searchPlaceholder}
+                      className="w-full rounded-full bg-background pl-10 border-muted focus-visible:ring-primary"
+                      value={Searchitem}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                    {searchTerm && (
+                      <button
+                        className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
+                        onClick={() => setsearchTerm("")}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
 
                 <Button
                   color="primary"
@@ -241,7 +240,7 @@ export default function Dashboard({
                   onPress={() => navigate({ to: "/inventory/add" })}
                   className="h-9"
                 >
-                  Add New Institute
+                  Add New Inventory
                 </Button>
               </div>
             </div>
@@ -360,7 +359,7 @@ export default function Dashboard({
                                               Edit
                                             </DropdownItem>
                                           </DropdownSection>
-                                          <DropdownSection title="Danger zone">
+                                          <DropdownSection title="Want to delete this data?">
                                             <DropdownItem
                                               key="delete"
                                               className="text-danger"
@@ -430,7 +429,7 @@ export default function Dashboard({
                       </Button>
 
                       {/* Add page numbers */}
-                      <div className="flex gap-1">
+                      {/* <div className="flex gap-1">
                         {Array.from(
                           { length: totalPages },
                           (_, i) => i + 1
@@ -445,7 +444,7 @@ export default function Dashboard({
                             {page}
                           </Button>
                         ))}
-                      </div>
+                      </div> */}
 
                       <Button
                         color="default"

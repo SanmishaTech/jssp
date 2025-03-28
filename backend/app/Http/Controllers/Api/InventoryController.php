@@ -23,7 +23,7 @@ class InventoryController extends BaseController
             });
         }
 
-        $inventory = $query->orderBy("id", "DESC")->paginate(5);
+        $inventory = $query->orderBy("id", "DESC")->paginate(7);
 
         return $this->sendResponse(["Inventory"=>InventoryResource::collection($inventory),
         'Pagination' => [
