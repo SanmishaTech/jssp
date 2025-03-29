@@ -224,6 +224,7 @@ export default function Dashboardholiday() {
         setCurrentPage={(page) => handlePageChange(page)}
         handlePageChange={handlePageChange}
         typeofschema={typeofschema}
+        fetchData={fetchData}
       />
     </div>
   );

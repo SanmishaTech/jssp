@@ -93,6 +93,7 @@ export const description =
 export default function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
+  fetchData,
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
   AddItem,
@@ -111,6 +112,9 @@ export default function Dashboard({
   onExport = () => {},
   onFilterChange = () => {},
   onProductAction = () => {},
+  onSearch,
+  onKeyPress,
+  searchQuery,
 }) {
   console.log("This is inside the dashboard", tableData);
   const navigate = useNavigate();
@@ -120,21 +124,22 @@ export default function Dashboard({
   const [searchTerm, setsearchTerm] = useState("");
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-  // State to manage expanded rows (array of _id)
+  // State to manage expanded rows (array of id)
   const [expandedRows, setExpandedRows] = useState([]);
 
   // Handler to toggle row expansion with debug logs
   const toggleRow = (rowId) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
-        console.log(`Collapsing row with _id: ${rowId}`);
+        console.log(`Collapsing row with id: ${rowId}`);
         return prev.filter((id) => id !== rowId);
       } else {
-        console.log(`Expanding row with _id: ${rowId}`);
+        console.log(`Expanding row with id: ${rowId}`);
         return [...prev, rowId];
       }
     });
@@ -154,6 +159,22 @@ export default function Dashboard({
     console.log("Delete clicked");
     // Implement delete functionality here
   };
+
+  const handleSearchClick = () => {
+    onSearch(localSearchTerm);
+  };
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearchTerm(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      handleSearchClick();
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background/30">
       <div className="flex flex-col gap-6 py-6 px-8">
@@ -195,44 +216,40 @@ export default function Dashboard({
               </div>
 
               <div className="flex items-center gap-3 self-end">
-                {/* <Button
-                  color="default"
-                  variant="flat"
-                  startContent={<Filter size={16} />}
-                  className="h-9"
-                >
-                  Filter
-                </Button>
-
-                <Button
-                  color="default"
-                  variant="flat"
-                  startContent={<Download size={16} />}
-                  className="h-9"
-                >
-                  Export
-                </Button> */}
                 <div className="flex items-center gap-3 ml-auto">
-                  <div className="relative flex-1 md:w-[300px]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="search"
-                      placeholder={searchPlaceholder}
-                      className="w-full rounded-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                      value={Searchitem}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                    {searchTerm && (
-                      <button
-                        className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                        onClick={() => setsearchTerm("")}
-                      >
-                        <X size={16} />
-                      </button>
-                    )}
+                  <div className="relative flex items-center gap-2">
+                    <div className="relative flex-1 md:w-[300px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="search"
+                        placeholder={searchPlaceholder}
+                        className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
+                        value={localSearchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
+                      />
+                      {localSearchTerm && (
+                        <button
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            setLocalSearchTerm("");
+                            onSearch("");
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                    <Button
+                      color="primary"
+                      variant="solid"
+                      className="h-10 rounded-r-full"
+                      onPress={handleSearchClick}
+                    >
+                      Search
+                    </Button>
                   </div>
                 </div>
-
                 <Button
                   color="primary"
                   variant="solid"
@@ -240,7 +257,7 @@ export default function Dashboard({
                   onPress={() => navigate({ to: "/inventory/add" })}
                   className="h-9"
                 >
-                  Add New Inventory
+                  Add New Institute
                 </Button>
               </div>
             </div>
@@ -258,6 +275,7 @@ export default function Dashboard({
                 backdrop="blur"
                 url={editid}
                 isOpen={toggleopen}
+                fetchData={fetchData}
                 onOpen={setToggleopen}
               />
 
@@ -271,7 +289,7 @@ export default function Dashboard({
 
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
-                  className="w-full bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
+                  className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
                   title="No inventory Available"
                   description="You can add a new institute to get started."
                   icons={[FileText, FileSymlink, Files]}
@@ -288,7 +306,7 @@ export default function Dashboard({
                               key={index}
                               className={cn(
                                 "text-xs font-medium text-muted-foreground py-3",
-                                header.hiddenOn
+                                header.hiddenOn,
                               )}
                             >
                               <div className="flex items-center gap-1">
@@ -305,153 +323,119 @@ export default function Dashboard({
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {tableData?.length === 0 ? (
-                          <TableRow>
-                            <TableCell
-                              colSpan={tableColumns?.headers?.length}
-                              className="h-24 text-center"
-                            >
-                              No results found.
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          tableData?.map((row) => (
-                            <React.Fragment key={row.id}>
-                              <TableRow>
-                                {tableColumns?.headers?.map((header, index) => (
-                                  <TableCell
-                                    key={index}
-                                    className={
-                                      header.hiddenOn ? header.hiddenOn : ""
-                                    }
-                                  >
-                                    {header.key === "one" ? (
-                                      row.one
-                                    ) : header.key === "action" ? (
-                                      <Dropdown backdrop="blur" showArrow>
-                                        <DropdownTrigger>
-                                          <button className="p-1 rounded-full opacity-100 group-hover:opacity-100 transition-opacity hover:bg-muted">
-                                            <Ellipsis className="w-5 h-5 text-muted-foreground" />
-                                          </button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu
-                                          aria-label="Actions"
-                                          variant="faded"
-                                          className="w-56"
-                                        >
-                                          <DropdownSection title="Actions">
-                                            <DropdownItem
-                                              key="edit"
-                                              description="Edit institute details"
-                                              onPress={() =>
-                                                navigate({
-                                                  to:
-                                                    "/inventory/edit/" +
-                                                    row?.id,
-                                                })
-                                              }
-                                              startContent={
-                                                <EditDocumentIcon
-                                                  className={iconClasses}
-                                                />
-                                              }
-                                            >
-                                              Edit
-                                            </DropdownItem>
-                                          </DropdownSection>
-                                          <DropdownSection title="Want to delete this data?">
-                                            <DropdownItem
-                                              key="delete"
-                                              className="text-danger"
-                                              color="danger"
-                                              description="This action cannot be undone"
-                                              onPress={() => {
-                                                setEditid(row?.id);
-                                                setToggleopen(true);
-                                              }}
-                                              startContent={
-                                                <DeleteDocumentIcon
-                                                  className={cn(
-                                                    iconClasses,
-                                                    "text-danger"
-                                                  )}
-                                                />
-                                              }
-                                            >
-                                              Delete
-                                            </DropdownItem>
-                                          </DropdownSection>
-                                        </DropdownMenu>
-                                      </Dropdown>
-                                    ) : header.key === "two" ? (
-                                      row.two
-                                    ) : header.key === "three" ? (
-                                      row.three
-                                    ) : header.key === "four" ? (
-                                      row.four
-                                    ) : header.key === "five" ? (
-                                      row.five
-                                    ) : header.key === "six" ? (
-                                      `₹${row.six}`
-                                    ) : (
-                                      row[header.key]
-                                    )}
-                                  </TableCell>
-                                ))}
-                              </TableRow>
-                            </React.Fragment>
-                          ))
-                        )}
+                        {tableData?.map((row) => (
+                          <React.Fragment key={row.id}>
+                            <TableRow>
+                              {tableColumns?.headers?.map((header, index) => (
+                                <TableCell
+                                  key={index}
+                                  className={
+                                    header.hiddenOn ? header.hiddenOn : ""
+                                  }
+                                >
+                                  {header.key === "one" ? (
+                                    row.one
+                                  ) : header.key === "action" ? (
+                                    <Dropdown backdrop="blur" showArrow>
+                                      <DropdownTrigger>
+                                        <button className="p-1 rounded-full opacity-100 group-hover:opacity-100 transition-opacity hover:bg-muted">
+                                          <Ellipsis className="w-5 h-5 text-muted-foreground" />
+                                        </button>
+                                      </DropdownTrigger>
+                                      <DropdownMenu
+                                        aria-label="Actions"
+                                        variant="faded"
+                                        className="w-56"
+                                      >
+                                        <DropdownSection title="Actions">
+                                          <DropdownItem
+                                            key="edit"
+                                            description="Edit institute details"
+                                            onPress={() =>
+                                              navigate({
+                                                to:
+                                                  "/inventory/edit/" + row?.id,
+                                              })
+                                            }
+                                            startContent={
+                                              <EditDocumentIcon
+                                                className={iconClasses}
+                                              />
+                                            }
+                                          >
+                                            Edit
+                                          </DropdownItem>
+                                        </DropdownSection>
+                                        <DropdownSection title="Danger zone">
+                                          <DropdownItem
+                                            key="delete"
+                                            className="text-danger"
+                                            color="danger"
+                                            description="This action cannot be undone"
+                                            onPress={() => {
+                                              setEditid(row?.id);
+                                              setToggleopen(true);
+                                            }}
+                                            startContent={
+                                              <DeleteDocumentIcon
+                                                className={cn(
+                                                  iconClasses,
+                                                  "text-danger",
+                                                )}
+                                              />
+                                            }
+                                          >
+                                            Delete
+                                          </DropdownItem>
+                                        </DropdownSection>
+                                      </DropdownMenu>
+                                    </Dropdown>
+                                  ) : header.key === "two" ? (
+                                    row.two
+                                  ) : header.key === "three" ? (
+                                    row.three
+                                  ) : header.key === "four" ? (
+                                    row.four
+                                  ) : header.key === "five" ? (
+                                    row.five
+                                  ) : header.key === "six" ? (
+                                    `₹${row.six}`
+                                  ) : (
+                                    row[header.key]
+                                  )}
+                                </TableCell>
+                              ))}
+                            </TableRow>
+                          </React.Fragment>
+                        ))}
                       </TableBody>
                     </Table>
                   </CardContent>
 
                   <CardFooter className="flex items-center justify-between border-t p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="text-sm text-muted-foreground">
-                        {tableData && (
-                          <>
-                            Page {currentPage} of {totalPages}
-                          </>
-                        )}
-                      </div>
+                    <div className="text-xs text-muted-foreground">
+                      {tableData && (
+                        <>
+                          Showing page <strong>{currentPage}</strong> of{" "}
+                          <strong>{totalPages}</strong>
+                        </>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <Button
-                        color="default"
-                        variant="flat"
+                        onPress={() => handlePrevPage()}
                         size="sm"
+                        variant="flat"
                         isDisabled={currentPage <= 1}
-                        onPress={handlePrevPage}
                       >
                         Previous
                       </Button>
-
-                      {/* Add page numbers */}
-                      {/* <div className="flex gap-1">
-                        {Array.from(
-                          { length: totalPages },
-                          (_, i) => i + 1
-                        ).map((page) => (
-                          <Button
-                            key={page}
-                            color={currentPage === page ? "primary" : "default"}
-                            variant={currentPage === page ? "solid" : "flat"}
-                            size="sm"
-                            onPress={() => setCurrentPage(page)}
-                          >
-                            {page}
-                          </Button>
-                        ))}
-                      </div> */}
-
                       <Button
-                        color="default"
-                        variant="flat"
+                        onPress={() => handleNextPage()}
                         size="sm"
+                        variant="flat"
                         isDisabled={currentPage >= totalPages}
-                        onPress={handleNextPage}
                       >
                         Next
                       </Button>

@@ -16,6 +16,7 @@ export default function AlertDialogbox({
   url,
   backdrop = "blur",
   isOpen,
+  fetchData,
   onOpen,
 }) {
   const onClose = () => {
@@ -35,6 +36,7 @@ export default function AlertDialogbox({
     });
     // window.location.reload();
     onClose();
+    fetchData();
     queryClient.invalidateQueries({ queryKey: ["patientmaster"] });
   };
 

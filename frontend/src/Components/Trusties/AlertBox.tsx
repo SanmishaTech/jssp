@@ -1,50 +1,73 @@
+import { useState, useEffect } from "react";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@heroui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 
-export default function AlertDialogbox({ url }) {
+export default function AlertDialogbox({
+  url,
+  backdrop = "blur",
+  isOpen,
+  onOpen,
+  fetchData,
+}) {
+  const onClose = () => {
+    onOpen();
+  };
+  const token = localStorage.getItem("token");
+
+  console.log("This is Delete url", url);
+  const queryClient = useQueryClient();
+  const DeleteApi = async () => {
+    console.log("This is Delete url", `/api/${url}`);
+    await axios.delete(`/api/trustees/${url}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // window.location.reload();
+    onClose();
+    fetchData();
+  };
+
+  useEffect(() => {
+    console.log("Fetching idasdsadasdasd", isOpen);
+  }, [isOpen]);
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="w-full">
-          Delete
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              });
-              window.location.reload();
-            }}
-          >
-            Continue
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <>
+      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Delete Item
+              </ModalHeader>
+              <ModalBody>
+                This action cannot be undone. This will permanently delete the
+                selected item.
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={DeleteApi}>
+                  Confirm
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
