@@ -93,6 +93,7 @@ export const description =
 export default function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
+  fetchData,
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
   AddItem,
@@ -104,7 +105,6 @@ export default function Dashboard({
   setSearch,
   setCurrentPage,
   Searchitem,
-  fetchData,
   currentPage,
   handlePrevPage,
   tableData = [],
@@ -112,6 +112,9 @@ export default function Dashboard({
   onExport = () => {},
   onFilterChange = () => {},
   onProductAction = () => {},
+  onSearch,
+  onKeyPress,
+  searchQuery,
 }) {
   console.log("This is inside the dashboard", tableData);
   const navigate = useNavigate();
@@ -121,6 +124,7 @@ export default function Dashboard({
   const [searchTerm, setsearchTerm] = useState("");
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
+  const [localSearchTerm, setLocalSearchTerm] = useState("");
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -155,6 +159,22 @@ export default function Dashboard({
     console.log("Delete clicked");
     // Implement delete functionality here
   };
+
+  const handleSearchClick = () => {
+    onSearch(localSearchTerm);
+  };
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalSearchTerm(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission
+      handleSearchClick();
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background/30">
       <div className="flex flex-col gap-6 py-6 px-8">
@@ -180,27 +200,6 @@ export default function Dashboard({
               ))}
             </BreadcrumbList>
           </Breadcrumb>
-
-          <div className="flex items-center gap-3 ml-auto">
-            <div className="relative flex-1 md:w-[300px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder={searchPlaceholder}
-                className="w-full rounded-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                value={Searchitem}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              {searchTerm && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                  onClick={() => setsearchTerm("")}
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          </div>
         </header>
 
         <main className="grid flex-1 items-start gap-6">
@@ -217,24 +216,40 @@ export default function Dashboard({
               </div>
 
               <div className="flex items-center gap-3 self-end">
-                <Button
-                  color="default"
-                  variant="flat"
-                  startContent={<Filter size={16} />}
-                  className="h-9"
-                >
-                  Filter
-                </Button>
-
-                <Button
-                  color="default"
-                  variant="flat"
-                  startContent={<Download size={16} />}
-                  className="h-9"
-                >
-                  Export
-                </Button>
-
+                <div className="flex items-center gap-3 ml-auto">
+                  <div className="relative flex items-center gap-2">
+                    <div className="relative flex-1 md:w-[300px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="search"
+                        placeholder={searchPlaceholder}
+                        className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
+                        value={localSearchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
+                      />
+                      {localSearchTerm && (
+                        <button
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            setLocalSearchTerm("");
+                            onSearch("");
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                    <Button
+                      color="primary"
+                      variant="solid"
+                      className="h-10 rounded-r-full"
+                      onPress={handleSearchClick}
+                    >
+                      Search
+                    </Button>
+                  </div>
+                </div>
                 <Button
                   color="primary"
                   variant="solid"
@@ -259,10 +274,18 @@ export default function Dashboard({
               <AlertDialogbox
                 backdrop="blur"
                 url={editid}
-                fetchData={fetchData}
                 isOpen={toggleopen}
+                fetchData={fetchData}
                 onOpen={setToggleopen}
               />
+
+              {/* <Additem
+                typeofschema={typeofschema}
+                add={tableData?.add}
+                onAddProduct={onAddProduct}
+                setHandleopen={setHandleopen}
+                handleopen={handleopen}
+              /> */}
 
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
@@ -283,7 +306,7 @@ export default function Dashboard({
                               key={index}
                               className={cn(
                                 "text-xs font-medium text-muted-foreground py-3",
-                                header.hiddenOn
+                                header.hiddenOn,
                               )}
                             >
                               <div className="flex items-center gap-1">
@@ -356,7 +379,7 @@ export default function Dashboard({
                                               <DeleteDocumentIcon
                                                 className={cn(
                                                   iconClasses,
-                                                  "text-danger"
+                                                  "text-danger",
                                                 )}
                                               />
                                             }

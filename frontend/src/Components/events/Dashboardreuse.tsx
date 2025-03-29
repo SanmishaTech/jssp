@@ -111,6 +111,7 @@ export interface DashboardProps {
 export function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
+  fetchData,
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
   typeofschema,
@@ -129,7 +130,7 @@ export function Dashboard({
   const [open, setOpen] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [institutes, setInstitutes] = useState(tableData);
-  
+
   // Add new state for the event detail dialog
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [eventDialogOpen, setEventDialogOpen] = useState(false);
@@ -219,7 +220,7 @@ export function Dashboard({
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       const eventData = response.data.data.Event;
       setSelectedEvent(eventData);
       setEventImages(eventData.images || []);
@@ -400,10 +401,10 @@ export function Dashboard({
                     <TableBody>
                       {institutes?.map((row) => (
                         <React.Fragment key={row.id}>
-                          <TableRow 
+                          <TableRow
                             onClick={(e) => {
                               // Don't open dialog if clicking on dropdown menu
-                              if (e.target.closest('[data-dropdown-trigger]')) {
+                              if (e.target.closest("[data-dropdown-trigger]")) {
                                 return;
                               }
                               handleRowClick(row);
@@ -499,7 +500,7 @@ export function Dashboard({
               View detailed information about this event
             </DialogDescription>
           </DialogHeader>
-          
+
           {selectedEvent && (
             <div className="space-y-6">
               {/* Event details section */}
@@ -510,15 +511,17 @@ export function Dashboard({
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-semibold text-sm">Date & Time</h4>
-                  <p>{selectedEvent.date} - {selectedEvent.time}</p>
+                  <p>
+                    {selectedEvent.date} - {selectedEvent.time}
+                  </p>
                 </div>
               </div>
-              
+
               <div className="space-y-1">
                 <h4 className="font-semibold text-sm">Synopsis</h4>
                 <p className="text-sm">{selectedEvent.synopsis}</p>
               </div>
-              
+
               {/* Image gallery section */}
               {eventImages && eventImages.length > 0 && (
                 <div className="space-y-2">
@@ -526,18 +529,21 @@ export function Dashboard({
                   <div className="grid grid-cols-3 gap-4">
                     {eventImages.map((image, index) => (
                       <div key={image.id} className="relative group">
-                        <a 
-                          href={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`} 
-                          target="_blank" 
+                        <a
+                          href={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
+                          target="_blank"
                           rel="noopener noreferrer"
                         >
                           <img
-                            src={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`}
+                            src={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
                             alt={`Event image ${index + 1}`}
                             className="h-40 w-full object-cover rounded-md hover:opacity-90 transition-opacity"
                             onError={(e) => {
-                              console.error("Image failed to load:", image.image_path);
-                              e.currentTarget.src = '/placeholder-image.jpg';
+                              console.error(
+                                "Image failed to load:",
+                                image.image_path,
+                              );
+                              e.currentTarget.src = "/placeholder-image.jpg";
                             }}
                           />
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -553,7 +559,7 @@ export function Dashboard({
               )}
             </div>
           )}
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setEventDialogOpen(false)}>
               Close

@@ -17,16 +17,22 @@ export default function AlertDialogbox({
   backdrop = "blur",
   isOpen,
   onOpen,
+  fetchData,
 }) {
   const onClose = () => {
     onOpen();
   };
-
+  const token = localStorage.getItem("token");
   console.log("This is Delete url", url);
   const queryClient = useQueryClient();
   const DeleteApi = async () => {
     console.log("This is Delete url", `/api/${url}`);
-    await axios.delete(`/api/patientmaster/delete/${url}`);
+    await axios.delete(`/api/institutes/${url}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     // window.location.reload();
     fetchData();
   };

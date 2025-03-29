@@ -123,8 +123,16 @@ export default function Dashboardholiday() {
   }, []);
 
   const handleSearch = async (query: string) => {
+    console.log("Searching for:", query);
     setSearchQuery(query);
-    await fetchData(query);
+    setCurrentPage(1); // Reset to first page when searching
+    await fetchData(query, 1);
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch(event.currentTarget.value);
+    }
   };
 
   const handleNextPage = () => {
@@ -216,11 +224,14 @@ export default function Dashboardholiday() {
         onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
         onSearch={handleSearch}
+        onKeyPress={handleKeyPress} // Add this prop
+        searchQuery={searchQuery} // Add this prop
         typeofschema={typeofschema}
         currentPage={currentPage}
         totalPages={totalPages}
         handleNextPage={handleNextPage}
         handlePrevPage={handlePrevPage}
+        fetchData={fetchData}
         setCurrentPage={setCurrentPage}
       />
     </div>

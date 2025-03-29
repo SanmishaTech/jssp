@@ -108,7 +108,7 @@ export default function Dashboardholiday() {
     setConfig({
       // breadcrumbs: [
       //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
+      //   { label: "complaints" },
       // ],
       searchPlaceholder: "Search Complaint...",
       userAvatar: "/path-to-avatar.jpg",
