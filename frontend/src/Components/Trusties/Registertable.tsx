@@ -92,6 +92,11 @@ export default function Dashboardholiday() {
 
   useEffect(() => {
     setConfig({
+      breadcrumbs: [
+        { label: "Home", href: "/rootdashboard" },
+        { label: "/", href: "" },
+        { label: "Trustees" },
+      ],
       searchPlaceholder: "Search Trustees...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {

@@ -80,10 +80,11 @@ export default function Dashboardholiday() {
   // Define the dashboard configuration
   useEffect(() => {
     setConfig({
-      // breadcrumbs: [
-      //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
-      // ],
+      breadcrumbs: [
+        { label: "Home", href: "/rootdashboard" },
+        { label: "/", href: "" },
+        { label: "Inventory" },
+      ],
       searchPlaceholder: "Search Inventory...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
