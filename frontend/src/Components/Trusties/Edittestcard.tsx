@@ -39,7 +39,7 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  trustee_name: z.string().trim().nonempty("Institute Name is Required"),
+  trustee_name: z.string().trim().nonempty("Trustee Name is Required"),
   designation: z.string().optional(),
   contact_mobile: z.string().trim().nonempty("Mobile is Required"),
   address: z.string().trim().nonempty("Address is Required"),
@@ -83,8 +83,8 @@ function ProfileForm({ formData }) {
       user: {
         name: data.trustee_name,
         email: data.email,
-        password: data.password
-      }
+        password: data.password,
+      },
     };
     try {
       await axios.put(`/api/trustees/${id}`, submissionData, {
@@ -93,20 +93,20 @@ function ProfileForm({ formData }) {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       toast.success("Trustees Master Updated Successfully");
       navigate({ to: "/trusties" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { errors } = error.response.data; // Extract validation errors
-  
+
         // Loop through backend errors and set them in the form
         Object.keys(errors).forEach((key) => {
           form.setError(key as keyof ProfileFormValues, {
             type: "server",
             message: errors[key][0], // First error message from array
           });
-  
+
           // Show each error as a separate toast notification
           toast.error(errors[key][0]);
         });
@@ -115,7 +115,6 @@ function ProfileForm({ formData }) {
       }
     }
   }
-  
 
   return (
     <Form {...form}>
@@ -290,8 +289,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Trustee  Master</CardTitle>
-        <CardDescription>Trustee  master</CardDescription>
+        <CardTitle>Trustee Master</CardTitle>
+        <CardDescription>Trustee master</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

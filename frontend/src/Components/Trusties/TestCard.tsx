@@ -38,7 +38,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  trustee_name: z.string().trim().nonempty("Institute Name is Required"),
+  trustee_name: z.string().trim().nonempty("Trustee Name is Required"),
   designation: z.string().optional(),
   contact_mobile: z.string().trim().nonempty("Mobile is Required"),
   address: z.string().trim().nonempty("Address is Required"),
@@ -72,7 +72,7 @@ function ProfileForm() {
     const submissionData = {
       ...data,
       name: data.trustee_name,
-      userId: User?._id
+      userId: User?._id,
     };
     try {
       await axios.post(`/api/trustees`, submissionData, {
@@ -81,20 +81,20 @@ function ProfileForm() {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       toast.success("Trustee Master Created Successfully");
       window.history.back();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         const { errors } = error.response.data; // Extract validation errors
-  
+
         // Loop through backend errors and set them in the form
         Object.keys(errors).forEach((key) => {
           form.setError(key as keyof ProfileFormValues, {
             type: "server",
             message: errors[key][0], // First error message from array
           });
-  
+
           // Show each error as a separate toast notification
           toast.error(errors[key][0]);
         });
@@ -103,8 +103,6 @@ function ProfileForm() {
       }
     }
   }
-  
-  
 
   return (
     <Form {...form}>

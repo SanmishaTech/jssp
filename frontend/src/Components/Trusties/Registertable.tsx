@@ -27,7 +27,6 @@ export default function Dashboardholiday() {
   const token = localStorage.getItem("token");
 
   const typeofschema = {
-    institute_name: "String",
     contact_name: "String",
     contact_mobile: "String",
     street_address: "String",
