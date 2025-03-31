@@ -29,7 +29,7 @@ class DivisionController extends BaseController
         }
     
         // Paginate the results.
-        $division = $query->paginate(1);
+        $division = $query->paginate(7);
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(

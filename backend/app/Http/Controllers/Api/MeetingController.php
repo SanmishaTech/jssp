@@ -29,7 +29,7 @@ class MeetingController extends BaseController
         }
     
         // Paginate the results.
-        $meeting = $query->paginate(15);
+        $meeting = $query->paginate(7);
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(

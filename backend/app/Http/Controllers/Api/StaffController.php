@@ -37,7 +37,7 @@ public function index(Request $request): JsonResponse
     }
 
     // Paginate the results.
-    $staff = $query->paginate(1);
+    $staff = $query->paginate(7);
 
     // Return the paginated response with staff resources.
     return $this->sendResponse(

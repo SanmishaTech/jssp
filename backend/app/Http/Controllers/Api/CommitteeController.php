@@ -36,7 +36,7 @@ class CommitteeController extends BaseController
             });
         }
     
-        $commitees = $query->orderBy("id", "DESC")->paginate(5);
+        $commitees = $query->orderBy("id", "DESC")->paginate(7);
     
         return $this->sendResponse([
             "Commitees" => CommitteeResource::collection($commitees),

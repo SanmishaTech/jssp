@@ -30,7 +30,7 @@ class CourseController extends BaseController
         }
     
         // Paginate the results.
-        $course = $query->paginate(1);
+        $course = $query->paginate(7);
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(

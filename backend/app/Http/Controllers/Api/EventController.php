@@ -31,7 +31,7 @@ class EventController extends BaseController
         }
     
         // Paginate the results.
-        $event = $query->paginate(15);
+        $event = $query->paginate(7);
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(

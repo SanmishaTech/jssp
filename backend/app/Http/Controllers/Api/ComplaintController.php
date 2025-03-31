@@ -40,7 +40,7 @@ class ComplaintController extends BaseController
         }
     
         // Paginate the results.
-        $complaint = $query->paginate(15);
+        $complaint = $query->paginate(7);
     
         // Return the paginated response with complaint resources.
         return $this->sendResponse(

@@ -30,7 +30,7 @@ class TrusteeController extends BaseController
             });
         }
 
-        $trustees = $query->orderBy("id", "DESC")->paginate(5);
+        $trustees = $query->orderBy("id", "DESC")->paginate(7);
 
         return $this->sendResponse(["Trustees"=>TrusteeResource::collection($trustees),
         'Pagination' => [

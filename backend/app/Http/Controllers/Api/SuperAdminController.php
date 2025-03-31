@@ -29,7 +29,7 @@ class SuperAdminController extends BaseController
             $query->where('staff_name', 'like', "%$searchTerm%");
         }
         
-        $staff = $query->paginate(15);
+        $staff = $query->paginate(7);
 
         return $this->sendResponse([
             'Staff' => StaffResource::collection($staff),

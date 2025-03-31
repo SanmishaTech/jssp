@@ -43,7 +43,7 @@ class InstituteController extends BaseController
             });
         }
 
-        $institutes = $query->orderBy("id", "DESC")->paginate(5);
+        $institutes = $query->orderBy("id", "DESC")->paginate(7);
 
         return $this->sendResponse(["Institutes"=>InstituteResource::collection($institutes),
         'Pagination' => [
