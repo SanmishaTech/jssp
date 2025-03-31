@@ -241,10 +241,6 @@ export default function SettingsProfilePage() {
         Back
       </Button>
 
-      <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
-      </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
           <ProfileForm formData={formData} />

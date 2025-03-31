@@ -108,6 +108,11 @@ export default function Dashboardholiday() {
 
   useEffect(() => {
     setConfig({
+      breadcrumbs: [
+        { label: "Home", href: "/staffdashboard" },
+        { label: "/", href: "" },
+        { label: "Staff" },
+      ],
       searchPlaceholder: "Search staff...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {

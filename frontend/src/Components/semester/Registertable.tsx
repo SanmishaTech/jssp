@@ -107,6 +107,13 @@ export default function Dashboardholiday() {
   // Define the dashboard configuration
   useEffect(() => {
     setConfig({
+      breadcrumbs: [
+        { label: "Home", href: "/staffdashboard" },
+        { label: "/", href: "" },
+        { label: "Academic Information", href: "" },
+        { label: "/", href: "" },
+        { label: "Semester" },
+      ],
       searchPlaceholder: "Search by Semesters...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {

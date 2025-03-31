@@ -179,24 +179,29 @@ export default function Dashboard({
     <div className="flex min-h-screen w-full flex-col bg-background/30">
       <div className="flex flex-col gap-6 py-6 px-8">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b pb-4">
-          <Breadcrumb className="hidden md:flex">
-            <BreadcrumbList>
+
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <Breadcrumb className="flex md:flex">
+            <BreadcrumbList className="flex items-center space-x-2">
               {breadcrumbs?.map((breadcrumb, index) => (
-                <BreadcrumbItem key={index}>
-                  {breadcrumb.href ? (
-                    <BreadcrumbLink asChild>
-                      <Link
-                        to={breadcrumb.href}
-                        className="text-primary hover:text-primary/80 transition-colors"
-                      >
+                <React.Fragment key={index}>
+                  <BreadcrumbItem>
+                    {breadcrumb.href ? (
+                      <BreadcrumbLink asChild>
+                        <Link
+                          to={breadcrumb.href}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          {breadcrumb.label}
+                        </Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage className="text-muted-foreground">
                         {breadcrumb.label}
-                      </Link>
-                    </BreadcrumbLink>
-                  ) : (
-                    <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
+                      </BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </React.Fragment>
               ))}
             </BreadcrumbList>
           </Breadcrumb>

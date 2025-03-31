@@ -72,10 +72,11 @@ export default function Dashboardholiday() {
   // Define the dashboard configuration
   useEffect(() => {
     setConfig({
-      // breadcrumbs: [
-      //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Institutes" },
-      // ],
+      breadcrumbs: [
+        { label: "Home", href: "/staffdashboard" },
+        { label: "/", href: "" },
+        { label: "Commitees" },
+      ],
       searchPlaceholder: "Search by Commitees...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
