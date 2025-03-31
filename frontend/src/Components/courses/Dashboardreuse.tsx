@@ -212,7 +212,7 @@ export default function Dashboard({
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {tableColumns.description ||
-                    "Manage institute data efficiently"}
+                    "Manage Courses data efficiently"}
                 </p>
               </div>
 
@@ -258,7 +258,7 @@ export default function Dashboard({
                   onPress={() => navigate({ to: "/courses/add" })}
                   className="h-9"
                 >
-                  Add New Institute
+                  Add New Courses
                 </Button>
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function Dashboard({
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
                   title="No courses Available"
-                  description="You can add a new institute to get started."
+                  description="You can add a new courses to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />
@@ -307,7 +307,7 @@ export default function Dashboard({
                               key={index}
                               className={cn(
                                 "text-xs font-medium text-muted-foreground py-3",
-                                header.hiddenOn,
+                                header.hiddenOn
                               )}
                             >
                               <div className="flex items-center gap-1">
@@ -351,7 +351,7 @@ export default function Dashboard({
                                         <DropdownSection title="Actions">
                                           <DropdownItem
                                             key="edit"
-                                            description="Edit institute details"
+                                            description="Edit course details"
                                             onPress={() =>
                                               navigate({
                                                 to: "/courses/edit/" + row?.id,
@@ -380,7 +380,7 @@ export default function Dashboard({
                                               <DeleteDocumentIcon
                                                 className={cn(
                                                   iconClasses,
-                                                  "text-danger",
+                                                  "text-danger"
                                                 )}
                                               />
                                             }

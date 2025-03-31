@@ -120,7 +120,7 @@ function ProfileForm({ formData }) {
             <CardHeader>
               <CardTitle>Courses</CardTitle>
               <CardDescription>
-                Create the Courses for this Institute
+                Create the Courses for this Courses
               </CardDescription>
             </CardHeader>
             <CardContent>

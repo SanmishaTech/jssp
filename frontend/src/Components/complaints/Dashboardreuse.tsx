@@ -212,7 +212,7 @@ export default function Dashboard({
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {tableColumns.description ||
-                    "Manage institute data efficiently"}
+                    "Manage complaint data efficiently"}
                 </p>
               </div>
 
@@ -258,7 +258,7 @@ export default function Dashboard({
                   onPress={() => navigate({ to: "/complaints/add" })}
                   className="h-9"
                 >
-                  Add New Institute
+                  Add New Complaint
                 </Button>
               </div>
             </div>
@@ -351,7 +351,7 @@ export default function Dashboard({
                                         <DropdownSection title="Actions">
                                           <DropdownItem
                                             key="edit"
-                                            description="Edit institute details"
+                                            description="Edit complaint details"
                                             onPress={() =>
                                               navigate({
                                                 to:

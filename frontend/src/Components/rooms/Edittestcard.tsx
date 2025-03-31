@@ -116,9 +116,6 @@ function ProfileForm({ formData }) {
           <Card className="max-w-full p-4">
             <CardHeader>
               <CardTitle>Room Information</CardTitle>
-              <CardDescription>
-                Create the Room for this Institute
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
@@ -208,8 +205,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Room Master</CardTitle>
+        <CardDescription>Edit/Update the Room</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

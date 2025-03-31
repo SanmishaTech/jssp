@@ -153,9 +153,6 @@ function ProfileForm({ formData }) {
           <Card className="max-w-full p-4">
             <CardHeader>
               <CardTitle>Semester Information</CardTitle>
-              <CardDescription>
-                Create the Semester for this Institute
-              </CardDescription>
             </CardHeader>
             <CardContent>
               {/* Course Combobox Field */}
@@ -322,8 +319,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
+        <CardTitle>Semester Master</CardTitle>
+        <CardDescription>Edit/Update the Semester</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

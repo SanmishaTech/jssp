@@ -146,7 +146,7 @@ function ProfileForm() {
             <CardHeader>
               <CardTitle>Semester Information</CardTitle>
               <CardDescription>
-                Create the Semester for this Institute
+                Create the Semester for this Semester
               </CardDescription>
             </CardHeader>
             <CardContent>

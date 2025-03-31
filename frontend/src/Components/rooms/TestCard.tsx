@@ -112,9 +112,6 @@ function ProfileForm() {
           <Card className="max-w-full p-4">
             <CardHeader>
               <CardTitle>Room Information</CardTitle>
-              <CardDescription>
-                Create the Room for this Institute
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-3">
