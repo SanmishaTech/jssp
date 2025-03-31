@@ -291,8 +291,8 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No complaints Available"
-                  description="You can add a new institute to get started."
+                  title="No Complaints Available"
+                  description="You can add a new complaint to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />
@@ -307,7 +307,7 @@ export default function Dashboard({
                               key={index}
                               className={cn(
                                 "text-xs font-medium text-muted-foreground py-3",
-                                header.hiddenOn,
+                                header.hiddenOn
                               )}
                             >
                               <div className="flex items-center gap-1">
@@ -381,7 +381,7 @@ export default function Dashboard({
                                               <DeleteDocumentIcon
                                                 className={cn(
                                                   iconClasses,
-                                                  "text-danger",
+                                                  "text-danger"
                                                 )}
                                               />
                                             }

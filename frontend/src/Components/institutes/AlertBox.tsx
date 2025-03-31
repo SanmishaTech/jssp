@@ -33,7 +33,8 @@ export default function AlertDialogbox({
         Authorization: `Bearer ${token}`,
       },
     });
-    // window.location.reload();
+    window.location.reload();
+    onClose();
     fetchData();
   };
 

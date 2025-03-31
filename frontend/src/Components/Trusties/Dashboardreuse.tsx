@@ -290,7 +290,7 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No trusties Available"
+                  title="No Trustees Available"
                   description="You can add a new trustees to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
