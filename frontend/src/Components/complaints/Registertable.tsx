@@ -105,9 +105,13 @@ export default function Dashboardholiday() {
 
   // Define the dashboard configuration
   useEffect(() => {
+    const role = localStorage.getItem("role"); // Get the role from local storage
+    const homeHref =
+      role === "superadmin" ? "/rootdashboard" : "/staffdashboard";
+
     setConfig({
       breadcrumbs: [
-        { label: "Home", href: "/staffdashboard" },
+        { label: "Home", href: homeHref },
         { label: "/", href: "" },
         { label: "Complaint" },
       ],
