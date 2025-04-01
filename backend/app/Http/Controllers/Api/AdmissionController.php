@@ -22,7 +22,7 @@ class AdmissionController extends BaseController
           if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('room_name', 'like', '%' . $searchTerm . '%');
+                $query->where('total_valuation', 'like', '%' . $searchTerm . '%');
             });
         }
     

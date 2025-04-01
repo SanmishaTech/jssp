@@ -118,7 +118,7 @@ const roleBasedItems = {
       children: [
         {
           title: "Admissions",
-          url: "#",
+          url: "/admissions",
           icon: BookText,
         },
         {
