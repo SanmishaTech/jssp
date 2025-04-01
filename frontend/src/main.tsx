@@ -41,10 +41,10 @@ if (!rootElement.innerHTML) {
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <RouterProvider router={router} />
-          <ReactQueryDevtools
+          {/* <ReactQueryDevtools
             initialIsOpen={false}
             buttonPosition="bottom-right"
-          />
+          /> */}
         </Provider>
       </QueryClientProvider>
     </StrictMode>

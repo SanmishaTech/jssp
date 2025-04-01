@@ -4,7 +4,7 @@ import {
   Outlet,
   useLocation,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Layout from "../Components/sidebar/layout";
 import { Toaster } from "sonner";
 import { ErrorProvider } from "../Context"; // Import your ErrorProvider
@@ -34,7 +34,7 @@ export const Route = createRootRoute({
               )}
               <div className="rounded-2xl w-full">
                 <Outlet />
-                <TanStackRouterDevtools />
+                {/* <TanStackRouterDevtools /> */}
               </div>
             </div>
           </>

@@ -112,6 +112,22 @@ const roleBasedItems = {
       url: "/events",
       icon: Calendar,
     },
+    {
+      title: "Admissions",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Admissions",
+          url: "#",
+          icon: BookText,
+        },
+        {
+          title: "Casier",
+          url: "#",
+          icon: Calendar,
+        },
+      ],
+    },
   ],
   superadmin: [
     {
