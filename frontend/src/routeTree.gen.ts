@@ -24,7 +24,6 @@ import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as InventoryIndexImport } from './routes/inventory/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
 import { Route as EventsIndexImport } from './routes/events/index'
-import { Route as EventscopyIndexImport } from './routes/events copy/index'
 import { Route as DivisionsIndexImport } from './routes/divisions/index'
 import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
@@ -38,7 +37,6 @@ import { Route as MeetingsAddIndexImport } from './routes/meetings/add/index'
 import { Route as InventoryAddIndexImport } from './routes/inventory/add/index'
 import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
 import { Route as EventsAddIndexImport } from './routes/events/add/index'
-import { Route as EventscopyAddIndexImport } from './routes/events copy/add/index'
 import { Route as DivisionsAddIndexImport } from './routes/divisions/add/index'
 import { Route as CoursesAddIndexImport } from './routes/courses/add/index'
 import { Route as ComplaintsAddIndexImport } from './routes/complaints/add/index'
@@ -51,7 +49,6 @@ import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
 import { Route as InventoryEditIdImport } from './routes/inventory/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
 import { Route as EventsEditIdImport } from './routes/events/edit/$id'
-import { Route as EventscopyEditIdImport } from './routes/events copy/edit/$id'
 import { Route as DivisionsEditIdImport } from './routes/divisions/edit/$id'
 import { Route as CoursesEditIdImport } from './routes/courses/edit/$id'
 import { Route as ComplaintsEditIdImport } from './routes/complaints/edit/$id'
@@ -137,12 +134,6 @@ const EventsIndexRoute = EventsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const EventscopyIndexRoute = EventscopyIndexImport.update({
-  id: '/events copy/',
-  path: '/events copy/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const DivisionsIndexRoute = DivisionsIndexImport.update({
   id: '/divisions/',
   path: '/divisions/',
@@ -221,12 +212,6 @@ const EventsAddIndexRoute = EventsAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const EventscopyAddIndexRoute = EventscopyAddIndexImport.update({
-  id: '/events copy/add/',
-  path: '/events copy/add/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const DivisionsAddIndexRoute = DivisionsAddIndexImport.update({
   id: '/divisions/add/',
   path: '/divisions/add/',
@@ -299,12 +284,6 @@ const EventsEditIdRoute = EventsEditIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const EventscopyEditIdRoute = EventscopyEditIdImport.update({
-  id: '/events copy/edit/$id',
-  path: '/events copy/edit/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const DivisionsEditIdRoute = DivisionsEditIdImport.update({
   id: '/divisions/edit/$id',
   path: '/divisions/edit/$id',
@@ -373,13 +352,6 @@ declare module '@tanstack/react-router' {
       path: '/divisions'
       fullPath: '/divisions'
       preLoaderRoute: typeof DivisionsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/events copy/': {
-      id: '/events copy/'
-      path: '/events copy'
-      fullPath: '/events copy'
-      preLoaderRoute: typeof EventscopyIndexImport
       parentRoute: typeof rootRoute
     }
     '/events/': {
@@ -494,13 +466,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DivisionsEditIdImport
       parentRoute: typeof rootRoute
     }
-    '/events copy/edit/$id': {
-      id: '/events copy/edit/$id'
-      path: '/events copy/edit/$id'
-      fullPath: '/events copy/edit/$id'
-      preLoaderRoute: typeof EventscopyEditIdImport
-      parentRoute: typeof rootRoute
-    }
     '/events/edit/$id': {
       id: '/events/edit/$id'
       path: '/events/edit/$id'
@@ -585,13 +550,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DivisionsAddIndexImport
       parentRoute: typeof rootRoute
     }
-    '/events copy/add/': {
-      id: '/events copy/add/'
-      path: '/events copy/add'
-      fullPath: '/events copy/add'
-      preLoaderRoute: typeof EventscopyAddIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/events/add/': {
       id: '/events/add/'
       path: '/events/add'
@@ -660,7 +618,6 @@ export interface FileRoutesByFullPath {
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/divisions': typeof DivisionsIndexRoute
-  '/events copy': typeof EventscopyIndexRoute
   '/events': typeof EventsIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
@@ -677,7 +634,6 @@ export interface FileRoutesByFullPath {
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/courses/edit/$id': typeof CoursesEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
-  '/events copy/edit/$id': typeof EventscopyEditIdRoute
   '/events/edit/$id': typeof EventsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
@@ -690,7 +646,6 @@ export interface FileRoutesByFullPath {
   '/complaints/add': typeof ComplaintsAddIndexRoute
   '/courses/add': typeof CoursesAddIndexRoute
   '/divisions/add': typeof DivisionsAddIndexRoute
-  '/events copy/add': typeof EventscopyAddIndexRoute
   '/events/add': typeof EventsAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
@@ -708,7 +663,6 @@ export interface FileRoutesByTo {
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/divisions': typeof DivisionsIndexRoute
-  '/events copy': typeof EventscopyIndexRoute
   '/events': typeof EventsIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
@@ -725,7 +679,6 @@ export interface FileRoutesByTo {
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/courses/edit/$id': typeof CoursesEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
-  '/events copy/edit/$id': typeof EventscopyEditIdRoute
   '/events/edit/$id': typeof EventsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
@@ -738,7 +691,6 @@ export interface FileRoutesByTo {
   '/complaints/add': typeof ComplaintsAddIndexRoute
   '/courses/add': typeof CoursesAddIndexRoute
   '/divisions/add': typeof DivisionsAddIndexRoute
-  '/events copy/add': typeof EventscopyAddIndexRoute
   '/events/add': typeof EventsAddIndexRoute
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
@@ -757,7 +709,6 @@ export interface FileRoutesById {
   '/complaints/': typeof ComplaintsIndexRoute
   '/courses/': typeof CoursesIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
-  '/events copy/': typeof EventscopyIndexRoute
   '/events/': typeof EventsIndexRoute
   '/institutes/': typeof InstitutesIndexRoute
   '/inventory/': typeof InventoryIndexRoute
@@ -774,7 +725,6 @@ export interface FileRoutesById {
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/courses/edit/$id': typeof CoursesEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
-  '/events copy/edit/$id': typeof EventscopyEditIdRoute
   '/events/edit/$id': typeof EventsEditIdRoute
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
@@ -787,7 +737,6 @@ export interface FileRoutesById {
   '/complaints/add/': typeof ComplaintsAddIndexRoute
   '/courses/add/': typeof CoursesAddIndexRoute
   '/divisions/add/': typeof DivisionsAddIndexRoute
-  '/events copy/add/': typeof EventscopyAddIndexRoute
   '/events/add/': typeof EventsAddIndexRoute
   '/institutes/add/': typeof InstitutesAddIndexRoute
   '/inventory/add/': typeof InventoryAddIndexRoute
@@ -807,7 +756,6 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/courses'
     | '/divisions'
-    | '/events copy'
     | '/events'
     | '/institutes'
     | '/inventory'
@@ -824,7 +772,6 @@ export interface FileRouteTypes {
     | '/complaints/edit/$id'
     | '/courses/edit/$id'
     | '/divisions/edit/$id'
-    | '/events copy/edit/$id'
     | '/events/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
@@ -837,7 +784,6 @@ export interface FileRouteTypes {
     | '/complaints/add'
     | '/courses/add'
     | '/divisions/add'
-    | '/events copy/add'
     | '/events/add'
     | '/institutes/add'
     | '/inventory/add'
@@ -854,7 +800,6 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/courses'
     | '/divisions'
-    | '/events copy'
     | '/events'
     | '/institutes'
     | '/inventory'
@@ -871,7 +816,6 @@ export interface FileRouteTypes {
     | '/complaints/edit/$id'
     | '/courses/edit/$id'
     | '/divisions/edit/$id'
-    | '/events copy/edit/$id'
     | '/events/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
@@ -884,7 +828,6 @@ export interface FileRouteTypes {
     | '/complaints/add'
     | '/courses/add'
     | '/divisions/add'
-    | '/events copy/add'
     | '/events/add'
     | '/institutes/add'
     | '/inventory/add'
@@ -901,7 +844,6 @@ export interface FileRouteTypes {
     | '/complaints/'
     | '/courses/'
     | '/divisions/'
-    | '/events copy/'
     | '/events/'
     | '/institutes/'
     | '/inventory/'
@@ -918,7 +860,6 @@ export interface FileRouteTypes {
     | '/complaints/edit/$id'
     | '/courses/edit/$id'
     | '/divisions/edit/$id'
-    | '/events copy/edit/$id'
     | '/events/edit/$id'
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
@@ -931,7 +872,6 @@ export interface FileRouteTypes {
     | '/complaints/add/'
     | '/courses/add/'
     | '/divisions/add/'
-    | '/events copy/add/'
     | '/events/add/'
     | '/institutes/add/'
     | '/inventory/add/'
@@ -950,7 +890,6 @@ export interface RootRouteChildren {
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
   CoursesIndexRoute: typeof CoursesIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
-  EventscopyIndexRoute: typeof EventscopyIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   InventoryIndexRoute: typeof InventoryIndexRoute
@@ -967,7 +906,6 @@ export interface RootRouteChildren {
   ComplaintsEditIdRoute: typeof ComplaintsEditIdRoute
   CoursesEditIdRoute: typeof CoursesEditIdRoute
   DivisionsEditIdRoute: typeof DivisionsEditIdRoute
-  EventscopyEditIdRoute: typeof EventscopyEditIdRoute
   EventsEditIdRoute: typeof EventsEditIdRoute
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
   InventoryEditIdRoute: typeof InventoryEditIdRoute
@@ -980,7 +918,6 @@ export interface RootRouteChildren {
   ComplaintsAddIndexRoute: typeof ComplaintsAddIndexRoute
   CoursesAddIndexRoute: typeof CoursesAddIndexRoute
   DivisionsAddIndexRoute: typeof DivisionsAddIndexRoute
-  EventscopyAddIndexRoute: typeof EventscopyAddIndexRoute
   EventsAddIndexRoute: typeof EventsAddIndexRoute
   InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
   InventoryAddIndexRoute: typeof InventoryAddIndexRoute
@@ -998,7 +935,6 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsIndexRoute: ComplaintsIndexRoute,
   CoursesIndexRoute: CoursesIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
-  EventscopyIndexRoute: EventscopyIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
   InventoryIndexRoute: InventoryIndexRoute,
@@ -1015,7 +951,6 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsEditIdRoute: ComplaintsEditIdRoute,
   CoursesEditIdRoute: CoursesEditIdRoute,
   DivisionsEditIdRoute: DivisionsEditIdRoute,
-  EventscopyEditIdRoute: EventscopyEditIdRoute,
   EventsEditIdRoute: EventsEditIdRoute,
   InstitutesEditIdRoute: InstitutesEditIdRoute,
   InventoryEditIdRoute: InventoryEditIdRoute,
@@ -1028,7 +963,6 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsAddIndexRoute: ComplaintsAddIndexRoute,
   CoursesAddIndexRoute: CoursesAddIndexRoute,
   DivisionsAddIndexRoute: DivisionsAddIndexRoute,
-  EventscopyAddIndexRoute: EventscopyAddIndexRoute,
   EventsAddIndexRoute: EventsAddIndexRoute,
   InstitutesAddIndexRoute: InstitutesAddIndexRoute,
   InventoryAddIndexRoute: InventoryAddIndexRoute,
@@ -1055,7 +989,6 @@ export const routeTree = rootRoute
         "/complaints/",
         "/courses/",
         "/divisions/",
-        "/events copy/",
         "/events/",
         "/institutes/",
         "/inventory/",
@@ -1072,7 +1005,6 @@ export const routeTree = rootRoute
         "/complaints/edit/$id",
         "/courses/edit/$id",
         "/divisions/edit/$id",
-        "/events copy/edit/$id",
         "/events/edit/$id",
         "/institutes/edit/$id",
         "/inventory/edit/$id",
@@ -1085,7 +1017,6 @@ export const routeTree = rootRoute
         "/complaints/add/",
         "/courses/add/",
         "/divisions/add/",
-        "/events copy/add/",
         "/events/add/",
         "/institutes/add/",
         "/inventory/add/",
@@ -1113,9 +1044,6 @@ export const routeTree = rootRoute
     },
     "/divisions/": {
       "filePath": "divisions/index.tsx"
-    },
-    "/events copy/": {
-      "filePath": "events copy/index.tsx"
     },
     "/events/": {
       "filePath": "events/index.tsx"
@@ -1165,9 +1093,6 @@ export const routeTree = rootRoute
     "/divisions/edit/$id": {
       "filePath": "divisions/edit/$id.tsx"
     },
-    "/events copy/edit/$id": {
-      "filePath": "events copy/edit/$id.tsx"
-    },
     "/events/edit/$id": {
       "filePath": "events/edit/$id.tsx"
     },
@@ -1203,9 +1128,6 @@ export const routeTree = rootRoute
     },
     "/divisions/add/": {
       "filePath": "divisions/add/index.tsx"
-    },
-    "/events copy/add/": {
-      "filePath": "events copy/add/index.tsx"
     },
     "/events/add/": {
       "filePath": "events/add/index.tsx"
