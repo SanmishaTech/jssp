@@ -213,30 +213,12 @@ export default function Dashboard({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                  {tableColumns.title || "Cashier Dashboard"}
+                  {tableColumns.title || "Subjects Dashboard"}
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {tableColumns.description ||
-                    "Manage Cashier data efficiently"}
+                    "Manage Subjects data efficiently"}
                 </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Input
-                    type="date"
-                    className="w-[150px] bg-background border-muted focus-visible:ring-primary"
-                    value={selectedDate}
-                    onChange={onDateChange}
-                  />
-                  {selectedDate && (
-                    <Button
-                      color="primary"
-                      variant="solid"
-                      className="h-9 rounded-r-full"
-                      onPress={() => onDateChange({ target: { value: "" } })}
-                    >
-                      Reset
-                    </Button>
-                  )}
-                </div>
               </div>
 
               <div className="flex items-center gap-3 self-end">
@@ -269,10 +251,10 @@ export default function Dashboard({
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/cashiers/add" })}
+                  onPress={() => navigate({ to: "/subjects/add" })}
                   className="h-9"
                 >
-                  Add Cashiers Details
+                  Add Subjects Details
                 </Button>
               </div>
             </div>
@@ -305,8 +287,8 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No Cashier Available"
-                  description="You can add a new cashier to get started."
+                  title="No Subjects Available"
+                  description="You can add a new subjects to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />
@@ -365,10 +347,10 @@ export default function Dashboard({
                                         <DropdownSection title="Actions">
                                           <DropdownItem
                                             key="edit"
-                                            description="Edit Cashier details"
+                                            description="Edit Subjects details"
                                             onPress={() =>
                                               navigate({
-                                                to: "/cashiers/edit/" + row?.id,
+                                                to: "/subjects/edit/" + row?.id,
                                               })
                                             }
                                             startContent={

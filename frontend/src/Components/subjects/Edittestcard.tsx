@@ -39,10 +39,7 @@ import { useParams } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  total_fees: z.string().trim().nonempty("Total Fees is Required"),
-  cheque: z.any().optional(),
-  cash: z.any().optional(),
-  upi: z.any().optional(),
+  subject_name: z.string().trim().nonempty("Subject Name is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -56,7 +53,7 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
-  const { id } = useParams({ from: "/cashiers/edit/$id" });
+  const { id } = useParams({ from: "/subjects/edit/$id" });
 
   const { reset } = form;
 
@@ -72,15 +69,15 @@ function ProfileForm({ formData }) {
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/cashiers/${id}`, data, {
+      await axios.put(`/api/subjects/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Cashiers Master Updated Successfully");
-      navigate({ to: "/cashiers" });
+      toast.success("Subject Master Updated Successfully");
+      navigate({ to: "/subjects" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -115,78 +112,36 @@ function ProfileForm({ formData }) {
         {" "}
         <div className="space-y-6">
           {/* Institute Information Section */}
-          <Card className="max-w-full p-4">
-            <CardContent>
-              <div className="grid grid-cols-4 gap-3">
-                <FormField
-                  control={form.control}
-                  name="total_fees"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Total Fees
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Total Fees..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cheque"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cheque Amount</FormLabel>
-                      <FormControl>
-                        <Input placeholder=" Cheque Amount..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cash"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cash Amount</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Cash..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="upi"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>UPI Amount</FormLabel>
-                      <FormControl>
-                        <Input placeholder="UPI..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+
+          <div className="grid grid-cols-1 gap-3">
+            <FormField
+              control={form.control}
+              name="subject_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Subject Name
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Subject Name..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
         <div className="flex justify-end w-full gap-3 ">
           <Button
-            onClick={() => navigate({ to: "/cashiers" })}
+            onClick={() => navigate({ to: "/subjects" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Cashiers
+            Update Subjects
           </Button>
         </div>
       </form>
@@ -196,18 +151,18 @@ function ProfileForm({ formData }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/cashiers/edit/$id" });
+  const { id } = useParams({ from: "/subjects/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/cashiers/${id}`, {
+      const response = await axios.get(`/api/subjects/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      setFormData(response.data.data.Cashier);
+      setFormData(response.data.data.Subject);
     };
     if (id) {
       fetchData();
@@ -227,8 +182,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Cashier Master</CardTitle>
-        <CardDescription>Edit/Update the Cashier</CardDescription>
+        <CardTitle>Subject Master</CardTitle>
+        <CardDescription>Edit/Update the Subject</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

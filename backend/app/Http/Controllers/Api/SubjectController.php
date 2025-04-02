@@ -22,7 +22,7 @@ class SubjectController extends BaseController
           if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('total_fees', 'like', '%' . $searchTerm . '%');
+                $query->where('subject_name', 'like', '%' . $searchTerm . '%');
             });
         }
 

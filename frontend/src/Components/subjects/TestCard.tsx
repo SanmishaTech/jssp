@@ -38,10 +38,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  total_fees: z.string().trim().nonempty("Total Fees is Required"),
-  cheque: z.any().optional(),
-  cash: z.any().optional(),
-  upi: z.any().optional(),
+  subject_name: z.string().trim().nonempty("Subject Name is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -67,14 +64,14 @@ function ProfileForm() {
     data.userId = User?._id;
     try {
       await axios
-        .post(`/api/cashiers`, data, {
+        .post(`/api/subjects`, data, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         })
         .then((res) => {
-          toast.success("Cashiers Created Successfully");
+          toast.success("Subjects Created Successfully");
           window.history.back();
         });
     } catch (error) {
@@ -113,57 +110,18 @@ function ProfileForm() {
           {/* Cashiers Information Section */}
           <Card className="max-w-full p-4">
             <CardContent>
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <FormField
                   control={form.control}
-                  name="total_fees"
+                  name="subject_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Total Fees
+                        Subject Name
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Total Fees..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cheque"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cheque Amount</FormLabel>
-                      <FormControl>
-                        <Input placeholder=" Cheque Amount..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cash"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cash</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Cash..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="upi"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>UPI</FormLabel>
-                      <FormControl>
-                        <Input placeholder="UPI..." {...field} />
+                        <Input placeholder="Subject Name..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -182,7 +140,7 @@ function ProfileForm() {
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Cashier Details
+            Add Subject Details
           </Button>
         </div>
       </form>
@@ -202,8 +160,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Cashier Master</CardTitle>
-        <CardDescription>Add Cashier</CardDescription>
+        <CardTitle>Subject Master</CardTitle>
+        <CardDescription>Add Subject</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">
