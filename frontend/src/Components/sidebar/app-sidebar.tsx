@@ -12,6 +12,7 @@ import {
   FileText,
   User,
   MapPin,
+  PiggyBank,
   Grid,
 } from "lucide-react";
 import background from "../../images/Jeevandeep-logo.jpeg";
@@ -123,8 +124,8 @@ const roleBasedItems = {
         },
         {
           title: "Casier",
-          url: "#",
-          icon: Calendar,
+          url: "/cashiers",
+          icon: PiggyBank,
         },
       ],
     },

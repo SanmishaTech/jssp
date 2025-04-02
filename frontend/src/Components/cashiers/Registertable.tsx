@@ -51,7 +51,7 @@ export default function Dashboardholiday() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/admissions?page=${page}&limit=${itemsPerPage}${query ? `&search=${query}` : ""}${date ? `&date=${date}` : ""}`,
+        `/api/cashiers?page=${page}&limit=${itemsPerPage}${query ? `&search=${query}` : ""}${date ? `&date=${date}` : ""}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export default function Dashboardholiday() {
       );
 
       // Update data from response
-      setData(response.data.data.Admission);
+      setData(response.data.data.Cashier);
 
       // Update pagination info from the actual response structure
       const pagination = response.data.data.Pagination;
@@ -97,18 +97,19 @@ export default function Dashboardholiday() {
       breadcrumbs: [
         { label: "Home", href: "/staffdashboard" },
         { label: "/", href: "" },
-        { label: "Admissions" },
+        { label: "Cashier" },
       ],
-      searchPlaceholder: "Search Admissions...",
+      searchPlaceholder: "Search Cashier...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Admissions",
-        description: "Manage Admissions and view their details.",
+        title: "Cashier",
+        description: "Manage Cashier and view their details.",
         headers: [
-          { label: "Total valuation students", key: "one" },
-          { label: "Uploaded with University", key: "two" },
-          { label: "Students Received PRN", key: "three" },
-          { label: "Registered Date", key: "four" },
+          { label: "Total Fees", key: "one" },
+          { label: "Cheque", key: "two" },
+          { label: "Cash", key: "three" },
+          { label: "Upi", key: "four" },
+          { label: "Registered Date", key: "five" },
           { label: "Action", key: "action" },
         ],
         // tabs: [
@@ -138,7 +139,7 @@ export default function Dashboardholiday() {
   const handleAddProduct = () => {
     console.log("Add Registration clicked");
     console.log("AS");
-    navigate({ to: "/admissions/add" });
+    navigate({ to: "/cashiers/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
@@ -214,13 +215,14 @@ export default function Dashboardholiday() {
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
     return {
       id: item?.id,
-      one: item?.total_valuation || "Unknown",
-      two: item?.university_upload || "NA",
-      three: item?.received_prn || "NA",
-      four: item?.created_at
+      one: item?.total_fees || "Unknown",
+      two: item?.cheque || "NA",
+      three: item?.cash || "NA",
+      four: item?.upi || "NA",
+      five: item?.created_at
         ? format(new Date(item.created_at), "dd-MM-yyyy (HH:mm)")
         : "NA",
-      delete: "/admissions/" + item?.id,
+      delete: "/cashiers/" + item?.id,
     };
   });
 

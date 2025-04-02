@@ -15,20 +15,26 @@ class AdmissionController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-         $instituteId = Auth::user()->staff->institute_id;
-    
-         $query = Admission::where('institute_id', $instituteId);
-    
-          if ($request->query('search')) {
+        $instituteId = Auth::user()->staff->institute_id;
+
+        $query = Admission::where('institute_id', $instituteId);
+
+        if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('total_valuation', 'like', '%' . $searchTerm . '%');
             });
         }
-    
-          $admission = $query->paginate(7);
-    
-         return $this->sendResponse(
+
+        // Add date filter
+        if ($request->query('date')) {
+            $date = $request->query('date');
+            $query->whereDate('created_at', $date);
+        }
+
+        $admission = $query->paginate(7);
+
+        return $this->sendResponse(
             [
                 "Admission" => AdmissionResource::collection($admission),
                 'Pagination' => [

@@ -213,11 +213,11 @@ export default function Dashboard({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                  {tableColumns.title || "admission Dashboard"}
+                  {tableColumns.title || "Cashier Dashboard"}
                 </h1>
                 <p className="text-muted-foreground mt-1">
                   {tableColumns.description ||
-                    "Manage Admission data efficiently"}
+                    "Manage Cashier data efficiently"}
                 </p>
                 <div className="flex items-center gap-2 mt-2">
                   <Input
@@ -269,10 +269,10 @@ export default function Dashboard({
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/admissions/add" })}
+                  onPress={() => navigate({ to: "/cashiers/add" })}
                   className="h-9"
                 >
-                  Add Admissions Details
+                  Add Cashiers Details
                 </Button>
               </div>
             </div>
@@ -305,8 +305,8 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No admissions Available"
-                  description="You can add a new admissions to get started."
+                  title="No Cashier Available"
+                  description="You can add a new cashier to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />
@@ -365,11 +365,10 @@ export default function Dashboard({
                                         <DropdownSection title="Actions">
                                           <DropdownItem
                                             key="edit"
-                                            description="Edit Admission details"
+                                            description="Edit Cashier details"
                                             onPress={() =>
                                               navigate({
-                                                to:
-                                                  "/admissions/edit/" + row?.id,
+                                                to: "/cashiers/edit/" + row?.id,
                                               })
                                             }
                                             startContent={

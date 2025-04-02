@@ -25,6 +25,13 @@ class CashierController extends BaseController
                 $query->where('total_fees', 'like', '%' . $searchTerm . '%');
             });
         }
+
+           // Add date filter
+           if ($request->query('date')) {
+            $date = $request->query('date');
+            $query->whereDate('created_at', $date);
+        }
+
     
           $cashier = $query->paginate(7);
     
