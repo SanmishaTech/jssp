@@ -127,6 +127,11 @@ const roleBasedItems = {
           url: "/cashiers",
           icon: PiggyBank,
         },
+        {
+          title: "Subjects",
+          url: "/subjects",
+          icon: PiggyBank,
+        },
       ],
     },
   ],
