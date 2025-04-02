@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\MeetingController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
@@ -84,6 +85,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('subjects', SubjectController::class);
    Route::get('/all_subjects', [SubjectController::class, 'allSubject'])->name("subjects.all");
+   
+   Route::resource('students', StudentController::class);
+   Route::get('/all_students', [StudentController::class, 'allStudent'])->name("students.all");
 
 });
 
