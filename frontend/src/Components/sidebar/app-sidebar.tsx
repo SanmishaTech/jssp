@@ -133,6 +133,11 @@ const roleBasedItems = {
           url: "/subjects",
           icon: BookMarked,
         },
+        {
+          title: "Students",
+          url: "/students",
+          icon: BookMarked,
+        },
       ],
     },
   ],
