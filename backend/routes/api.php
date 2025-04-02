@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\MeetingController;
 use App\Http\Controllers\Api\ProfileController;
@@ -76,6 +77,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('admissions', AdmissionController::class);
    Route::get('/all_admissions', [AdmissionController::class, 'allAdmissions'])->name("admissions.all");
+   
+   Route::resource('cashiers', CashierController::class);
+   Route::get('/all_cashiers', [CashierController::class, 'allCashier'])->name("cashiers.all");
 
 });
 

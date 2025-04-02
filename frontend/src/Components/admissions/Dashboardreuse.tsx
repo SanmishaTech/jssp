@@ -261,7 +261,7 @@ export default function Dashboard({
                   onPress={() => navigate({ to: "/admissions/add" })}
                   className="h-9"
                 >
-                  Add New Admissions Details
+                  Add Admissions Details
                 </Button>
               </div>
             </div>

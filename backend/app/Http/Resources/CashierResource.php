@@ -3,10 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\AdmissionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdmissionResource extends JsonResource
+class CashierResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,11 +17,13 @@ class AdmissionResource extends JsonResource
         return [
             'id' => $this->id,
             'institute_id' => $this->institute_id,
-            'total_valuation' => $this->total_valuation,
-            'university_upload' => $this->university_upload,
-            'received_prn' => $this->received_prn,
+            'total_fees' => $this->total_fees,
+            'cheque' => $this->cheque,
+            'cash' => $this->cash,
+            'upi' => $this->upi,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ];  
-      }
+
+        ];   
+        }
 }
