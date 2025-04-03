@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\DivisionController;
 use App\Http\Controllers\Api\InvoicesController;
+use App\Http\Controllers\Api\PeticashController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\AdmissionController;
@@ -88,6 +89,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudent'])->name("students.all");
+
+   Route::resource('peticash', PeticashController::class);
+
 
 });
 

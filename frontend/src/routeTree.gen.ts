@@ -20,6 +20,7 @@ import { Route as StaffIndexImport } from './routes/staff/index'
 import { Route as SemesterIndexImport } from './routes/semester/index'
 import { Route as RootdashboardIndexImport } from './routes/rootdashboard/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
+import { Route as PeticashIndexImport } from './routes/peticash/index'
 import { Route as MemberdashboardIndexImport } from './routes/memberdashboard/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
@@ -39,6 +40,7 @@ import { Route as StudentsAddIndexImport } from './routes/students/add/index'
 import { Route as StaffAddIndexImport } from './routes/staff/add/index'
 import { Route as SemesterAddIndexImport } from './routes/semester/add/index'
 import { Route as RoomsAddIndexImport } from './routes/rooms/add/index'
+import { Route as PeticashAddIndexImport } from './routes/peticash/add/index'
 import { Route as MeetingsAddIndexImport } from './routes/meetings/add/index'
 import { Route as InventoryAddIndexImport } from './routes/inventory/add/index'
 import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
@@ -55,6 +57,7 @@ import { Route as StudentsEditIdImport } from './routes/students/edit/$id'
 import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
 import { Route as SemesterEditIdImport } from './routes/semester/edit/$id'
 import { Route as RoomsEditIdImport } from './routes/rooms/edit/$id'
+import { Route as PeticashEditIdImport } from './routes/peticash/edit/$id'
 import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
 import { Route as InventoryEditIdImport } from './routes/inventory/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
@@ -119,6 +122,12 @@ const RootdashboardIndexRoute = RootdashboardIndexImport.update({
 const RoomsIndexRoute = RoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PeticashIndexRoute = PeticashIndexImport.update({
+  id: '/peticash/',
+  path: '/peticash/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -236,6 +245,12 @@ const RoomsAddIndexRoute = RoomsAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PeticashAddIndexRoute = PeticashAddIndexImport.update({
+  id: '/peticash/add/',
+  path: '/peticash/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const MeetingsAddIndexRoute = MeetingsAddIndexImport.update({
   id: '/meetings/add/',
   path: '/meetings/add/',
@@ -329,6 +344,12 @@ const SemesterEditIdRoute = SemesterEditIdImport.update({
 const RoomsEditIdRoute = RoomsEditIdImport.update({
   id: '/rooms/edit/$id',
   path: '/rooms/edit/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PeticashEditIdRoute = PeticashEditIdImport.update({
+  id: '/peticash/edit/$id',
+  path: '/peticash/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -494,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemberdashboardIndexImport
       parentRoute: typeof rootRoute
     }
+    '/peticash/': {
+      id: '/peticash/'
+      path: '/peticash'
+      fullPath: '/peticash'
+      preLoaderRoute: typeof PeticashIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/': {
       id: '/rooms/'
       path: '/rooms'
@@ -620,6 +648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeetingsEditIdImport
       parentRoute: typeof rootRoute
     }
+    '/peticash/edit/$id': {
+      id: '/peticash/edit/$id'
+      path: '/peticash/edit/$id'
+      fullPath: '/peticash/edit/$id'
+      preLoaderRoute: typeof PeticashEditIdImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/edit/$id': {
       id: '/rooms/edit/$id'
       path: '/rooms/edit/$id'
@@ -732,6 +767,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeetingsAddIndexImport
       parentRoute: typeof rootRoute
     }
+    '/peticash/add/': {
+      id: '/peticash/add/'
+      path: '/peticash/add'
+      fullPath: '/peticash/add'
+      preLoaderRoute: typeof PeticashAddIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/rooms/add/': {
       id: '/rooms/add/'
       path: '/rooms/add'
@@ -794,6 +836,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memberdashboard': typeof MemberdashboardIndexRoute
+  '/peticash': typeof PeticashIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/rootdashboard': typeof RootdashboardIndexRoute
   '/semester': typeof SemesterIndexRoute
@@ -812,6 +855,7 @@ export interface FileRoutesByFullPath {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
+  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -828,6 +872,7 @@ export interface FileRoutesByFullPath {
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
   '/meetings/add': typeof MeetingsAddIndexRoute
+  '/peticash/add': typeof PeticashAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
@@ -851,6 +896,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memberdashboard': typeof MemberdashboardIndexRoute
+  '/peticash': typeof PeticashIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/rootdashboard': typeof RootdashboardIndexRoute
   '/semester': typeof SemesterIndexRoute
@@ -869,6 +915,7 @@ export interface FileRoutesByTo {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
+  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -885,6 +932,7 @@ export interface FileRoutesByTo {
   '/institutes/add': typeof InstitutesAddIndexRoute
   '/inventory/add': typeof InventoryAddIndexRoute
   '/meetings/add': typeof MeetingsAddIndexRoute
+  '/peticash/add': typeof PeticashAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
@@ -909,6 +957,7 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/meetings/': typeof MeetingsIndexRoute
   '/memberdashboard/': typeof MemberdashboardIndexRoute
+  '/peticash/': typeof PeticashIndexRoute
   '/rooms/': typeof RoomsIndexRoute
   '/rootdashboard/': typeof RootdashboardIndexRoute
   '/semester/': typeof SemesterIndexRoute
@@ -927,6 +976,7 @@ export interface FileRoutesById {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
+  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
@@ -943,6 +993,7 @@ export interface FileRoutesById {
   '/institutes/add/': typeof InstitutesAddIndexRoute
   '/inventory/add/': typeof InventoryAddIndexRoute
   '/meetings/add/': typeof MeetingsAddIndexRoute
+  '/peticash/add/': typeof PeticashAddIndexRoute
   '/rooms/add/': typeof RoomsAddIndexRoute
   '/semester/add/': typeof SemesterAddIndexRoute
   '/staff/add/': typeof StaffAddIndexRoute
@@ -968,6 +1019,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meetings'
     | '/memberdashboard'
+    | '/peticash'
     | '/rooms'
     | '/rootdashboard'
     | '/semester'
@@ -986,6 +1038,7 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
+    | '/peticash/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -1002,6 +1055,7 @@ export interface FileRouteTypes {
     | '/institutes/add'
     | '/inventory/add'
     | '/meetings/add'
+    | '/peticash/add'
     | '/rooms/add'
     | '/semester/add'
     | '/staff/add'
@@ -1024,6 +1078,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meetings'
     | '/memberdashboard'
+    | '/peticash'
     | '/rooms'
     | '/rootdashboard'
     | '/semester'
@@ -1042,6 +1097,7 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
+    | '/peticash/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -1058,6 +1114,7 @@ export interface FileRouteTypes {
     | '/institutes/add'
     | '/inventory/add'
     | '/meetings/add'
+    | '/peticash/add'
     | '/rooms/add'
     | '/semester/add'
     | '/staff/add'
@@ -1080,6 +1137,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/meetings/'
     | '/memberdashboard/'
+    | '/peticash/'
     | '/rooms/'
     | '/rootdashboard/'
     | '/semester/'
@@ -1098,6 +1156,7 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
+    | '/peticash/edit/$id'
     | '/rooms/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
@@ -1114,6 +1173,7 @@ export interface FileRouteTypes {
     | '/institutes/add/'
     | '/inventory/add/'
     | '/meetings/add/'
+    | '/peticash/add/'
     | '/rooms/add/'
     | '/semester/add/'
     | '/staff/add/'
@@ -1138,6 +1198,7 @@ export interface RootRouteChildren {
   LoginIndexRoute: typeof LoginIndexRoute
   MeetingsIndexRoute: typeof MeetingsIndexRoute
   MemberdashboardIndexRoute: typeof MemberdashboardIndexRoute
+  PeticashIndexRoute: typeof PeticashIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
   RootdashboardIndexRoute: typeof RootdashboardIndexRoute
   SemesterIndexRoute: typeof SemesterIndexRoute
@@ -1156,6 +1217,7 @@ export interface RootRouteChildren {
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
   InventoryEditIdRoute: typeof InventoryEditIdRoute
   MeetingsEditIdRoute: typeof MeetingsEditIdRoute
+  PeticashEditIdRoute: typeof PeticashEditIdRoute
   RoomsEditIdRoute: typeof RoomsEditIdRoute
   SemesterEditIdRoute: typeof SemesterEditIdRoute
   StaffEditIdRoute: typeof StaffEditIdRoute
@@ -1172,6 +1234,7 @@ export interface RootRouteChildren {
   InstitutesAddIndexRoute: typeof InstitutesAddIndexRoute
   InventoryAddIndexRoute: typeof InventoryAddIndexRoute
   MeetingsAddIndexRoute: typeof MeetingsAddIndexRoute
+  PeticashAddIndexRoute: typeof PeticashAddIndexRoute
   RoomsAddIndexRoute: typeof RoomsAddIndexRoute
   SemesterAddIndexRoute: typeof SemesterAddIndexRoute
   StaffAddIndexRoute: typeof StaffAddIndexRoute
@@ -1195,6 +1258,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginIndexRoute: LoginIndexRoute,
   MeetingsIndexRoute: MeetingsIndexRoute,
   MemberdashboardIndexRoute: MemberdashboardIndexRoute,
+  PeticashIndexRoute: PeticashIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
   RootdashboardIndexRoute: RootdashboardIndexRoute,
   SemesterIndexRoute: SemesterIndexRoute,
@@ -1213,6 +1277,7 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutesEditIdRoute: InstitutesEditIdRoute,
   InventoryEditIdRoute: InventoryEditIdRoute,
   MeetingsEditIdRoute: MeetingsEditIdRoute,
+  PeticashEditIdRoute: PeticashEditIdRoute,
   RoomsEditIdRoute: RoomsEditIdRoute,
   SemesterEditIdRoute: SemesterEditIdRoute,
   StaffEditIdRoute: StaffEditIdRoute,
@@ -1229,6 +1294,7 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutesAddIndexRoute: InstitutesAddIndexRoute,
   InventoryAddIndexRoute: InventoryAddIndexRoute,
   MeetingsAddIndexRoute: MeetingsAddIndexRoute,
+  PeticashAddIndexRoute: PeticashAddIndexRoute,
   RoomsAddIndexRoute: RoomsAddIndexRoute,
   SemesterAddIndexRoute: SemesterAddIndexRoute,
   StaffAddIndexRoute: StaffAddIndexRoute,
@@ -1261,6 +1327,7 @@ export const routeTree = rootRoute
         "/login/",
         "/meetings/",
         "/memberdashboard/",
+        "/peticash/",
         "/rooms/",
         "/rootdashboard/",
         "/semester/",
@@ -1279,6 +1346,7 @@ export const routeTree = rootRoute
         "/institutes/edit/$id",
         "/inventory/edit/$id",
         "/meetings/edit/$id",
+        "/peticash/edit/$id",
         "/rooms/edit/$id",
         "/semester/edit/$id",
         "/staff/edit/$id",
@@ -1295,6 +1363,7 @@ export const routeTree = rootRoute
         "/institutes/add/",
         "/inventory/add/",
         "/meetings/add/",
+        "/peticash/add/",
         "/rooms/add/",
         "/semester/add/",
         "/staff/add/",
@@ -1344,6 +1413,9 @@ export const routeTree = rootRoute
     },
     "/memberdashboard/": {
       "filePath": "memberdashboard/index.tsx"
+    },
+    "/peticash/": {
+      "filePath": "peticash/index.tsx"
     },
     "/rooms/": {
       "filePath": "rooms/index.tsx"
@@ -1399,6 +1471,9 @@ export const routeTree = rootRoute
     "/meetings/edit/$id": {
       "filePath": "meetings/edit/$id.tsx"
     },
+    "/peticash/edit/$id": {
+      "filePath": "peticash/edit/$id.tsx"
+    },
     "/rooms/edit/$id": {
       "filePath": "rooms/edit/$id.tsx"
     },
@@ -1446,6 +1521,9 @@ export const routeTree = rootRoute
     },
     "/meetings/add/": {
       "filePath": "meetings/add/index.tsx"
+    },
+    "/peticash/add/": {
+      "filePath": "peticash/add/index.tsx"
     },
     "/rooms/add/": {
       "filePath": "rooms/add/index.tsx"
