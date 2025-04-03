@@ -99,18 +99,16 @@ export default function Dashboardholiday() {
       breadcrumbs: [
         { label: "Home", href: "/staffdashboard" },
         { label: "/", href: "" },
-        { label: "Academic Information", href: "" },
-        { label: "/", href: "" },
-        { label: "Student" },
+        { label: "Students" },
       ],
 
-      searchPlaceholder: "Search Student...",
+      searchPlaceholder: "Search Students...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Student",
-        description: "Manage Student and view their details.",
+        title: "Students",
+        description: "Manage Students and view their details.",
         headers: [
-          { label: "Student Name", key: "one" },
+          { label: "Student", key: "one" },
           { label: "PRN", key: "two" },
           { label: "Subject", key: "three" },
           { label: "Division", key: "four" },
@@ -202,11 +200,11 @@ export default function Dashboardholiday() {
       id: item?.id,
       one: item?.student_name || "Unknown",
       two: item?.prn || "NA",
-      three: item?.subject_id || "NA",
-      four: item?.division_id || "NA",
+      three: item?.subject_name || "NA",
+      four: item?.division_name || "NA",
 
       delete: "/students/" + item?.id,
-    };
+    };P
   });
 
   return (

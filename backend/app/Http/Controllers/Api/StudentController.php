@@ -24,7 +24,7 @@ class StudentController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('Student', 'like', '%' . $searchTerm . '%');
+                $query->where('student_name', 'like', '%' . $searchTerm . '%');
             });
         }
     

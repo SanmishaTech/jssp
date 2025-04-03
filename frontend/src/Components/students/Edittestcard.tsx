@@ -67,19 +67,19 @@ interface Semester {
 }
 
 const formSchema = z.object({
-  course_id: z.string().nonempty("Course is required"),
-  room_id: z.string().nonempty("Room is required"),
-  semester_id: z.string().nonempty("Semester Title is required"),
-  division: z.string().nonempty("Division is required"),
+  student_name: z.string().nonempty("Student Name is required"),
+  prn: z.string().nonempty("PRN is required"),
+  subject_id: z.string().nonempty("Subject is required"),
+  division_id: z.string().nonempty("Division is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const defaultValues: FormValues = {
-  course_id: "",
-  room_id: "",
-  semester_id: "",
-  division: "",
+  student_name: "",
+  prn: "",
+  subject_id: "",
+  division_id: "",
 };
 
 function ProfileForm({ formData }: { formData: FormValues }) {
@@ -91,7 +91,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
     mode: "onChange",
   });
 
-  const { id } = useParams({ from: "/divisions/edit/$id" });
+  const { id } = useParams({ from: "/students/edit/$id" });
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -107,19 +107,19 @@ function ProfileForm({ formData }: { formData: FormValues }) {
   useEffect(() => {
     setLoadingCourses(true);
     axios
-      .get("/api/all_courses", {
+      .get("/api/all_subjects", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        const coursesData = response.data.data.Course || [];
+        const coursesData = response.data.data.Subject || [];
         setCourses(coursesData);
       })
       .catch((error) => {
-        console.error("Error fetching courses:", error);
-        toast.error("Failed to fetch courses");
+        console.error("Error fetching subjects:", error);
+        toast.error("Failed to fetch subjects");
       })
       .finally(() => setLoadingCourses(false));
   }, [token]);
@@ -128,19 +128,19 @@ function ProfileForm({ formData }: { formData: FormValues }) {
   useEffect(() => {
     setLoadingRooms(true);
     axios
-      .get("/api/rooms", {
+      .get("/api/all_divisions", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        const roomsData = response.data.data.Room || [];
+        const roomsData = response.data.data.Division || [];
         setRooms(roomsData);
       })
       .catch((error) => {
-        console.error("Error fetching rooms:", error);
-        toast.error("Failed to fetch rooms");
+        console.error("Error fetching divisions:", error);
+        toast.error("Failed to fetch divisions");
       })
       .finally(() => setLoadingRooms(false));
   }, [token]);
@@ -176,7 +176,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
 
   async function onSubmit(data: FormValues) {
     try {
-      const response = await axios.put(`/api/divisions/${id}`, data, {
+      const response = await axios.put(`/api/students/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -184,8 +184,8 @@ function ProfileForm({ formData }: { formData: FormValues }) {
       });
 
       if (response.data) {
-        toast.success("Division Updated Successfully");
-        navigate({ to: "/divisions" });
+        toast.success("Student Updated Successfully");
+        navigate({ to: "/students" });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -201,7 +201,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
             toast.error(message as string);
           });
         } else {
-          toast.error(errorData?.message || "Failed to update division");
+          toast.error(errorData?.message || "Failed to update students");
         }
       } else {
         toast.error("An unexpected error occurred");
@@ -216,249 +216,204 @@ function ProfileForm({ formData }: { formData: FormValues }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <div className="space-y-6">
-          <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Division Information</CardTitle>
-              <CardDescription>Update division details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4">
-                {/* Course Title Field */}
-                <FormField
-                  control={form.control}
-                  name="course_id"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="mt-[10px]">
-                        Course Title <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? courses.find(
-                                    (course) =>
-                                      course.id.toString() === field.value
-                                  )?.medium_title || "Select Course..."
-                                : "Select Course..."}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search course..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  {loadingCourses
-                                    ? "Loading courses..."
-                                    : "No course found."}
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {courses.map((course) => (
-                                    <CommandItem
-                                      key={course.id}
-                                      value={course.id.toString()}
-                                      onSelect={(value) => {
-                                        field.onChange(
-                                          value === field.value ? "" : value
-                                        );
-                                      }}
-                                    >
-                                      {course.medium_title}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          field.value === course.id.toString()
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <div className=" grid grid-cols-2 gap-3">
+          <FormField
+            control={form.control}
+            name="student_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Student Name <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Student Name..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="prn"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  PRN <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="PRN..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Division Field */}
+          <FormField
+            control={form.control}
+            name="division_id"
+            render={({ field }) => {
+              const [open, setOpen] = React.useState(false);
+              return (
+                <FormItem className="">
+                  <FormLabel className="">
+                    Division <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-full justify-between"
+                        >
+                          {field.value
+                            ? rooms.find((room) => {
+                                const roomId = room.id?.toString() || "";
+                                return roomId === field.value;
+                              })?.division || "Select Division..."
+                            : "Select Division..."}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[300px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search division..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              {loadingRooms
+                                ? "Loading divisions..."
+                                : "No division found."}
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {rooms.map((room) => {
+                                const roomId = room.id?.toString() || "";
+                                return (
+                                  <CommandItem
+                                    key={roomId}
+                                    value={roomId}
+                                    onSelect={(currentValue) => {
+                                      field.onChange(
+                                        currentValue === field.value
+                                          ? ""
+                                          : currentValue
+                                      );
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    {room.division}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        field.value === roomId
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                );
+                              })}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
 
-                {/* Room Title Field */}
-                <FormField
-                  control={form.control}
-                  name="room_id"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="mt-[10px]">
-                        Room Title <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? rooms.find(
-                                    (room) => room.id.toString() === field.value
-                                  )?.room_name || "Select Room..."
-                                : "Select Room..."}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search room..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  {loadingRooms
-                                    ? "Loading rooms..."
-                                    : "No room found."}
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {rooms.map((room) => (
-                                    <CommandItem
-                                      key={room.id}
-                                      value={room.id.toString()}
-                                      onSelect={(value) => {
-                                        field.onChange(
-                                          value === field.value ? "" : value
-                                        );
-                                      }}
-                                    >
-                                      {room.room_name}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          field.value === room.id.toString()
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="semester_id"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel className="mt-[10px]">
-                        Semester Title <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? semesters.find(
-                                    (semester) =>
-                                      semester.id.toString() === field.value
-                                  )?.semester || "Select Semester..."
-                                : "Select Semester..."}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search semester..." />
-                              <CommandList>
-                                <CommandEmpty>
-                                  {loadingSemesters
-                                    ? "Loading semesters..."
-                                    : "No semester found."}
-                                </CommandEmpty>
-                                <CommandGroup>
-                                  {semesters.map((semester) => (
-                                    <CommandItem
-                                      key={semester.id}
-                                      value={semester.id.toString()}
-                                      onSelect={(value) => {
-                                        field.onChange(
-                                          value === field.value ? "" : value
-                                        );
-                                      }}
-                                    >
-                                      {semester.semester}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          field.value === semester.id.toString()
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Division Field */}
-              <div className="mt-4">
-                <FormField
-                  control={form.control}
-                  name="division"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Division <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Division..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Course Title Field */}
+          <FormField
+            control={form.control}
+            name="subject_id"
+            render={({ field }) => {
+              const [open, setOpen] = React.useState(false);
+              return (
+                <FormItem className="flex-1">
+                  <FormLabel className="mt-[0px]">
+                    Subject <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-full justify-between"
+                        >
+                          {field.value
+                            ? courses.find((course) => {
+                                const courseId = course.id?.toString() || "";
+                                return courseId === field.value;
+                              })?.subject_name || "Select Subject..."
+                            : "Select Subject..."}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[300px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search subject..." />
+                          <CommandList>
+                            <CommandEmpty>
+                              {loadingCourses
+                                ? "Loading subjects..."
+                                : "No subject found."}
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {courses.map((course) => {
+                                const courseId = course.id?.toString() || "";
+                                return (
+                                  <CommandItem
+                                    key={courseId}
+                                    value={courseId}
+                                    onSelect={(currentValue) => {
+                                      field.onChange(
+                                        currentValue === field.value
+                                          ? ""
+                                          : currentValue
+                                      );
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    {course.subject_name}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        field.value === courseId
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                );
+                              })}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
         </div>
 
         <div className="flex justify-end w-full gap-3">
           <Button
-            onClick={() => navigate({ to: "/divisions" })}
+            onClick={() => navigate({ to: "/students" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Update Division
+            Update Student
           </Button>
         </div>
       </form>
@@ -468,13 +423,8 @@ function ProfileForm({ formData }: { formData: FormValues }) {
 
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
-  const { id } = useParams({ from: "/divisions/edit/$id" });
-  const [formData, setFormData] = useState<FormValues>({
-    course_id: "",
-    room_id: "",
-    semester_id: "",
-    division: "",
-  });
+  const { id } = useParams({ from: "/students/edit/$id" });
+  const [formData, setFormData] = useState<FormValues>(defaultValues);
   const [isLoading, setIsLoading] = useState(true);
   const token = localStorage.getItem("token");
 
@@ -482,34 +432,34 @@ export default function SettingsProfilePage() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`/api/divisions/${id}`, {
+        const response = await axios.get(`/api/students/${id}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const divisionData = response.data.data.Division;
+        const studentData = response.data.data.Student;
         console.log("Raw API Response:", response.data); // Debug log
-        console.log("Division Data:", divisionData); // Debug log
+        console.log("Student Data:", studentData); // Debug log
 
-        if (!divisionData) {
+        if (!studentData) {
           throw new Error("No data received from API");
         }
 
         // Map the data according to the actual API response structure
         const formattedData = {
-          course_id: String(divisionData.courses_id || ""),
-          room_id: String(divisionData.room_id || ""),
-          semester_id: String(divisionData.semester_id || ""),
-          division: divisionData.division || "",
+          student_name: studentData.student_name || "",
+          prn: studentData.prn || "",
+          subject_id: String(studentData.subject_id || ""),
+          division_id: String(studentData.division_id || ""),
         };
 
         console.log("Formatted Data:", formattedData); // Debug log
         setFormData(formattedData);
       } catch (error) {
-        console.error("Error fetching division:", error);
-        toast.error("Failed to fetch division data");
+        console.error("Error fetching student:", error);
+        toast.error("Failed to fetch student data");
       } finally {
         setIsLoading(false);
       }
@@ -524,7 +474,7 @@ export default function SettingsProfilePage() {
     return (
       <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
         <CardContent className="flex items-center justify-center min-h-[200px]">
-          <div>Loading division data...</div>
+          <div>Loading student data...</div>
         </CardContent>
       </Card>
     );
@@ -541,8 +491,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Division Master</CardTitle>
-        <CardDescription>Edit/Update the Division</CardDescription>
+        <CardTitle>Student Master</CardTitle>
+        <CardDescription>Edit/Update the Student</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
