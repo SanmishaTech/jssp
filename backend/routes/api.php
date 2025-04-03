@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\SuperAdminController;
+use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
 
@@ -90,7 +91,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudent'])->name("students.all");
 
-   Route::resource('peticash', PeticashController::class);
+   // Route::resource('peticash', PeticashController::class);
+
+   Route::resource('scholarships', ScholarshipController::class);
+   Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
 
 
 });
