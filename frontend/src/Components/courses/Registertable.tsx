@@ -1,49 +1,131 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Dashboard from "./Dashboardreuse";
-// import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "@tanstack/react-router";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import AddCourseDialog from "./AddCourseDialog";
+import EditCourseDialog from "./EditCourseDialog";
+
+interface Course {
+  id: string;
+  medium_title: string;
+  medium_code: string;
+  organization: string;
+}
+
+interface PaginationData {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+interface ApiResponse {
+  data: {
+    Course: Course[];
+    Pagination: PaginationData;
+  };
+}
+
+interface DashboardConfig {
+  breadcrumbs: Array<{ label: string; href?: string }>;
+  searchPlaceholder: string;
+  userAvatar: string;
+  tableColumns: {
+    title: string;
+    description: string;
+    headers: Array<{ label: string; key: string; hiddenOn?: string; sortable?: boolean }>;
+    actions: Array<{ label: string; value: string }>;
+    pagination: {
+      currentPage: number;
+      lastPage: number;
+      perPage: number;
+      total: number;
+      from: number;
+      to: number;
+    };
+  };
+}
+
+interface DashboardProps {
+  breadcrumbs: Array<{ label: string; href?: string }>;
+  searchPlaceholder: string;
+  userAvatar: string;
+  tableColumns: {
+    title: string;
+    description: string;
+    headers: Array<{ label: string; key: string; hiddenOn?: string; sortable?: boolean }>;
+    actions: Array<{ label: string; value: string }>;
+    pagination: {
+      currentPage: number;
+      lastPage: number;
+      perPage: number;
+      total: number;
+      from: number;
+      to: number;
+    };
+  };
+  tableData: Array<{
+    id: string;
+    one: string;
+    two: string;
+    three: string;
+    delete: string;
+  }>;
+  onAddProduct: () => void;
+  onExport: () => void;
+  onFilterChange: (value: string) => void;
+  onProductAction: (action: string, product: Course) => Promise<void>;
+  onSearch: (query: string) => void;
+  typeofschema: Record<string, string>;
+  currentPage: number;
+  totalPages: number;
+  handleNextPage: () => void;
+  handlePrevPage: () => void;
+  setCurrentPage: (page: number) => void;
+  handlePageChange: (page: number) => void;
+  fetchData: (query?: string, page?: number) => Promise<void>;
+  AddItem?: string;
+  Edititem?: string;
+  filterValue?: string;
+  setSearch?: (value: string) => void;
+  Searchitem?: string;
+  onKeyPress?: (event: React.KeyboardEvent) => void;
+  searchQuery: string;
+}
+
 export default function Dashboardholiday() {
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
-  const [config, setConfig] = useState(null);
-  const [data, setData] = useState([]);
+  const [config, setConfig] = useState<DashboardConfig | null>(null);
+  const [data, setData] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const token = localStorage.getItem("token");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const typeofschema = {
     medium_code: "String",
     medium_title: "String",
     organization: "String",
   };
+
   const [paginationState, setPaginationState] = useState({
     currentPage: 1,
     totalPages: 1,
     perPage: 10,
     total: 0,
   });
+
   useEffect(() => {
     // Initial data fetch
     fetchData();
-  }, [token]); // Only re-run when token changes
+  }, [token]);
 
   // Separate fetchData function that can be reused
   const fetchData = async (query: string = "", page: number = 1) => {
     try {
       setLoading(true);
-      const response = await axios.get(
+      const response = await axios.get<ApiResponse>(
         `/api/courses${query ? `?search=${query}&` : "?"}page=${page}`,
         {
           headers: {
@@ -66,7 +148,7 @@ export default function Dashboardholiday() {
       setLoading(false);
     } catch (err) {
       console.error("Error fetching data:", err);
-      setError(err);
+      setError(err instanceof Error ? err : new Error("Unknown error"));
       setLoading(false);
     }
   };
@@ -91,18 +173,8 @@ export default function Dashboardholiday() {
           { label: "Medium Title", key: "one" },
           { label: "Medium Code", key: "two" },
           { label: "Organization", key: "three" },
-
           { label: "Action", key: "action" },
         ],
-        // tabs: [
-        //   { label: "All", value: "all" },
-        //   { label: "Active", value: "active" },
-        //   { label: "Completed", value: "completed" },
-        // ],
-        // filters: [
-        //   { label: "Active", value: "active", checked: true },
-        //   { label: "Completed", value: "completed", checked: false },
-        // ],
         actions: [
           { label: "Edit", value: "edit" },
           { label: "Delete", value: "delete" },
@@ -120,30 +192,25 @@ export default function Dashboardholiday() {
         },
       },
     });
-  }, [data, paginationState]); // Update dependencies to include data and paginationState
-  const navigate = useNavigate();
+  }, [data, paginationState]);
 
   // Handlers for actions
   const handleAddProduct = () => {
-    console.log("Add Registration clicked");
-    console.log("AS");
-    navigate({ to: "/courses/add" });
-    // For example, navigate to an add registration page or open a modal
+    setIsDialogOpen(true);
   };
 
   const handleExport = () => {
     console.log("Export clicked");
-    // Implement export functionality such as exporting data as CSV or PDF
   };
 
-  const handleFilterChange = (filterValue) => {
+  const handleFilterChange = (filterValue: string) => {
     console.log(`Filter changed: ${filterValue}`);
-    // You can implement filtering logic here, possibly refetching data with filters applied
   };
 
-  const handleProductAction = async (action, product) => {
+  const handleProductAction = async (action: string, product: Course) => {
     if (action === "edit") {
-      navigate({ to: `/courses/edit/${product.id}` });
+      setSelectedCourseId(product.id);
+      setIsEditDialogOpen(true);
     } else if (action === "delete") {
       try {
         const response = await axios.delete(`/api/courses/${product.id}`, {
@@ -158,7 +225,6 @@ export default function Dashboardholiday() {
         }
       } catch (err) {
         console.error("Error deleting course:", err);
-        // Optionally add error handling UI feedback here
       }
     }
   };
@@ -195,51 +261,57 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  const mappedTableData = data?.map((item) => {
-    const services = item?.services || [];
-    const paidAmount = item?.paymentMode?.paidAmount || 0;
+  const mappedTableData = data.map((item) => ({
+    id: item.id,
+    one: item.medium_title || "Unknown",
+    two: item.medium_code || "NA",
+    three: item.organization || "NA",
+    delete: "/courses/" + item.id,
+  }));
 
-    // Calculate the total service price based on each service's populated details.
-    const totalServicePrice = services.reduce((acc, service) => {
-      const servicePrice = service?.serviceId?.price || 0; // Replace 'price' with the actual field name for service price
-      return acc + servicePrice;
-    }, 0);
-
-    // Calculate balance amount based on total service price and paid amount.
-    const balanceAmount =
-      totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
-    return {
-      id: item?.id,
-      one: item?.medium_title || "Unknown",
-      two: item?.medium_code || "NA",
-      three: item?.organization || "NA",
-
-      delete: "/courses/" + item?.id,
-    };
-  });
+  const dashboardProps: DashboardProps = {
+    breadcrumbs: config.breadcrumbs,
+    searchPlaceholder: config.searchPlaceholder,
+    userAvatar: userAvatar,
+    tableColumns: config.tableColumns,
+    tableData: mappedTableData,
+    onAddProduct: handleAddProduct,
+    onExport: handleExport,
+    onFilterChange: handleFilterChange,
+    onProductAction: handleProductAction,
+    onSearch: handleSearch,
+    typeofschema: typeofschema,
+    currentPage: paginationState.currentPage,
+    totalPages: paginationState.totalPages,
+    handleNextPage: handleNextPage,
+    handlePrevPage: handlePrevPage,
+    setCurrentPage: handlePageChange,
+    handlePageChange: handlePageChange,
+    fetchData: fetchData,
+    AddItem: undefined,
+    Edititem: undefined,
+    filterValue: undefined,
+    setSearch: undefined,
+    Searchitem: undefined,
+    onKeyPress: undefined,
+    searchQuery: searchQuery,
+  };
 
   return (
     <div className="p-4">
-      <Dashboard
-        breadcrumbs={config.breadcrumbs}
-        searchPlaceholder={config.searchPlaceholder}
-        userAvatar={userAvatar}
-        tableColumns={config.tableColumns}
-        tableData={mappedTableData}
-        onAddProduct={handleAddProduct}
-        onExport={handleExport}
-        onFilterChange={handleFilterChange}
-        onProductAction={handleProductAction}
-        onSearch={handleSearch}
-        // AddItem={AddItem}
-        typeofschema={typeofschema}
-        currentPage={paginationState.currentPage}
-        totalPages={paginationState.totalPages}
-        handleNextPage={handleNextPage}
-        handlePrevPage={handlePrevPage}
-        setCurrentPage={(page) => handlePageChange(page)}
-        handlePageChange={handlePageChange}
-        fetchData={fetchData}
+      <Dashboard {...dashboardProps} />
+      <AddCourseDialog 
+        isOpen={isDialogOpen} 
+        onOpen={setIsDialogOpen}
+        backdrop="blur"
+        fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
+      />
+      <EditCourseDialog
+        isOpen={isEditDialogOpen}
+        onOpen={setIsEditDialogOpen}
+        backdrop="blur"
+        fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
+        courseId={selectedCourseId}
       />
     </div>
   );

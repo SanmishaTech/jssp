@@ -90,38 +90,72 @@ import {
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
+interface TableData {
+  id: string;
+  one: string;
+  two: string;
+  three: string;
+  delete: string;
+}
+
+interface DashboardProps {
+  breadcrumbs: Array<{ label: string; href?: string }>;
+  searchPlaceholder: string;
+  userAvatar: string;
+  tableColumns: {
+    title: string;
+    description: string;
+    headers: Array<{ label: string; key: string }>;
+    actions: Array<{ label: string; value: string }>;
+    pagination: {
+      currentPage: number;
+      lastPage: number;
+      perPage: number;
+      total: number;
+      from: number;
+      to: number;
+    };
+  };
+  tableData: TableData[];
+  onAddProduct: () => void;
+  onExport: () => void;
+  onFilterChange: (filterValue: string) => void;
+  onProductAction: (action: string, product: any) => Promise<void>;
+  onSearch: (query: string) => void;
+  typeofschema: Record<string, string>;
+  currentPage: number;
+  totalPages: number;
+  handleNextPage: () => void;
+  handlePrevPage: () => void;
+  setCurrentPage: (page: number) => void;
+  handlePageChange: (page: number) => void;
+  fetchData: (query?: string, page?: number) => Promise<void>;
+}
+
 export default function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
   fetchData,
-
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
-  AddItem,
-  Edititem,
-  filterValue,
-  typeofschema,
-  handleNextPage,
-  totalPages,
-  setSearch,
-  setCurrentPage,
-  Searchitem,
-  currentPage,
-  handlePrevPage,
   tableData = [],
   onAddProduct = () => {},
   onExport = () => {},
   onFilterChange = () => {},
   onProductAction = () => {},
-  onSearch,
-  onKeyPress,
-  searchQuery,
-}) {
-  console.log("This is inside the dashboard", tableData);
+  onSearch = () => {},
+  typeofschema = {},
+  currentPage = 1,
+  totalPages = 1,
+  handleNextPage = () => {},
+  handlePrevPage = () => {},
+  setCurrentPage = () => {},
+  handlePageChange = () => {},
+}: DashboardProps) {
   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
-  const [editid, setEditid] = useState();
-  const [toggledelete, setToggledelete] = useState();
+  const [editid, setEditid] = useState<string>();
+  const [toggledelete, setToggledelete] = useState<boolean>(false);
   const [searchTerm, setsearchTerm] = useState("");
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
@@ -131,10 +165,10 @@ export default function Dashboard({
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
   // State to manage expanded rows (array of id)
-  const [expandedRows, setExpandedRows] = useState([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
   // Handler to toggle row expansion with debug logs
-  const toggleRow = (rowId) => {
+  const toggleRow = (rowId: string) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
         console.log(`Collapsing row with id: ${rowId}`);
@@ -146,19 +180,14 @@ export default function Dashboard({
     });
   };
 
-  const handleEdit = async (id, url) => {
+  const handleEdit = async (id: string, url: string) => {
     console.log("Edit clicked");
     setToggleedit(true);
-    setEditid({
-      id: id,
-      url: url,
-    });
-    // Implement edit functionality here
+    setEditid(id);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     console.log("Delete clicked");
-    // Implement delete functionality here
   };
 
   const handleSearchClick = () => {
@@ -231,7 +260,7 @@ export default function Dashboard({
                         className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
                         value={localSearchTerm}
                         onChange={handleSearchInput}
-                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
+                        onKeyDown={handleKeyDown}
                       />
                       {localSearchTerm && (
                         <button
@@ -259,7 +288,7 @@ export default function Dashboard({
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/courses/add" })}
+                  onPress={onAddProduct}
                   className="h-9"
                 >
                   Add New Courses
@@ -357,12 +386,10 @@ export default function Dashboard({
                                             key="edit"
                                             description="Edit course details"
                                             onPress={() =>
-                                              navigate({
-                                                to: "/courses/edit/" + row?.id,
-                                              })
+                                              onProductAction("edit", row)
                                             }
                                             startContent={
-                                              <EditDocumentIcon
+                                              <Pencil
                                                 className={iconClasses}
                                               />
                                             }
@@ -377,11 +404,11 @@ export default function Dashboard({
                                             color="danger"
                                             description="This action cannot be undone"
                                             onPress={() => {
-                                              setEditid(row?.id);
+                                              setEditid(row.id);
                                               setToggleopen(true);
                                             }}
                                             startContent={
-                                              <DeleteDocumentIcon
+                                              <Trash
                                                 className={cn(
                                                   iconClasses,
                                                   "text-danger"

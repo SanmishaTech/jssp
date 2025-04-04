@@ -1,6 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,31 +16,21 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-
-import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
   medium_code: z.string().trim().nonempty("Medium Code is Required"),
   medium_title: z.string().trim().nonempty("Medium Title is Required"),
   organization: z.string().trim().nonempty("Organization is Required"),
+  userId: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -54,28 +44,24 @@ function ProfileForm() {
     defaultValues,
     mode: "onChange",
   });
+
+  const navigate = useNavigate();
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
-  //     name: "urls",
-  //     control: form.control,
-  //   });
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     try {
-      await axios
-        .post(`/api/courses`, data, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => {
-          toast.success("Courses Created Successfully");
-          window.history.back();
-        });
+      await axios.post(`/api/courses`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      toast.success("Course Created Successfully");
+      navigate({ to: "/courses" });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -103,18 +89,13 @@ function ProfileForm() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 pb-[2rem]"
-      >
-        {" "}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-[2rem]">
         <div className="space-y-6">
-          {/* Courses Information Section */}
           <Card className="max-w-full p-4">
             <CardHeader>
-              <CardTitle>Courses</CardTitle>
+              <CardTitle>Course</CardTitle>
               <CardDescription>
-                Create the Courses for this Courses
+                Create a new course
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -173,16 +154,16 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex justify-end w-full gap-3">
           <Button
-            onClick={() => window.history.back()}
+            onClick={() => navigate({ to: "/courses" })}
             className="self-center"
             type="button"
           >
             Cancel
           </Button>
           <Button className="self-center mr-8" type="submit">
-            Add Courses
+            Add Course
           </Button>
         </div>
       </form>
@@ -191,10 +172,12 @@ function ProfileForm() {
 }
 
 export default function SettingsProfilePage() {
+  const navigate = useNavigate();
+  
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
       <Button
-        onClick={() => window.history.back()}
+        onClick={() => navigate({ to: "/courses" })}
         className="ml-4 flex gap-2 m-8 mb-4"
       >
         <MoveLeft className="w-5 text-white" />
@@ -202,11 +185,11 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Courses Master</CardTitle>
-        <CardDescription>Add Courses</CardDescription>
+        <CardTitle>Course Master</CardTitle>
+        <CardDescription>Add Course</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 ">
+        <div className="space-y-6">
           <ProfileForm />
         </div>
       </CardContent>
