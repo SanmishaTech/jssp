@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import PeticashForm from "../../../Components/peticash/PeticashForm";
+import PeticashDashboard from "../../Components/peticash/PeticashDashboard";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/peticash/edit/$id")({
+export const Route = createFileRoute("/peticash/$id")({
   beforeLoad: async () => {
     // Check authentication
     const token = localStorage.getItem("token");
@@ -16,9 +16,9 @@ export const Route = createFileRoute("/peticash/edit/$id")({
       });
     }
   },
-  component: EditPeticashRoute,
+  component: PeticashDetailRoute,
 });
 
-function EditPeticashRoute() {
-  return <PeticashForm />;
+function PeticashDetailRoute() {
+  return <PeticashDashboard />;
 } 

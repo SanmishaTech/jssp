@@ -34,6 +34,7 @@ import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
+import { Route as PeticashIdImport } from './routes/peticash/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as SubjectsAddIndexImport } from './routes/subjects/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
@@ -206,6 +207,12 @@ const CalenderIndexRoute = CalenderIndexImport.update({
 const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   id: '/admissions/',
   path: '/admissions/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PeticashIdRoute = PeticashIdImport.update({
+  id: '/peticash/$id',
+  path: '/peticash/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -422,6 +429,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/peticash/$id': {
+      id: '/peticash/$id'
+      path: '/peticash/$id'
+      fullPath: '/peticash/$id'
+      preLoaderRoute: typeof PeticashIdImport
       parentRoute: typeof rootRoute
     }
     '/admissions/': {
@@ -823,6 +837,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/peticash/$id': typeof PeticashIdRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashiers': typeof CashiersIndexRoute
@@ -883,6 +898,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/peticash/$id': typeof PeticashIdRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashiers': typeof CashiersIndexRoute
@@ -944,6 +960,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/peticash/$id': typeof PeticashIdRoute
   '/admissions/': typeof AdmissionsIndexRoute
   '/calender/': typeof CalenderIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
@@ -1006,6 +1023,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/peticash/$id'
     | '/admissions'
     | '/calender'
     | '/cashiers'
@@ -1065,6 +1083,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/peticash/$id'
     | '/admissions'
     | '/calender'
     | '/cashiers'
@@ -1124,6 +1143,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/peticash/$id'
     | '/admissions/'
     | '/calender/'
     | '/cashiers/'
@@ -1185,6 +1205,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PeticashIdRoute: typeof PeticashIdRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
@@ -1245,6 +1266,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PeticashIdRoute: PeticashIdRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
@@ -1314,6 +1336,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/peticash/$id",
         "/admissions/",
         "/calender/",
         "/cashiers/",
@@ -1374,6 +1397,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/peticash/$id": {
+      "filePath": "peticash/$id.tsx"
     },
     "/admissions/": {
       "filePath": "admissions/index.tsx"

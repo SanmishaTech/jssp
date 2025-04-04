@@ -251,7 +251,7 @@ export default function Dashboard({
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/subjects/add" })}
+                  onPress={() => navigate({ to: "/peticash/add" })}
                   className="h-9"
                 >
                   Add Subjects Details

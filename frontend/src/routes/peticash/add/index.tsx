@@ -1,24 +1,24 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import Additem from "../../../Components/subjects/TestCard";
-
+import PeticashForm from "../../../Components/peticash/PeticashForm";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/subjects copy/add/")({
-  beforeLoad: async ({ fetch }) => {
-    const role = localStorage.getItem("role");
-    // if (role !== "superadmin") {
-    //   toast.error("You are not authorized to access this page.");
-    //   throw redirect({
-    //     to: "/",
-    //     search: {
-    //       redirect: location.href,
-    //     },
-    //   });
-    // }
+export const Route = createFileRoute("/peticash/add/")({
+  beforeLoad: async () => {
+    // Check authentication
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to access this page");
+      throw redirect({
+        to: "/login",
+        search: {
+          redirect: window.location.pathname,
+        },
+      });
+    }
   },
-  component: RouteComponent,
+  component: AddPeticashRoute,
 });
 
-function RouteComponent() {
-  return <Additem />;
-}
+function AddPeticashRoute() {
+  return <PeticashForm />;
+} 

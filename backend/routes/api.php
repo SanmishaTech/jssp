@@ -91,11 +91,14 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudent'])->name("students.all");
 
-   // Route::resource('peticash', PeticashController::class);
+   // Peticash routes
+   Route::resource('peticash', PeticashController::class);
+   Route::get('/all_peticash', [PeticashController::class, 'allRooms'])->name("peticash.all");
+   Route::post('/peticash/{id}/transaction', [PeticashController::class, 'recordTransaction'])->name("peticash.transaction");
+   Route::get('/peticash/{id}/transactions', [PeticashController::class, 'getTransactionHistory'])->name("peticash.transactions");
 
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
-
 
 });
 

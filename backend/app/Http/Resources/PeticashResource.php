@@ -16,11 +16,18 @@ class PeticashResource extends JsonResource
     {
         return [
             'id'               => $this->id,
-            'total_amount' => $this->total_amount,
-            'note'           => $this->note,
-            'note_amount'    => $this->note_amount,
+            'institute_id'     => $this->institute_id,
+            'total_amount'     => $this->total_amount,
+            'note'             => $this->note,
+            'note_amount'      => $this->note_amount,
             'total_spend'      => $this->total_spend,
             'created_at'       => $this->created_at,
             'updated_at'       => $this->updated_at,
-        ];    }
+            'latest_transactions' => $this->whenLoaded('transactions', function() {
+                return PeticashTransactionResource::collection(
+                    $this->transactions->sortByDesc('created_at')->take(5)
+                );
+            }),
+        ];
+    }
 }
