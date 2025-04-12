@@ -23,15 +23,24 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
-  medium_code: z.string().trim().nonempty("Medium Code is Required"),
-  medium_title: z.string().trim().nonempty("Medium Title is Required"),
-  organization: z.string().trim().nonempty("Organization is Required"),
+  students_applied_for_scholarship: z
+    .string()
+    .trim()
+    .nonempty("Medium Code is Required"),
+  approved_from_university: z
+    .string()
+    .trim()
+    .nonempty("Medium Title is Required"),
+  first_installment_date: z
+    .string()
+    .trim()
+    .nonempty("Organization is Required"),
   userId: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-interface AddCourseDialogProps {
+interface AddScholarshipDialogProps {
   isOpen: boolean;
   onOpen: (value: boolean) => void;
   backdrop?: "blur" | "transparent" | "opaque";
@@ -48,12 +57,12 @@ interface FormFieldProps {
   };
 }
 
-export default function AddCourseDialog({
+export default function AddScholarshipDialog({
   isOpen,
   onOpen,
   backdrop = "blur",
   fetchData,
-}: AddCourseDialogProps) {
+}: AddScholarshipDialogProps) {
   const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -73,14 +82,14 @@ export default function AddCourseDialog({
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
     try {
-      await axios.post(`/api/courses`, data, {
+      await axios.post(`/api/scholarships`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Course Created Successfully");
+      toast.success("Scholarship Created Successfully");
       onClose();
       fetchData();
     } catch (error) {
@@ -118,7 +127,7 @@ export default function AddCourseDialog({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Add New Course
+              Add New Scholarship
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -184,7 +193,7 @@ export default function AddCourseDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>
-                Add Course
+                Add Scholarship
               </Button>
             </ModalFooter>
           </>

@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 import {
   Modal,
   ModalContent,
@@ -31,11 +33,12 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-interface AddCourseDialogProps {
+interface EditScholarshipDialogProps {
   isOpen: boolean;
   onOpen: (value: boolean) => void;
   backdrop?: "blur" | "transparent" | "opaque";
   fetchData: () => void;
+  scholarshipId: string;
 }
 
 interface FormFieldProps {
@@ -48,12 +51,13 @@ interface FormFieldProps {
   };
 }
 
-export default function AddCourseDialog({
+export default function EditScholarshipDialog({
   isOpen,
   onOpen,
   backdrop = "blur",
   fetchData,
-}: AddCourseDialogProps) {
+  scholarshipId,
+}: EditScholarshipDialogProps) {
   const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -66,21 +70,44 @@ export default function AddCourseDialog({
     form.reset();
   };
 
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
 
+  // Fetch scholarship data when dialog opens
+  React.useEffect(() => {
+    if (isOpen && scholarshipId) {
+      const fetchScholarshipData = async () => {
+        try {
+          const response = await axios.get(
+            `/api/scholarships/${scholarshipId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const scholarshipData = response.data.data.Scholarships;
+          form.reset(scholarshipData);
+        } catch (error) {
+          console.error("Error fetching scholarship:", error);
+          toast.error("Failed to load scholarship data");
+          onClose();
+        }
+      };
+      fetchScholarshipData();
+    }
+  }, [isOpen, scholarshipId, form, token]);
+
   async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
     try {
-      await axios.post(`/api/courses`, data, {
+      await axios.put(`/api/scholarships/${scholarshipId}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Course Created Successfully");
+      toast.success("Scholarship Updated Successfully");
       onClose();
       fetchData();
     } catch (error) {
@@ -118,7 +145,7 @@ export default function AddCourseDialog({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Add New Course
+              Edit Scholarship
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -184,7 +211,7 @@ export default function AddCourseDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>
-                Add Course
+                Update Scholarship
               </Button>
             </ModalFooter>
           </>
