@@ -103,7 +103,7 @@ export default function EditCourseDialog({
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       toast.success("Course Updated Successfully");
       onClose();
       fetchData();
@@ -146,7 +146,10 @@ export default function EditCourseDialog({
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -180,23 +183,23 @@ export default function EditCourseDialog({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="organization"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Organization
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Organization..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="organization"
+                    render={({ field }: FormFieldProps) => (
+                      <FormItem>
+                        <FormLabel>
+                          Organization
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Organization..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </form>
               </Form>
             </ModalBody>
@@ -213,4 +216,4 @@ export default function EditCourseDialog({
       </ModalContent>
     </Modal>
   );
-} 
+}

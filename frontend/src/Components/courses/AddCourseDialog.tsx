@@ -159,23 +159,23 @@ export default function AddCourseDialog({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="organization"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Organization
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Organization..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="organization"
+                    render={({ field }: FormFieldProps) => (
+                      <FormItem>
+                        <FormLabel>
+                          Organization
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Organization..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </form>
               </Form>
             </ModalBody>
