@@ -25,22 +25,18 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
-  total_valuation: z.string().trim().nonempty("Total Valuation is Required"),
-  university_upload: z
-    .string()
-    .trim()
-    .nonempty("University Uplaod is Required"),
-  received_prn: z.string().trim().nonempty("Received PRN is Required"),
+  room_number: z.string().trim().nonempty("Room Number is Required"),
+  room_name: z.string().trim().nonempty("Room Name is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-interface EditAdmissionDialogProps {
+interface EditRoomDialogProps {
   isOpen: boolean;
   onOpen: (value: boolean) => void;
   backdrop?: "blur" | "transparent" | "opaque";
   fetchData: () => void;
-  admissionId: string;
+  roomId: string;
 }
 
 interface FormFieldProps {
@@ -53,13 +49,13 @@ interface FormFieldProps {
   };
 }
 
-export default function EditAdmissionDialog({
+export default function EditRoomDialog({
   isOpen,
   onOpen,
   backdrop = "blur",
   fetchData,
-  admissionId,
-}: EditAdmissionDialogProps) {
+  roomId,
+}: EditRoomDialogProps) {
   const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -74,45 +70,44 @@ export default function EditAdmissionDialog({
 
   const token = localStorage.getItem("token");
 
-  // Fetch admission data when dialog opens
+  // Fetch room data when dialog opens
   React.useEffect(() => {
-    if (isOpen && admissionId) {
-      const fetchAdmissionData = async () => {
+    if (isOpen && roomId) {
+      const fetchRoomData = async () => {
         try {
-          const response = await axios.get(`/api/admissions/${admissionId}`, {
+          const response = await axios.get(`/api/rooms/${roomId}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           });
-          const admissionData = response.data.data.Admission;
-          form.reset(admissionData);
+          const roomData = response.data.data.Room;
+          form.reset(roomData);
         } catch (error) {
-          console.error("Error fetching admission:", error);
-          toast.error("Failed to load admission data");
+          console.error("Error fetching room:", error);
+          toast.error("Failed to load room data");
           onClose();
         }
       };
-      fetchAdmissionData();
+      fetchRoomData();
     }
-  }, [isOpen, admissionId, form, token]);
+  }, [isOpen, roomId, form, token]);
 
   async function onSubmit(data: ProfileFormValues) {
     try {
       const formattedData = {
-        total_valuation: data.total_valuation,
-        university_upload: data.university_upload,
-        received_prn: data.received_prn,
+        room_number: data.room_number,
+        room_name: data.room_name,
       };
 
-      await axios.patch(`/api/admissions/${admissionId}`, formattedData, {
+      await axios.patch(`/api/rooms/${roomId}`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Admission Updated Successfully");
+      toast.success("Room Updated Successfully");
       onClose();
       fetchData();
     } catch (error) {
@@ -149,9 +144,7 @@ export default function EditAdmissionDialog({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              Edit Admission
-            </ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Edit Room</ModalHeader>
             <ModalBody>
               <Form {...form}>
                 <form
@@ -161,18 +154,15 @@ export default function EditAdmissionDialog({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="total_valuation"
+                      name="room_number"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Total Valuation
+                            Room Number
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Total Valuation..."
-                              {...field}
-                            />
+                            <Input placeholder="Room Number..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -180,40 +170,21 @@ export default function EditAdmissionDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="university_upload"
+                      name="room_name"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            University Upload
+                            Room Name
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="University Upload..."
-                              {...field}
-                            />
+                            <Input placeholder="Room Name..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <FormField
-                    control={form.control}
-                    name="received_prn"
-                    render={({ field }: FormFieldProps) => (
-                      <FormItem>
-                        <FormLabel>
-                          Reveived PRN
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Reveived PRN..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </form>
               </Form>
             </ModalBody>
@@ -222,7 +193,7 @@ export default function EditAdmissionDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>
-                Update Admission
+                Update Room
               </Button>
             </ModalFooter>
           </>

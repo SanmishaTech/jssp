@@ -168,23 +168,23 @@ export default function AddAdmissionDialog({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="received_prn"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Reveived PRN
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Reveived PRN..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="received_prn"
+                    render={({ field }: FormFieldProps) => (
+                      <FormItem>
+                        <FormLabel>
+                          Reveived PRN
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Reveived PRN..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </form>
               </Form>
             </ModalBody>
