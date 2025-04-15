@@ -34,7 +34,19 @@ const profileFormSchema = z.object({
   first_installment_date: z
     .string()
     .trim()
-    .nonempty("Organization is Required"),
+    .nonempty("First Installment Date is Required"),
+  first_installment_amount: z
+    .string()
+    .trim()
+    .nonempty("First Installment Amount is Required"),
+  second_installment_date: z
+    .string()
+    .trim()
+    .nonempty("Second Installment Date is Required"),
+  second_installment_amount: z
+    .string()
+    .trim()
+    .nonempty("Second Installment Amount is Required"),
   userId: z.string().optional(),
 });
 
@@ -138,15 +150,18 @@ export default function AddScholarshipDialog({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="medium_title"
+                      name="students_applied_for_scholarship"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Title
+                            Students Applied for Scholarship
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Title..." {...field} />
+                            <Input
+                              placeholder="Students Applied for Scholarship..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -154,15 +169,18 @@ export default function AddScholarshipDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="medium_code"
+                      name="approved_from_university"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Code
+                            Approved from University
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Code..." {...field} />
+                            <Input
+                              placeholder="Approved from University..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -170,15 +188,77 @@ export default function AddScholarshipDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="organization"
+                      name="first_installment_date"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Organization
+                            First Installment Date
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Organization..." {...field} />
+                            <Input
+                              type="date"
+                              placeholder="First Installment Date..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="first_installment_amount"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            First Installment Amount
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="First Installment Amount..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="second_installment_date"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Second Installment Date
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="date"
+                              placeholder="Second Installment Date..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="second_installment_amount"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Second Installment Amount
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Second Installment Amount..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

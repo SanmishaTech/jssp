@@ -37,11 +37,9 @@ import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
 import { Route as PeticashIdImport } from './routes/peticash/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
-import { Route as SubjectsAddIndexImport } from './routes/subjects/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
 import { Route as StaffAddIndexImport } from './routes/staff/add/index'
 import { Route as SemesterAddIndexImport } from './routes/semester/add/index'
-import { Route as ScholarshipsAddIndexImport } from './routes/scholarships/add/index'
 import { Route as RoomsAddIndexImport } from './routes/rooms/add/index'
 import { Route as PeticashAddIndexImport } from './routes/peticash/add/index'
 import { Route as MeetingsAddIndexImport } from './routes/meetings/add/index'
@@ -55,11 +53,9 @@ import { Route as CommitteeAddIndexImport } from './routes/committee/add/index'
 import { Route as CashiersAddIndexImport } from './routes/cashiers/add/index'
 import { Route as AdmissionsAddIndexImport } from './routes/admissions/add/index'
 import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
-import { Route as SubjectsEditIdImport } from './routes/subjects/edit/$id'
 import { Route as StudentsEditIdImport } from './routes/students/edit/$id'
 import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
 import { Route as SemesterEditIdImport } from './routes/semester/edit/$id'
-import { Route as ScholarshipsEditIdImport } from './routes/scholarships/edit/$id'
 import { Route as RoomsEditIdImport } from './routes/rooms/edit/$id'
 import { Route as PeticashEditIdImport } from './routes/peticash/edit/$id'
 import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
@@ -231,12 +227,6 @@ const TrustiesAddIndexRoute = TrustiesAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SubjectsAddIndexRoute = SubjectsAddIndexImport.update({
-  id: '/subjects/add/',
-  path: '/subjects/add/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const StudentsAddIndexRoute = StudentsAddIndexImport.update({
   id: '/students/add/',
   path: '/students/add/',
@@ -252,12 +242,6 @@ const StaffAddIndexRoute = StaffAddIndexImport.update({
 const SemesterAddIndexRoute = SemesterAddIndexImport.update({
   id: '/semester/add/',
   path: '/semester/add/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ScholarshipsAddIndexRoute = ScholarshipsAddIndexImport.update({
-  id: '/scholarships/add/',
-  path: '/scholarships/add/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -339,12 +323,6 @@ const TrustiesEditIdRoute = TrustiesEditIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const SubjectsEditIdRoute = SubjectsEditIdImport.update({
-  id: '/subjects/edit/$id',
-  path: '/subjects/edit/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const StudentsEditIdRoute = StudentsEditIdImport.update({
   id: '/students/edit/$id',
   path: '/students/edit/$id',
@@ -360,12 +338,6 @@ const StaffEditIdRoute = StaffEditIdImport.update({
 const SemesterEditIdRoute = SemesterEditIdImport.update({
   id: '/semester/edit/$id',
   path: '/semester/edit/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ScholarshipsEditIdRoute = ScholarshipsEditIdImport.update({
-  id: '/scholarships/edit/$id',
-  path: '/scholarships/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -704,13 +676,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsEditIdImport
       parentRoute: typeof rootRoute
     }
-    '/scholarships/edit/$id': {
-      id: '/scholarships/edit/$id'
-      path: '/scholarships/edit/$id'
-      fullPath: '/scholarships/edit/$id'
-      preLoaderRoute: typeof ScholarshipsEditIdImport
-      parentRoute: typeof rootRoute
-    }
     '/semester/edit/$id': {
       id: '/semester/edit/$id'
       path: '/semester/edit/$id'
@@ -730,13 +695,6 @@ declare module '@tanstack/react-router' {
       path: '/students/edit/$id'
       fullPath: '/students/edit/$id'
       preLoaderRoute: typeof StudentsEditIdImport
-      parentRoute: typeof rootRoute
-    }
-    '/subjects/edit/$id': {
-      id: '/subjects/edit/$id'
-      path: '/subjects/edit/$id'
-      fullPath: '/subjects/edit/$id'
-      preLoaderRoute: typeof SubjectsEditIdImport
       parentRoute: typeof rootRoute
     }
     '/trusties/edit/$id': {
@@ -830,13 +788,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsAddIndexImport
       parentRoute: typeof rootRoute
     }
-    '/scholarships/add/': {
-      id: '/scholarships/add/'
-      path: '/scholarships/add'
-      fullPath: '/scholarships/add'
-      preLoaderRoute: typeof ScholarshipsAddIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/semester/add/': {
       id: '/semester/add/'
       path: '/semester/add'
@@ -856,13 +807,6 @@ declare module '@tanstack/react-router' {
       path: '/students/add'
       fullPath: '/students/add'
       preLoaderRoute: typeof StudentsAddIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/subjects/add/': {
-      id: '/subjects/add/'
-      path: '/subjects/add'
-      fullPath: '/subjects/add'
-      preLoaderRoute: typeof SubjectsAddIndexImport
       parentRoute: typeof rootRoute
     }
     '/trusties/add/': {
@@ -915,11 +859,9 @@ export interface FileRoutesByFullPath {
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
-  '/scholarships/edit/$id': typeof ScholarshipsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
-  '/subjects/edit/$id': typeof SubjectsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/admissions/add': typeof AdmissionsAddIndexRoute
   '/cashiers/add': typeof CashiersAddIndexRoute
@@ -933,11 +875,9 @@ export interface FileRoutesByFullPath {
   '/meetings/add': typeof MeetingsAddIndexRoute
   '/peticash/add': typeof PeticashAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
-  '/scholarships/add': typeof ScholarshipsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
   '/students/add': typeof StudentsAddIndexRoute
-  '/subjects/add': typeof SubjectsAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
 }
 
@@ -979,11 +919,9 @@ export interface FileRoutesByTo {
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
-  '/scholarships/edit/$id': typeof ScholarshipsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
-  '/subjects/edit/$id': typeof SubjectsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/admissions/add': typeof AdmissionsAddIndexRoute
   '/cashiers/add': typeof CashiersAddIndexRoute
@@ -997,11 +935,9 @@ export interface FileRoutesByTo {
   '/meetings/add': typeof MeetingsAddIndexRoute
   '/peticash/add': typeof PeticashAddIndexRoute
   '/rooms/add': typeof RoomsAddIndexRoute
-  '/scholarships/add': typeof ScholarshipsAddIndexRoute
   '/semester/add': typeof SemesterAddIndexRoute
   '/staff/add': typeof StaffAddIndexRoute
   '/students/add': typeof StudentsAddIndexRoute
-  '/subjects/add': typeof SubjectsAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
 }
 
@@ -1044,11 +980,9 @@ export interface FileRoutesById {
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
   '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/rooms/edit/$id': typeof RoomsEditIdRoute
-  '/scholarships/edit/$id': typeof ScholarshipsEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
-  '/subjects/edit/$id': typeof SubjectsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
   '/admissions/add/': typeof AdmissionsAddIndexRoute
   '/cashiers/add/': typeof CashiersAddIndexRoute
@@ -1062,11 +996,9 @@ export interface FileRoutesById {
   '/meetings/add/': typeof MeetingsAddIndexRoute
   '/peticash/add/': typeof PeticashAddIndexRoute
   '/rooms/add/': typeof RoomsAddIndexRoute
-  '/scholarships/add/': typeof ScholarshipsAddIndexRoute
   '/semester/add/': typeof SemesterAddIndexRoute
   '/staff/add/': typeof StaffAddIndexRoute
   '/students/add/': typeof StudentsAddIndexRoute
-  '/subjects/add/': typeof SubjectsAddIndexRoute
   '/trusties/add/': typeof TrustiesAddIndexRoute
 }
 
@@ -1110,11 +1042,9 @@ export interface FileRouteTypes {
     | '/meetings/edit/$id'
     | '/peticash/edit/$id'
     | '/rooms/edit/$id'
-    | '/scholarships/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
-    | '/subjects/edit/$id'
     | '/trusties/edit/$id'
     | '/admissions/add'
     | '/cashiers/add'
@@ -1128,11 +1058,9 @@ export interface FileRouteTypes {
     | '/meetings/add'
     | '/peticash/add'
     | '/rooms/add'
-    | '/scholarships/add'
     | '/semester/add'
     | '/staff/add'
     | '/students/add'
-    | '/subjects/add'
     | '/trusties/add'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -1173,11 +1101,9 @@ export interface FileRouteTypes {
     | '/meetings/edit/$id'
     | '/peticash/edit/$id'
     | '/rooms/edit/$id'
-    | '/scholarships/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
-    | '/subjects/edit/$id'
     | '/trusties/edit/$id'
     | '/admissions/add'
     | '/cashiers/add'
@@ -1191,11 +1117,9 @@ export interface FileRouteTypes {
     | '/meetings/add'
     | '/peticash/add'
     | '/rooms/add'
-    | '/scholarships/add'
     | '/semester/add'
     | '/staff/add'
     | '/students/add'
-    | '/subjects/add'
     | '/trusties/add'
   id:
     | '__root__'
@@ -1236,11 +1160,9 @@ export interface FileRouteTypes {
     | '/meetings/edit/$id'
     | '/peticash/edit/$id'
     | '/rooms/edit/$id'
-    | '/scholarships/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
-    | '/subjects/edit/$id'
     | '/trusties/edit/$id'
     | '/admissions/add/'
     | '/cashiers/add/'
@@ -1254,11 +1176,9 @@ export interface FileRouteTypes {
     | '/meetings/add/'
     | '/peticash/add/'
     | '/rooms/add/'
-    | '/scholarships/add/'
     | '/semester/add/'
     | '/staff/add/'
     | '/students/add/'
-    | '/subjects/add/'
     | '/trusties/add/'
   fileRoutesById: FileRoutesById
 }
@@ -1301,11 +1221,9 @@ export interface RootRouteChildren {
   MeetingsEditIdRoute: typeof MeetingsEditIdRoute
   PeticashEditIdRoute: typeof PeticashEditIdRoute
   RoomsEditIdRoute: typeof RoomsEditIdRoute
-  ScholarshipsEditIdRoute: typeof ScholarshipsEditIdRoute
   SemesterEditIdRoute: typeof SemesterEditIdRoute
   StaffEditIdRoute: typeof StaffEditIdRoute
   StudentsEditIdRoute: typeof StudentsEditIdRoute
-  SubjectsEditIdRoute: typeof SubjectsEditIdRoute
   TrustiesEditIdRoute: typeof TrustiesEditIdRoute
   AdmissionsAddIndexRoute: typeof AdmissionsAddIndexRoute
   CashiersAddIndexRoute: typeof CashiersAddIndexRoute
@@ -1319,11 +1237,9 @@ export interface RootRouteChildren {
   MeetingsAddIndexRoute: typeof MeetingsAddIndexRoute
   PeticashAddIndexRoute: typeof PeticashAddIndexRoute
   RoomsAddIndexRoute: typeof RoomsAddIndexRoute
-  ScholarshipsAddIndexRoute: typeof ScholarshipsAddIndexRoute
   SemesterAddIndexRoute: typeof SemesterAddIndexRoute
   StaffAddIndexRoute: typeof StaffAddIndexRoute
   StudentsAddIndexRoute: typeof StudentsAddIndexRoute
-  SubjectsAddIndexRoute: typeof SubjectsAddIndexRoute
   TrustiesAddIndexRoute: typeof TrustiesAddIndexRoute
 }
 
@@ -1365,11 +1281,9 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingsEditIdRoute: MeetingsEditIdRoute,
   PeticashEditIdRoute: PeticashEditIdRoute,
   RoomsEditIdRoute: RoomsEditIdRoute,
-  ScholarshipsEditIdRoute: ScholarshipsEditIdRoute,
   SemesterEditIdRoute: SemesterEditIdRoute,
   StaffEditIdRoute: StaffEditIdRoute,
   StudentsEditIdRoute: StudentsEditIdRoute,
-  SubjectsEditIdRoute: SubjectsEditIdRoute,
   TrustiesEditIdRoute: TrustiesEditIdRoute,
   AdmissionsAddIndexRoute: AdmissionsAddIndexRoute,
   CashiersAddIndexRoute: CashiersAddIndexRoute,
@@ -1383,11 +1297,9 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingsAddIndexRoute: MeetingsAddIndexRoute,
   PeticashAddIndexRoute: PeticashAddIndexRoute,
   RoomsAddIndexRoute: RoomsAddIndexRoute,
-  ScholarshipsAddIndexRoute: ScholarshipsAddIndexRoute,
   SemesterAddIndexRoute: SemesterAddIndexRoute,
   StaffAddIndexRoute: StaffAddIndexRoute,
   StudentsAddIndexRoute: StudentsAddIndexRoute,
-  SubjectsAddIndexRoute: SubjectsAddIndexRoute,
   TrustiesAddIndexRoute: TrustiesAddIndexRoute,
 }
 
@@ -1438,11 +1350,9 @@ export const routeTree = rootRoute
         "/meetings/edit/$id",
         "/peticash/edit/$id",
         "/rooms/edit/$id",
-        "/scholarships/edit/$id",
         "/semester/edit/$id",
         "/staff/edit/$id",
         "/students/edit/$id",
-        "/subjects/edit/$id",
         "/trusties/edit/$id",
         "/admissions/add/",
         "/cashiers/add/",
@@ -1456,11 +1366,9 @@ export const routeTree = rootRoute
         "/meetings/add/",
         "/peticash/add/",
         "/rooms/add/",
-        "/scholarships/add/",
         "/semester/add/",
         "/staff/add/",
         "/students/add/",
-        "/subjects/add/",
         "/trusties/add/"
       ]
     },
@@ -1575,9 +1483,6 @@ export const routeTree = rootRoute
     "/rooms/edit/$id": {
       "filePath": "rooms/edit/$id.tsx"
     },
-    "/scholarships/edit/$id": {
-      "filePath": "scholarships/edit/$id.tsx"
-    },
     "/semester/edit/$id": {
       "filePath": "semester/edit/$id.tsx"
     },
@@ -1586,9 +1491,6 @@ export const routeTree = rootRoute
     },
     "/students/edit/$id": {
       "filePath": "students/edit/$id.tsx"
-    },
-    "/subjects/edit/$id": {
-      "filePath": "subjects/edit/$id.tsx"
     },
     "/trusties/edit/$id": {
       "filePath": "trusties/edit/$id.tsx"
@@ -1629,9 +1531,6 @@ export const routeTree = rootRoute
     "/rooms/add/": {
       "filePath": "rooms/add/index.tsx"
     },
-    "/scholarships/add/": {
-      "filePath": "scholarships/add/index.tsx"
-    },
     "/semester/add/": {
       "filePath": "semester/add/index.tsx"
     },
@@ -1640,9 +1539,6 @@ export const routeTree = rootRoute
     },
     "/students/add/": {
       "filePath": "students/add/index.tsx"
-    },
-    "/subjects/add/": {
-      "filePath": "subjects/add/index.tsx"
     },
     "/trusties/add/": {
       "filePath": "trusties/add/index.tsx"

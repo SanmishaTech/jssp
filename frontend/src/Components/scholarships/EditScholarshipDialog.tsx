@@ -25,10 +25,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
-  medium_code: z.string().trim().nonempty("Medium Code is Required"),
-  medium_title: z.string().trim().nonempty("Medium Title is Required"),
-  organization: z.string().trim().nonempty("Organization is Required"),
-  userId: z.string().optional(),
+  students_applied_for_scholarship: z.string().transform(Number),
+  approved_from_university: z.string().transform(Number),
+  first_installment_date: z.string(),
+  first_installment_amount: z.string().transform(Number),
+  second_installment_date: z.string(),
+  second_installment_amount: z.string().transform(Number),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -86,7 +88,7 @@ export default function EditScholarshipDialog({
               },
             }
           );
-          const scholarshipData = response.data.data.Scholarships;
+          const scholarshipData = response.data.data.Scholarship;
           form.reset(scholarshipData);
         } catch (error) {
           console.error("Error fetching scholarship:", error);
@@ -100,7 +102,18 @@ export default function EditScholarshipDialog({
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      await axios.put(`/api/scholarships/${scholarshipId}`, data, {
+      const formattedData = {
+        students_applied_for_scholarship: Number(
+          data.students_applied_for_scholarship
+        ),
+        approved_from_university: Number(data.approved_from_university),
+        first_installment_date: data.first_installment_date,
+        first_installment_amount: Number(data.first_installment_amount),
+        second_installment_date: data.second_installment_date,
+        second_installment_amount: Number(data.second_installment_amount),
+      };
+
+      await axios.patch(`/api/scholarships/${scholarshipId}`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -156,15 +169,18 @@ export default function EditScholarshipDialog({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="medium_title"
+                      name="students_applied_for_scholarship"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Title
+                            Students Applied for Scholarship
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Title..." {...field} />
+                            <Input
+                              placeholder="Students Applied for Scholarship..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -172,15 +188,18 @@ export default function EditScholarshipDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="medium_code"
+                      name="approved_from_university"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Code
+                            Approved from University
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Code..." {...field} />
+                            <Input
+                              placeholder="Approved from University..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -188,15 +207,77 @@ export default function EditScholarshipDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="organization"
+                      name="first_installment_date"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Organization
+                            First Installment Date
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Organization..." {...field} />
+                            <Input
+                              type="date"
+                              placeholder="First Installment Date..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="first_installment_amount"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            First Installment Amount
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="First Installment Amount..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="second_installment_date"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Second Installment Date
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="date"
+                              placeholder="Second Installment Date..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="second_installment_amount"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Second Installment Amount
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Second Installment Amount..."
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

@@ -181,9 +181,8 @@ export default function Dashboardholiday() {
         title: "Scholarship",
         description: "Manage Scholarship and view their details.",
         headers: [
-          { label: "Medium Title", key: "one" },
-          { label: "Medium Code", key: "two" },
-          { label: "Organization", key: "three" },
+          { label: "Students Applied for Scholarship", key: "one" },
+          { label: "Students Approved from University", key: "two" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -274,9 +273,8 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
-    one: item.medium_title || "Unknown",
-    two: item.medium_code || "NA",
-    three: item.organization || "NA",
+    one: item.students_applied_for_scholarship || "Unknown",
+    two: item.approved_from_university || "NA",
     delete: "/scholarships/" + item.id,
   }));
 

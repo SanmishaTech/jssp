@@ -21,7 +21,7 @@ class ScholarshipController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('total_valuation', 'like', '%' . $searchTerm . '%');
+                $query->where('students_applied_for_scholarship', 'like', '%' . $searchTerm . '%');
             });
         }
 
