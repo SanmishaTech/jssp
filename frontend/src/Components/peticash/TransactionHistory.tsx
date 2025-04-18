@@ -33,14 +33,16 @@ interface Transaction {
   peticash_id: number;
   amount: string;
   description: string;
-  type: 'credit' | 'debit';
+  type: "credit" | "debit";
   balance_after: string;
   created_at: string;
   updated_at: string;
   created_by?: number;
 }
 
-export default function TransactionHistory({ peticashId }: TransactionHistoryProps) {
+export default function TransactionHistory({
+  peticashId,
+}: TransactionHistoryProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,11 +55,11 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
     setLoading(true);
     try {
       let url = `/api/peticash/${peticashId}/transactions?page=${page}`;
-      
+
       if (typeFilter !== "all") {
         url += `&type=${typeFilter}`;
       }
-      
+
       if (dateFilter) {
         url += `&date=${dateFilter}`;
       }
@@ -65,10 +67,10 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
       const token = localStorage.getItem("token");
       const { data } = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       if (data.status) {
         setTransactions(data.data.transactions);
         setTotalPages(data.data.pagination.last_page);
@@ -118,7 +120,9 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
       <Chip
         className={cn(
           "capitalize",
-          type === "credit" ? "bg-success/20 text-success" : "bg-danger/20 text-danger"
+          type === "credit"
+            ? "bg-success/20 text-success"
+            : "bg-danger/20 text-danger"
         )}
         size="sm"
       >
@@ -137,26 +141,39 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
               <Button
                 variant="flat"
                 size="sm"
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 mt-1 h-9.5"
                 endContent={<ChevronDown size={16} />}
               >
                 <Filter size={16} />
-                {typeFilter === "all" ? "All Types" : typeFilter === "credit" ? "Credits" : "Debits"}
+                {typeFilter === "all"
+                  ? "All Types"
+                  : typeFilter === "credit"
+                    ? "Credits"
+                    : "Debits"}
               </Button>
             </DropdownTrigger>
             <DropdownMenu aria-label="Transaction Type Filter">
-              <DropdownItem key="all" onClick={() => handleTypeFilterChange("all")}>
+              <DropdownItem
+                key="all"
+                onClick={() => handleTypeFilterChange("all")}
+              >
                 All Types
               </DropdownItem>
-              <DropdownItem key="credit" onClick={() => handleTypeFilterChange("credit")}>
+              <DropdownItem
+                key="credit"
+                onClick={() => handleTypeFilterChange("credit")}
+              >
                 Credits Only
               </DropdownItem>
-              <DropdownItem key="debit" onClick={() => handleTypeFilterChange("debit")}>
+              <DropdownItem
+                key="debit"
+                onClick={() => handleTypeFilterChange("debit")}
+              >
                 Debits Only
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          
+
           <div className="flex items-center">
             <Input
               type="date"
@@ -167,9 +184,14 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
               startContent={<Calendar size={16} />}
             />
           </div>
-          
+
           {(typeFilter !== "all" || dateFilter) && (
-            <Button variant="flat" size="sm" onClick={resetFilters}>
+            <Button
+              className="mt-1 h-9.5 bg-blue-600 text-white hover:bg-blue-600"
+              variant="flat"
+              size="sm"
+              onClick={resetFilters}
+            >
               Reset Filters
             </Button>
           )}
@@ -196,14 +218,25 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
                 {transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>{transaction.description}</TableCell>
-                    <TableCell>{renderTransactionType(transaction.type)}</TableCell>
                     <TableCell>
-                      <span className={transaction.type === "credit" ? "text-success" : "text-danger"}>
-                        {transaction.type === "credit" ? "+" : "-"}₹{transaction.amount}
+                      {renderTransactionType(transaction.type)}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={
+                          transaction.type === "credit"
+                            ? "text-success"
+                            : "text-danger"
+                        }
+                      >
+                        {transaction.type === "credit" ? "+" : "-"}₹
+                        {transaction.amount}
                       </span>
                     </TableCell>
                     <TableCell>₹{transaction.balance_after}</TableCell>
-                    <TableCell>{formattedDate(transaction.created_at)}</TableCell>
+                    <TableCell>
+                      {formattedDate(transaction.created_at)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -225,4 +258,4 @@ export default function TransactionHistory({ peticashId }: TransactionHistoryPro
       </CardBody>
     </Card>
   );
-} 
+}

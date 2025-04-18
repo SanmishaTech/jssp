@@ -10,9 +10,13 @@ import {
   Tabs,
   Tab,
   Chip,
-  Divider,
 } from "@heroui/react";
-import { CreditCard, ArrowDownCircle, ArrowUpCircle, PlusCircle } from "lucide-react";
+import {
+  CreditCard,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  PlusCircle,
+} from "lucide-react";
 import TransactionHistory from "./TransactionHistory";
 import TransactionForm from "./TransactionForm";
 
@@ -39,15 +43,15 @@ export default function PeticashDashboard() {
     try {
       // If no ID is provided, fetch the first peticash record
       const url = id ? `/api/peticash/${id}` : "/api/all_peticash";
-      
+
       const token = localStorage.getItem("token");
-      
+
       const { data } = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       if (data.status) {
         if (id) {
           setPeticash(data.data.Peticash);
@@ -124,7 +128,8 @@ export default function PeticashDashboard() {
   }
 
   // Calculate available balance
-  const availableBalance = parseFloat(peticash.total_amount) - parseFloat(peticash.total_spend || "0");
+  const availableBalance =
+    parseFloat(peticash.total_amount) - parseFloat(peticash.total_spend || "0");
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,7 +141,9 @@ export default function PeticashDashboard() {
               <CreditCard className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Fund</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                Total Fund
+              </p>
               <h3 className="text-2xl font-bold">₹{peticash.total_amount}</h3>
             </div>
           </CardBody>
@@ -149,21 +156,29 @@ export default function PeticashDashboard() {
               <ArrowDownCircle className="h-6 w-6 text-danger" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
-              <h3 className="text-2xl font-bold">₹{peticash.total_spend || "0"}</h3>
+              <p className="text-sm font-medium text-muted-foreground">
+                Total Spent
+              </p>
+              <h3 className="text-2xl font-bold">
+                ₹{peticash.total_spend || "0"}
+              </h3>
             </div>
           </CardBody>
         </Card>
 
-        {/* Available Balance Card */}
+        {/* Credit Balance Card */}
         <Card className="bg-card shadow-sm">
           <CardBody className="flex items-center gap-4 p-4">
             <div className="p-3 rounded-full bg-success/10">
               <ArrowUpCircle className="h-6 w-6 text-success" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Available Balance</p>
-              <h3 className="text-2xl font-bold">₹{availableBalance.toFixed(2)}</h3>
+              <p className="text-sm font-medium text-muted-foreground">
+                Credited Balance
+              </p>
+              <h3 className="text-2xl font-bold">
+                ₹{peticash.total_amount}
+              </h3>
             </div>
           </CardBody>
         </Card>
@@ -191,59 +206,59 @@ export default function PeticashDashboard() {
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
         aria-label="Petty Cash Tabs"
-        className="w-full"
+        className="w-full flex flex-col items-center"
+        classNames={{
+          tabList: "justify-center w-full max-w-md mb-[-50px]",
+          tab: "px-3 py-1 text-xs",
+          tabContent: "w-full"
+        }}
+        size="sm"
       >
-        <Tab key="overview" title="Overview">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <TransactionForm
-              peticashId={peticash.id}
-              currentBalance={availableBalance}
-              onTransactionComplete={handleTransactionComplete}
-            />
-            <Card className="bg-card shadow-sm">
-              <CardHeader>
-                <h3 className="text-lg font-semibold">Petty Cash Details</h3>
-              </CardHeader>
-              <CardBody>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">ID</p>
-                    <p className="font-medium">{peticash.id}</p>
-                  </div>
-                  <Divider />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Created</p>
-                    <p className="font-medium">
-                      {new Date(peticash.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Divider />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Last Updated</p>
-                    <p className="font-medium">
-                      {new Date(peticash.updated_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+        <Tab key="overview" title="Add Transaction">
+          <div className="mt-2">
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground mb-3">
+              <div>
+                <span>Created: </span>
+                <span className="font-medium">
+                  {new Date(peticash.created_at).toLocaleDateString()}
+                </span>
+              </div>
+              <div>
+                <span>Last Updated: </span>
+                <span className="font-medium">
+                  {new Date(peticash.updated_at).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <TransactionForm
+                peticashId={peticash.id}
+                currentBalance={availableBalance}
+                onTransactionComplete={handleTransactionComplete}
+              />
+            </div>
           </div>
         </Tab>
         <Tab key="history" title="Transaction History">
-          <div className="mt-4">
+          <div className="mt-2">
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground mb-3">
+              <div>
+                <span>Created: </span>
+                <span className="font-medium">
+                  {new Date(peticash.created_at).toLocaleDateString()}
+                </span>
+              </div>
+              <div>
+                <span>Last Updated: </span>
+                <span className="font-medium">
+                  {new Date(peticash.updated_at).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
             <TransactionHistory peticashId={peticash.id} />
-          </div>
-        </Tab>
-        <Tab key="add" title="Add Transaction">
-          <div className="mt-4 max-w-xl mx-auto">
-            <TransactionForm
-              peticashId={peticash.id}
-              currentBalance={availableBalance}
-              onTransactionComplete={handleTransactionComplete}
-            />
           </div>
         </Tab>
       </Tabs>
     </div>
   );
-} 
+}

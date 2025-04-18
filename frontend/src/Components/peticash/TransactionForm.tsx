@@ -156,35 +156,43 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   };
 
   return (
-    <Card className="w-full shadow-sm">
+    <Card className="w-full max-w-lg shadow-sm">
       <CardHeader className="pb-0">
         <h3 className="text-lg font-semibold">Record New Transaction</h3>
       </CardHeader>
       <form onSubmit={handleSubmit}>
-        <CardBody className="gap-4 flex flex-col">
-          <div className="flex flex-col gap-1">
+        <CardBody className="gap-6 flex flex-col">
+          <div className="w-full">
             <RadioGroup
-              label="Transaction Type"
               orientation="horizontal"
               value={formData.type}
               onValueChange={handleTypeChange}
+              className="gap-2"
             >
-              <Radio value="debit" description="Money spent from petty cash">
+              <Radio
+                value="debit"
+                description="Money spent from petty cash"
+                size="sm"
+              >
                 <div className="flex items-center gap-2">
-                  <Minus size={18} className="text-danger" />
+                  <Minus size={16} className="text-danger" />
                   <span>Debit (Money Out)</span>
                 </div>
               </Radio>
-              <Radio value="credit" description="Money added to petty cash">
+              <Radio
+                value="credit"
+                description="Money added to petty cash"
+                size="sm"
+              >
                 <div className="flex items-center gap-2">
-                  <Plus size={18} className="text-success" />
+                  <Plus size={16} className="text-success" />
                   <span>Credit (Money In)</span>
                 </div>
               </Radio>
             </RadioGroup>
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="w-full">
             <Input
               placeholder="Enter amount"
               type="number"
@@ -194,39 +202,41 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               value={formData.amount}
               onChange={handleInputChange}
               startContent={
-                <div className="pointer-events-none flex items-center pr-2">
-                  <span className="text-default-400">₹</span>
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 pl-1">₹</span>
                 </div>
               }
-              className="pl-6"
               isRequired
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <Textarea
-              label="Additional Notes"
+          <div className="w-full">
+            <Input
               placeholder="Any additional details about this transaction (optional)"
               name="note"
               value={formData.note}
               onChange={handleInputChange}
+              className="w-full"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="w-full">
             <Input
               placeholder="Transaction date"
               type="date"
               name="date"
-              value={formData.date}
-              onChange={handleInputChange}
-              className="pl-2"
+              value={new Date().toISOString().split("T")[0]}
+              className="w-full"
+              readOnly
+              disabled
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <p className="text-danger">{formData.error}</p>
-          </div>
+          {formData.error && (
+            <div className="w-full">
+              <p className="text-danger">{formData.error}</p>
+            </div>
+          )}
         </CardBody>
         <CardFooter>
           <Button

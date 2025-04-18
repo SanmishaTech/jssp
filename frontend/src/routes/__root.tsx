@@ -1,6 +1,5 @@
 import {
   createRootRoute,
-  Link,
   Outlet,
   useLocation,
 } from "@tanstack/react-router";
@@ -15,15 +14,15 @@ export const Route = createRootRoute({
   component: () => {
     const location = useLocation();
 
-    // Define the path where you don't want to show the sidebar
-    const noSidebarPath = "/";
+    // Define the paths where you don't want to show the sidebar
+    const noSidebarPaths = ["/", "/login"];
 
-    // Check if the current location path is not the login path
-    const shouldShowSidebar = location.pathname !== noSidebarPath;
+    // Check if the current location path is not in noSidebarPaths
+    const shouldShowSidebar = !noSidebarPaths.includes(location.pathname);
 
     return (
-      <ErrorProvider>
-        <ErrorBoundary>
+      <ErrorBoundary>
+        <ErrorProvider>
           <>
             <Toaster />
             <div className={shouldShowSidebar ? "flex pt-2" : "flex"}>
@@ -38,8 +37,8 @@ export const Route = createRootRoute({
               </div>
             </div>
           </>
-        </ErrorBoundary>
-      </ErrorProvider>
+        </ErrorProvider>
+      </ErrorBoundary>
     );
   },
   notFoundComponent: () => {
