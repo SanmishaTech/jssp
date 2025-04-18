@@ -10,6 +10,10 @@ interface Admission {
   total_fees: string;
   cash: string;
   upi: string;
+  total_valuation?: string;
+  university_upload?: string;
+  received_prn?: string;
+  created_at?: string;
 }
 
 interface PaginationData {
@@ -79,6 +83,7 @@ interface DashboardProps {
     one: string;
     two: string;
     three: string;
+    four: string;
     delete: string;
   }>;
   onAddProduct: () => void;
@@ -102,6 +107,17 @@ interface DashboardProps {
   onKeyPress?: (event: React.KeyboardEvent) => void;
   searchQuery: string;
 }
+
+// Utility to format created_at
+const formatDateTime = (datetime: string) => {
+  const date = new Date(datetime);
+  const dateStr = date.toLocaleDateString("en-GB").replace(/\//g, "-");
+  const timeStr = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${dateStr} (${timeStr})`;
+};
 
 export default function Dashboardholiday() {
   const [config, setConfig] = useState<DashboardConfig | null>(null);
@@ -127,11 +143,9 @@ export default function Dashboardholiday() {
   });
 
   useEffect(() => {
-    // Initial data fetch
     fetchData();
   }, [token]);
 
-  // Separate fetchData function that can be reused
   const fetchData = async (query: string = "", page: number = 1) => {
     try {
       setLoading(true);
@@ -145,8 +159,6 @@ export default function Dashboardholiday() {
         }
       );
       setData(response.data.data.Admission);
-
-      // Update pagination state
       const pagination = response.data.data.Pagination;
       setPaginationState({
         currentPage: Number(pagination.current_page),
@@ -154,7 +166,6 @@ export default function Dashboardholiday() {
         perPage: Number(pagination.per_page),
         total: Number(pagination.total),
       });
-
       setLoading(false);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -163,7 +174,6 @@ export default function Dashboardholiday() {
     }
   };
 
-  // Define the dashboard configuration
   useEffect(() => {
     setConfig({
       breadcrumbs: [
@@ -173,7 +183,6 @@ export default function Dashboardholiday() {
         { label: "/", href: "" },
         { label: "Admission" },
       ],
-
       searchPlaceholder: "Search Admission...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
@@ -183,6 +192,7 @@ export default function Dashboardholiday() {
           { label: "Total Valuation", key: "one" },
           { label: "University Upload", key: "two" },
           { label: "Received PRN", key: "three" },
+          { label: "Timestamp", key: "four" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -204,7 +214,6 @@ export default function Dashboardholiday() {
     });
   }, [data, paginationState]);
 
-  // Handlers for actions
   const handleAddProduct = () => {
     setIsDialogOpen(true);
   };
@@ -230,7 +239,6 @@ export default function Dashboardholiday() {
         });
 
         if (response.status === 200) {
-          // Refetch the data after successful deletion
           await fetchData(searchQuery, paginationState.currentPage);
         }
       } catch (err) {
@@ -258,7 +266,6 @@ export default function Dashboardholiday() {
     }
   };
 
-  // Update handleSearch to reset pagination
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
     setPaginationState((prev) => ({ ...prev, currentPage: 1 }));
@@ -270,12 +277,12 @@ export default function Dashboardholiday() {
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
-  // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
     one: item.total_valuation || "Unknown",
     two: item.university_upload || "NA",
     three: item.received_prn || "NA",
+    four: item.created_at ? formatDateTime(item.created_at) : "NA",
     delete: "/admissions/" + item.id,
   }));
 

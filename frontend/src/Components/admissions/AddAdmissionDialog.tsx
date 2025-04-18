@@ -23,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
-  total_valuation: z.string().trim().nonempty("Total Valuation is Required"),
+  total_valuation: z.string().trim().nonempty("Total Admission is Required"),
   university_upload: z
     .string()
     .trim()
@@ -121,7 +121,7 @@ export default function AddAdmissionDialog({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Add New Admission
+              Add Admission
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -136,12 +136,12 @@ export default function AddAdmissionDialog({
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Total Valuation
+                            Total Admission
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Total Valuation..."
+                              placeholder="Total Admission..."
                               {...field}
                             />
                           </FormControl>

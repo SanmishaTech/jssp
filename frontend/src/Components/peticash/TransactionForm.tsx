@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import {
   Button,
   Card,
@@ -23,7 +25,7 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
   peticashId,
-  onTransactionComplete
+  onTransactionComplete,
 }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -34,7 +36,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     error: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -51,7 +55,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Form validation
     if (!formData.type) {
       setFormData((prev) => ({
@@ -60,7 +64,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       }));
       return;
     }
-    
+
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
       setFormData((prev) => ({
         ...prev,
@@ -68,7 +72,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       }));
       return;
     }
-    
+
     if (formData.type === "debit" && !formData.note.trim()) {
       setFormData((prev) => ({
         ...prev,
@@ -76,25 +80,25 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       }));
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const payload = {
         amount: parseFloat(formData.amount),
         type: formData.type,
         description: formData.note.trim(), // Changed 'note' to 'description' to match the API
-        date: formData.date || new Date().toISOString().split('T')[0]
+        date: formData.date || new Date().toISOString().split("T")[0],
       };
-      
+
       const token = localStorage.getItem("token");
       // Changed API endpoint to match the route defined in api.php
       await axios.post(`/api/peticash/${peticashId}/transaction`, payload, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       // Reset form
       setFormData({
         amount: "",
@@ -103,11 +107,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         date: "",
         error: "",
       });
-      
-      toast.success(`${formData.type === 'credit' ? 'Credit' : 'Debit'} transaction recorded successfully`);
+
+      toast.success(
+        `${formData.type === "credit" ? "Credit" : "Debit"} transaction recorded successfully`
+      );
       onTransactionComplete();
     } catch (error: unknown) {
-      const err = error as { response?: { status: number, data: { message: string } } };
+      const err = error as {
+        response?: { status: number; data: { message: string } };
+      };
       if (err && err.response) {
         if (err.response.status === 401) {
           setFormData((prev) => ({
@@ -124,12 +132,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           // Insufficient balance
           setFormData((prev) => ({
             ...prev,
-            error: err.response?.data?.message || "Insufficient balance for this debit",
+            error:
+              err.response?.data?.message ||
+              "Insufficient balance for this debit",
           }));
         } else {
           setFormData((prev) => ({
             ...prev,
-            error: err.response?.data?.message || "Failed to record transaction",
+            error:
+              err.response?.data?.message || "Failed to record transaction",
           }));
         }
       } else {
@@ -158,19 +169,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               value={formData.type}
               onValueChange={handleTypeChange}
             >
-              <Radio
-                value="debit"
-                description="Money spent from petty cash"
-              >
+              <Radio value="debit" description="Money spent from petty cash">
                 <div className="flex items-center gap-2">
                   <Minus size={18} className="text-danger" />
                   <span>Debit (Money Out)</span>
                 </div>
               </Radio>
-              <Radio
-                value="credit"
-                description="Money added to petty cash"
-              >
+              <Radio value="credit" description="Money added to petty cash">
                 <div className="flex items-center gap-2">
                   <Plus size={18} className="text-success" />
                   <span>Credit (Money In)</span>
@@ -181,7 +186,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
           <div className="flex flex-col gap-1">
             <Input
-               placeholder="Enter amount"
+              placeholder="Enter amount"
               type="number"
               min="0.01"
               step="0.01"
@@ -210,7 +215,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
           <div className="flex flex-col gap-1">
             <Input
-               placeholder="Transaction date"
+              placeholder="Transaction date"
               type="date"
               name="date"
               value={formData.date}
