@@ -102,7 +102,11 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
 
+
+
+   
 });
 
+Route::get('/file/{document}', [EventController::class, 'displayDocuments'])->name("client.displayDocuments");
 
  

@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use File;
+use Response;
 use App\Models\Event;
 use App\Models\EventImage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\EventResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
 
 class EventController extends BaseController
@@ -75,7 +77,7 @@ class EventController extends BaseController
             foreach ($request->file('images') as $image) {
                 // Store the image
                 $path = $image->store('events', 'public');
-                
+
                 // Create EventImage record
                 EventImage::create([
                     'event_id' => $event->id,
@@ -155,12 +157,13 @@ class EventController extends BaseController
             
             foreach ($request->file('images') as $image) {
                 // Store the image
-                $path = $image->store('events', 'public');
+                $originalName = $image->getClientOriginalName();
+                $path = $image->storeAs('public/events', $originalName);
                 
                 // Create EventImage record
                 EventImage::create([
                     'event_id' => $event->id,
-                    'image_path' => $path
+                    'image_path' => $originalName
                 ]);
             }
         }
@@ -192,4 +195,28 @@ class EventController extends BaseController
             "Event retrieved successfully"
         );
     }
+
+    public function displayDocuments(string $document){
+
+        // Generate the full path to the invoice in the public storage
+        $path = storage_path('app/public/events/'.$document);
+    
+        // Check if the file exists
+        if (!file_exists($path)) {
+            return $this->sendError("Document not found", ['error'=>['Document not found.']]);
+        }
+    
+        // Get the file content and MIME type
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+    
+        // Create the response for the file download
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $document . '"'); // Set attachment to force download
+     //to download the invoice change 'Content-Deposition to attachment from inline
+        return $response;
+    
+
+}
 }

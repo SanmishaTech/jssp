@@ -85,19 +85,25 @@ function ProfileForm({ formData }) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesArray = Array.from(e.target.files);
-      
+
       // Check for maximum 10 images
-      const totalImages = existingImages.length - imagesToDelete.length + selectedImages.length + filesArray.length;
+      const totalImages =
+        existingImages.length -
+        imagesToDelete.length +
+        selectedImages.length +
+        filesArray.length;
       if (totalImages > 10) {
         toast.error("You can upload a maximum of 10 images");
         return;
       }
 
       // Create preview URLs for the selected images
-      const newPreviewUrls = filesArray.map(file => URL.createObjectURL(file));
-      
-      setSelectedImages(prevImages => [...prevImages, ...filesArray]);
-      setPreviewUrls(prevUrls => [...prevUrls, ...newPreviewUrls]);
+      const newPreviewUrls = filesArray.map((file) =>
+        URL.createObjectURL(file)
+      );
+
+      setSelectedImages((prevImages) => [...prevImages, ...filesArray]);
+      setPreviewUrls((prevUrls) => [...prevUrls, ...newPreviewUrls]);
     }
   };
 
@@ -105,45 +111,45 @@ function ProfileForm({ formData }) {
   const removeNewImage = (index: number) => {
     // Revoke object URL to prevent memory leaks
     URL.revokeObjectURL(previewUrls[index]);
-    
-    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
-    setPreviewUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+
+    setSelectedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setPreviewUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
   };
 
   // Mark existing image for deletion
   const markImageForDeletion = (imageId: number) => {
-    setImagesToDelete(prev => [...prev, imageId]);
+    setImagesToDelete((prev) => [...prev, imageId]);
   };
 
   // Restore image that was marked for deletion
   const restoreImage = (imageId: number) => {
-    setImagesToDelete(prev => prev.filter(id => id !== imageId));
+    setImagesToDelete((prev) => prev.filter((id) => id !== imageId));
   };
 
   async function onSubmit(data: ProfileFormValues) {
     try {
       // Create FormData for file uploads
       const formData = new FormData();
-      
+
       // Add form fields to FormData
-      formData.append('venue', data.venue);
-      formData.append('date', data.date);
-      formData.append('time', data.time);
-      formData.append('synopsis', data.synopsis);
-      
+      formData.append("venue", data.venue);
+      formData.append("date", data.date);
+      formData.append("time", data.time);
+      formData.append("synopsis", data.synopsis);
+
       // Add new images to FormData
-      selectedImages.forEach(image => {
-        formData.append('images[]', image);
+      selectedImages.forEach((image) => {
+        formData.append("images[]", image);
       });
-      
+
       // Add images to delete
-      imagesToDelete.forEach(imageId => {
-        formData.append('delete_images[]', imageId.toString());
+      imagesToDelete.forEach((imageId) => {
+        formData.append("delete_images[]", imageId.toString());
       });
 
       await axios.post(`/api/events/${id}?_method=PUT`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -174,6 +180,39 @@ function ProfileForm({ formData }) {
       }
     }
   }
+
+  const handleViewDocument = (documentName: string) => {
+    // URL to your Laravel endpoint to get the document
+    const url = `/api/file/${documentName}`;
+
+    // Trigger the API call to fetch the document and open it in a new tab
+    axios
+      .get(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          responseType: "blob",
+        },
+      })
+      .then((response) => {
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
+        });
+        const link = document.createElement("a");
+        const objectURL = URL.createObjectURL(blob);
+
+        link.href = objectURL;
+        link.target = "_blank";
+        link.click();
+
+        // Clean up the URL object
+        URL.revokeObjectURL(objectURL);
+      })
+      .catch((error) => {
+        console.error("Error fetching the document:", error);
+        toast.error("Error viewing image");
+      });
+  };
 
   return (
     <Form {...form}>
@@ -258,59 +297,100 @@ function ProfileForm({ formData }) {
                   </FormItem>
                 )}
               />
-              
+
               {/* Existing Images Section */}
               {existingImages.length > 0 && (
                 <div className="mt-6">
-                  <FormLabel>
-                    Current Event Images
-                  </FormLabel>
+                  <FormLabel>Current Event Images</FormLabel>
                   <div className="grid grid-cols-5 gap-4 mt-2">
                     {existingImages.map((image, index) => (
                       <div key={image.id} className="relative group">
                         <img
-                          src={`${import.meta.env.VITE_API_URL || ''}/storage/${image.image_path}`}
+                          src={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
                           alt={`Event image ${index + 1}`}
-                          className={`h-24 w-24 object-cover rounded-md ${imagesToDelete.includes(image.id) ? 'opacity-30' : ''}`}
+                          className={`h-24 w-24 object-cover rounded-md ${
+                            imagesToDelete.includes(image.id)
+                              ? "opacity-30"
+                              : ""
+                          }`}
                           onError={(e) => {
-                            console.error("Image failed to load:", image.image_path);
-                            e.currentTarget.src = '/placeholder-image.jpg'; // Fallback image
+                            console.error(
+                              "Image failed to load:",
+                              image.image_path
+                            );
+                            e.currentTarget.src = "/placeholder-image.jpg"; // Fallback image
                           }}
                         />
-                        {!imagesToDelete.includes(image.id) ? (
+                        <div className="absolute -top-2 -right-2 flex gap-2">
                           <button
                             type="button"
-                            onClick={() => markImageForDeletion(image.id)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
+                            onClick={() => handleViewDocument(image.image_path)}
+                            className="bg-blue-500 text-white rounded-full p-1 shadow-md hover:bg-blue-600"
                           >
-                            <X className="h-4 w-4" />
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => restoreImage(image.id)}
-                            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white rounded-full p-1 shadow-md"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12"></polyline>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
                             </svg>
                           </button>
-                        )}
+                          {!imagesToDelete.includes(image.id) ? (
+                            <button
+                              type="button"
+                              onClick={() => markImageForDeletion(image.id)}
+                              className="bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => restoreImage(image.id)}
+                              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white rounded-full p-1 shadow-md"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                   {imagesToDelete.length > 0 && (
                     <p className="text-xs text-red-500 mt-2">
-                      {imagesToDelete.length} image(s) marked for deletion. Changes will be applied after saving.
+                      {imagesToDelete.length} image(s) marked for deletion.
+                      Changes will be applied after saving.
                     </p>
                   )}
                 </div>
               )}
-              
+
               {/* New Image Upload Section */}
               <div className="mt-6">
                 <FormLabel>
-                  Add New Images <span className="text-xs text-gray-500">(Max 10 images total)</span>
+                  Add New Images{" "}
+                  <span className="text-xs text-gray-500">
+                    (Max 10 images total)
+                  </span>
                 </FormLabel>
                 <div className="mt-2">
                   <div className="flex items-center justify-center w-full">
@@ -321,7 +401,8 @@ function ProfileForm({ formData }) {
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-gray-500" />
                         <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span> or drag and drop
+                          <span className="font-semibold">Click to upload</span>{" "}
+                          or drag and drop
                         </p>
                         <p className="text-xs text-gray-500">
                           PNG, JPG, GIF up to 2MB
@@ -338,18 +419,21 @@ function ProfileForm({ formData }) {
                     </label>
                   </div>
                 </div>
-                
+
                 {/* New Image Previews */}
                 {previewUrls.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium mb-2">New Images to Upload</h4>
+                    <h4 className="text-sm font-medium mb-2">
+                      New Images to Upload
+                    </h4>
                     <div className="grid grid-cols-5 gap-4">
                       {previewUrls.map((url, index) => (
                         <div key={index} className="relative group">
                           <img
                             src={url}
                             alt={`Preview ${index}`}
-                            className="h-24 w-24 object-cover rounded-md"
+                            className="h-24 w-24 object-cover rounded-md cursor-pointer"
+                            onClick={() => window.open(url, "_blank")}
                           />
                           <button
                             type="button"
@@ -363,10 +447,14 @@ function ProfileForm({ formData }) {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Image Count Information */}
                 <p className="text-xs text-gray-500 mt-2">
-                  Total images after changes: {existingImages.length - imagesToDelete.length + selectedImages.length}/10
+                  Total images after changes:{" "}
+                  {existingImages.length -
+                    imagesToDelete.length +
+                    selectedImages.length}
+                  /10
                 </p>
               </div>
             </CardContent>
