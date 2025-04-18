@@ -260,7 +260,7 @@ class PeticashController extends BaseController
         }
         
         // Get transactions with pagination
-        $transactions = $query->orderBy('created_at', 'desc')->paginate(10);
+        $transactions = $query->orderBy('created_at', 'desc')->paginate(5);
         
         return $this->sendResponse([
             "transactions" => PeticashTransactionResource::collection($transactions),

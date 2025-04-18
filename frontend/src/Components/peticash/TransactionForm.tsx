@@ -32,7 +32,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     amount: "",
     note: "",
     type: "debit", // Default is debit (money out)
-    date: "",
+    date: new Date().toISOString().split("T")[0], // Set today's date as default
     error: "",
   });
 
@@ -73,10 +73,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       return;
     }
 
-    if (formData.type === "debit" && !formData.note.trim()) {
+    // Note is mandatory for all transactions
+    if (!formData.note.trim()) {
       setFormData((prev) => ({
         ...prev,
-        error: "Note is required for debit transactions",
+        error: "Please provide a note for this transaction",
       }));
       return;
     }
@@ -88,40 +89,59 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         amount: parseFloat(formData.amount),
         type: formData.type,
         description: formData.note.trim(), // Changed 'note' to 'description' to match the API
-        date: formData.date || new Date().toISOString().split("T")[0],
+        date: formData.date, // Today's date is already set by default
       };
 
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        setFormData((prev) => ({
+          ...prev,
+          error: "You are not logged in. Please login to continue.",
+        }));
+        return;
+      }
+
       // Changed API endpoint to match the route defined in api.php
-      await axios.post(`/api/peticash/${peticashId}/transaction`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // Reset form
-      setFormData({
-        amount: "",
-        note: "",
-        type: "debit",
-        date: "",
-        error: "",
-      });
-
-      toast.success(
-        `${formData.type === "credit" ? "Credit" : "Debit"} transaction recorded successfully`
+      const response = await axios.post(
+        `/api/peticash/${peticashId}/transaction`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      onTransactionComplete();
+
+      // Reset form only if the request was successful
+      if (response.status === 200) {
+        setFormData({
+          amount: "",
+          note: "",
+          type: "debit",
+          date: "",
+          error: "",
+        });
+
+        toast.success(
+          `${formData.type === "credit" ? "Credit" : "Debit"} transaction recorded successfully`
+        );
+        onTransactionComplete();
+      }
     } catch (error: unknown) {
       const err = error as {
         response?: { status: number; data: { message: string } };
       };
       if (err && err.response) {
         if (err.response.status === 401) {
+          // Don't automatically sign out, just show the error
           setFormData((prev) => ({
             ...prev,
-            error: "Session expired. Please login again.",
+            error: "Session expired. Please refresh the page and login again.",
           }));
+
+          // Keep the form data intact so user doesn't lose their input
+          toast.error("Authentication error. Please login again.");
         } else if (err.response.status === 422) {
           // Validation errors
           setFormData((prev) => ({
@@ -149,7 +169,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           error: "Network error, please try again",
         }));
       }
-      console.error(error);
+      console.error("Transaction error:", error);
     } finally {
       setLoading(false);
     }
