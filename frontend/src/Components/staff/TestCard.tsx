@@ -301,7 +301,7 @@ function ProfileForm() {
           {/* Staff Images Card */}
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Staff Images</CardTitle>
+              <CardTitle>Staff Documents Images</CardTitle>
               <CardDescription>
                 Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)
               </CardDescription>
@@ -316,18 +316,21 @@ function ProfileForm() {
                   disabled={selectedImages.length >= 5}
                 />
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4">
-                  {previewUrls.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-md"
-                      />
+                <div className="space-y-2 mt-4">
+                  {selectedImages.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                      <a 
+                        href={previewUrls[index]} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                      >
+                        {file.name}
+                      </a>
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                        className="text-red-500 hover:text-red-700"
                       >
                         <X className="w-4 h-4" />
                       </button>

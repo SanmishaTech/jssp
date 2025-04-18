@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react";
-// import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -37,7 +34,6 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
-import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
@@ -72,8 +68,8 @@ function ProfileForm({ formData }) {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<any[]>([]);
-  const [deleteExisting, setDeleteExisting] = useState(false);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
+  const [deleteExisting, setDeleteExisting] = useState(false);
 
   const { reset } = form;
 
@@ -330,68 +326,63 @@ function ProfileForm({ formData }) {
           {/* Add this before the Profile Information Card */}
           <Card className="w-full">
             <CardHeader>
-              <CardTitle>Staff Images</CardTitle>
+              <CardTitle>Staff Documents Images</CardTitle>
               <CardDescription>Upload up to 5 images (JPEG, PNG, JPG - Max 2MB each)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {existingImages.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="deleteExisting"
-                        checked={deleteExisting}
-                        onChange={(e) => setDeleteExisting(e.target.checked)}
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="deleteExisting">Replace all existing images</label>
-                    </div>
-                    
-                    {!deleteExisting && (
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        {existingImages.map((image) => (
-                          <div key={image.id} className="relative">
-                            <img
-                              src={image.url}
-                              alt="Staff"
-                              className="w-full h-32 object-cover rounded-md"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeExistingImage(image.id)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-
                 <Input
                   type="file"
                   accept="image/jpeg,image/png,image/jpg"
                   multiple
                   onChange={handleImageChange}
-                  disabled={selectedImages.length + existingImages.length >= 5}
+                  disabled={existingImages.length + selectedImages.length >= 5}
                 />
-                
+
+                {/* Existing Images */}
+                {existingImages.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">Existing Images</h4>
+                    {existingImages.map((img) => (
+                      <div key={img.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                        <a 
+                          href={img.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        >
+                          {img.filename || `Image ${img.id}`}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => removeExistingImage(img.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* New Images */}
                 {selectedImages.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-md"
-                        />
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">New Images</h4>
+                    {selectedImages.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                        <a 
+                          href={previewUrls[index]} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        >
+                          {file.name}
+                        </a>
                         <button
                           type="button"
                           onClick={() => removeNewImage(index)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                          className="text-red-500 hover:text-red-700"
                         >
                           <X className="w-4 h-4" />
                         </button>
