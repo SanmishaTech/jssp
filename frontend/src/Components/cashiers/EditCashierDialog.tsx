@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import {
   Modal,
@@ -24,13 +24,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const profileFormSchema = z.object({
-  total_fees: z.string().trim().nonempty("Total Fees is Required"),
-  cheque: z.string().trim().nonempty("Cheque is Required"),
-  cash: z.string().trim().nonempty("Cash is Required"),
-  upi: z.string().trim().nonempty("Upi is Required"),
-});
-
+const profileFormSchema = z
+  .object({
+    total_fees: z.string().trim().nonempty("Total Fees is required"),
+    cheque: z.string().optional(),
+    cash: z.string().optional(),
+    upi: z.string().optional(),
+    userId: z.string().optional(),
+  })
+  .refine(
+    (data) => !!(data.cheque?.trim() || data.cash?.trim() || data.upi?.trim()),
+    {
+      message: "At least one of Cheque, Cash, or UPI must be filled",
+      path: ["cheque"], // You can choose to show error on any one field, or duplicate for others
+    }
+  );
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface EditCashierDialogProps {
@@ -58,22 +66,36 @@ export default function EditCashierDialog({
   fetchData,
   cashierId,
 }: EditCashierDialogProps) {
-  const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: { total_fees: "", cheque: "", cash: "", upi: "" },
     mode: "onChange",
   });
 
+  const { watch, setValue, control, reset, handleSubmit, setError } = form;
+  const chequeVal = watch("cheque");
+  const cashVal = watch("cash");
+  const upiVal = watch("upi");
+
+  useEffect(() => {
+    if (!chequeVal && !cashVal && !upiVal) {
+      setValue("total_fees", "", { shouldValidate: true });
+      return;
+    }
+    const sum =
+      (Number(chequeVal) || 0) + (Number(cashVal) || 0) + (Number(upiVal) || 0);
+    setValue("total_fees", sum.toString(), { shouldValidate: true });
+  }, [chequeVal, cashVal, upiVal, setValue]);
+
   const onClose = () => {
     onOpen(false);
-    form.reset();
+    reset();
   };
 
   const token = localStorage.getItem("token");
 
   // Fetch cashier data when dialog opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen && cashierId) {
       const fetchCashierData = async () => {
         try {
@@ -84,7 +106,12 @@ export default function EditCashierDialog({
             },
           });
           const cashierData = response.data.data.Cashier;
-          form.reset(cashierData);
+          reset({
+            cheque: cashierData.cheque ?? "",
+            cash: cashierData.cash ?? "",
+            upi: cashierData.upi ?? "",
+            total_fees: cashierData.total_fees ?? "",
+          });
         } catch (error) {
           console.error("Error fetching cashier:", error);
           toast.error("Failed to load cashier data");
@@ -93,44 +120,30 @@ export default function EditCashierDialog({
       };
       fetchCashierData();
     }
-  }, [isOpen, cashierId, form, token]);
+  }, [isOpen, cashierId, reset, token]);
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      const formattedData = {
-        total_fees: data.total_fees,
-        cheque: data.cheque,
-        cash: data.cash,
-        upi: data.upi,
-      };
-
-      await axios.patch(`/api/cashiers/${cashierId}`, formattedData, {
+      await axios.patch(`/api/cashiers/${cashierId}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-
       toast.success("Cashier Updated Successfully");
       onClose();
       fetchData();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
-
         if (errorData.errors) {
-          // Handle validation errors
           Object.entries(errorData.errors).forEach(([field, messages]) => {
-            // Set form errors
             form.setError(field as keyof ProfileFormValues, {
               message: Array.isArray(messages) ? messages[0] : messages,
             });
-
-            // Show toast for each validation error
             toast.error(Array.isArray(messages) ? messages[0] : messages);
           });
         } else {
-          // Handle general error message
           toast.error(errorData.message || "An error occurred");
         }
       } else {
@@ -138,10 +151,6 @@ export default function EditCashierDialog({
       }
     }
   }
-
-  const handleSubmit = () => {
-    form.handleSubmit(onSubmit)();
-  };
 
   return (
     <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
@@ -153,13 +162,10 @@ export default function EditCashierDialog({
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="total_fees"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
@@ -168,14 +174,19 @@ export default function EditCashierDialog({
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Total Fees..." {...field} />
+                            <Input
+                              type="number"
+                              disabled
+                              {...field}
+                              placeholder="Total Fees..."
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="cheque"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
@@ -191,7 +202,7 @@ export default function EditCashierDialog({
                       )}
                     />
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="cash"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
@@ -207,7 +218,7 @@ export default function EditCashierDialog({
                       )}
                     />
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="upi"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
@@ -230,7 +241,7 @@ export default function EditCashierDialog({
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={() => handleSubmit(onSubmit)()}>
                 Update Cashier
               </Button>
             </ModalFooter>

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -22,33 +23,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const profileFormSchema = z.object({
-  total_fees: z.string().trim().nonempty("Total Fees is Required"),
-  cheque: z.string().trim().nonempty("Cheque is Required"),
-  cash: z.string().trim().nonempty("Cash is Required"),
-  upi: z.string().trim().nonempty("Upi is Required"),
-
-  userId: z.string().optional(),
-});
-
+const profileFormSchema = z
+  .object({
+    total_fees: z.string().trim().nonempty("Total Fees is required"),
+    cheque: z.string().optional(),
+    cash: z.string().optional(),
+    upi: z.string().optional(),
+    userId: z.string().optional(),
+  })
+  .refine(
+    (data) => !!(data.cheque?.trim() || data.cash?.trim() || data.upi?.trim()),
+    {
+      message: "At least one of Cheque, Cash, or UPI must be filled",
+      path: ["cheque"], // You can choose to show error on any one field, or duplicate for others
+    }
+  );
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-interface AddCashierDialogProps {
-  isOpen: boolean;
-  onOpen: (value: boolean) => void;
-  backdrop?: "blur" | "transparent" | "opaque";
-  fetchData: () => void;
-}
-
-interface FormFieldProps {
-  field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onBlur: () => void;
-    value: string;
-    name: string;
-    ref: React.Ref<HTMLInputElement>;
-  };
-}
 
 export default function AddCashierDialog({
   isOpen,
@@ -56,52 +46,56 @@ export default function AddCashierDialog({
   backdrop = "blur",
   fetchData,
 }: AddCashierDialogProps) {
-  const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: { total_fees: "", cheque: "", cash: "", upi: "" },
     mode: "onChange",
   });
 
+  const { watch, setValue, control, reset, handleSubmit, setError } = form;
+
+  const chequeVal = watch("cheque");
+  const cashVal = watch("cash");
+  const upiVal = watch("upi");
+
+  useEffect(() => {
+    if (!chequeVal && !cashVal && !upiVal) {
+      setValue("total_fees", "", { shouldValidate: true });
+      return;
+    }
+
+    const sum =
+      (Number(chequeVal) || 0) + (Number(cashVal) || 0) + (Number(upiVal) || 0);
+    setValue("total_fees", sum.toString(), { shouldValidate: true });
+  }, [chequeVal, cashVal, upiVal, setValue]);
+
   const onClose = () => {
+    reset();
     onOpen(false);
-    form.reset();
   };
 
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
-  const token = localStorage.getItem("token");
-
   async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
+    data.userId = JSON.parse(localStorage.getItem("user") || "{}")._id;
     try {
-      await axios.post(`/api/cashiers`, data, {
+      await axios.post("/api/cashiers", data, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       toast.success("Cashier Created Successfully");
       onClose();
       fetchData();
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        const errorData = error.response.data;
-
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const errorData = err.response.data;
         if (errorData.errors) {
-          // Handle validation errors
-          Object.entries(errorData.errors).forEach(([field, messages]) => {
-            // Set form errors
-            form.setError(field as keyof ProfileFormValues, {
-              message: Array.isArray(messages) ? messages[0] : messages,
-            });
-
-            // Show toast for each validation error
-            toast.error(Array.isArray(messages) ? messages[0] : messages);
+          Object.entries(errorData.errors).forEach(([field, msgs]) => {
+            const message = Array.isArray(msgs) ? msgs[0] : msgs;
+            setError(field as any, { message });
+            toast.error(message);
           });
         } else {
-          // Handle general error message
           toast.error(errorData.message || "An error occurred");
         }
       } else {
@@ -110,84 +104,84 @@ export default function AddCashierDialog({
     }
   }
 
-  const handleSubmit = () => {
-    form.handleSubmit(onSubmit)();
-  };
-
   return (
     <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              Add New Cashier
-            </ModalHeader>
+            <ModalHeader>Add Cashier</ModalHeader>
             <ModalBody>
               <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
-                >
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
-                      control={form.control}
-                      name="total_fees"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Total Fees
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input placeholder="Total Fees..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
+                      control={control}
                       name="cheque"
-                      render={({ field }: FormFieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Cheque
-                            <span className="text-red-500">*</span>
+                            Cheque <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Cheque..." {...field} />
+                            <Input
+                              type="number"
+                              {...field}
+                              placeholder="Cheque..."
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="cash"
-                      render={({ field }: FormFieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Cash
-                            <span className="text-red-500">*</span>
+                            Cash <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Cash..." {...field} />
+                            <Input
+                              type="number"
+                              {...field}
+                              placeholder="Cash..."
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
-                      control={form.control}
+                      control={control}
                       name="upi"
-                      render={({ field }: FormFieldProps) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            UPI
-                            <span className="text-red-500">*</span>
+                            UPI <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="UPI..." {...field} />
+                            <Input
+                              type="number"
+                              {...field}
+                              placeholder="UPI..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={control}
+                      name="total_fees"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Total Fees</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} disabled />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -201,7 +195,7 @@ export default function AddCashierDialog({
               <Button color="danger" variant="light" onPress={onClose}>
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit(onSubmit)}>
                 Add Cashier
               </Button>
             </ModalFooter>
