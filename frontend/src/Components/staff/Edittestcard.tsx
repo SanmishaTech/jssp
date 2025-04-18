@@ -77,7 +77,16 @@ function ProfileForm({ formData }) {
   useEffect(() => {
     reset(formData);
     if (formData?.images) {
-      setExistingImages(formData.images);
+      console.log('Image data received:', formData.images);
+      
+      // Map the images to ensure they have the right structure
+      const processedImages = formData.images.map(img => ({
+        ...img,
+        // If the image_path is already correct, use it, otherwise ensure it's properly formatted
+        image_path: img.image_path || (typeof img.url === 'string' ? img.url.split('/').pop() : `Image ${img.id}`)
+      }));
+      
+      setExistingImages(processedImages);
       setDeletedImageIds([]);
     }
   }, [formData, reset]);
@@ -130,8 +139,8 @@ function ProfileForm({ formData }) {
       });
 
       // Append each selected image to the FormData
-      selectedImages.forEach(image => {
-        formData.append('images[]', image);
+      selectedImages.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
       });
 
       // Add flag to delete existing images if requested
@@ -343,15 +352,17 @@ function ProfileForm({ formData }) {
                 {existingImages.length > 0 && (
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium text-gray-700">Existing Images</h4>
-                    {existingImages.map((img) => (
+                    {existingImages.map((img) => {
+                      console.log('Image object:', img);
+                      return (
                       <div key={img.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
                         <a 
-                          href={img.url} 
+                          href={`/api/staff-file/${img.image_path}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                         >
-                          {img.filename || `Image ${img.id}`}
+                          {img.image_path || `Image ${img.id}`}
                         </a>
                         <button
                           type="button"
@@ -361,7 +372,8 @@ function ProfileForm({ formData }) {
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 

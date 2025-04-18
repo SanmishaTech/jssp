@@ -108,5 +108,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 });
 
 Route::get('/file/{document}', [EventController::class, 'displayDocuments'])->name("client.displayDocuments");
+Route::get('/staff-file/{document}', [StaffController::class, 'displayDocuments'])->name("client.displayStaffDocuments");
 
  

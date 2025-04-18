@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
- 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+
  
 class StaffController extends BaseController
 {
@@ -85,11 +87,16 @@ public function index(Request $request): JsonResponse
         // Handle multiple image uploads
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('staff_images', 'public');
+                // Get original filename
+                $originalName = $image->getClientOriginalName();
                 
+                // Store the image in the staff_images directory
+                $path = $image->storeAs('staff_images', $originalName, 'public');
+                
+                // Store only the filename in the database, not the full path
                 StaffImage::create([
                     'staff_id' => $staff->id,
-                    'image_path' => $path
+                    'image_path' => $originalName
                 ]);
             }
         }
@@ -150,7 +157,8 @@ public function index(Request $request): JsonResponse
         // Case 1: Delete all existing images if requested
         if ($request->input('delete_existing_images') === 'true') {
             foreach ($staff->images as $image) {
-                Storage::disk('public')->delete($image->image_path);
+                // Delete the file from storage using the correct path
+                Storage::disk('public')->delete('staff_images/'.$image->image_path);
                 $image->delete();
             }
         } 
@@ -160,7 +168,8 @@ public function index(Request $request): JsonResponse
             if (is_array($deletedImageIds) && count($deletedImageIds) > 0) {
                 foreach ($staff->images as $image) {
                     if (in_array($image->id, $deletedImageIds)) {
-                        Storage::disk('public')->delete($image->image_path);
+                        // Delete the file from storage using the correct path
+                        Storage::disk('public')->delete('staff_images/'.$image->image_path);
                         $image->delete();
                     }
                 }
@@ -170,11 +179,16 @@ public function index(Request $request): JsonResponse
         // Add new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('staff_images', 'public');
+                // Get original filename
+                $originalName = $image->getClientOriginalName();
                 
+                // Store the image in the staff_images directory
+                $path = $image->storeAs('staff_images', $originalName, 'public');
+                
+                // Store only the filename in the database, not the full path
                 StaffImage::create([
                     'staff_id' => $staff->id,
-                    'image_path' => $path
+                    'image_path' => $originalName
                 ]);
             }
         }
@@ -194,7 +208,8 @@ public function index(Request $request): JsonResponse
 
         // Delete associated images
         foreach ($staff->images as $image) {
-            Storage::disk('public')->delete($image->image_path);
+            // Delete the file from storage using the correct path
+            Storage::disk('public')->delete('staff_images/'.$image->image_path);
             $image->delete();
         }
 
@@ -204,6 +219,39 @@ public function index(Request $request): JsonResponse
         return $this->sendResponse([], "Staff deleted successfully");
     }
 
+    public function displayDocuments(string $document){
+        // Generate the full path to the file in the public storage
+        $path = storage_path('app/public/staff_images/'.$document);
+        
+        // Log for debugging
+        \Log::info('Staff image requested: ' . $document);
+        \Log::info('Path being checked: ' . $path);
+        \Log::info('File exists: ' . (file_exists($path) ? 'Yes' : 'No'));
+    
+        // Check if the file exists
+        if (!file_exists($path)) {
+            // Try alternative path
+            $alternatePath = storage_path('app/public/events/'.$document);
+            \Log::info('Trying alternate path: ' . $alternatePath);
+            \Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+            
+            if (file_exists($alternatePath)) {
+                $path = $alternatePath;
+            } else {
+                return $this->sendError("Document not found", ['error'=>['Document not found.']]);
+            }
+        }
+    
+        // Get the file content and MIME type
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+    
+        // Create the response for the file download
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $document . '"'); // Set to inline for viewing
+        return $response;
+    }
 
     public function allStaffs(): JsonResponse
     {
@@ -218,8 +266,4 @@ public function index(Request $request): JsonResponse
             "Staff retrieved successfully"
         );
     }
-    
-    
-    
-
 }

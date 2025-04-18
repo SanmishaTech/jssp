@@ -120,8 +120,8 @@ function ProfileForm() {
       });
 
       // Append each selected image to the FormData
-      selectedImages.forEach((image) => {
-        formData.append("images[]", image);
+      selectedImages.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
       });
 
       await axios.post(`/api/staff`, formData, {
