@@ -89,7 +89,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_subjects', [SubjectController::class, 'allSubject'])->name("subjects.all");
    
    Route::resource('students', StudentController::class);
-   Route::get('/all_students', [StudentController::class, 'allStudent'])->name("students.all");
+   Route::get('/all_students', [StudentController::class, 'allStudents'])->name("students.all");
+   Route::get('/students/template', [StudentController::class, 'downloadTemplate'])->name("students.template")->middleware('auth:sanctum');
+   Route::post('/students/import', [StudentController::class, 'import'])->name("students.import");
 
    // Peticash routes
    Route::resource('peticash', PeticashController::class);

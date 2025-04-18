@@ -9,6 +9,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\StudentResource;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class StudentController extends BaseController
 {
@@ -122,5 +126,92 @@ class StudentController extends BaseController
             ["Student" => StudentResource::collection($student)],
             "Student retrieved successfully"
         );
+    }
+
+    /**
+     * Generate an Excel template for student import
+     */
+    public function downloadTemplate(Request $request)
+    {
+        // Create spreadsheet object
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set headers
+        $sheet->setCellValue('A1', 'Student Name');
+        $sheet->setCellValue('B1', 'PRN');
+        $sheet->setCellValue('C1', 'Subject ID');
+        $sheet->setCellValue('D1', 'Division ID');
+        
+        // Add some sample data
+        $sheet->setCellValue('A2', 'John Doe');
+        $sheet->setCellValue('B2', 'PRN12345');
+        $sheet->setCellValue('C2', '1');  // Example subject ID
+        $sheet->setCellValue('D2', '1');  // Example division ID
+        
+        // Create a temporary file
+        $fileName = 'students_template.xlsx';
+        $tempPath = storage_path('app/public/' . $fileName);
+        
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempPath);
+        
+        // Return the file as download response
+        return response()->download($tempPath, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Import students from Excel file
+     */
+    public function import(Request $request): JsonResponse
+    {
+        // Validate the uploaded file
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error', $validator->errors(), 422);
+        }
+
+        try {
+            $file = $request->file('file');
+            $spreadsheet = IOFactory::load($file->getPathname());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $rows = $worksheet->toArray();
+            
+            // Skip header row
+            $dataRows = array_slice($rows, 1);
+            $instituteId = Auth::user()->staff->institute_id;
+            $importCount = 0;
+            
+            foreach ($dataRows as $row) {
+                // Skip empty rows
+                if (empty($row[0]) && empty($row[1])) {
+                    continue;
+                }
+                
+                // Create new student
+                $student = new Student();
+                $student->student_name = $row[0];
+                $student->prn = $row[1];
+                $student->subject_id = $row[2];
+                $student->division_id = $row[3];
+                $student->institute_id = $instituteId;
+                $student->save();
+                
+                $importCount++;
+            }
+            
+            return $this->sendResponse(
+                ['count' => $importCount],
+                "Successfully imported {$importCount} students"
+            );
+            
+        } catch (\Exception $e) {
+            return $this->sendError('Import Error', ['error' => $e->getMessage()], 500);
+        }
     }
 }

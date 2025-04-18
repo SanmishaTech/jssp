@@ -13,10 +13,12 @@ import {
   Download,
   Filter,
   X,
+  Upload,
 } from "lucide-react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
 import AlertDialogbox from "./AlertBox";
+import ImportStudentDialog from "./ImportStudentDialog";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -125,6 +127,7 @@ export default function Dashboard({
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -254,15 +257,26 @@ export default function Dashboard({
                     </Button>
                   </div>
                 </div>
-                <Button
-                  color="primary"
-                  variant="solid"
-                  startContent={<PlusCircle size={16} />}
-                  onPress={() => navigate({ to: "/students/add" })}
-                  className="h-9"
-                >
-                  Add New Student
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    color="secondary"
+                    variant="solid"
+                    startContent={<Upload size={16} />}
+                    onPress={() => setImportDialogOpen(true)}
+                    className="h-9"
+                  >
+                    Import
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    startContent={<PlusCircle size={16} />}
+                    onPress={() => navigate({ to: "/students/add" })}
+                    className="h-9"
+                  >
+                    Add New Student
+                  </Button>
+                </div>
               </div>
             </div>
             <TabsContent value="all" className="mt-0">
@@ -281,6 +295,12 @@ export default function Dashboard({
                 isOpen={toggleopen}
                 fetchData={fetchData}
                 onOpen={setToggleopen}
+              />
+
+              <ImportStudentDialog
+                isOpen={importDialogOpen}
+                onOpen={setImportDialogOpen}
+                fetchData={fetchData}
               />
 
               {/* <Additem

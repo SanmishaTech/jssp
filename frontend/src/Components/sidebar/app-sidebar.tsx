@@ -15,6 +15,10 @@ import {
   PiggyBank,
   BookMarked,
   Grid,
+  GraduationCap,
+  Banknote,
+  UsersRound,
+  Landmark,
 } from "lucide-react";
 import background from "../../images/Jeevandeep-logo.jpeg";
 import {
@@ -126,7 +130,7 @@ const roleBasedItems = {
         {
           title: "Cashiers",
           url: "/cashiers",
-          icon: PiggyBank,
+          icon: Banknote,
         },
         {
           title: "Subjects",
@@ -136,17 +140,17 @@ const roleBasedItems = {
         {
           title: "Students",
           url: "/students",
-          icon: BookMarked,
+          icon: UsersRound,
         },
         {
-          title: "Peticash",
+          title: "Petty Cash",
           url: "/peticash",
-          icon: BookMarked,
+          icon: Landmark,
         },
         {
           title: "Scholarships",
           url: "/scholarships",
-          icon: BookMarked,
+          icon: GraduationCap,
         },
       ],
     },

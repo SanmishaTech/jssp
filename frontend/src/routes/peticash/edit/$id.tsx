@@ -9,7 +9,7 @@ export const Route = createFileRoute("/peticash/edit/$id")({
     if (!token) {
       toast.error("Please login to access this page");
       throw redirect({
-        to: "/login",
+        to: "/",
         search: {
           redirect: window.location.pathname,
         },
@@ -21,4 +21,4 @@ export const Route = createFileRoute("/peticash/edit/$id")({
 
 function EditPeticashRoute() {
   return <PeticashForm />;
-} 
+}
