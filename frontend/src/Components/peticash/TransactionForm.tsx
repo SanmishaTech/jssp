@@ -65,19 +65,40 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       return;
     }
 
+    // Amount validation - must be a positive number and not too large
     if (!formData.amount || parseFloat(formData.amount) <= 0) {
       setFormData((prev) => ({
         ...prev,
-        error: "Please enter a valid amount",
+        error: "Please enter a valid amount greater than zero",
+      }));
+      return;
+    }
+    
+    // Check if amount is reasonable (not too large)
+    if (parseFloat(formData.amount) > 100000) {
+      setFormData((prev) => ({
+        ...prev,
+        error: "Amount seems too large. Please verify.",
       }));
       return;
     }
 
-    // Note is mandatory for all transactions
+    // Note validation - mandatory and length check
     if (!formData.note.trim()) {
       setFormData((prev) => ({
         ...prev,
         error: "Please provide a note for this transaction",
+      }));
+      return;
+    }
+    
+    // Check note length - not empty and not too long
+    // Note must have at least 1 character (already checked by trim check above)
+    
+    if (formData.note.trim().length > 100) {
+      setFormData((prev) => ({
+        ...prev,
+        error: "Note must be less than 100 characters",
       }));
       return;
     }
@@ -217,6 +238,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               placeholder="Enter amount"
               type="number"
               min="0.01"
+              max="100000"
               step="0.01"
               name="amount"
               value={formData.amount}
@@ -227,16 +249,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 </div>
               }
               isRequired
+              description="Enter a valid amount (max ₹100,000)"
             />
           </div>
 
           <div className="w-full">
             <Input
-              placeholder="Any additional details about this transaction (optional)"
+              placeholder="Enter details about this transaction"
               name="note"
               value={formData.note}
               onChange={handleInputChange}
               className="w-full"
+              isRequired
+              minLength={1}
+              maxLength={100}
+              description="Required: 1-100 characters"
             />
           </div>
 

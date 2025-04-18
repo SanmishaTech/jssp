@@ -217,7 +217,11 @@ export default function TransactionHistory({
               <TableBody>
                 {transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
-                    <TableCell>{transaction.description}</TableCell>
+                    <TableCell title={transaction.description}>
+                      {transaction.description.length > 20 
+                        ? `${transaction.description.substring(0, 20)}...` 
+                        : transaction.description}
+                    </TableCell>
                     <TableCell>
                       {renderTransactionType(transaction.type)}
                     </TableCell>
