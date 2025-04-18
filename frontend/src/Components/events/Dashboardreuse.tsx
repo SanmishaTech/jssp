@@ -530,12 +530,12 @@ export function Dashboard({
                     {eventImages.map((image, index) => (
                       <div key={image.id} className="relative group">
                         <a
-                          href={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
+                          href={`/api/file/${image.image_path}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           <img
-                            src={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
+                            src={`/api/file/${image.image_path}`}
                             alt={`Event image ${index + 1}`}
                             className="h-40 w-full object-cover rounded-md hover:opacity-90 transition-opacity"
                             onError={(e) => {

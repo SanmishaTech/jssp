@@ -107,8 +107,8 @@ function ProfileForm() {
     }
     
     // Add images to FormData
-    selectedImages.forEach(image => {
-      formData.append('images[]', image);
+    selectedImages.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
     });
 
     try {

@@ -138,13 +138,13 @@ function ProfileForm({ formData }) {
       formData.append("synopsis", data.synopsis);
 
       // Add new images to FormData
-      selectedImages.forEach((image) => {
-        formData.append("images[]", image);
+      selectedImages.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
       });
 
       // Add images to delete
-      imagesToDelete.forEach((imageId) => {
-        formData.append("delete_images[]", imageId.toString());
+      imagesToDelete.forEach((imageId, index) => {
+        formData.append(`delete_images[${index}]`, imageId.toString());
       });
 
       await axios.post(`/api/events/${id}?_method=PUT`, formData, {
@@ -185,33 +185,8 @@ function ProfileForm({ formData }) {
     // URL to your Laravel endpoint to get the document
     const url = `/api/file/${documentName}`;
 
-    // Trigger the API call to fetch the document and open it in a new tab
-    axios
-      .get(url, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          responseType: "blob",
-        },
-      })
-      .then((response) => {
-        const blob = new Blob([response.data], {
-          type: response.headers["content-type"],
-        });
-        const link = document.createElement("a");
-        const objectURL = URL.createObjectURL(blob);
-
-        link.href = objectURL;
-        link.target = "_blank";
-        link.click();
-
-        // Clean up the URL object
-        URL.revokeObjectURL(objectURL);
-      })
-      .catch((error) => {
-        console.error("Error fetching the document:", error);
-        toast.error("Error viewing image");
-      });
+    // Open the document in a new tab to view it
+    window.open(url, '_blank');
   };
 
   return (
@@ -306,7 +281,7 @@ function ProfileForm({ formData }) {
                     {existingImages.map((image, index) => (
                       <div key={image.id} className="relative group">
                         <img
-                          src={`${import.meta.env.VITE_API_URL || ""}/storage/${image.image_path}`}
+                          src={`/api/file/${image.image_path}`}
                           alt={`Event image ${index + 1}`}
                           className={`h-24 w-24 object-cover rounded-md ${
                             imagesToDelete.includes(image.id)

@@ -59,8 +59,8 @@ class EventController extends BaseController
             'date' => 'required|string|max:255',
             'time' => 'required|string|max:255',
             'synopsis' => 'nullable|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
-            'images' => 'array|max:10', // Maximum 10 images
+            'images' => 'nullable|array|max:10', // Maximum 10 images
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
         ]);
         
         // Create a new event record and assign the institute_id from the logged-in admin
@@ -75,14 +75,23 @@ class EventController extends BaseController
         // Handle image uploads if present
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                // Store the image
-                $path = $image->store('events', 'public');
-
-                // Create EventImage record
-                EventImage::create([
-                    'event_id' => $event->id,
-                    'image_path' => $path
-                ]);
+                try {
+                    // Get original filename
+                    $originalName = $image->getClientOriginalName();
+                    
+                    // Store the image in the events directory
+                    $path = $image->storeAs('events', $originalName, 'public');
+                    
+                    // Store only the filename in the database, not the full path
+                    // Create EventImage record
+                    EventImage::create([
+                        'event_id' => $event->id,
+                        'image_path' => $originalName
+                    ]);
+                } catch (\Exception $e) {
+                    // Log the error but continue with other images
+                    \Log::error('Error uploading image: ' . $e->getMessage());
+                }
             }
         }
         
@@ -111,8 +120,8 @@ class EventController extends BaseController
             'date' => 'required|string|max:255',
             'time' => 'required|string|max:255',
             'synopsis' => 'nullable|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
             'images' => 'nullable|array|max:10', // Maximum 10 images
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each image
             'delete_images' => 'nullable|array',
             'delete_images.*' => 'integer|exists:event_images,id'
         ]);
@@ -136,8 +145,8 @@ class EventController extends BaseController
                 $image = EventImage::find($imageId);
                 if ($image && $image->event_id == $event->id) {
                     // Delete the file from storage
-                    if (Storage::disk('public')->exists($image->image_path)) {
-                        Storage::disk('public')->delete($image->image_path);
+                    if (Storage::disk('public')->exists('events/'.$image->image_path)) {
+                        Storage::disk('public')->delete('events/'.$image->image_path);
                     }
                     // Delete the record
                     $image->delete();
@@ -156,15 +165,23 @@ class EventController extends BaseController
             }
             
             foreach ($request->file('images') as $image) {
-                // Store the image
-                $originalName = $image->getClientOriginalName();
-                $path = $image->storeAs('public/events', $originalName);
-                
-                // Create EventImage record
-                EventImage::create([
-                    'event_id' => $event->id,
-                    'image_path' => $originalName
-                ]);
+                try {
+                    // Get original filename
+                    $originalName = $image->getClientOriginalName();
+                    
+                    // Store the image
+                    $path = $image->storeAs('events', $originalName, 'public');
+                    
+                    // Store only the filename in the database, not the full path
+                    // Create EventImage record
+                    EventImage::create([
+                        'event_id' => $event->id,
+                        'image_path' => $originalName
+                    ]);
+                } catch (\Exception $e) {
+                    // Log the error but continue with other images
+                    \Log::error('Error uploading image: ' . $e->getMessage());
+                }
             }
         }
        
@@ -198,7 +215,8 @@ class EventController extends BaseController
 
     public function displayDocuments(string $document){
 
-        // Generate the full path to the invoice in the public storage
+        // Generate the full path to the file in the public storage
+        // Since we're now storing just the filename in the database, we need to construct the full path
         $path = storage_path('app/public/events/'.$document);
     
         // Check if the file exists
@@ -216,7 +234,5 @@ class EventController extends BaseController
         $response->header('Content-Disposition', 'inline; filename="' . $document . '"'); // Set attachment to force download
      //to download the invoice change 'Content-Deposition to attachment from inline
         return $response;
-    
-
-}
+    }
 }
