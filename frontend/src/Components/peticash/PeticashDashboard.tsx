@@ -133,7 +133,7 @@ export default function PeticashDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Total Fund Card */}
         <Card className="bg-card shadow-sm">
           <CardBody className="flex items-center gap-4 p-4">
@@ -166,22 +166,22 @@ export default function PeticashDashboard() {
           </CardBody>
         </Card>
 
-        {/* Credit Balance Card */}
-        <Card className="bg-card shadow-sm">
+        {/* Available Balance Card */}
+        {/* <Card className="bg-card shadow-sm">
           <CardBody className="flex items-center gap-4 p-4">
             <div className="p-3 rounded-full bg-success/10">
               <ArrowUpCircle className="h-6 w-6 text-success" />
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Credited Balance
+                Available Balance
               </p>
               <h3 className="text-2xl font-bold">
-                ₹{peticash.total_amount}
+                ₹{availableBalance.toFixed(2)}
               </h3>
             </div>
           </CardBody>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Note Section */}
@@ -210,7 +210,7 @@ export default function PeticashDashboard() {
         classNames={{
           tabList: "justify-center w-full max-w-md mb-[-50px]",
           tab: "px-3 py-1 text-xs",
-          tabContent: "w-full"
+          tabContent: "w-full",
         }}
         size="sm"
       >
