@@ -71,6 +71,7 @@ export default function SettingsProfilePage() {
   const [rooms, setRooms] = React.useState<any[]>([]);
   const [loadingCourses, setLoadingCourses] = React.useState(false);
   const [loadingRooms, setLoadingRooms] = React.useState(false);
+  const [selectedDivision, setSelectedDivision] = React.useState<any>(null);
 
   // Fetch courses from /api/all_courses.
   React.useEffect(() => {
@@ -253,6 +254,17 @@ export default function SettingsProfilePage() {
                                               ? ""
                                               : currentValue
                                           );
+                                          // Set the selected division when a division is selected
+                                          const selectedDiv = rooms.find(
+                                            (room) =>
+                                              room.id?.toString() ===
+                                              (currentValue === field.value
+                                                ? ""
+                                                : currentValue)
+                                          );
+                                          setSelectedDivision(
+                                            selectedDiv || null
+                                          );
                                           setOpen(false);
                                         }}
                                       >
@@ -360,6 +372,53 @@ export default function SettingsProfilePage() {
                 }}
               />
             </div>
+
+            {/* Division Details Section */}
+            {selectedDivision && (
+              <div className="mt-4 p-4 border rounded-md bg-gray-50">
+                <h3 className="text-lg font-medium mb-2">Division Details</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">
+                      Division Name
+                    </p>
+                    <p>{selectedDivision.division}</p>
+                  </div>
+
+                  {selectedDivision.course_name && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        Course
+                      </p>
+                      <p>{selectedDivision.course_name}</p>
+                    </div>
+                  )}
+                  {selectedDivision.semester_name && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">
+                        Semester
+                      </p>
+                      <p>{selectedDivision.semester_name}</p>
+                    </div>
+                  )}
+                  {selectedDivision.room_name && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Room</p>
+                      <p>{selectedDivision.room_name}</p>
+                    </div>
+                  )}
+                  {selectedDivision.semester &&
+                    !selectedDivision.semester_name && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">
+                          Semester
+                        </p>
+                        <p>{selectedDivision.semester}</p>
+                      </div>
+                    )}
+                </div>
+              </div>
+            )}
 
             {/* Students Field */}
 

@@ -79,6 +79,8 @@ interface DashboardProps {
     one: string;
     two: string;
     three: string;
+    four: string;
+    five: string;
     delete: string;
   }>;
   onAddProduct: () => void;
@@ -102,6 +104,16 @@ interface DashboardProps {
   onKeyPress?: (event: React.KeyboardEvent) => void;
   searchQuery: string;
 }
+
+const formatDateTime = (datetime: string) => {
+  const date = new Date(datetime);
+  const dateStr = date.toLocaleDateString("en-GB").replace(/\//g, "-");
+  const timeStr = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `${dateStr} (${timeStr})`;
+};
 
 export default function Dashboardholiday() {
   const [config, setConfig] = useState<DashboardConfig | null>(null);
@@ -184,6 +196,7 @@ export default function Dashboardholiday() {
           { label: "Cheque", key: "two" },
           { label: "Cash", key: "three" },
           { label: "UPI", key: "four" },
+          { label: "Timestamp", key: "five" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -278,6 +291,7 @@ export default function Dashboardholiday() {
     two: item.cheque || "NA",
     three: item.cash || "NA",
     four: item.upi || "NA",
+    five: item.created_at ? formatDateTime(item.created_at) : "NA",
     delete: "/cashiers/" + item.id,
   }));
 

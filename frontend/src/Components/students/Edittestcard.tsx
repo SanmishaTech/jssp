@@ -102,6 +102,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
   const [loadingCourses, setLoadingCourses] = useState(false);
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [loadingSemesters, setLoadingSemesters] = useState(false);
+  const [selectedDivision, setSelectedDivision] = useState<any>(null);
 
   // Fetch courses
   useEffect(() => {
@@ -171,8 +172,14 @@ function ProfileForm({ formData }: { formData: FormValues }) {
     console.log("Resetting form with data:", formData); // Debug log
     if (formData) {
       form.reset(formData);
+      
+      // Set the selected division when form data is loaded
+      if (formData.division_id) {
+        const divisionData = rooms.find(room => room.id?.toString() === formData.division_id);
+        setSelectedDivision(divisionData || null);
+      }
     }
-  }, [formData, form]);
+  }, [formData, form, rooms]);
 
   async function onSubmit(data: FormValues) {
     try {
@@ -298,6 +305,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                           ? ""
                                           : currentValue
                                       );
+                                      // Set the selected division when a division is selected
+                                      const selectedDiv = rooms.find(room => room.id?.toString() === (currentValue === field.value ? "" : currentValue));
+                                      setSelectedDivision(selectedDiv || null);
                                       setOpen(false);
                                     }}
                                   >
@@ -376,6 +386,9 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                           ? ""
                                           : currentValue
                                       );
+                                      // Set the selected division when a division is selected
+                                      const selectedDiv = rooms.find(room => room.id?.toString() === (currentValue === field.value ? "" : currentValue));
+                                      setSelectedDivision(selectedDiv || null);
                                       setOpen(false);
                                     }}
                                   >
@@ -403,6 +416,67 @@ function ProfileForm({ formData }: { formData: FormValues }) {
             }}
           />
         </div>
+
+        {/* Division Details Section */}
+        {selectedDivision && (
+          <div className="mt-4 p-4 border rounded-md bg-gray-50">
+            <h3 className="text-lg font-medium mb-2">Division Details</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Division Name</p>
+                <p>{selectedDivision.division}</p>
+              </div>
+              {selectedDivision.institute_name && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Institute</p>
+                  <p>{selectedDivision.institute_name}</p>
+                </div>
+              )}
+              {selectedDivision.course_name && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Course</p>
+                  <p>{selectedDivision.course_name}</p>
+                </div>
+              )}
+              {selectedDivision.semester_name && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Semester</p>
+                  <p>{selectedDivision.semester_name}</p>
+                </div>
+              )}
+              {selectedDivision.room_name && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Room</p>
+                  <p>{selectedDivision.room_name}</p>
+                </div>
+              )}
+              {selectedDivision.semester && !selectedDivision.semester_name && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Semester</p>
+                  <p>{selectedDivision.semester}</p>
+                </div>
+              )}
+              {selectedDivision.batch && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Batch</p>
+                  <p>{selectedDivision.batch}</p>
+                </div>
+              )}
+              {selectedDivision.year && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Year</p>
+                  <p>{selectedDivision.year}</p>
+                </div>
+              )}
+              {selectedDivision.description && (
+                <div className="col-span-2">
+                  <p className="text-sm font-medium text-gray-500">Description</p>
+                  <p>{selectedDivision.description}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-end w-full gap-3">
           <Button
