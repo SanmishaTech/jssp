@@ -27,7 +27,7 @@ export default function AlertDialogbox({
   const queryClient = useQueryClient();
   const DeleteApi = async () => {
     console.log("This is Delete url", `/api/${url}`);
-    await axios.delete(`/api/divisions/${url}`, {
+    await axios.delete(`/api/students/${url}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,

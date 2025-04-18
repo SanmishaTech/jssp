@@ -90,7 +90,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudents'])->name("students.all");
-   Route::get('/students/template', [StudentController::class, 'downloadTemplate'])->name("students.template")->middleware('auth:sanctum');
+   Route::get('/students/download-template', [StudentController::class, 'downloadTemplate'])->name("students.download-template");
    Route::post('/students/import', [StudentController::class, 'import'])->name("students.import");
 
    // Peticash routes

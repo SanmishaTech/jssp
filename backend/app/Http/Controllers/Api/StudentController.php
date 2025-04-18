@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Student;
+use App\Models\Subject;
+use App\Models\Division;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -129,40 +131,6 @@ class StudentController extends BaseController
     }
 
     /**
-     * Generate an Excel template for student import
-     */
-    public function downloadTemplate(Request $request)
-    {
-        // Create spreadsheet object
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        
-        // Set headers
-        $sheet->setCellValue('A1', 'Student Name');
-        $sheet->setCellValue('B1', 'PRN');
-        $sheet->setCellValue('C1', 'Subject ID');
-        $sheet->setCellValue('D1', 'Division ID');
-        
-        // Add some sample data
-        $sheet->setCellValue('A2', 'John Doe');
-        $sheet->setCellValue('B2', 'PRN12345');
-        $sheet->setCellValue('C2', '1');  // Example subject ID
-        $sheet->setCellValue('D2', '1');  // Example division ID
-        
-        // Create a temporary file
-        $fileName = 'students_template.xlsx';
-        $tempPath = storage_path('app/public/' . $fileName);
-        
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($tempPath);
-        
-        // Return the file as download response
-        return response()->download($tempPath, $fileName, [
-            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        ])->deleteFileAfterSend(true);
-    }
-
-    /**
      * Import students from Excel file
      */
     public function import(Request $request): JsonResponse
@@ -182,36 +150,152 @@ class StudentController extends BaseController
             $worksheet = $spreadsheet->getActiveSheet();
             $rows = $worksheet->toArray();
             
+            if (empty($rows) || count($rows) < 2) {
+                return $this->sendError('Import Error', ['error' => 'The uploaded file is empty or does not contain any data rows.'], 422);
+            }
+            
+            // Get header row and map column indices
+            $headers = array_map('trim', $rows[0]);
+            $columnMap = [
+                'student_name' => array_search('Student Name', $headers),
+                'prn' => array_search('PRN', $headers),
+                'subject' => array_search('Subject', $headers) !== false ? array_search('Subject', $headers) : array_search('Subject Name', $headers),
+                'division' => array_search('Division', $headers) !== false ? array_search('Division', $headers) : array_search('Division Name', $headers)
+            ];
+            
+            // Validate that all required columns are present
+            foreach ($columnMap as $key => $index) {
+                if ($index === false) {
+                    return $this->sendError('Import Error', ['error' => "Required column '{$key}' not found in the uploaded file."], 422);
+                }
+            }
+            
             // Skip header row
             $dataRows = array_slice($rows, 1);
             $instituteId = Auth::user()->staff->institute_id;
             $importCount = 0;
+            $errors = [];
+            $errorRows = [];
             
-            foreach ($dataRows as $row) {
+            // Get all subjects and divisions for this institute for lookup
+            $subjects = Subject::where('institute_id', $instituteId)->get();
+            $divisions = Division::where('institute_id', $instituteId)->get();
+            
+            // Log the number of subjects and divisions found
+            \Log::info('Import subjects count: ' . $subjects->count());
+            \Log::info('Import divisions count: ' . $divisions->count());
+            \Log::info('Column mapping: ' . json_encode($columnMap));
+            
+            foreach ($dataRows as $index => $row) {
+                $rowNum = $index + 2; // +2 because of 1-indexing and header row
+                
                 // Skip empty rows
-                if (empty($row[0]) && empty($row[1])) {
+                if (empty($row[$columnMap['student_name']]) && empty($row[$columnMap['prn']])) {
+                    \Log::info('Skipping empty row: ' . $rowNum);
                     continue;
                 }
                 
-                // Create new student
-                $student = new Student();
-                $student->student_name = $row[0];
-                $student->prn = $row[1];
-                $student->subject_id = $row[2];
-                $student->division_id = $row[3];
-                $student->institute_id = $instituteId;
-                $student->save();
+                // Log the row data for debugging
+                \Log::info('Processing row: ' . $rowNum . ', Data: ' . json_encode($row));
                 
-                $importCount++;
+                // Check if subject and division columns have values
+                if (!isset($row[$columnMap['subject']]) || !isset($row[$columnMap['division']])) {
+                    $errors[] = 'Row ' . $rowNum . ': Missing subject or division';
+                    $errorRows[] = $rowNum;
+                    \Log::warning('Missing subject or division in row: ' . $rowNum);
+                    continue;
+                }
+                
+                // Find subject ID by name
+                $subject_name = trim($row[$columnMap['subject']]);
+                \Log::info('Looking for subject: ' . $subject_name);
+                
+                $subject = $subjects->first(function($item) use ($subject_name) {
+                    return strtolower(trim($item->subject_name)) === strtolower($subject_name);
+                });
+                
+                if (!$subject) {
+                    $errors[] = 'Row ' . $rowNum . ': Subject "' . $subject_name . '" not found';
+                    $errorRows[] = $rowNum;
+                    \Log::warning('Subject not found: ' . $subject_name);
+                    continue; // Skip if subject not found
+                }
+                
+                // Find division ID by name
+                $division_name = trim($row[$columnMap['division']]);
+                \Log::info('Looking for division: ' . $division_name);
+                
+                $division = $divisions->first(function($item) use ($division_name) {
+                    return strtolower(trim($item->division)) === strtolower($division_name);
+                });
+                
+                if (!$division) {
+                    $errors[] = 'Row ' . $rowNum . ': Division "' . $division_name . '" not found';
+                    $errorRows[] = $rowNum;
+                    \Log::warning('Division not found: ' . $division_name);
+                    continue; // Skip if division not found
+                }
+                
+                try {
+                    // Create new student
+                    $student = new Student();
+                    $student->student_name = trim($row[$columnMap['student_name']]);
+                    $student->prn = trim($row[$columnMap['prn']]);
+                    $student->subject_id = $subject->id;
+                    $student->division_id = $division->id;
+                    $student->institute_id = $instituteId;
+                    $student->save();
+                    
+                    \Log::info('Student created: ' . $student->id);
+                    $importCount++;
+                } catch (\Exception $e) {
+                    $errors[] = 'Row ' . $rowNum . ': ' . $e->getMessage();
+                    $errorRows[] = $rowNum;
+                    \Log::error('Error creating student: ' . $e->getMessage());
+                }
             }
             
-            return $this->sendResponse(
-                ['count' => $importCount],
-                "Successfully imported {$importCount} students"
-            );
+            $message = "Successfully imported {$importCount} students";
+            $response = ['count' => $importCount];
+            
+            
+            if (!empty($errors)) {
+                $response['errors'] = $errors;
+                $response['errorRows'] = $errorRows;
+                if ($importCount == 0) {
+                    $message = "No students were imported. Please check the errors.";
+                } else {
+                    $message = "Imported {$importCount} students with some errors.";
+                }
+            }
+            
+            return $this->sendResponse($response, $message);
             
         } catch (\Exception $e) {
             return $this->sendError('Import Error', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Download the student import template
+     */
+    public function downloadTemplate(): JsonResponse
+    {
+        try {
+            $filePath = public_path('excel/students.xlsx');
+            if (!file_exists($filePath)) {
+                $filePath = base_path('excel/students.xlsx');
+                if (!file_exists($filePath)) {
+                    return $this->sendError('Template Error', ['error' => 'Template file not found'], 404);
+                }
+            }
+            
+            return response()->download($filePath, 'students.xlsx', [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="students.xlsx"'
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError('Download Error', ['error' => $e->getMessage()], 500);
         }
     }
 }
