@@ -53,7 +53,7 @@ export default function PeticashForm() {
               note_amount: data.data.Peticash.note_amount || "",
             });
           } else {
-            toast.error("Failed to fetch petty cash data");
+            toast.error("Failed to fetch cashbook data");
           }
         } catch (err) {
           console.error("Error fetching peticash data:", err);
@@ -97,7 +97,7 @@ export default function PeticashForm() {
       }
       
       if (response.data.status) {
-        toast.success(id ? "Petty cash updated successfully" : "Petty cash created successfully");
+        toast.success(id ? "CashBook updated successfully" : "CashBook created successfully");
         
         // Navigate to the peticash dashboard
         if (id) {
@@ -108,7 +108,7 @@ export default function PeticashForm() {
           navigate({ to: "/peticash" });
         }
       } else {
-        toast.error(response.data.message || "Failed to save petty cash");
+        toast.error(response.data.message || "Failed to save cashbook");
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -121,7 +121,7 @@ export default function PeticashForm() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
-        <Spinner label="Loading petty cash data..." />
+        <Spinner label="Loading cashbook data..." />
       </div>
     );
   }
@@ -130,7 +130,7 @@ export default function PeticashForm() {
     <Card className="max-w-2xl mx-auto shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between">
         <h3 className="text-xl font-semibold">
-          {id ? "Edit Petty Cash" : "Create Petty Cash Account"}
+          {id ? "Edit CashBook" : "Create CashBook"}
         </h3>
         <Button
           variant="flat"
@@ -163,7 +163,7 @@ export default function PeticashForm() {
           <div className="flex flex-col gap-1">
             <Textarea
               label="Note"
-              placeholder="Add a note about this petty cash (optional)"
+              placeholder="Add a note about this cashbook (optional)"
               name="note"
               value={formData.note}
               onChange={handleInputChange}
@@ -196,7 +196,7 @@ export default function PeticashForm() {
             className="w-full"
             startContent={<Save size={16} />}
           >
-            {id ? "Update Petty Cash" : "Create Petty Cash Account"}
+            {id ? "Update CashBook" : "Create CashBook"}
           </Button>
         </CardFooter>
       </form>

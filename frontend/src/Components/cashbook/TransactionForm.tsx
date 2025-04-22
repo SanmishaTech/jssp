@@ -212,7 +212,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             >
               <Radio
                 value="debit"
-                description="Money spent from petty cash"
+                description="Money spent from cashbook"
                 size="sm"
               >
                 <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               </Radio>
               <Radio
                 value="credit"
-                description="Money added to petty cash"
+                description="Money added to cashbook"
                 size="sm"
               >
                 <div className="flex items-center gap-2">

@@ -59,16 +59,16 @@ export default function PeticashDashboard() {
           // If no ID was provided, use the first peticash record
           setPeticash(data.data.Peticash[0]);
         } else {
-          setError("No petty cash accounts found. Please create one first.");
+          setError("No cashbook found. Please create one first.");
         }
       } else {
-        setError(data.message || "Failed to fetch petty cash data");
+        setError(data.message || "Failed to fetch cashbook data");
       }
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
         setError("Session expired. Please login again.");
       } else {
-        setError("Error loading petty cash data");
+        setError("Error loading cashbook data");
       }
       console.error(error);
     } finally {
@@ -90,7 +90,7 @@ export default function PeticashDashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
-        <Spinner label="Loading petty cash data..." />
+        <Spinner label="Loading cashbook data..." />
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function PeticashDashboard() {
           href="/peticash/add"
           startContent={<PlusCircle size={16} />}
         >
-          Create Petty Cash Account
+          Create CashBook
         </Button>
       </div>
     );
@@ -114,14 +114,14 @@ export default function PeticashDashboard() {
   if (!peticash) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
-        <p className="text-muted-foreground">No petty cash account found</p>
+        <p className="text-muted-foreground">No cashbook found</p>
         <Button
           color="primary"
           as="a"
           href="/peticash/add"
           startContent={<PlusCircle size={16} />}
         >
-          Create Petty Cash Account
+          Create CashBook
         </Button>
       </div>
     );
@@ -185,7 +185,7 @@ export default function PeticashDashboard() {
       </div>
 
       {/* Note Section */}
-      {peticash.note && (
+      {/* {peticash.note && (
         <Card className="bg-card shadow-sm">
           <CardHeader className="pb-2">
             <h3 className="text-base font-medium">Latest Note</h3>
@@ -199,13 +199,13 @@ export default function PeticashDashboard() {
             )}
           </CardBody>
         </Card>
-      )}
+      )} */}
 
       {/* Tabs for different sections */}
       <Tabs
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
-        aria-label="Petty Cash Tabs"
+        aria-label="CashBook Tabs"
         className="w-full flex flex-col items-center"
         classNames={{
           tabList: "justify-center w-full max-w-md mb-[-50px]",

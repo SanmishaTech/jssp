@@ -33,10 +33,11 @@ import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
+import { Route as CashbookIndexImport } from './routes/cashbook/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
-import { Route as PeticashIdImport } from './routes/peticash/$id'
+import { Route as CashbookIdImport } from './routes/cashbook/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
 import { Route as StaffAddIndexImport } from './routes/staff/add/index'
@@ -49,11 +50,11 @@ import { Route as EventsAddIndexImport } from './routes/events/add/index'
 import { Route as DivisionsAddIndexImport } from './routes/divisions/add/index'
 import { Route as ComplaintsAddIndexImport } from './routes/complaints/add/index'
 import { Route as CommitteeAddIndexImport } from './routes/committee/add/index'
+import { Route as CashbookAddIndexImport } from './routes/cashbook/add/index'
 import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
 import { Route as StudentsEditIdImport } from './routes/students/edit/$id'
 import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
 import { Route as SemesterEditIdImport } from './routes/semester/edit/$id'
-import { Route as PeticashEditIdImport } from './routes/peticash/edit/$id'
 import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
 import { Route as InventoryEditIdImport } from './routes/inventory/edit/$id'
 import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
@@ -61,6 +62,7 @@ import { Route as EventsEditIdImport } from './routes/events/edit/$id'
 import { Route as DivisionsEditIdImport } from './routes/divisions/edit/$id'
 import { Route as ComplaintsEditIdImport } from './routes/complaints/edit/$id'
 import { Route as CommitteeEditIdImport } from './routes/committee/edit/$id'
+import { Route as CashbookEditIdImport } from './routes/cashbook/edit/$id'
 
 // Create/Update Routes
 
@@ -196,6 +198,12 @@ const CashiersIndexRoute = CashiersIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CashbookIndexRoute = CashbookIndexImport.update({
+  id: '/cashbook/',
+  path: '/cashbook/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CalenderIndexRoute = CalenderIndexImport.update({
   id: '/calender/',
   path: '/calender/',
@@ -214,9 +222,9 @@ const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PeticashIdRoute = PeticashIdImport.update({
-  id: '/peticash/$id',
-  path: '/peticash/$id',
+const CashbookIdRoute = CashbookIdImport.update({
+  id: '/cashbook/$id',
+  path: '/cashbook/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -292,6 +300,12 @@ const CommitteeAddIndexRoute = CommitteeAddIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CashbookAddIndexRoute = CashbookAddIndexImport.update({
+  id: '/cashbook/add/',
+  path: '/cashbook/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const TrustiesEditIdRoute = TrustiesEditIdImport.update({
   id: '/trusties/edit/$id',
   path: '/trusties/edit/$id',
@@ -313,12 +327,6 @@ const StaffEditIdRoute = StaffEditIdImport.update({
 const SemesterEditIdRoute = SemesterEditIdImport.update({
   id: '/semester/edit/$id',
   path: '/semester/edit/$id',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const PeticashEditIdRoute = PeticashEditIdImport.update({
-  id: '/peticash/edit/$id',
-  path: '/peticash/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -364,6 +372,12 @@ const CommitteeEditIdRoute = CommitteeEditIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const CashbookEditIdRoute = CashbookEditIdImport.update({
+  id: '/cashbook/edit/$id',
+  path: '/cashbook/edit/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -375,11 +389,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/peticash/$id': {
-      id: '/peticash/$id'
-      path: '/peticash/$id'
-      fullPath: '/peticash/$id'
-      preLoaderRoute: typeof PeticashIdImport
+    '/cashbook/$id': {
+      id: '/cashbook/$id'
+      path: '/cashbook/$id'
+      fullPath: '/cashbook/$id'
+      preLoaderRoute: typeof CashbookIdImport
       parentRoute: typeof rootRoute
     }
     '/admissions/': {
@@ -401,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/calender'
       fullPath: '/calender'
       preLoaderRoute: typeof CalenderIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/': {
+      id: '/cashbook/'
+      path: '/cashbook'
+      fullPath: '/cashbook'
+      preLoaderRoute: typeof CashbookIndexImport
       parentRoute: typeof rootRoute
     }
     '/cashiers/': {
@@ -550,6 +571,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrustiesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/cashbook/edit/$id': {
+      id: '/cashbook/edit/$id'
+      path: '/cashbook/edit/$id'
+      fullPath: '/cashbook/edit/$id'
+      preLoaderRoute: typeof CashbookEditIdImport
+      parentRoute: typeof rootRoute
+    }
     '/committee/edit/$id': {
       id: '/committee/edit/$id'
       path: '/committee/edit/$id'
@@ -599,13 +627,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeetingsEditIdImport
       parentRoute: typeof rootRoute
     }
-    '/peticash/edit/$id': {
-      id: '/peticash/edit/$id'
-      path: '/peticash/edit/$id'
-      fullPath: '/peticash/edit/$id'
-      preLoaderRoute: typeof PeticashEditIdImport
-      parentRoute: typeof rootRoute
-    }
     '/semester/edit/$id': {
       id: '/semester/edit/$id'
       path: '/semester/edit/$id'
@@ -632,6 +653,13 @@ declare module '@tanstack/react-router' {
       path: '/trusties/edit/$id'
       fullPath: '/trusties/edit/$id'
       preLoaderRoute: typeof TrustiesEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/add/': {
+      id: '/cashbook/add/'
+      path: '/cashbook/add'
+      fullPath: '/cashbook/add'
+      preLoaderRoute: typeof CashbookAddIndexImport
       parentRoute: typeof rootRoute
     }
     '/committee/add/': {
@@ -725,10 +753,11 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/peticash/$id': typeof PeticashIdRoute
+  '/cashbook/$id': typeof CashbookIdRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
+  '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
@@ -750,6 +779,7 @@ export interface FileRoutesByFullPath {
   '/students': typeof StudentsIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
@@ -757,11 +787,11 @@ export interface FileRoutesByFullPath {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
-  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/cashbook/add': typeof CashbookAddIndexRoute
   '/committee/add': typeof CommitteeAddIndexRoute
   '/complaints/add': typeof ComplaintsAddIndexRoute
   '/divisions/add': typeof DivisionsAddIndexRoute
@@ -778,10 +808,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/peticash/$id': typeof PeticashIdRoute
+  '/cashbook/$id': typeof CashbookIdRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
+  '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
@@ -803,6 +834,7 @@ export interface FileRoutesByTo {
   '/students': typeof StudentsIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
@@ -810,11 +842,11 @@ export interface FileRoutesByTo {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
-  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/cashbook/add': typeof CashbookAddIndexRoute
   '/committee/add': typeof CommitteeAddIndexRoute
   '/complaints/add': typeof ComplaintsAddIndexRoute
   '/divisions/add': typeof DivisionsAddIndexRoute
@@ -832,10 +864,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/peticash/$id': typeof PeticashIdRoute
+  '/cashbook/$id': typeof CashbookIdRoute
   '/admissions/': typeof AdmissionsIndexRoute
   '/bankaccounts/': typeof BankaccountsIndexRoute
   '/calender/': typeof CalenderIndexRoute
+  '/cashbook/': typeof CashbookIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
   '/complaints/': typeof ComplaintsIndexRoute
@@ -857,6 +890,7 @@ export interface FileRoutesById {
   '/students/': typeof StudentsIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
+  '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
   '/divisions/edit/$id': typeof DivisionsEditIdRoute
@@ -864,11 +898,11 @@ export interface FileRoutesById {
   '/institutes/edit/$id': typeof InstitutesEditIdRoute
   '/inventory/edit/$id': typeof InventoryEditIdRoute
   '/meetings/edit/$id': typeof MeetingsEditIdRoute
-  '/peticash/edit/$id': typeof PeticashEditIdRoute
   '/semester/edit/$id': typeof SemesterEditIdRoute
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/cashbook/add/': typeof CashbookAddIndexRoute
   '/committee/add/': typeof CommitteeAddIndexRoute
   '/complaints/add/': typeof ComplaintsAddIndexRoute
   '/divisions/add/': typeof DivisionsAddIndexRoute
@@ -887,10 +921,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/peticash/$id'
+    | '/cashbook/$id'
     | '/admissions'
     | '/bankaccounts'
     | '/calender'
+    | '/cashbook'
     | '/cashiers'
     | '/committee'
     | '/complaints'
@@ -912,6 +947,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjects'
     | '/trusties'
+    | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
     | '/divisions/edit/$id'
@@ -919,11 +955,11 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
-    | '/peticash/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/cashbook/add'
     | '/committee/add'
     | '/complaints/add'
     | '/divisions/add'
@@ -939,10 +975,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/peticash/$id'
+    | '/cashbook/$id'
     | '/admissions'
     | '/bankaccounts'
     | '/calender'
+    | '/cashbook'
     | '/cashiers'
     | '/committee'
     | '/complaints'
@@ -964,6 +1001,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjects'
     | '/trusties'
+    | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
     | '/divisions/edit/$id'
@@ -971,11 +1009,11 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
-    | '/peticash/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/cashbook/add'
     | '/committee/add'
     | '/complaints/add'
     | '/divisions/add'
@@ -991,10 +1029,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/peticash/$id'
+    | '/cashbook/$id'
     | '/admissions/'
     | '/bankaccounts/'
     | '/calender/'
+    | '/cashbook/'
     | '/cashiers/'
     | '/committee/'
     | '/complaints/'
@@ -1016,6 +1055,7 @@ export interface FileRouteTypes {
     | '/students/'
     | '/subjects/'
     | '/trusties/'
+    | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
     | '/divisions/edit/$id'
@@ -1023,11 +1063,11 @@ export interface FileRouteTypes {
     | '/institutes/edit/$id'
     | '/inventory/edit/$id'
     | '/meetings/edit/$id'
-    | '/peticash/edit/$id'
     | '/semester/edit/$id'
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/cashbook/add/'
     | '/committee/add/'
     | '/complaints/add/'
     | '/divisions/add/'
@@ -1045,10 +1085,11 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PeticashIdRoute: typeof PeticashIdRoute
+  CashbookIdRoute: typeof CashbookIdRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
   BankaccountsIndexRoute: typeof BankaccountsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
+  CashbookIndexRoute: typeof CashbookIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
@@ -1070,6 +1111,7 @@ export interface RootRouteChildren {
   StudentsIndexRoute: typeof StudentsIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
+  CashbookEditIdRoute: typeof CashbookEditIdRoute
   CommitteeEditIdRoute: typeof CommitteeEditIdRoute
   ComplaintsEditIdRoute: typeof ComplaintsEditIdRoute
   DivisionsEditIdRoute: typeof DivisionsEditIdRoute
@@ -1077,11 +1119,11 @@ export interface RootRouteChildren {
   InstitutesEditIdRoute: typeof InstitutesEditIdRoute
   InventoryEditIdRoute: typeof InventoryEditIdRoute
   MeetingsEditIdRoute: typeof MeetingsEditIdRoute
-  PeticashEditIdRoute: typeof PeticashEditIdRoute
   SemesterEditIdRoute: typeof SemesterEditIdRoute
   StaffEditIdRoute: typeof StaffEditIdRoute
   StudentsEditIdRoute: typeof StudentsEditIdRoute
   TrustiesEditIdRoute: typeof TrustiesEditIdRoute
+  CashbookAddIndexRoute: typeof CashbookAddIndexRoute
   CommitteeAddIndexRoute: typeof CommitteeAddIndexRoute
   ComplaintsAddIndexRoute: typeof ComplaintsAddIndexRoute
   DivisionsAddIndexRoute: typeof DivisionsAddIndexRoute
@@ -1098,10 +1140,11 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PeticashIdRoute: PeticashIdRoute,
+  CashbookIdRoute: CashbookIdRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
   BankaccountsIndexRoute: BankaccountsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
+  CashbookIndexRoute: CashbookIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
   ComplaintsIndexRoute: ComplaintsIndexRoute,
@@ -1123,6 +1166,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentsIndexRoute: StudentsIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
+  CashbookEditIdRoute: CashbookEditIdRoute,
   CommitteeEditIdRoute: CommitteeEditIdRoute,
   ComplaintsEditIdRoute: ComplaintsEditIdRoute,
   DivisionsEditIdRoute: DivisionsEditIdRoute,
@@ -1130,11 +1174,11 @@ const rootRouteChildren: RootRouteChildren = {
   InstitutesEditIdRoute: InstitutesEditIdRoute,
   InventoryEditIdRoute: InventoryEditIdRoute,
   MeetingsEditIdRoute: MeetingsEditIdRoute,
-  PeticashEditIdRoute: PeticashEditIdRoute,
   SemesterEditIdRoute: SemesterEditIdRoute,
   StaffEditIdRoute: StaffEditIdRoute,
   StudentsEditIdRoute: StudentsEditIdRoute,
   TrustiesEditIdRoute: TrustiesEditIdRoute,
+  CashbookAddIndexRoute: CashbookAddIndexRoute,
   CommitteeAddIndexRoute: CommitteeAddIndexRoute,
   ComplaintsAddIndexRoute: ComplaintsAddIndexRoute,
   DivisionsAddIndexRoute: DivisionsAddIndexRoute,
@@ -1160,10 +1204,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/peticash/$id",
+        "/cashbook/$id",
         "/admissions/",
         "/bankaccounts/",
         "/calender/",
+        "/cashbook/",
         "/cashiers/",
         "/committee/",
         "/complaints/",
@@ -1185,6 +1230,7 @@ export const routeTree = rootRoute
         "/students/",
         "/subjects/",
         "/trusties/",
+        "/cashbook/edit/$id",
         "/committee/edit/$id",
         "/complaints/edit/$id",
         "/divisions/edit/$id",
@@ -1192,11 +1238,11 @@ export const routeTree = rootRoute
         "/institutes/edit/$id",
         "/inventory/edit/$id",
         "/meetings/edit/$id",
-        "/peticash/edit/$id",
         "/semester/edit/$id",
         "/staff/edit/$id",
         "/students/edit/$id",
         "/trusties/edit/$id",
+        "/cashbook/add/",
         "/committee/add/",
         "/complaints/add/",
         "/divisions/add/",
@@ -1214,8 +1260,8 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
-    "/peticash/$id": {
-      "filePath": "peticash/$id.tsx"
+    "/cashbook/$id": {
+      "filePath": "cashbook/$id.tsx"
     },
     "/admissions/": {
       "filePath": "admissions/index.tsx"
@@ -1225,6 +1271,9 @@ export const routeTree = rootRoute
     },
     "/calender/": {
       "filePath": "calender/index.tsx"
+    },
+    "/cashbook/": {
+      "filePath": "cashbook/index.tsx"
     },
     "/cashiers/": {
       "filePath": "cashiers/index.tsx"
@@ -1289,6 +1338,9 @@ export const routeTree = rootRoute
     "/trusties/": {
       "filePath": "trusties/index.tsx"
     },
+    "/cashbook/edit/$id": {
+      "filePath": "cashbook/edit/$id.tsx"
+    },
     "/committee/edit/$id": {
       "filePath": "committee/edit/$id.tsx"
     },
@@ -1310,9 +1362,6 @@ export const routeTree = rootRoute
     "/meetings/edit/$id": {
       "filePath": "meetings/edit/$id.tsx"
     },
-    "/peticash/edit/$id": {
-      "filePath": "peticash/edit/$id.tsx"
-    },
     "/semester/edit/$id": {
       "filePath": "semester/edit/$id.tsx"
     },
@@ -1324,6 +1373,9 @@ export const routeTree = rootRoute
     },
     "/trusties/edit/$id": {
       "filePath": "trusties/edit/$id.tsx"
+    },
+    "/cashbook/add/": {
+      "filePath": "cashbook/add/index.tsx"
     },
     "/committee/add/": {
       "filePath": "committee/add/index.tsx"

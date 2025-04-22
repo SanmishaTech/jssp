@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import PeticashForm from "../../../Components/peticash/PeticashForm";
+import PeticashForm from "../../../Components/cashbook/PeticashForm";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/peticash/edit/$id")({
+export const Route = createFileRoute("/cashbook/edit/$id")({
   beforeLoad: async () => {
     // Check authentication
     const token = localStorage.getItem("token");

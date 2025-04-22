@@ -143,8 +143,8 @@ const roleBasedItems = {
           icon: UsersRound,
         },
         {
-          title: "Petty Cash",
-          url: "/peticash",
+          title: "CashBook",
+          url: "/cashbook",
           icon: Landmark,
         },
         {

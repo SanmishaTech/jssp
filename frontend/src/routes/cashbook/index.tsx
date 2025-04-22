@@ -31,7 +31,7 @@ axios.interceptors.response.use(
   }
 );
 
-export const Route = createFileRoute("/peticash/")({
+export const Route = createFileRoute("/cashbook/")({
   beforeLoad: async () => {
     // Check authentication
     const token = localStorage.getItem("token");
