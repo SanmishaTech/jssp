@@ -86,8 +86,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('cashiers', CashierController::class);
    Route::get('/all_cashiers', [CashierController::class, 'allCashier'])->name("cashiers.all");
 
-   Route::resource('bank-accounts', BankAccountController::class);
-   Route::get('/all_bank_accounts', [BankAccountController::class, 'allBankAccounts'])->name("bankaccounts.all");
+   Route::resource('bankaccounts', BankAccountController::class);
+   Route::get('/all_bankaccounts', [BankAccountController::class, 'allBankAccounts'])->name("bankaccounts.all");
    
    Route::resource('subjects', SubjectController::class);
    Route::get('/all_subjects', [SubjectController::class, 'allSubject'])->name("subjects.all");

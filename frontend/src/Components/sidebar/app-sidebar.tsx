@@ -154,6 +154,20 @@ const roleBasedItems = {
         },
       ],
     },
+    {
+      title: "Bank",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Bank Accounts",
+          url: "/bankaccounts",
+          icon: BookText,
+        },
+       
+         
+      
+      ],
+    },
   ],
   superadmin: [
     {

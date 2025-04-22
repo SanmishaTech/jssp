@@ -34,6 +34,7 @@ import { Route as ComplaintsIndexImport } from './routes/complaints/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
+import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
 import { Route as PeticashIdImport } from './routes/peticash/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
@@ -198,6 +199,12 @@ const CashiersIndexRoute = CashiersIndexImport.update({
 const CalenderIndexRoute = CalenderIndexImport.update({
   id: '/calender/',
   path: '/calender/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BankaccountsIndexRoute = BankaccountsIndexImport.update({
+  id: '/bankaccounts/',
+  path: '/bankaccounts/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -380,6 +387,13 @@ declare module '@tanstack/react-router' {
       path: '/admissions'
       fullPath: '/admissions'
       preLoaderRoute: typeof AdmissionsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/bankaccounts/': {
+      id: '/bankaccounts/'
+      path: '/bankaccounts'
+      fullPath: '/bankaccounts'
+      preLoaderRoute: typeof BankaccountsIndexImport
       parentRoute: typeof rootRoute
     }
     '/calender/': {
@@ -713,6 +727,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/peticash/$id': typeof PeticashIdRoute
   '/admissions': typeof AdmissionsIndexRoute
+  '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
@@ -765,6 +780,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/peticash/$id': typeof PeticashIdRoute
   '/admissions': typeof AdmissionsIndexRoute
+  '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
@@ -818,6 +834,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/peticash/$id': typeof PeticashIdRoute
   '/admissions/': typeof AdmissionsIndexRoute
+  '/bankaccounts/': typeof BankaccountsIndexRoute
   '/calender/': typeof CalenderIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
@@ -872,6 +889,7 @@ export interface FileRouteTypes {
     | '/'
     | '/peticash/$id'
     | '/admissions'
+    | '/bankaccounts'
     | '/calender'
     | '/cashiers'
     | '/committee'
@@ -923,6 +941,7 @@ export interface FileRouteTypes {
     | '/'
     | '/peticash/$id'
     | '/admissions'
+    | '/bankaccounts'
     | '/calender'
     | '/cashiers'
     | '/committee'
@@ -974,6 +993,7 @@ export interface FileRouteTypes {
     | '/'
     | '/peticash/$id'
     | '/admissions/'
+    | '/bankaccounts/'
     | '/calender/'
     | '/cashiers/'
     | '/committee/'
@@ -1027,6 +1047,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PeticashIdRoute: typeof PeticashIdRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
+  BankaccountsIndexRoute: typeof BankaccountsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
@@ -1079,6 +1100,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PeticashIdRoute: PeticashIdRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
+  BankaccountsIndexRoute: BankaccountsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
@@ -1140,6 +1162,7 @@ export const routeTree = rootRoute
         "/",
         "/peticash/$id",
         "/admissions/",
+        "/bankaccounts/",
         "/calender/",
         "/cashiers/",
         "/committee/",
@@ -1196,6 +1219,9 @@ export const routeTree = rootRoute
     },
     "/admissions/": {
       "filePath": "admissions/index.tsx"
+    },
+    "/bankaccounts/": {
+      "filePath": "bankaccounts/index.tsx"
     },
     "/calender/": {
       "filePath": "calender/index.tsx"

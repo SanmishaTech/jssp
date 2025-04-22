@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\BankAccountResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BankAccountResource extends JsonResource
@@ -28,5 +29,6 @@ class BankAccountResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         
-         ];    }
+         ];   
+         }
 }
