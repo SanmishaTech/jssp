@@ -25,6 +25,7 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
   peticashId,
+  currentBalance,
   onTransactionComplete,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -100,6 +101,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         ...prev,
         error: "Note must be less than 100 characters",
       }));
+      return;
+    }
+
+    // Check for local insufficient balance
+    if (formData.type === "debit" && parseFloat(formData.amount) > Number(currentBalance)) {
+      toast.error("Insufficient balance for this debit");
       return;
     }
 
