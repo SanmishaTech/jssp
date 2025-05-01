@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 use App\Http\Controllers\Api\BankAccountController;
+use App\Http\Controllers\Api\BankController;
 
 
 
@@ -102,6 +103,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_peticash', [PeticashController::class, 'allRooms'])->name("peticash.all");
    Route::post('/peticash/{id}/transaction', [PeticashController::class, 'recordTransaction'])->name("peticash.transaction");
    Route::get('/peticash/{id}/transactions', [PeticashController::class, 'getTransactionHistory'])->name("peticash.transactions");
+
+   // Bank routes
+   Route::resource('banks', BankController::class);
+   Route::get('/all_banks', [BankController::class, 'allBanks'])->name("banks.all");
+   Route::post('/banks/{id}/transaction', [BankController::class, 'recordTransaction'])->name("banks.transaction");
+   Route::get('/banks/{id}/transactions', [BankController::class, 'getTransactionHistory'])->name("banks.transactions");
 
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");

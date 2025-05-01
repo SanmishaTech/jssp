@@ -6,13 +6,10 @@
 export const formattedDate = (dateString: string): string => {
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    // Format as "DD Month, YYYY (hh:mm AM/PM)"
+    const d = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+    const t = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return `${d}, ${date.getFullYear()} (${t})`;
   } catch {
     return dateString || '-';
   }

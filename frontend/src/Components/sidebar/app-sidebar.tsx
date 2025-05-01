@@ -163,6 +163,11 @@ const roleBasedItems = {
           url: "/bankaccounts",
           icon: BookText,
         },
+        {
+          title: "Bank",
+          url: "/bank",
+          icon: BookText,
+        },
        
          
       
