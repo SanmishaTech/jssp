@@ -18,7 +18,7 @@ class BankTransactionResource extends JsonResource
             'id' => $this->id,
             'bank_id' => $this->bank_id,
             'bank_account_id' => $this->bank_account_id,
-            'bank_account_name' => optional($this->bankAccount)->account_name,
+            'bank_account_name' => optional($this->bankAccount)->bank_name,
             'amount' => $this->amount,
             'description' => $this->description,
             'type' => $this->type,

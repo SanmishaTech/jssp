@@ -143,6 +143,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         payment_method: formData.payment_method,
         payer_name: formData.payer_name,
         reference_number: formData.reference_number,
+        bank_account_id: selectedAccountId,
       };
 
       const token = localStorage.getItem("token");

@@ -109,6 +109,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_banks', [BankController::class, 'allBanks'])->name("banks.all");
    Route::post('/banks/{id}/transaction', [BankController::class, 'recordTransaction'])->name("banks.transaction");
    Route::get('/banks/{id}/transactions', [BankController::class, 'getTransactionHistory'])->name("banks.transactions");
+   Route::get('/all_bankaccounts', [BankAccountController::class, 'allBankAccounts'])->name("bankaccounts.all");
+
 
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");

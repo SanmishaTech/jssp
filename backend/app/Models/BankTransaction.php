@@ -26,6 +26,14 @@ class BankTransaction extends Model
     }
 
     /**
+     * Get the bank account that owns the transaction.
+     */
+    public function bankAccount(): BelongsTo
+    {
+        return $this->belongsTo(BankAccount::class, 'bank_account_id');
+    }
+
+    /**
      * Get the user who created the transaction.
      */
     public function creator(): BelongsTo

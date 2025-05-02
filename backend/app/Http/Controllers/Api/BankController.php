@@ -234,6 +234,12 @@ class BankController extends BaseController
             $query->whereDate('created_at', $request->input('date'));
         }
 
+        if ($request->has('bank_account_name')) {
+            $query->whereHas('bankAccount', function($q) use ($request) {
+                $q->where('bank_name', 'like', '%' . $request->input('bank_account_name') . '%');
+            });
+        }
+
         $transactions = $query->orderBy('created_at', 'desc')->paginate(5);
 
         return $this->sendResponse([

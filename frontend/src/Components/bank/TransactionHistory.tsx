@@ -42,6 +42,7 @@ interface Transaction {
   payment_method?: string;
   payer_name?: string;
   reference_number?: string;
+  bank_account_name?: string;
 }
 
 export default function TransactionHistory({
@@ -54,6 +55,7 @@ export default function TransactionHistory({
   const [totalPages, setTotalPages] = useState(1);
   const [typeFilter, setTypeFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [bankAccountFilter, setBankAccountFilter] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'created_at', direction: 'desc' });
@@ -95,6 +97,10 @@ export default function TransactionHistory({
         url += `&date=${dateFilter}`;
       }
 
+      if (bankAccountFilter) {
+        url += `&bank_account_name=${encodeURIComponent(bankAccountFilter)}`;
+      }
+
       const token = localStorage.getItem("token");
       const { data } = await axios.get(url, {
         headers: {
@@ -124,7 +130,7 @@ export default function TransactionHistory({
     if (peticashId) {
       fetchTransactions();
     }
-  }, [peticashId, page, typeFilter, dateFilter]);
+  }, [peticashId, page, typeFilter, dateFilter, bankAccountFilter]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -140,9 +146,15 @@ export default function TransactionHistory({
     setPage(1); // Reset to first page when filter changes
   };
 
+  const handleBankAccountFilterChange = (value: string) => {
+    setBankAccountFilter(value);
+    setPage(1); // Reset page when filter changes
+  };
+
   const resetFilters = () => {
     setTypeFilter("all");
     setDateFilter("");
+    setBankAccountFilter("");
     setPage(1);
   };
 
@@ -221,7 +233,17 @@ export default function TransactionHistory({
             />
           </div>
 
-          {(typeFilter !== "all" || dateFilter) && (
+          <div className="flex items-center">
+            <Input
+              type="text"
+              placeholder="Filter by bank name"
+              value={bankAccountFilter}
+              onChange={(e) => handleBankAccountFilterChange(e.target.value)}
+              className="max-w-[180px]"
+            />
+          </div>
+
+          {(typeFilter !== "all" || dateFilter || bankAccountFilter) && (
             <Button
               className="mt-1 h-9.5 bg-blue-600 text-white hover:bg-blue-600"
               variant="flat"
@@ -249,6 +271,7 @@ export default function TransactionHistory({
                 <TableColumn onClick={() => handleSort('amount')} className="cursor-pointer">AMOUNT{sortConfig.key==='amount'?(sortConfig.direction==='asc'?' ▲':' ▼'):''}</TableColumn>
                 <TableColumn onClick={() => handleSort('balance_after')} className="cursor-pointer">BALANCE{sortConfig.key==='balance_after'?(sortConfig.direction==='asc'?' ▲':' ▼'):''}</TableColumn>
                 <TableColumn onClick={() => handleSort('created_at')} className="cursor-pointer">DATE{sortConfig.key==='created_at'?(sortConfig.direction==='asc'?' ▲':' ▼'):''}</TableColumn>
+                <TableColumn>BANK NAME</TableColumn>
               </TableHeader>
               <TableBody>
                 {sortedTransactions.map((transaction) => (
@@ -277,6 +300,7 @@ export default function TransactionHistory({
                     <TableCell>
                       {formattedDate(transaction.created_at)}
                     </TableCell>
+                    <TableCell>{transaction.bank_account_name || '-'}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
