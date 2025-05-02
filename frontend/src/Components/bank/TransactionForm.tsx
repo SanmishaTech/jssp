@@ -14,7 +14,7 @@ import {
   DropdownItem,
   Spinner,
 } from "@heroui/react";
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "../../Components/ui/radio-group";
 import { toast } from "sonner";
 
 interface TransactionFormProps {
@@ -143,7 +143,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         payment_method: formData.payment_method,
         payer_name: formData.payer_name,
         reference_number: formData.reference_number,
-        bank_account_id: selectedAccountId,
       };
 
       const token = localStorage.getItem("token");
@@ -158,13 +157,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
       // Changed API endpoint to match the route defined in api.php
       const response = await axios.post(
-        `/api/banks/${selectedAccountId}/transaction`,
+        `/api/bankaccounts/${selectedAccountId}/add-transaction`,
         payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          // resolve 4xx statuses so global 401 interceptor won’t redirect
+          // resolve 4xx statuses so global 401 interceptor won't redirect
           validateStatus: (status) => status < 500,
         }
       );

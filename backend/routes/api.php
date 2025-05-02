@@ -110,6 +110,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::post('/banks/{id}/transaction', [BankController::class, 'recordTransaction'])->name("banks.transaction");
    Route::get('/banks/{id}/transactions', [BankController::class, 'getTransactionHistory'])->name("banks.transactions");
    Route::get('/banks/transactions/account/{id}', [BankController::class, 'getTransactionsByBankAccount'])->name("banks.transactions.byAccount");
+   Route::post('/bankaccounts/{id}/add-transaction', [BankController::class, 'recordBankAccountTransaction'])->name("bankaccounts.transaction");
    Route::get('/all_bankaccounts', [BankAccountController::class, 'allBankAccounts'])->name("bankaccounts.all");
 
 

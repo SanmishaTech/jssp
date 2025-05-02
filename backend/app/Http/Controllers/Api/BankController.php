@@ -261,7 +261,7 @@ class BankController extends BaseController
     public function getTransactionsByBankAccount(string $id, Request $request): JsonResponse
     {
         // Debug log
-        \Log::info('Fetching transactions for bank account ID: ' . $id);
+        Log::info('Fetching transactions for bank account ID: ' . $id);
         
         $query = BankTransaction::where('bank_account_id', $id);
 
@@ -275,7 +275,7 @@ class BankController extends BaseController
         $transactions = $query->orderBy('created_at', 'desc')->paginate(5);
         
         // Debug log
-        \Log::info('Found ' . $transactions->count() . ' transactions');
+        Log::info('Found ' . $transactions->count() . ' transactions');
 
         return $this->sendResponse([
             "transactions" => $transactions->count() ? BankTransactionResource::collection($transactions) : [],
@@ -286,5 +286,75 @@ class BankController extends BaseController
                 'total'        => $transactions->total(),
             ]
         ], "Transaction history retrieved successfully");
+    }
+
+    /**
+     * Record a new transaction for a bank account directly.
+     */
+    public function recordBankAccountTransaction(Request $request, string $id): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Find the bank associated with this account or use the default bank
+            $bankAccount = DB::table('bank_accounts')->find($id);
+            
+            if (!$bankAccount) {
+                return $this->sendError("Bank account not found", ['error' => 'Bank account not found']);
+            }
+            
+            // Find or use default bank
+            $bank = Bank::where('institute_id', Auth::user()->staff->institute_id)->first();
+            
+            if (!$bank) {
+                return $this->sendError("No bank found for this institute", ['error' => 'No bank found']);
+            }
+
+            $amount = (float) $request->input('amount');
+            $description = $request->input('description');
+            $type = $request->input('type', 'debit');
+
+            if ($type == 'debit') {
+                if ($bank->total_amount < $amount) {
+                    return $this->sendError("Insufficient funds", ['error' => 'Not enough balance']);
+                }
+                $newBalance = $bank->total_amount - $amount;
+                $bank->total_amount = $newBalance;
+                $bank->total_spend = ($bank->total_spend ?? 0) + $amount;
+            } else {
+                $newBalance = $bank->total_amount + $amount;
+                $bank->total_amount = $newBalance;
+            }
+
+            if ($request->has('note')) {
+                $bank->note = $request->input('note');
+            }
+            if ($request->has('note_amount')) {
+                $bank->note_amount = $request->input('note_amount');
+            }
+
+            $bank->save();
+
+            $transaction = new BankTransaction();
+            $transaction->bank_id = $bank->id;
+            $transaction->amount = $amount;
+            $transaction->description = $description;
+            $transaction->type = $type;
+            $transaction->balance_after = $newBalance;
+            $transaction->payment_method = $request->input('payment_method', 'cash');
+            $transaction->payer_name = $request->input('payer_name');
+            $transaction->reference_number = $request->input('reference_number');
+            $transaction->created_by = Auth::id();
+            $transaction->bank_account_id = $id;
+            $transaction->save();
+
+            DB::commit();
+            return $this->sendResponse([
+                "transaction" => new BankTransactionResource($transaction),
+                "bank" => new BankResource($bank)
+            ], "Transaction recorded successfully");
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $this->sendError("Failed to record transaction", ['error' => $e->getMessage()]);
+        }
     }
 }
