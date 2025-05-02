@@ -130,6 +130,8 @@ interface DashboardProps {
   setCurrentPage: (page: number) => void;
   handlePageChange: (page: number) => void;
   fetchData: (query?: string, page?: number) => Promise<void>;
+  onRowClick?: (item: any) => void;
+  searchQuery?: string;
 }
 
 export default function Dashboard({
@@ -151,6 +153,8 @@ export default function Dashboard({
   handlePrevPage = () => {},
   setCurrentPage = () => {},
   handlePageChange = () => {},
+  onRowClick = () => {},
+  searchQuery = "",
 }: DashboardProps) {
   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
@@ -332,7 +336,7 @@ export default function Dashboard({
               ) : (
                 <Card className="bg-card border border-border shadow-sm overflow-hidden">
                   <CardContent className="p-0">
-                    <Table>
+                    <Table aria-label="Product table">
                       <TableHeader>
                         <TableRow className="bg-muted/40 hover:bg-muted/40">
                           {tableColumns?.headers?.map((header, index) => (
@@ -357,18 +361,32 @@ export default function Dashboard({
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {tableData?.map((row) => (
-                          <React.Fragment key={row.id}>
-                            <TableRow>
-                              {tableColumns?.headers?.map((header, index) => (
+                        {tableData.length > 0 ? (
+                          tableData.map((item) => {
+                            console.log("Rendering table row item:", item);
+                            return (
+                            <TableRow 
+                              key={item.id}
+                              className="group cursor-pointer" 
+                              onClick={() => item.rawData ? onRowClick(item.rawData) : null}
+                            >
+                              {tableColumns?.headers?.map((header, index) => {
+                                console.log(`Rendering cell for header ${header.key}, value: ${item[header.key] || item.one}`);
+                                return (
                                 <TableCell
                                   key={index}
                                   className={
                                     header.hiddenOn ? header.hiddenOn : ""
                                   }
                                 >
-                                  {header.key === "one" ? (
-                                    row.one
+                                  {header.key === "bank_name" ? (
+                                    item.one
+                                  ) : header.key === "account_number" ? (
+                                    item.two
+                                  ) : header.key === "ifsc_code" ? (
+                                    item.three
+                                  ) : header.key === "branch" ? (
+                                    item.four
                                   ) : header.key === "action" ? (
                                     <Dropdown backdrop="blur" showArrow>
                                       <DropdownTrigger>
@@ -386,7 +404,7 @@ export default function Dashboard({
                                             key="edit"
                                             description="Edit Bank Accounts details"
                                             onPress={() =>
-                                              onProductAction("edit", row)
+                                              onProductAction("edit", item)
                                             }
                                             startContent={
                                               <Pencil className={iconClasses} />
@@ -402,7 +420,7 @@ export default function Dashboard({
                                             color="danger"
                                             description="This action cannot be undone"
                                             onPress={() => {
-                                              setEditid(row.id);
+                                              setEditid(item.id);
                                               setToggleopen(true);
                                             }}
                                             startContent={
@@ -419,24 +437,22 @@ export default function Dashboard({
                                         </DropdownSection>
                                       </DropdownMenu>
                                     </Dropdown>
-                                  ) : header.key === "two" ? (
-                                    row.two
-                                  ) : header.key === "three" ? (
-                                    row.three
-                                  ) : header.key === "four" ? (
-                                    row.four
-                                  ) : header.key === "five" ? (
-                                    row.five
-                                  ) : header.key === "six" ? (
-                                    `₹${row.six}`
                                   ) : (
-                                    row[header.key]
+                                    item[header.key] || item.one
                                   )}
                                 </TableCell>
-                              ))}
+                                );
+                              })}
                             </TableRow>
-                          </React.Fragment>
-                        ))}
+                            );
+                          })
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={tableColumns.headers.length} className="text-center">
+                              No data found
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </CardContent>

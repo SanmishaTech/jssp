@@ -39,10 +39,9 @@ type BankAccountFormValues = z.infer<typeof bankAccountFormSchema>;
 
 interface EditBankAccountDialogProps {
   isOpen: boolean;
-  onOpen: (value: boolean) => void;
-  backdrop?: "blur" | "transparent" | "opaque";
-  fetchData: () => void;
-  bankAccountId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+  id: string;
 }
 
 interface FormFieldProps {
@@ -57,10 +56,9 @@ interface FormFieldProps {
 
 export default function EditBankAccountDialog({
   isOpen,
-  onOpen,
-  backdrop = "blur",
-  fetchData,
-  bankAccountId,
+  onClose,
+  onSuccess,
+  id,
 }: EditBankAccountDialogProps) {
   const defaultValues: Partial<BankAccountFormValues> = {};
   const form = useForm<BankAccountFormValues>({
@@ -69,8 +67,8 @@ export default function EditBankAccountDialog({
     mode: "onChange",
   });
 
-  const onClose = () => {
-    onOpen(false);
+  const handleClose = () => {
+    onClose();
     form.reset();
   };
 
@@ -78,10 +76,10 @@ export default function EditBankAccountDialog({
 
   // Fetch bank account data when dialog opens
   React.useEffect(() => {
-    if (isOpen && bankAccountId) {
+    if (isOpen && id) {
       const fetchBankAccountData = async () => {
         try {
-          const response = await axios.get(`/api/bankaccounts/${bankAccountId}`, {
+          const response = await axios.get(`/api/bankaccounts/${id}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -92,16 +90,16 @@ export default function EditBankAccountDialog({
         } catch (error) {
           console.error("Error fetching bank account:", error);
           toast.error("Failed to load bank account data");
-          onClose();
+          handleClose();
         }
       };
       fetchBankAccountData();
     }
-  }, [isOpen, bankAccountId, form, token]);
+  }, [isOpen, id, form, token]);
 
   async function onSubmit(data: BankAccountFormValues) {
     try {
-      await axios.put(`/api/bankaccounts/${bankAccountId}`, data, {
+      await axios.put(`/api/bankaccounts/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -109,8 +107,8 @@ export default function EditBankAccountDialog({
       });
 
       toast.success("Bank Account Updated Successfully");
-      onClose();
-      fetchData();
+      handleClose();
+      onSuccess();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -119,7 +117,7 @@ export default function EditBankAccountDialog({
           // Handle validation errors
           Object.entries(errorData.errors).forEach(([field, messages]) => {
             // Set form errors
-            form.setError(field as keyof ProfileFormValues, {
+            form.setError(field as keyof BankAccountFormValues, {
               message: Array.isArray(messages) ? messages[0] : messages,
             });
 
@@ -141,7 +139,7 @@ export default function EditBankAccountDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal size="2xl" isOpen={isOpen} onClose={handleClose}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -281,7 +279,7 @@ export default function EditBankAccountDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={handleClose}>
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>

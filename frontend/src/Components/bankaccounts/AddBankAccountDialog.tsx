@@ -38,9 +38,8 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface AddAdmissionDialogProps {
   isOpen: boolean;
-  onOpen: (value: boolean) => void;
-  backdrop?: "blur" | "transparent" | "opaque";
-  fetchData: () => void;
+  onClose: () => void;
+  onSuccess: () => void;
 }
 
 interface FormFieldProps {
@@ -55,9 +54,8 @@ interface FormFieldProps {
 
 export default function AddAdmissionDialog({
   isOpen,
-  onOpen,
-  backdrop = "blur",
-  fetchData,
+  onClose,
+  onSuccess,
 }: AddAdmissionDialogProps) {
   const defaultValues: Partial<ProfileFormValues> = {};
   const form = useForm<ProfileFormValues>({
@@ -66,8 +64,8 @@ export default function AddAdmissionDialog({
     mode: "onChange",
   });
 
-  const onClose = () => {
-    onOpen(false);
+  const handleClose = () => {
+    onClose();
     form.reset();
   };
 
@@ -86,8 +84,8 @@ export default function AddAdmissionDialog({
       });
 
       toast.success("Bank Account Created Successfully");
-      onClose();
-      fetchData();
+      handleClose();
+      onSuccess();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data;
@@ -118,7 +116,7 @@ export default function AddAdmissionDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal size="2xl" backdrop="blur" isOpen={isOpen} onClose={handleClose}>
       <ModalContent>
         {(onClose) => (
           <>
@@ -265,7 +263,7 @@ export default function AddAdmissionDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={handleClose}>
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>

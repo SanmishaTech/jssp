@@ -12,6 +12,7 @@ use App\Http\Resources\BankResource;
 use App\Http\Resources\BankTransactionResource;
 use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BankController extends BaseController
 {
@@ -251,6 +252,39 @@ class BankController extends BaseController
                 'total'        => $transactions->total(),
             ],
             "bank" => new BankResource($bank)
+        ], "Transaction history retrieved successfully");
+    }
+
+    /**
+     * Get transaction history for a specific bank account.
+     */
+    public function getTransactionsByBankAccount(string $id, Request $request): JsonResponse
+    {
+        // Debug log
+        \Log::info('Fetching transactions for bank account ID: ' . $id);
+        
+        $query = BankTransaction::where('bank_account_id', $id);
+
+        if ($request->has('type')) {
+            $query->where('type', $request->input('type'));
+        }
+        if ($request->has('date')) {
+            $query->whereDate('created_at', $request->input('date'));
+        }
+
+        $transactions = $query->orderBy('created_at', 'desc')->paginate(5);
+        
+        // Debug log
+        \Log::info('Found ' . $transactions->count() . ' transactions');
+
+        return $this->sendResponse([
+            "transactions" => $transactions->count() ? BankTransactionResource::collection($transactions) : [],
+            "pagination" => [
+                'current_page' => $transactions->currentPage(),
+                'last_page'    => $transactions->lastPage(),
+                'per_page'     => $transactions->perPage(),
+                'total'        => $transactions->total(),
+            ]
         ], "Transaction history retrieved successfully");
     }
 }

@@ -4,6 +4,7 @@ import Dashboard from "./Dashboardreuse";
 import userAvatar from "@/images/Profile.jpg";
 import AddBankAccountDialog from "./AddBankAccountDialog";
 import EditBankAccountDialog from "./EditAdmissionDialog";
+import TransactionHistoryDialog from "./TransactionHistoryDialog";
 
 interface BankAccount {
   id: string;
@@ -108,6 +109,22 @@ interface DashboardProps {
   Searchitem?: string;
   onKeyPress?: (event: React.KeyboardEvent) => void;
   searchQuery: string;
+  onRowClick?: (product: BankAccount) => void;
+}
+
+// Update AddBankAccountDialog props
+interface AddBankAccountDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+// Update EditBankAccountDialog props
+interface EditBankAccountDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  id: string;
 }
 
 // Utility to format created_at
@@ -131,6 +148,8 @@ export default function Dashboardholiday() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedBankAccountId, setSelectedBankAccountId] = useState<string>("");
+  const [isTransactionDialogOpen, setIsTransactionDialogOpen] = useState(false);
+  const [selectedBankAccount, setSelectedBankAccount] = useState<BankAccount | null>(null);
   const typeofschema = {
     name: "String",
     bank_name: "String",
@@ -165,14 +184,29 @@ export default function Dashboardholiday() {
           },
         }
       );
-      setData(response.data.data.BankAccount);
-      const pagination = response.data.data.Pagination;
-      setPaginationState({
-        currentPage: Number(pagination.current_page),
-        totalPages: Number(pagination.last_page),
-        perPage: Number(pagination.per_page),
-        total: Number(pagination.total),
-      });
+      
+      console.log("Bank accounts API response:", response.data);
+      
+      if (response.data.data && response.data.data.BankAccount) {
+        setData(response.data.data.BankAccount);
+        
+        // Debug log each item
+        response.data.data.BankAccount.forEach((account, index) => {
+          console.log(`Bank account ${index}:`, account);
+        });
+        
+        const pagination = response.data.data.Pagination;
+        setPaginationState({
+          currentPage: Number(pagination.current_page),
+          totalPages: Number(pagination.last_page),
+          perPage: Number(pagination.per_page),
+          total: Number(pagination.total),
+        });
+      } else {
+        console.error("Invalid API response format:", response.data);
+        setError(new Error("Invalid API response format"));
+      }
+      
       setLoading(false);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -280,29 +314,45 @@ export default function Dashboardholiday() {
     await fetchData(query, 1);
   };
 
+  // Add a new function to handle row click for transactions
+  const handleRowClick = (bankAccount: BankAccount) => {
+    console.log("Clicked on bank account:", bankAccount);
+    setSelectedBankAccount(bankAccount);
+    setIsTransactionDialogOpen(true);
+  };
+
   if (loading) return <div className="p-4">Loading...</div>;
   if (error)
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
-  const mappedTableData = data.map((item) => ({
-    id: item.id,
-    name: item.name,
-    bank_name: item.bank_name,
-    account_number: item.account_number,
-    ifsc_code: item.ifsc_code,
-    branch: item.branch,
-    address: item.address,
-  
-     delete: "/bank-accounts/" + item.id,
-  }));
+  const renderTableData = () => {
+    console.log("Data being rendered:", data);
+    return data.map((item) => {
+      console.log("Processing item:", item);
+      return {
+        id: item.id,
+        bank_name: item.bank_name,
+        account_number: item.account_number,
+        ifsc_code: item.ifsc_code,
+        branch: item.branch,
+        // For backward compatibility with the existing code
+        one: item.bank_name,
+        two: item.account_number, 
+        three: item.ifsc_code,
+        four: item.branch,
+        delete: item.id,
+        rawData: item // Store the original object for row click handling
+      };
+    });
+  };
 
   const dashboardProps: DashboardProps = {
     breadcrumbs: config.breadcrumbs,
     searchPlaceholder: config.searchPlaceholder,
     userAvatar: userAvatar,
     tableColumns: config.tableColumns,
-    tableData: mappedTableData,
+    tableData: renderTableData(),
     onAddProduct: handleAddProduct,
     onExport: handleExport,
     onFilterChange: handleFilterChange,
@@ -323,24 +373,64 @@ export default function Dashboardholiday() {
     Searchitem: undefined,
     onKeyPress: undefined,
     searchQuery: searchQuery,
+    onRowClick: handleRowClick, // Add row click handler
   };
 
   return (
-    <div className="p-4">
-      <Dashboard {...dashboardProps} />
-      <AddBankAccountDialog
-        isOpen={isDialogOpen}
-        onOpen={setIsDialogOpen}
-        backdrop="blur"
-        fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
+    <>
+      {config && (
+        <Dashboard
+          breadcrumbs={config.breadcrumbs}
+          searchPlaceholder={config.searchPlaceholder}
+          userAvatar={userAvatar}
+          tableColumns={config.tableColumns}
+          tableData={renderTableData()}
+          onAddProduct={handleAddProduct}
+          onExport={handleExport}
+          onFilterChange={handleFilterChange}
+          onProductAction={handleProductAction}
+          onSearch={handleSearch}
+          typeofschema={typeofschema}
+          currentPage={paginationState.currentPage}
+          totalPages={paginationState.totalPages}
+          handleNextPage={handleNextPage}
+          handlePrevPage={handlePrevPage}
+          setCurrentPage={(page) => handlePageChange(page)}
+          handlePageChange={handlePageChange}
+          fetchData={fetchData}
+          searchQuery={searchQuery}
+          onRowClick={handleRowClick} // Add row click handler
+        />
+      )}
+      
+      {isDialogOpen && (
+        <AddBankAccountDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onSuccess={() => {
+            setIsDialogOpen(false);
+            fetchData(searchQuery, paginationState.currentPage);
+          }}
+        />
+      )}
+
+      {isEditDialogOpen && selectedBankAccountId && (
+        <EditBankAccountDialog
+          isOpen={isEditDialogOpen}
+          onClose={() => setIsEditDialogOpen(false)}
+          onSuccess={() => {
+            setIsEditDialogOpen(false);
+            fetchData(searchQuery, paginationState.currentPage);
+          }}
+          id={selectedBankAccountId}
+        />
+      )}
+
+      <TransactionHistoryDialog
+        isOpen={isTransactionDialogOpen}
+        onClose={() => setIsTransactionDialogOpen(false)}
+        bankAccount={selectedBankAccount}
       />
-      <EditBankAccountDialog
-        isOpen={isEditDialogOpen}
-        onOpen={setIsEditDialogOpen}
-        backdrop="blur"
-        fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
-        bankAccountId={selectedBankAccountId}
-      />
-    </div>
+    </>
   );
 }
