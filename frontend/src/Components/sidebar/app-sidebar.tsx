@@ -29,7 +29,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@/Components/ui/sidebar";
 // Import AlertDialog components from shadcn
 import {
   AlertDialog,
@@ -41,7 +41,7 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+} from "@/Components/ui/alert-dialog";
 // Import DropdownMenu and Button components
 import {
   DropdownMenu,
@@ -50,10 +50,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from "@/Components/ui/dropdown-menu";
+import { Button } from "@/Components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { ThemeSwitch } from "@/Components/theme-switch";
 
 const roleBasedItems = {
   admin: [
@@ -270,50 +271,61 @@ export function AppSidebar({ role, userAvatar }) {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent>
-        {/* Always visible logo container */}
-        <div className="flex items-center p-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex items-center cursor-pointer">
-                <img src={background} alt="Logo" className="w-7 h-7" />
-                {/* Optionally show text on larger screens */}
-                <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
-              </div>
-            </DropdownMenuTrigger>
-            {/* Dropdown content positioned relative to the trigger */}
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {/* Wrap the Logout item in an AlertDialog for confirmation */}
-              <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    Logout
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You will be logged out from your account.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <Button
-                      variant="outline"
-                      onClick={() => setOpenLogoAlert(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" onClick={handleLogout}>
+        {/* Header area with logo and theme switch */}
+        <div className="flex flex-col space-y-3">
+          {/* Logo and dropdown */}
+          <div className="flex items-center justify-between p-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center cursor-pointer">
+                  <img src={background} alt="Logo" className="w-7 h-7" />
+                  {/* Optionally show text on larger screens */}
+                  <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
+                </div>
+              </DropdownMenuTrigger>
+              {/* Dropdown content positioned relative to the trigger */}
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Wrap the Logout item in an AlertDialog for confirmation */}
+                <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                       Logout
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        You will be logged out from your account.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => setOpenLogoAlert(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variant="destructive" onClick={handleLogout}>
+                        Logout
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Theme Switch - Always visible */}
+            <ThemeSwitch />
+          </div>
+          
+          {/* Divider */}
+          <div className="h-px bg-border mx-4" />
         </div>
+        
         {/* Sidebar navigation items */}
         <SidebarGroup>
           <SidebarGroupContent>
@@ -328,11 +340,11 @@ export function AppSidebar({ role, userAvatar }) {
                           onClick={() => toggleDropdown(item.title)}
                           className="flex items-center w-full"
                         >
-                          <item.icon className="mr-2" />
+                          <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                           <span>{item.title}</span>
                           {/* Dropdown arrow indicator */}
                           <svg
-                            className={`ml-auto transition-transform duration-200 ${
+                            className={`ml-auto transition-transform duration-200 text-gray-500 dark:text-blue-200 ${
                               openDropdowns[item.title] ? "rotate-90" : ""
                             }`}
                             width="20"
@@ -351,7 +363,7 @@ export function AppSidebar({ role, userAvatar }) {
                           <SidebarMenuItem key={child.title}>
                             <SidebarMenuButton asChild>
                               <a href={child.url} className="flex items-center">
-                                <child.icon className="mr-2" />
+                                <child.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                                 <span>{child.title}</span>
                               </a>
                             </SidebarMenuButton>
@@ -365,7 +377,7 @@ export function AppSidebar({ role, userAvatar }) {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <a href={item.url} className="flex items-center">
-                        <item.icon className="mr-2" />
+                        <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                         <span>{item.title}</span>
                       </a>
                     </SidebarMenuButton>

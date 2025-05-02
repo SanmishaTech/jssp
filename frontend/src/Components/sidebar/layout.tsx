@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/Components/ui/sidebar";
 import { AppSidebar } from "./app-sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -7,7 +7,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar role={role} />
       <main className="pt-2 flex-1 overflow-auto">
-        <SidebarTrigger />
+        <div className="p-2">
+          <SidebarTrigger />
+        </div>
         {children}
       </main>
     </SidebarProvider>
