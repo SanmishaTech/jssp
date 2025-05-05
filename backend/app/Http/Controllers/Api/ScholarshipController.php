@@ -60,9 +60,14 @@ class ScholarshipController extends BaseController
         $scholarship->students_applied_for_scholarship = $request->input('students_applied_for_scholarship');
         $scholarship->approved_from_university = $request->input('approved_from_university');
         $scholarship->first_installment_date = $request->input('first_installment_date');
+        $scholarship->first_installment_student = $request->input('first_installment_student');
         $scholarship->first_installment_amount = $request->input('first_installment_amount');
         $scholarship->second_installment_date = $request->input('second_installment_date');
+        $scholarship->second_installment_student = $request->input('second_installment_student');
         $scholarship->second_installment_amount = $request->input('second_installment_amount');
+        $scholarship->third_installment_date = $request->input('third_installment_date');
+        $scholarship->third_installment_student = $request->input('third_installment_student');
+        $scholarship->third_installment_amount = $request->input('third_installment_amount');
         $scholarship->save();
         
         return $this->sendResponse([ "Scholarship" => new ScholarshipResource($scholarship)], "Scholarship stored successfully");
@@ -98,10 +103,15 @@ class ScholarshipController extends BaseController
         $scholarship->students_applied_for_scholarship = $request->input('students_applied_for_scholarship');
         $scholarship->approved_from_university = $request->input('approved_from_university');
         $scholarship->first_installment_date = $request->input('first_installment_date');
+        $scholarship->first_installment_student = $request->input('first_installment_student');
         $scholarship->first_installment_amount = $request->input('first_installment_amount');
         $scholarship->second_installment_date = $request->input('second_installment_date');
+        $scholarship->second_installment_student = $request->input('second_installment_student');
         $scholarship->second_installment_amount = $request->input('second_installment_amount');
-           $scholarship->save();
+        $scholarship->third_installment_date = $request->input('third_installment_date');
+        $scholarship->third_installment_student = $request->input('third_installment_student');
+        $scholarship->third_installment_amount = $request->input('third_installment_amount');
+        $scholarship->save();
        
         return $this->sendResponse([ "Scholarship" => new ScholarshipResource($scholarship)], "Scholarship updated successfully");
 

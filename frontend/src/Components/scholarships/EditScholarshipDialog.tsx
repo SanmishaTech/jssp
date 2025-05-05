@@ -35,9 +35,14 @@ const profileFormSchema = z.object({
   students_applied_for_scholarship: z.string().transform(Number),
   approved_from_university: z.string().transform(Number),
   first_installment_date: z.string(),
+  first_installment_student: z.string(),
   first_installment_amount: z.string().transform(Number),
   second_installment_date: z.string(),
+  second_installment_student: z.string(),
   second_installment_amount: z.string().transform(Number),
+  third_installment_date: z.string(),
+  third_installment_student: z.string(),
+  third_installment_amount: z.string().transform(Number),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -192,9 +197,14 @@ export default function EditScholarshipDialog({
         ),
         approved_from_university: Number(data.approved_from_university),
         first_installment_date: data.first_installment_date,
+        first_installment_student: data.first_installment_student,
         first_installment_amount: Number(data.first_installment_amount),
         second_installment_date: data.second_installment_date,
+        second_installment_student: data.second_installment_student,
         second_installment_amount: Number(data.second_installment_amount),
+        third_installment_date: data.third_installment_date,
+        third_installment_student: data.third_installment_student,
+        third_installment_amount: Number(data.third_installment_amount),
       };
 
       await axios.patch(`/api/scholarships/${scholarshipId}`, formattedData, {
@@ -250,182 +260,303 @@ export default function EditScholarshipDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Course selection field */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">
-                        Course Title
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <select
-                          {...form.register("course_id")}
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                        >
-                          <option value="">Select Course...</option>
-                          {courses.map((course) => (
-                            <option
-                              key={course.id.toString()}
-                              value={course.id.toString()}
-                            >
-                              {course.medium_title}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {form.formState.errors.course_id && (
-                        <p className="mt-1 text-sm text-red-500">
-                          {form.formState.errors.course_id.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    {/* Academic Year selection field */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">
-                        Academic Year
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <select
-                          {...form.register("academic_years_id")}
-                          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                        >
-                          <option value="">Select Academic Year...</option>
-                          {academicYears.map((academicYear) => (
-                            <option
-                              key={academicYear.id.toString()}
-                              value={academicYear.id.toString()}
-                            >
-                              {academicYear.academic_year}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {form.formState.errors.academic_years_id && (
-                        <p className="mt-1 text-sm text-red-500">
-                          {form.formState.errors.academic_years_id.message}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <FormField
-                      control={form.control}
-                      name="students_applied_for_scholarship"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Students Applied for Scholarship
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Students Applied for Scholarship..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="approved_from_university"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Approved from University
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Approved from University..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="first_installment_date"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            First Installment Date
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="date"
-                              placeholder="First Installment Date..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="first_installment_amount"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            First Installment Amount
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="First Installment Amount..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="second_installment_date"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Second Installment Date
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="date"
-                              placeholder="Second Installment Date..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="second_installment_amount"
-                      render={({ field }: FormFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Second Installment Amount
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Second Installment Amount..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 
+                  
+                 {/* Academic Year selection field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Academic Year
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <select
+                       {...form.register("academic_years_id")}
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     >
+                       <option value="">Select Academic Year...</option>
+                       {academicYears.map((academicYear) => (
+                         <option
+                           key={academicYear.id.toString()}
+                           value={academicYear.id.toString()}
+                         >
+                           {academicYear.academic_year}
+                         </option>
+                       ))}
+                     </select>
+                   </div>
+                   {form.formState.errors.academic_years_id && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.academic_years_id.message}
+                     </p>
+                   )}
+                 </div>
+
+                  {/* Course selection field */}
+                  <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Course Title
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <select
+                       {...form.register("course_id")}
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     >
+                       <option value="">Select Course...</option>
+                       {courses.map((course) => (
+                         <option
+                           key={course.id.toString()}
+                           value={course.id.toString()}
+                         >
+                           {course.medium_title}
+                         </option>
+                       ))}
+                     </select>
+                   </div>
+                   {form.formState.errors.course_id && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.course_id.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* Students Applied field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Students Applied for Scholarship
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("students_applied_for_scholarship")}
+                       placeholder="Students Applied for Scholarship..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.students_applied_for_scholarship && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.students_applied_for_scholarship.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* Approved from University field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Approved from University
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("approved_from_university")}
+                       placeholder="Approved from University..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.approved_from_university && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.approved_from_university.message}
+                     </p>
+                   )}
+                 </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                 {/* First Installment Date field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     First Installment Date
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("first_installment_date")}
+                       type="date"
+                       placeholder="First Installment Date..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.first_installment_date && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.first_installment_date.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* First Installment Student field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     First Installment Student
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("first_installment_student")}
+                       placeholder="First Installment Student..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.first_installment_student && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.first_installment_student.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* First Installment Amount field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     First Installment Amount
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("first_installment_amount")}
+                       placeholder="First Installment Amount..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.first_installment_amount && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.first_installment_amount.message}
+                     </p>
+                   )}
+                 </div>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+                 {/* Second Installment Date field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Second Installment Date
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("second_installment_date")}
+                       type="date"
+                       placeholder="Second Installment Date..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.second_installment_date && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.second_installment_date.message}
+                     </p>
+                   )}
+                 </div>
+
+
+                   {/* Second Installment Student field */}
+                   <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Second Installment Amount
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("second_installment_student")}
+                       placeholder="Second Installment Student..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.second_installment_student && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.second_installment_student.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* Second Installment Amount field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Second Installment Amount
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("second_installment_amount")}
+                       placeholder="Second Installment Amount..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.second_installment_amount && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.second_installment_amount.message}
+                     </p>
+                   )}
+                 </div>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+
+                 {/* Third Installment Date field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Third Installment Date
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("third_installment_date")}
+                       type="date"
+                       placeholder="Third Installment Date..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.third_installment_date && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.third_installment_date.message}
+                     </p>
+                   )}
+                 </div>
+
+
+                   {/* Third Installment Student field */}
+                   <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Third Installment Student
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("third_installment_student")}
+                       placeholder="Third Installment Student..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.third_installment_student && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.third_installment_student.message}
+                     </p>
+                   )}
+                 </div>
+
+                 {/* Third Installment Amount field */}
+                 <div className="mb-4">
+                   <label className="block text-sm font-medium mb-1">
+                     Third Installment Amount
+                     <span className="text-red-500">*</span>
+                   </label>
+                   <div className="relative">
+                     <input
+                       {...form.register("third_installment_amount")}
+                       placeholder="Third Installment Amount..."
+                       className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                     />
+                   </div>
+                   {form.formState.errors.third_installment_amount && (
+                     <p className="mt-1 text-sm text-red-500">
+                       {form.formState.errors.third_installment_amount.message}
+                     </p>
+                   )}
+                 </div>
+                 </div>
+             
                 </form>
               </Form>
             </ModalBody>

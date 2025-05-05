@@ -20,9 +20,14 @@ return new class extends Migration
             $table->string('students_applied_for_scholarship')->nullable();
             $table->string('approved_from_university')->nullable();
             $table->string('first_installment_date')->nullable();
+            $table->string('first_installment_student')->nullable();
             $table->string('first_installment_amount')->nullable();
             $table->string('second_installment_date')->nullable();
+            $table->string('second_installment_student')->nullable();
             $table->string('second_installment_amount')->nullable();
+            $table->string('third_installment_date')->nullable();
+            $table->string('third_installment_student')->nullable();
+            $table->string('third_installment_amount')->nullable();
             $table->timestamps();
         });
     }
