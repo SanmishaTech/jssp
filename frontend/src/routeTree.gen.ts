@@ -38,6 +38,7 @@ import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
 import { Route as BankIndexImport } from './routes/bank/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
+import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
 import { Route as CashbookIdImport } from './routes/cashbook/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
@@ -230,6 +231,12 @@ const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AcademicyearsIndexRoute = AcademicyearsIndexImport.update({
+  id: '/academicyears/',
+  path: '/academicyears/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CashbookIdRoute = CashbookIdImport.update({
   id: '/cashbook/$id',
   path: '/cashbook/$id',
@@ -408,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/cashbook/$id'
       fullPath: '/cashbook/$id'
       preLoaderRoute: typeof CashbookIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/academicyears/': {
+      id: '/academicyears/'
+      path: '/academicyears'
+      fullPath: '/academicyears'
+      preLoaderRoute: typeof AcademicyearsIndexImport
       parentRoute: typeof rootRoute
     }
     '/admissions/': {
@@ -782,6 +796,7 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
+  '/academicyears': typeof AcademicyearsIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
@@ -839,6 +854,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
+  '/academicyears': typeof AcademicyearsIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
@@ -897,6 +913,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
+  '/academicyears/': typeof AcademicyearsIndexRoute
   '/admissions/': typeof AdmissionsIndexRoute
   '/bank/': typeof BankIndexRoute
   '/bankaccounts/': typeof BankaccountsIndexRoute
@@ -956,6 +973,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cashbook/$id'
+    | '/academicyears'
     | '/admissions'
     | '/bank'
     | '/bankaccounts'
@@ -1012,6 +1030,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cashbook/$id'
+    | '/academicyears'
     | '/admissions'
     | '/bank'
     | '/bankaccounts'
@@ -1068,6 +1087,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cashbook/$id'
+    | '/academicyears/'
     | '/admissions/'
     | '/bank/'
     | '/bankaccounts/'
@@ -1126,6 +1146,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CashbookIdRoute: typeof CashbookIdRoute
+  AcademicyearsIndexRoute: typeof AcademicyearsIndexRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
   BankIndexRoute: typeof BankIndexRoute
   BankaccountsIndexRoute: typeof BankaccountsIndexRoute
@@ -1183,6 +1204,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CashbookIdRoute: CashbookIdRoute,
+  AcademicyearsIndexRoute: AcademicyearsIndexRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
   BankIndexRoute: BankIndexRoute,
   BankaccountsIndexRoute: BankaccountsIndexRoute,
@@ -1249,6 +1271,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/cashbook/$id",
+        "/academicyears/",
         "/admissions/",
         "/bank/",
         "/bankaccounts/",
@@ -1308,6 +1331,9 @@ export const routeTree = rootRoute
     },
     "/cashbook/$id": {
       "filePath": "cashbook/$id.tsx"
+    },
+    "/academicyears/": {
+      "filePath": "academicyears/index.tsx"
     },
     "/admissions/": {
       "filePath": "admissions/index.tsx"

@@ -78,6 +78,11 @@ const roleBasedItems = {
       icon: BookOpen,
       children: [
         {
+          title: "Acadamic Year",
+          url: "/academicyears",
+          icon: BookMarked,
+        },
+        {
           title: "Subjects",
           url: "/subjects",
           icon: BookMarked,

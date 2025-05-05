@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\EventController;
@@ -33,10 +34,10 @@ use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\SuperAdminController;
-use App\Http\Controllers\Api\ScholarshipController;
-use App\Http\Controllers\Api\ProductCategoriesController;
 use App\Http\Controllers\Api\BankAccountController;
-use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\ScholarshipController;
+use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\ProductCategoriesController;
 
 
 
@@ -92,6 +93,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('subjects', SubjectController::class);
    Route::get('/all_subjects', [SubjectController::class, 'allSubject'])->name("subjects.all");
+
+   Route::resource('academic_years', AcademicYearController::class);
+   Route::get('/all_academic_years', [AcademicYearController::class, 'allAcademicYears'])->name("academic_years.all");
    
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudents'])->name("students.all");
