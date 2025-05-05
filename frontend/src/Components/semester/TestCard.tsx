@@ -52,8 +52,7 @@ import {
 
 const profileFormSchema = z.object({
   course_id: z.string().trim().nonempty("Course Title is Required"),
-  standard: z.string().trim().nonempty("Standard is Required"),
-  semester: z.string().trim().nonempty("Semester is Required"),
+   semester: z.string().trim().nonempty("Semester is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -151,7 +150,7 @@ function ProfileForm() {
             </CardHeader>
             <CardContent>
               {/* Course Combobox Field */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="course_id"
@@ -169,7 +168,7 @@ function ProfileForm() {
                                 variant="outline"
                                 role="combobox"
                                 aria-expanded={open}
-                                className="w-[250px] justify-between "
+                                className="w-[550px] justify-between "
                               >
                                 {field.value
                                   ? courses.find(
@@ -180,7 +179,7 @@ function ProfileForm() {
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-[300px] p-0">
+                            <PopoverContent className="w-[500px] p-0">
                               <Command>
                                 <CommandInput placeholder="Search course..." />
                                 <CommandList>
@@ -242,21 +241,7 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="standard"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Standard <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Standard..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                 
               </div>
             </CardContent>
           </Card>

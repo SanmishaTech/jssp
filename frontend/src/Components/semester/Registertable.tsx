@@ -122,8 +122,7 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Courses", key: "one" },
           { label: "Semester", key: "two" },
-          { label: "Standard", key: "three" },
-          { label: "Action", key: "action" },
+           { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
@@ -196,8 +195,7 @@ export default function Dashboardholiday() {
       id: item?.id,
       one: item?.course_name || "Unknown",
       two: item?.semester || "NA",
-      three: item?.standard || "NA",
-
+ 
       delete: "/semesters/" + item?.id,
     };
   });

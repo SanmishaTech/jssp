@@ -54,8 +54,7 @@ import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
   course_id: z.any().optional(),
-  standard: z.string().trim().nonempty("Standard is Required"),
-  semester: z.string().trim().nonempty("Semester is Required"),
+   semester: z.string().trim().nonempty("Semester is Required"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -155,14 +154,15 @@ function ProfileForm({ formData }) {
               <CardTitle>Semester Information</CardTitle>
             </CardHeader>
             <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
               {/* Course Combobox Field */}
-              <div className="mb-3">
-                <FormField
+                 <FormField
                   control={form.control}
                   name="course_id"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
+                    <FormItem className="flex flex-col">
+                        <FormLabel className="mt-[10px]">
                         Course Title <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -172,7 +172,7 @@ function ProfileForm({ formData }) {
                               variant="outline"
                               role="combobox"
                               aria-expanded={open}
-                              className="w-[200px] justify-between"
+                              className="w-[550px] justify-between"
                             >
                               {field.value
                                 ? courses.find(
@@ -185,7 +185,7 @@ function ProfileForm({ formData }) {
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[500px] p-0">
                             <Command>
                               <CommandInput placeholder="Search course..." />
                               <CommandList>
@@ -229,11 +229,10 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-              </div>
+             
 
               {/* Semester and Standard Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <FormField
+                 <FormField
                   control={form.control}
                   name="semester"
                   render={({ field }) => (
@@ -248,22 +247,10 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="standard"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Standard <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Standard..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+
+                  </div>
+                
+               
             </CardContent>
           </Card>
         </div>

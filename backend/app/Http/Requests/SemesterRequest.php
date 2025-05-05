@@ -24,9 +24,9 @@ class SemesterRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'course_id' => [
+            'semester' => [
                 'required',
-                'unique:semesters,course_id',
+                'unique:semesters,semester',
             ],
             
            
@@ -35,9 +35,9 @@ class SemesterRequest extends FormRequest
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
          
-            $rules['course_id'] = [
+            $rules['semester'] = [
                 'required',
-                'unique:semesters,course_id,' .$this->route('semester'),
+                'unique:semesters,semester,' .$this->route('semester'),
             ];
          }
         

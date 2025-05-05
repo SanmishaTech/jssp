@@ -153,128 +153,135 @@ export default function EditBankAccountDialog({
                   className="space-y-4"
                 >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                   <FormField
-                                     control={form.control}
-                                     name="bank_name"
-                                     render={({ field }: FormFieldProps) => (
-                                       <FormItem>
-                                         <FormLabel>
-                                           Bank Name
-                                           <span className="text-red-500">*</span>
-                                         </FormLabel>
-                                         <FormControl>
-                                           <Input
-                                             placeholder="Bank Name..."
-                                             {...field}
-                                           />
-                                         </FormControl>
-                                         <FormMessage />
-                                       </FormItem>
-                                     )}
-                                   />
-                                    <FormField
-                                     control={form.control}
-                                     name="account_number"
-                                     render={({ field }: FormFieldProps) => (
-                                       <FormItem>
-                                         <FormLabel>
-                                           Account Number
-                                           <span className="text-red-500">*</span>
-                                         </FormLabel>
-                                         <FormControl>
-                                           <Input
-                                             placeholder="Account Number..."
-                                             {...field}
-                                           />
-                                         </FormControl>
-                                         <FormMessage />
-                                       </FormItem>
-                                     )}
-                                   />
-                                   <FormField
-                                     control={form.control}
-                                     name="ifsc_code"
-                                     render={({ field }: FormFieldProps) => (
-                                       <FormItem>
-                                         <FormLabel>
-                                           IFSC Code
-                                           <span className="text-red-500">*</span>
-                                         </FormLabel>
-                                         <FormControl>
-                                           <Input
-                                             placeholder="IFSC Code..."
-                                             {...field}
-                                           />
-                                         </FormControl>
-                                         <FormMessage />
-                                       </FormItem>
-                                     )}
-                                   />
-                                 </div>
-                                 <FormField
-                                   control={form.control}
-                                   name="address"
-                                   render={({ field }: FormFieldProps) => (
-                                     <FormItem>
-                                       <FormLabel>
-                                         Address
-                                         <span className="text-red-500">*</span>
-                                       </FormLabel>
-                                       <FormControl>
-                                         <Input placeholder="Address..." {...field} />
-                                       </FormControl>
-                                       <FormMessage />
-                                     </FormItem>
-                                   )}
-                                 />
-                                   <FormField
-                                   control={form.control}
-                                   name="branch"
-                                   render={({ field }: FormFieldProps) => (
-                                     <FormItem>
-                                       <FormLabel>
-                                         Branch
-                                         <span className="text-red-500">*</span>
-                                       </FormLabel>
-                                       <FormControl>
-                                         <Input placeholder="Branch..." {...field} />
-                                       </FormControl>
-                                       <FormMessage />
-                                     </FormItem>
-                                   )}
-                                 />
-                                   <FormField
-                                   control={form.control}
-                                   name="email"
-                                   render={({ field }: FormFieldProps) => (
-                                     <FormItem>
-                                       <FormLabel>
-                                         Email
-                                         <span className="text-red-500">*</span>
-                                       </FormLabel>
-                                       <FormControl>
-                                         <Input placeholder="Email..." {...field} />
-                                       </FormControl>
-                                       <FormMessage />
-                                     </FormItem>
-                                   )}
-                                 />
-                                   <FormField
-                                   control={form.control}
-                                   name="phone"
-                                   render={({ field }: FormFieldProps) => (
-                                     <FormItem>
-                                       <FormLabel>
-                                         Phone
-                                         <span className="text-red-500">*</span>
-                                       </FormLabel>
-                                       <FormControl>
-                                         <Input placeholder="Phone..." {...field} />
-                                       </FormControl>
-                                       <FormMessage />
-                                     </FormItem>
-                                   )}
-                                 />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Account Holder Name
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Account Holder Name..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="bank_name"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Bank Name
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Bank Name..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="account_number"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Account Number
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="Account Number..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="ifsc_code"
+                      render={({ field }: FormFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            IFSC Code
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="IFSC Code..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }: FormFieldProps) => (
+                      <FormItem>
+                        <FormLabel>
+                          Branch Address
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Address..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="branch"
+                    render={({ field }: FormFieldProps) => (
+                      <FormItem>
+                        <FormLabel>
+                          Branch
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="Branch..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                 <div className="grid grid-cols-2 gap-4">
+        <FormField
+    control={form.control}
+    name="email"
+    render={({ field }: FormFieldProps) => (
+      <FormItem>
+        <FormLabel>
+          Contact Email <span className="text-red-500">*</span>
+        </FormLabel>
+        <FormControl>
+          <Input placeholder="Email..." {...field} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+  <FormField
+    control={form.control}
+    name="phone"
+    render={({ field }: FormFieldProps) => (
+      <FormItem>
+        <FormLabel>
+        Contact Phone <span className="text-red-500">*</span>
+        </FormLabel>
+        <FormControl>
+          <Input placeholder="Phone..." {...field} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+</div>
                 </form>
               </Form>
             </ModalBody>

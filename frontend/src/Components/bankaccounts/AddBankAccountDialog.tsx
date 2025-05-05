@@ -201,7 +201,7 @@ export default function AddAdmissionDialog({
                     render={({ field }: FormFieldProps) => (
                       <FormItem>
                         <FormLabel>
-                          Address
+                          Branch Address
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
@@ -227,38 +227,39 @@ export default function AddAdmissionDialog({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }: FormFieldProps) => (
-                      <FormItem>
-                        <FormLabel>
-                          Email
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Email..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }: FormFieldProps) => (
-                      <FormItem>
-                        <FormLabel>
-                          Phone
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input placeholder="Phone..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                 <div className="grid grid-cols-2 gap-4">
+        <FormField
+    control={form.control}
+    name="email"
+    render={({ field }: FormFieldProps) => (
+      <FormItem>
+        <FormLabel>
+        Contact Email <span className="text-red-500">*</span>
+        </FormLabel>
+        <FormControl>
+          <Input placeholder="Email..." {...field} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+  <FormField
+    control={form.control}
+    name="phone"
+    render={({ field }: FormFieldProps) => (
+      <FormItem>
+        <FormLabel>
+        Contact Phone <span className="text-red-500">*</span>
+        </FormLabel>
+        <FormControl>
+          <Input placeholder="Phone..." {...field} />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    )}
+  />
+</div>
+
                 </form>
               </Form>
             </ModalBody>

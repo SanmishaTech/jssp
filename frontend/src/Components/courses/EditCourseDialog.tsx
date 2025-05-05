@@ -190,11 +190,11 @@ export default function EditCourseDialog({
                     render={({ field }: FormFieldProps) => (
                       <FormItem>
                         <FormLabel>
-                          Organization
+                          Affiliated University
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Organization..." {...field} />
+                          <Input placeholder="Affiliated University..." {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

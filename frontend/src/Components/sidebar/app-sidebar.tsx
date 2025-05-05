@@ -78,6 +78,11 @@ const roleBasedItems = {
       icon: BookOpen,
       children: [
         {
+          title: "Subjects",
+          url: "/subjects",
+          icon: BookMarked,
+        },
+        {
           title: "Courses",
           url: "/courses",
           icon: BookText,
@@ -124,7 +129,7 @@ const roleBasedItems = {
       icon: BookOpen,
       children: [
         {
-          title: "Admissions",
+          title: "Admission Information",
           url: "/admissions",
           icon: BookText,
         },
@@ -133,11 +138,7 @@ const roleBasedItems = {
           url: "/cashiers",
           icon: Banknote,
         },
-        {
-          title: "Subjects",
-          url: "/subjects",
-          icon: BookMarked,
-        },
+       
         {
           title: "Students",
           url: "/students",

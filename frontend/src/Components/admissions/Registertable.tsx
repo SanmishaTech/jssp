@@ -186,7 +186,7 @@ export default function Dashboardholiday() {
       searchPlaceholder: "Search Admission...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Admission",
+        title: "Admission Information",
         description: "Manage Admission and view their details.",
         headers: [
           { label: "Total Valuation", key: "one" },

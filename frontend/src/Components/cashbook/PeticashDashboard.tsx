@@ -142,7 +142,7 @@ export default function PeticashDashboard() {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Total Fund
+                Available Balance
               </p>
               <h3 className="text-2xl font-bold">₹{peticash.total_amount}</h3>
             </div>
@@ -157,7 +157,7 @@ export default function PeticashDashboard() {
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">
-                Total Spent
+                Spent Amount
               </p>
               <h3 className="text-2xl font-bold">
                 ₹{peticash.total_spend || "0"}

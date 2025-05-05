@@ -100,13 +100,8 @@ export default function PeticashForm() {
         toast.success(id ? "CashBook updated successfully" : "CashBook created successfully");
         
         // Navigate to the peticash dashboard
-        if (id) {
-          navigate({ to: `/peticash/${id}` });
-        } else if (response.data.data.Peticash && response.data.data.Peticash.id) {
-          navigate({ to: `/peticash/${response.data.data.Peticash.id}` });
-        } else {
-          navigate({ to: "/peticash" });
-        }
+        navigate({ to: "/peticash" });
+
       } else {
         toast.error(response.data.message || "Failed to save cashbook");
       }
