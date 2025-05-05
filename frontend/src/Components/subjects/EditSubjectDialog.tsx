@@ -335,7 +335,7 @@ export default function EditSubjectDialog({
                               key={semester.id ? semester.id.toString() : ''}
                               value={semester.id ? semester.id.toString() : ''}
                             >
-                              {semester.semester} {semester.course_name ? `- ${semester.course_name}` : ''}
+                              {semester.semester}
                             </option>
                           ))}
                         </select>
