@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('institute_id');
+            $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('semester_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
-
             // admission fields
             $table->string('subject_name')->nullable();
-  
-            
             $table->timestamps();
         });
     }

@@ -172,7 +172,7 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Medium Title", key: "one" },
           { label: "Medium Code", key: "two" },
-          { label: "Organization", key: "three" },
+          { label: "Affiliated University", key: "three" },
           { label: "Action", key: "action" },
         ],
         actions: [
