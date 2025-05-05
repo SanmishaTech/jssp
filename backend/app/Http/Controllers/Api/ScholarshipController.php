@@ -55,6 +55,8 @@ class ScholarshipController extends BaseController
         // Create a new staff record and assign the institute_id from the logged-in admin
         $scholarship = new Scholarship();
         $scholarship->institute_id = Auth::user()->staff->institute_id;  
+        $scholarship->course_id = $request->input('course_id');
+        $scholarship->academic_years_id = $request->input('academic_years_id');
         $scholarship->students_applied_for_scholarship = $request->input('students_applied_for_scholarship');
         $scholarship->approved_from_university = $request->input('approved_from_university');
         $scholarship->first_installment_date = $request->input('first_installment_date');
@@ -91,6 +93,8 @@ class ScholarshipController extends BaseController
        
                        
         $scholarship->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
+        $scholarship->course_id = $request->input('course_id');
+        $scholarship->academic_years_id = $request->input('academic_years_id');
         $scholarship->students_applied_for_scholarship = $request->input('students_applied_for_scholarship');
         $scholarship->approved_from_university = $request->input('approved_from_university');
         $scholarship->first_installment_date = $request->input('first_installment_date');

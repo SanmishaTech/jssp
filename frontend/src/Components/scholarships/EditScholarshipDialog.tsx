@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { toast } from "sonner";
+import { ChevronsUpDown, Check } from "lucide-react";
 
 import {
   Form,
@@ -25,6 +26,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
+  course_id: z.string().or(z.number()).transform(val => String(val)).refine(val => val.length > 0, {
+    message: "Course is required"
+  }),
+  academic_years_id: z.string().or(z.number()).transform(val => String(val)).refine(val => val.length > 0, {
+    message: "Academic Year is required"
+  }),
   students_applied_for_scholarship: z.string().transform(Number),
   approved_from_university: z.string().transform(Number),
   first_installment_date: z.string(),
@@ -53,6 +60,28 @@ interface FormFieldProps {
   };
 }
 
+// Define Course interface for type safety
+interface Course {
+  id: number | string;
+  medium_title: string;
+  [key: string]: any;
+}
+
+// Define AcademicYear interface for type safety
+interface AcademicYear {
+  id: number | string;
+  academic_year: string;
+  institute_id: number;
+  created_at: string;
+  updated_at: string;
+  [key: string]: any;
+}
+
+// Helper function to combine classnames (for simpler implementation)
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export default function EditScholarshipDialog({
   isOpen,
   onOpen,
@@ -60,7 +89,10 @@ export default function EditScholarshipDialog({
   fetchData,
   scholarshipId,
 }: EditScholarshipDialogProps) {
-  const defaultValues: Partial<ProfileFormValues> = {};
+  const defaultValues: Partial<ProfileFormValues> = {
+    course_id: "",
+    academic_years_id: "",
+  };
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -73,6 +105,56 @@ export default function EditScholarshipDialog({
   };
 
   const token = localStorage.getItem("token");
+
+  // State for courses
+  const [courses, setCourses] = React.useState<Course[]>([]);
+  const [loadingCourses, setLoadingCourses] = React.useState(false);
+  
+  // State for academic years
+  const [academicYears, setAcademicYears] = React.useState<AcademicYear[]>([]);
+  const [loadingAcademicYears, setLoadingAcademicYears] = React.useState(false);
+
+  // Fetch courses from API
+  React.useEffect(() => {
+    setLoadingCourses(true);
+    axios
+      .get("/api/all_courses", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const coursesData = response.data.data.Course || [];
+        setCourses(coursesData);
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+        toast.error("Failed to fetch courses");
+      })
+      .finally(() => setLoadingCourses(false));
+  }, [token]);
+  
+  // Fetch academic years from API
+  React.useEffect(() => {
+    setLoadingAcademicYears(true);
+    axios
+      .get("/api/all_academic_years", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const academicYearsData = response.data.data.AcademicYears || [];
+        setAcademicYears(academicYearsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching academic years:", error);
+        toast.error("Failed to fetch academic years");
+      })
+      .finally(() => setLoadingAcademicYears(false));
+  }, [token]);
 
   // Fetch scholarship data when dialog opens
   React.useEffect(() => {
@@ -103,6 +185,8 @@ export default function EditScholarshipDialog({
   async function onSubmit(data: ProfileFormValues) {
     try {
       const formattedData = {
+        course_id: String(data.course_id),
+        academic_years_id: String(data.academic_years_id),
         students_applied_for_scholarship: Number(
           data.students_applied_for_scholarship
         ),
@@ -167,6 +251,64 @@ export default function EditScholarshipDialog({
                   className="space-y-4"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Course selection field */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">
+                        Course Title
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          {...form.register("course_id")}
+                          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                        >
+                          <option value="">Select Course...</option>
+                          {courses.map((course) => (
+                            <option
+                              key={course.id.toString()}
+                              value={course.id.toString()}
+                            >
+                              {course.medium_title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {form.formState.errors.course_id && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {form.formState.errors.course_id.message}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Academic Year selection field */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">
+                        Academic Year
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <select
+                          {...form.register("academic_years_id")}
+                          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                        >
+                          <option value="">Select Academic Year...</option>
+                          {academicYears.map((academicYear) => (
+                            <option
+                              key={academicYear.id.toString()}
+                              value={academicYear.id.toString()}
+                            >
+                              {academicYear.academic_year}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {form.formState.errors.academic_years_id && (
+                        <p className="mt-1 text-sm text-red-500">
+                          {form.formState.errors.academic_years_id.message}
+                        </p>
+                      )}
+                    </div>
+                    
                     <FormField
                       control={form.control}
                       name="students_applied_for_scholarship"
