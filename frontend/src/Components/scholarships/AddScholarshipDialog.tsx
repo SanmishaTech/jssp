@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import * as React from "react";
 import { ChevronsUpDown, Check } from "lucide-react";
 
+
 // Define the profileFormSchema
 const profileFormSchema = z.object({
   course_id: z.string().or(z.number()).transform(val => String(val)).refine(val => val.length > 0, {
@@ -25,47 +26,20 @@ const profileFormSchema = z.object({
   students_applied_for_scholarship: z
     .string()
     .trim()
-    .nonempty("Medium Code is Required"),
+    .nonempty("Students Applied for Scholarship is Required"),
   approved_from_university: z
     .string()
     .trim()
-    .nonempty("Medium Title is Required"),
-  first_installment_date: z
-    .string()
-    .trim()
-    .nonempty("First Installment Date is Required"),
-  first_installment_student: z
-    .string()
-    .trim()
-    .nonempty("First Installment Student is Required"),
-  first_installment_amount: z
-    .string()
-    .trim()
-    .nonempty("First Installment Amount is Required"),
-  second_installment_date: z
-    .string()
-    .trim()
-    .nonempty("Second Installment Date is Required"),
-  second_installment_student: z
-    .string()
-    .trim()
-    .nonempty("Second Installment Student is Required"),
-  second_installment_amount: z
-    .string()
-    .trim()
-    .nonempty("Second Installment Amount is Required"),
-  third_installment_date: z
-    .string()
-    .trim()
-    .nonempty("Third Installment Date is Required"),
-  third_installment_student: z
-    .string()
-    .trim()
-    .nonempty("Third Installment Student is Required"),
-  third_installment_amount: z
-    .string()
-    .trim()
-    .nonempty("Third Installment Amount is Required"),
+    .nonempty("Approved from University is Required"),
+    first_installment_date: z.string().trim().optional(),
+    first_installment_student: z.string().trim().optional(),
+    first_installment_amount: z.string().trim().optional(),
+    second_installment_date: z.string().trim().optional(),
+    second_installment_student: z.string().trim().optional(),
+    second_installment_amount: z.string().trim().optional(),
+    third_installment_date: z.string().trim().optional(),
+    third_installment_student: z.string().trim().optional(),
+    third_installment_amount: z.string().trim().optional(),
   userId: z.string().optional(),
 });
 
@@ -277,6 +251,7 @@ export default function AddScholarshipDialog({
             </ModalHeader>
             <ModalBody>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <h1 className="text-center font-bold hover:cursor-default ">Scholarship Details</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  
                   
@@ -378,6 +353,11 @@ export default function AddScholarshipDialog({
                     )}
                   </div>
                   </div>
+
+                  <hr className="my-4 border-t border-gray-300" />
+
+
+                  <h1 className="text-center font-bold hover:cursor-default">Installments Details</h1>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
