@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   Home,
@@ -19,6 +19,7 @@ import {
   Banknote,
   UsersRound,
   Landmark,
+  LogOut,
 } from "lucide-react";
 import background from "../../images/Jeevandeep-logo.jpeg";
 import {
@@ -248,13 +249,16 @@ const roleBasedItems = {
   ],
 };
 
-export function AppSidebar({ role, userAvatar }) {
+export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail = "user@example.com" }) {
   const items = roleBasedItems[role] || [];
 
   // Manage open state for items with dropdown children
   const [openDropdowns, setOpenDropdowns] = useState({});
   // State to control the AlertDialog in the logo dropdown
   const [openLogoAlert, setOpenLogoAlert] = useState(false);
+  // State for profile dropdown
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  
   const navigate = useNavigate();
 
   const toggleDropdown = (title) => {
@@ -274,9 +278,15 @@ export function AppSidebar({ role, userAvatar }) {
     // e.g., clear tokens, call signOut(), or redirect to login
   };
 
+  // Profile navigation function
+  const handleUpdateProfile = () => {
+    navigate({ to: "/update-profile" });
+    setProfileDropdownOpen(false);
+  };
+
   return (
     <Sidebar variant="inset" collapsible="icon">
-      <SidebarContent>
+      <SidebarContent className="flex flex-col h-full">
         {/* Header area with logo and theme switch */}
         <div className="flex flex-col space-y-3">
           {/* Logo and dropdown */}
@@ -293,34 +303,6 @@ export function AppSidebar({ role, userAvatar }) {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                
-                {/* Wrap the Logout item in an AlertDialog for confirmation */}
-                <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
-                  <AlertDialogTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      Logout
-                    </DropdownMenuItem>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        You will be logged out from your account.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <Button
-                        variant="outline"
-                        onClick={() => setOpenLogoAlert(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button variant="destructive" onClick={handleLogout}>
-                        Logout
-                      </Button>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </DropdownMenuContent>
             </DropdownMenu>
             
@@ -332,8 +314,8 @@ export function AppSidebar({ role, userAvatar }) {
           <div className="h-px bg-border mx-4" />
         </div>
         
-        {/* Sidebar navigation items */}
-        <SidebarGroup>
+        {/* Sidebar navigation items - using flex-1 to allow it to expand */}
+        <SidebarGroup className="flex-1">
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) =>
@@ -393,7 +375,104 @@ export function AppSidebar({ role, userAvatar }) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+        {/* Profile button section at bottom */}
+        <div className="mt-auto border-t border-border p-2">
+          <DropdownMenu open={profileDropdownOpen} onOpenChange={setProfileDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+              <button className="flex w-full items-center justify-between rounded-md  hover:bg-accent hover:text-accent-foreground transition-colors data-[collapsed=true]:justify-start data-[collapsed=true]:pl-0">
+                {/* Profile section that adapts to collapsed state */}
+                <div className="flex w-full items-center gap-3 data-[collapsed=true]:justify-start">
+                  {/* Avatar - Always visible */}
+                  <div className="relative flex-shrink-0 h-9 w-9 rounded-full bg-primary/10 data-[collapsed=true]:mr-5">
+                    {userAvatar ? (
+                      <img 
+                        src={userAvatar} 
+                        alt={userName}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <User className="h-5 w-5" />
+                      </div>
+                    )}
+                    <span className="absolute right-0 bottom-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background"></span>
+                  </div>
+                  
+                  {/* User info - Hidden when collapsed */}
+                  <div className="flex-1 overflow-hidden data-[collapsed=true]:hidden">
+                    <div className="font-medium truncate">{userName}</div>
+                    <div className="text-xs text-muted-foreground truncate">{userEmail}</div>
+                  </div>
+
+                  {/* Dropdown chevron - Hidden when collapsed */}
+                  <svg
+                    className="h-4 w-4 shrink-0 text-muted-foreground transition-transform data-[collapsed=true]:hidden"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            
+            <DropdownMenuContent 
+              align="end" 
+              side="right" 
+              sideOffset={5}
+              alignOffset={30} 
+              className="w-56 animate-in slide-in-from-bottom-5 duration-200 origin-top-right data-[side=right]:animate-in data-[side=right]:slide-in-from-left-5"
+              avoidCollisions={true}
+            >
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium">{userName}</p>
+                  <p className="text-xs text-muted-foreground">{userEmail}</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleUpdateProfile} className="cursor-pointer">
+                <User className="mr-2 h-4 w-4" />
+                <span>Update Profile</span>
+              </DropdownMenuItem>
+              
+              <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You will be logged out from your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Log out
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </SidebarContent>
     </Sidebar>
   );
 }
+
+// Add a default export for the component
+export default AppSidebar;
