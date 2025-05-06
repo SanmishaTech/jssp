@@ -274,13 +274,13 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
     localStorage.removeItem("user");
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
-    console.log("User logged out");
+    console.log("User logged out"); 
     // e.g., clear tokens, call signOut(), or redirect to login
   };
 
   // Profile navigation function
   const handleUpdateProfile = () => {
-    navigate({ to: "/update-profile" });
+    navigate({ to: "/profiles" });
     setProfileDropdownOpen(false);
   };
 
@@ -439,10 +439,12 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleUpdateProfile} className="cursor-pointer">
-                <User className="mr-2 h-4 w-4" />
-                <span>Update Profile</span>
-              </DropdownMenuItem>
+              {role === "member" && (
+                <DropdownMenuItem onClick={handleUpdateProfile} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Update Profile</span>
+                </DropdownMenuItem>
+              )}
               
               <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
                 <AlertDialogTrigger asChild>
