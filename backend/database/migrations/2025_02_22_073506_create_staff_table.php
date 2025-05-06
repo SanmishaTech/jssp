@@ -16,12 +16,26 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id'); 
             $table->unsignedBigInteger('institute_id')->nullable(); 
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
+            $table->string('employee_code')->nullable();
             $table->string('staff_name')->nullable();
             $table->string('is_teaching',100)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('address')->nullable();
             $table->string('mobile')->nullable();
             $table->string('email')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('experience')->nullable();
+            $table->string('highest_qualification')->nullable();
+            $table->string('pan_number')->nullable();
+            $table->string('aadhaar_number')->nullable();
+            $table->string('appointment_date')->nullable();
+            $table->string('nature_of_appointment')->nullable();
+            $table->string('subject_type')->nullable();
+            $table->string('mode_of_payment')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('account_number')->nullable();
+            $table->string('ifsc_code')->nullable();
+            $table->string('salary')->nullable();
             $table->timestamps();
         });
     }

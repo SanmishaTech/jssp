@@ -77,11 +77,25 @@ public function index(Request $request): JsonResponse
         $staff->user_id = $user->id;
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
+        $staff->employee_code = $request->input('employee_code');
         $staff->is_teaching = $request->input('is_teaching');
         $staff->date_of_birth = $request->input('date_of_birth');
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
+        $staff->gender = $request->input('gender');
+        $staff->experience = $request->input('experience');
+        $staff->highest_qualification = $request->input('highest_qualification');
+        $staff->pan_number = $request->input('pan_number');
+        $staff->aadhaar_number = $request->input('aadhaar_number');
+        $staff->appointment_date = $request->input('appointment_date');
+        $staff->nature_of_appointment = $request->input('nature_of_appointment');
+        $staff->subject_type = $request->input('subject_type');
+        $staff->mode_of_payment = $request->input('mode_of_payment');
+        $staff->bank_name = $request->input('bank_name');
+        $staff->account_number = $request->input('account_number');
+        $staff->ifsc_code = $request->input('ifsc_code');
+        $staff->salary = $request->input('salary');
         $staff->save();
 
         // Handle multiple image uploads
@@ -146,11 +160,25 @@ public function index(Request $request): JsonResponse
                        
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
+        $staff->employee_code = $request->input('employee_code');
         $staff->is_teaching = $request->input('is_teaching');
         $staff->date_of_birth = $request->input('date_of_birth');
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
+        $staff->gender = $request->input('gender');
+        $staff->experience = $request->input('experience');
+        $staff->highest_qualification = $request->input('highest_qualification');
+        $staff->pan_number = $request->input('pan_number');
+        $staff->aadhaar_number = $request->input('aadhaar_number');
+        $staff->appointment_date = $request->input('appointment_date');
+        $staff->nature_of_appointment = $request->input('nature_of_appointment');
+        $staff->subject_type = $request->input('subject_type');
+        $staff->mode_of_payment = $request->input('mode_of_payment');
+        $staff->bank_name = $request->input('bank_name');
+        $staff->account_number = $request->input('account_number');
+        $staff->ifsc_code = $request->input('ifsc_code');
+        $staff->salary = $request->input('salary');
         $staff->save();
 
         // Handle image uploads and deletions

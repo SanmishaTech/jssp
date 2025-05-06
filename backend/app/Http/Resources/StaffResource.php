@@ -29,6 +29,7 @@ class StaffResource extends JsonResource
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'role'         => $role,
             'staff_name' =>$this->staff_name,
+            'employee_code' => $this->employee_code,
             'is_teaching' => $this->is_teaching,
             'date_of_birth' => $this->date_of_birth,
             'address' =>$this->address,

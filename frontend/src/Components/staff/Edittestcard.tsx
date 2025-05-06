@@ -37,6 +37,7 @@ import { useParams } from "@tanstack/react-router";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
+  employee_code: z.string().nonempty("Employee Code Required"),
   is_teaching: z.any().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
@@ -245,7 +246,7 @@ function ProfileForm({ formData }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3 space-y-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-4 space-y-3">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -254,6 +255,19 @@ function ProfileForm({ formData }) {
                       <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Name..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="employee_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Employee Code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Employee Code..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
