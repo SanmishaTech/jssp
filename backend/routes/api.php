@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\ProductCategoriesController;
+use App\Http\Controllers\LeaveController;
 
 
 
@@ -128,5 +129,13 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
 Route::get('/file/{document}', [EventController::class, 'displayDocuments'])->name("client.displayDocuments");
 Route::get('/staff-file/{document}', [StaffController::class, 'displayDocuments'])->name("client.displayStaffDocuments");
+
+// Leave Application Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/leaves', [LeaveController::class, 'store']);
+    Route::get('/leaves/member', [LeaveController::class, 'getByMember']);
+    Route::get('/leaves/status/{status}', [LeaveController::class, 'getByStatus']);
+    Route::put('/leaves/{id}', [LeaveController::class, 'update']);
+});
 
  

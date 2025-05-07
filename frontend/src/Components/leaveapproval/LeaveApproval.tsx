@@ -309,7 +309,17 @@ function LeaveApprovalDashboard() {
   
   return (
     <div className="space-y-6">
-       
+      <div className="flex items-center justify-between">
+        <Button
+          onClick={handleBack}
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1"
+        >
+          <MoveLeft className="h-4 w-4" />
+          Back
+        </Button>
+      </div>
       
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
         <TabsList>
@@ -317,6 +327,7 @@ function LeaveApprovalDashboard() {
           <TabsTrigger value="approved">Approved</TabsTrigger>
           <TabsTrigger value="rejected">Rejected</TabsTrigger>
         </TabsList>
+        
         <TabsContent value="pending" className="space-y-4">
           <Card>
             <CardHeader>
@@ -423,5 +434,4 @@ export default function LeaveApprovalPage() {
       <LeaveApprovalDashboard />
     </div>
   );
-}
-
+} 

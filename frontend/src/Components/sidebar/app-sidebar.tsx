@@ -121,6 +121,11 @@ const roleBasedItems = {
       icon: UserCheck,
     },
     {
+      title: "Leave Approval",
+      url: "/leaveapproval",
+      icon: FileText,
+    },
+    {
       title: "Meetings",
       url: "/meetings",
       icon: Users,
@@ -176,6 +181,7 @@ const roleBasedItems = {
           url: "/bank",
           icon: BookText,
         },
+        
        
          
       
@@ -246,6 +252,7 @@ const roleBasedItems = {
       url: "/leave",
       icon: FileText,
     },
+    
   ],
 };
 
