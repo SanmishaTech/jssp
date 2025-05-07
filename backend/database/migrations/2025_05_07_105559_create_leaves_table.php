@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             $table->string('date');
             $table->date('from_date');
+            $table->string('leave_type');
             $table->date('to_date');
             $table->string('reason');
             $table->string('status');

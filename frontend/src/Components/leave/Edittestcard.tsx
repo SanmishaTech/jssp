@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Combobox } from "../ui/combobox";
 import { MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +48,7 @@ interface LeaveApplication {
   id: number;
   from_date: string;
   to_date: string;
+  leave_type: string;
   reason: string;
   status: 'pending' | 'approved' | 'rejected';
   remarks: string;
@@ -63,6 +65,7 @@ interface Institute {
 const leaveFormSchema = z.object({
   from_date: z.string().nonempty("From date is required"),
   to_date: z.string().nonempty("To date is required"),
+  leave_type: z.string().nonempty("Leave type is required"),
   reason: z.string().min(10, "Reason must be at least 10 characters"),
   institute_id: z.number().optional()
 }).refine(
@@ -79,6 +82,7 @@ function LeaveForm() {
   const defaultValues: Partial<LeaveFormValues> = {
     from_date: "",
     to_date: "",
+    leave_type: "",
     reason: "",
     institute_id: undefined
   };
@@ -316,7 +320,7 @@ function LeaveForm() {
             <CardContent className="space-y-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <FormField
                       control={form.control}
                       name="from_date"
@@ -339,6 +343,35 @@ function LeaveForm() {
                           <FormLabel>To Date</FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="leave_type"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Leave Type</FormLabel>
+                          <FormControl>
+                            <Combobox
+                              options={[
+                                { value: "SL", label: "SL - Sick Leave" },
+                                { value: "ML", label: "ML - Medical Leave" },
+                                { value: "BL", label: "BL - Bereavement Leave" },
+                                { value: "CL", label: "CL - Casual Leave" },
+                                { value: "SLA", label: "SLA - Special Leave Allowance" },
+                                { value: "HDL", label: "HDL - Half Day Leave" },
+                                { value: "ODL", label: "ODL - On Duty Leave" },
+                                { value: "CO", label: "CO - Compensatory Off" },
+                                { value: "BH", label: "BH - Bank Holiday" },
+                                { value: "HL", label: "HL - Holiday Leave" }
+                              ]}
+                              value={field.value}
+                              onValueChange={field.onChange}
+                              placeholder="Select Leave Type"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -418,6 +451,7 @@ function LeaveForm() {
                     <TableCaption>Your leave applications</TableCaption>
                     <TableHeader>
                       <TableRow>
+                        <TableHead>Leave Type</TableHead>
                         <TableHead>From Date</TableHead>
                         <TableHead>To Date</TableHead>
                         <TableHead>Reason</TableHead>
@@ -428,6 +462,7 @@ function LeaveForm() {
                     <TableBody>
                       {leaveHistory.map((leave) => (
                         <TableRow key={leave.id}>
+                          <TableCell>{leave.leave_type}</TableCell>
                           <TableCell>{formatDate(leave.from_date)}</TableCell>
                           <TableCell>{formatDate(leave.to_date)}</TableCell>
                           <TableCell>{leave.reason}</TableCell>

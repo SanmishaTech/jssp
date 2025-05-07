@@ -57,6 +57,7 @@ class LeaveController extends BaseController
             $leave->institute_id = Auth::user()->staff->institute_id;  
             $leave->date = $request->date ?? now()->format('Y-m-d');
             $leave->from_date = $request->from_date;
+            $leave->leave_type = $request->leave_type;
             $leave->to_date = $request->to_date;
             $leave->reason = $request->reason;
             $leave->status = 'pending';
