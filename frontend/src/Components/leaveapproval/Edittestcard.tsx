@@ -33,9 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import EducationQualifications from "./EducationQualifications";
-import PaperUpload from "./PaperUpload";
-import {
+ import {
   Tabs,
   TabsContent,
   TabsList,
@@ -775,7 +773,7 @@ function ProfileForm({ formData }) {
               <Card className="w-full ">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle>Bank Information</CardTitle>
+                    <CardTitle>Payment Information</CardTitle>
                     <FormField
                       control={form.control}
                       name="mode_of_payment"
@@ -815,7 +813,7 @@ function ProfileForm({ formData }) {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-3 mb-3">
+                  <div className="grid grid-cols-3 gap-3 mb-3">
                     <FormField
                       control={form.control}
                       name="bank_name"
@@ -824,19 +822,6 @@ function ProfileForm({ formData }) {
                           <FormLabel>Bank Name</FormLabel>
                           <FormControl>
                             <Input placeholder="Enter Bank Name..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="account_holder_name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Account Holder Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Account Holder Name..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -940,22 +925,12 @@ function ProfileForm({ formData }) {
           </TabsContent>
           
           <TabsContent value="education" className="mt-4">
-            <div className="max-w-full p-4 space-y-6">
-              {/* Education Qualifications Component */}
-              <EducationQualifications form={form} />
-            </div>
+            asd
           </TabsContent>
           
           <TabsContent value="papers" className="mt-4">
             <div className="max-w-full p-4 space-y-6">
-              {/* Paper Upload Component (PDF Only) */}
-              <PaperUpload 
-                form={form}
-                existingPapers={existingPapers}
-                onAddPapers={handleAddPapers}
-                onRemovePaper={handleRemovePaper}
-                onRemoveNewPaper={handleRemoveNewPaper}
-              />
+              asd
             </div>
           </TabsContent>
         </Tabs>

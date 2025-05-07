@@ -43,6 +43,7 @@ class StaffResource extends JsonResource
             'subject_type' => $this->subject_type,
             'mode_of_payment' => $this->mode_of_payment,
             'bank_name' => $this->bank_name,
+            'account_holder_name' => $this->account_holder_name,
             'account_number' => $this->account_number,
             'ifsc_code' => $this->ifsc_code,
             'salary' => $this->salary,

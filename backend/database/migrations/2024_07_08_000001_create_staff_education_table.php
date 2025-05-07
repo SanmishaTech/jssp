@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('staff_education', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('staff_id');
-            $table->foreign('staff_id')->references('id')->on('staff')->onDelete('cascade');
-            $table->string('qualification')->nullable();
+             $table->string('qualification')->nullable();
             $table->string('college_name')->nullable();
             $table->string('board_university')->nullable();
             $table->year('passing_year')->nullable();

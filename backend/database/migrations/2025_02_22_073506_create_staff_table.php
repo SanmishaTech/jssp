@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('subject_type')->nullable();
             $table->string('mode_of_payment')->nullable();
             $table->string('bank_name')->nullable();
+            $table->string('account_holder_name')->nullable();
             $table->string('account_number')->nullable();
             $table->string('ifsc_code')->nullable();
             $table->string('salary')->nullable();

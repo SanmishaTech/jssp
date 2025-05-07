@@ -65,7 +65,7 @@ export default function EducationQualifications({ form }: EducationQualification
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2 text-left">Qualification</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">College Name</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Institute Name</th>
                   <th className="border border-gray-300 px-4 py-2 text-left">Board/University</th>
                   <th className="border border-gray-300 px-4 py-2 text-left">Passing Year</th>
                   <th className="border border-gray-300 px-4 py-2 text-left">Percentage</th>

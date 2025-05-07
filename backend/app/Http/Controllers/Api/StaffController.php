@@ -100,6 +100,7 @@ public function index(Request $request): JsonResponse
         $staff->subject_type = $request->input('subject_type');
         $staff->mode_of_payment = $request->input('mode_of_payment');
         $staff->bank_name = $request->input('bank_name');
+        $staff->account_holder_name = $request->input('account_holder_name');
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
@@ -213,6 +214,7 @@ public function index(Request $request): JsonResponse
         $staff->subject_type = $request->input('subject_type');
         $staff->mode_of_payment = $request->input('mode_of_payment');
         $staff->bank_name = $request->input('bank_name');
+        $staff->account_holder_name = $request->input('account_holder_name');
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');

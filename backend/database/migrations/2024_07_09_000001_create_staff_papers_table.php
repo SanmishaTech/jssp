@@ -18,10 +18,7 @@ return new class extends Migration
             $table->string('paper_title')->nullable();
             $table->timestamps();
             
-            $table->foreign('staff_id')
-                ->references('id')
-                ->on('staff')
-                ->onDelete('cascade');
+           
         });
     }
 
