@@ -1,6 +1,6 @@
 //ts-nocheck
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import Members from "../../Components/profiles/Registertable";
+import Members from "../../Components/profiles/Edittestcard";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profiles/")({

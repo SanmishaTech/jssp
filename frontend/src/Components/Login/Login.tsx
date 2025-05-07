@@ -10,7 +10,7 @@ import { useNavigate } from "@tanstack/react-router";
 
 const Login = () => {
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
+  const User = user ? JSON.parse(user) : null;
   // useEffect(() => {
   //   if (user && User?.email) {
   //     navigate({
@@ -25,43 +25,44 @@ const Login = () => {
     password: "",
   };
   const onSubmit = async (data: Record<string, any>) => {
-    const user = await axios
-      .post("/api/login", data)
-      .then((res) => {
-        const role = res.data.data.User.role;
-        localStorage.setItem("token", res.data.data.token);
-        if (role === "admin") {
-          localStorage.setItem("role", role);
-          navigate({
-            to: "/staffdashboard",
-          });
-        }
-        if (role === "superadmin") {
-          localStorage.setItem("role", role);
-          navigate({
-            to: "/rootdashboard",
-          });
-        }
-        if (role === "member") {
-          localStorage.setItem("role", role);
-          navigate({
-            to: "/memberdashboard",
-          });
-        }
-        if (res.data.token) {
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.user));
-
-          navigate({
-            to: "/staff",
-          });
-        }
-        toast.success("Successfully Logged In");
-      })
-      .catch((err) => {
-        console.error("Error logging in:", err);
-        toast.error("Failed to log in. Check your credentials.");
-      });
+    try {
+      const response = await axios.post("/api/login", data);
+      const responseData = response.data;
+      
+      // Store the User data directly
+      const userData = responseData.data.User;
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Also store token separately for easier access
+      if (responseData.data.token) {
+        localStorage.setItem("token", responseData.data.token);
+      }
+      
+      // Store staff_id separately
+      if (userData.staff_id) {
+        localStorage.setItem("staff_id", userData.staff_id.toString());
+      }
+      
+      // Get user role for navigation
+      const role = userData.role;
+      localStorage.setItem("role", role);
+      
+      // Navigate based on role
+      if (role === "admin") {
+        navigate({ to: "/staffdashboard" });
+      } else if (role === "superadmin") {
+        navigate({ to: "/rootdashboard" });
+      } else if (role === "member") {
+        navigate({ to: "/memberdashboard" });
+      } else {
+        navigate({ to: "/staff" });
+      }
+      
+      toast.success("Successfully Logged In");
+    } catch (err) {
+      console.error("Error logging in:", err);
+      toast.error("Failed to log in. Check your credentials.");
+    }
   };
 
   const typeofschema = {

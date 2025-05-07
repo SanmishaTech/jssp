@@ -83,6 +83,7 @@ public function index(Request $request): JsonResponse
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
+        
         $staff->gender = $request->input('gender');
         $staff->experience = $request->input('experience');
         $staff->highest_qualification = $request->input('highest_qualification');

@@ -249,8 +249,32 @@ const roleBasedItems = {
   ],
 };
 
-export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail = "user@example.com" }) {
+export function AppSidebar({ role }) {
   const items = roleBasedItems[role] || [];
+  
+  // Get user data from localStorage
+  const [userData, setUserData] = useState({
+    userName: "User Name", 
+    userEmail: "user@example.com",
+    userAvatar: null
+  });
+  
+  // Load user data from localStorage on component mount
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        setUserData({
+          userName: user.name || "User Name",
+          userEmail: user.email || "user@example.com",
+          userAvatar: null // Set avatar if available in your user object
+        });
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+      }
+    }
+  }, []);
 
   // Manage open state for items with dropdown children
   const [openDropdowns, setOpenDropdowns] = useState({});
@@ -270,12 +294,11 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
 
   // Logout function – replace with your actual logout logic
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    // Clear all localStorage items
+    localStorage.clear();
     toast.success("Logged Out Successfully");
     navigate({ to: "/" });
-    console.log("User logged out"); 
-    // e.g., clear tokens, call signOut(), or redirect to login
+     // e.g., clear tokens, call signOut(), or redirect to login
   };
 
   // Profile navigation function
@@ -300,10 +323,10 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
                 </div>
               </DropdownMenuTrigger>
               {/* Dropdown content positioned relative to the trigger */}
-              <DropdownMenuContent>
+              {/* <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-              </DropdownMenuContent>
+              </DropdownMenuContent> */}
             </DropdownMenu>
             
             {/* Theme Switch - Always visible */}
@@ -385,10 +408,10 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
                 <div className="flex w-full items-center gap-3 data-[collapsed=true]:justify-start">
                   {/* Avatar - Always visible */}
                   <div className="relative flex-shrink-0 h-9 w-9 rounded-full bg-primary/10 data-[collapsed=true]:mr-5">
-                    {userAvatar ? (
+                    {userData.userAvatar ? (
                       <img 
-                        src={userAvatar} 
-                        alt={userName}
+                        src={userData.userAvatar} 
+                        alt={userData.userName}
                         className="h-full w-full rounded-full object-cover"
                       />
                     ) : (
@@ -401,8 +424,8 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
                   
                   {/* User info - Hidden when collapsed */}
                   <div className="flex-1 overflow-hidden data-[collapsed=true]:hidden">
-                    <div className="font-medium truncate">{userName}</div>
-                    <div className="text-xs text-muted-foreground truncate">{userEmail}</div>
+                    <div className="font-medium truncate">{userData.userName}</div>
+                    <div className="text-xs text-muted-foreground truncate">{userData.userEmail}</div>
                   </div>
 
                   {/* Dropdown chevron - Hidden when collapsed */}
@@ -434,8 +457,8 @@ export function AppSidebar({ role, userAvatar, userName = "User Name", userEmail
             >
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{userName}</p>
-                  <p className="text-xs text-muted-foreground">{userEmail}</p>
+                  <p className="text-sm font-medium">{userData.userName}</p>
+                  <p className="text-xs text-muted-foreground">{userData.userEmail}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
