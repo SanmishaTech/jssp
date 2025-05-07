@@ -205,6 +205,9 @@ function LeaveForm() {
       const defaultInstituteId = localStorage.getItem("institute_id") || 
                                localStorage.getItem("default_institute_id");
       
+      // Get staff_id from localStorage if available
+      const staffId = localStorage.getItem("staff_id");
+      
       const formData = {
         ...data,
         date: today,
@@ -212,6 +215,7 @@ function LeaveForm() {
         remarks: "",
         approved_by: "",
         approved_at: "",
+        staff_id: staffId ? parseInt(staffId, 10) : null // Include staff_id in the request
       };
       
       // Add institute_id to request if available, as a fallback
@@ -243,11 +247,16 @@ function LeaveForm() {
     params: {
       queryKey: ['leave-history'],
       onSuccess: (data: any) => {
-        if (data && data.data) {
-          console.log("Loaded leave history:", data.data);
+        if (data && data.data && data.data.Leave && Array.isArray(data.data.Leave)) {
+          // Access the Leave array from the response based on the updated LeaveController format
+          console.log("Loaded leave history:", data.data.Leave);
+          setLeaveHistory(data.data.Leave);
+        } else if (data && data.data && Array.isArray(data.data)) {
+          // Fallback to the old format if needed
+          console.log("Loaded leave history (old format):", data.data);
           setLeaveHistory(data.data);
         } else {
-          console.log("No leave history data found");
+          console.log("No leave history data found or invalid format:", data);
           setLeaveHistory([]);
         }
       },
@@ -424,7 +433,7 @@ function LeaveForm() {
             <CardContent>
               {isLoadingHistory ? (
                 <div className="flex justify-center py-6">Loading...</div>
-              ) : !leaveHistory || leaveHistory.length === 0 ? (
+              ) : !leaveHistory || !Array.isArray(leaveHistory) || leaveHistory.length === 0 ? (
                 <div className="text-center py-6 text-muted-foreground">
                   <p>No leave history found</p>
                   <Button 
@@ -460,7 +469,7 @@ function LeaveForm() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {leaveHistory.map((leave) => (
+                      {Array.isArray(leaveHistory) && leaveHistory.map((leave) => (
                         <TableRow key={leave.id}>
                           <TableCell>{leave.leave_type}</TableCell>
                           <TableCell>{formatDate(leave.from_date)}</TableCell>

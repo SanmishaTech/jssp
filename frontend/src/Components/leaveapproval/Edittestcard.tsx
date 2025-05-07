@@ -78,9 +78,16 @@ function LeaveApprovalDashboard() {
     params: {
       queryKey: ['leaves-pending'],
       onSuccess: (data: any) => {
-        if (data && data.data) {
+        if (data && data.data && data.data.Leave && Array.isArray(data.data.Leave)) {
+          // Access the Leave array from the response based on the updated LeaveController format
+          console.log("Loaded pending leaves:", data.data.Leave);
+          setPendingLeaves(data.data.Leave);
+        } else if (data && data.data && Array.isArray(data.data)) {
+          // Fallback to the old format if needed
+          console.log("Loaded pending leaves (old format):", data.data);
           setPendingLeaves(data.data);
         } else {
+          console.log("No pending leaves found or invalid format:", data);
           setPendingLeaves([]);
         }
       },
@@ -102,9 +109,16 @@ function LeaveApprovalDashboard() {
     params: {
       queryKey: ['leaves-approved'],
       onSuccess: (data: any) => {
-        if (data && data.data) {
+        if (data && data.data && data.data.Leave && Array.isArray(data.data.Leave)) {
+          // Access the Leave array from the response based on the updated LeaveController format
+          console.log("Loaded approved leaves:", data.data.Leave);
+          setApprovedLeaves(data.data.Leave);
+        } else if (data && data.data && Array.isArray(data.data)) {
+          // Fallback to the old format if needed
+          console.log("Loaded approved leaves (old format):", data.data);
           setApprovedLeaves(data.data);
         } else {
+          console.log("No approved leaves found or invalid format:", data);
           setApprovedLeaves([]);
         }
       },
@@ -126,9 +140,16 @@ function LeaveApprovalDashboard() {
     params: {
       queryKey: ['leaves-rejected'],
       onSuccess: (data: any) => {
-        if (data && data.data) {
+        if (data && data.data && data.data.Leave && Array.isArray(data.data.Leave)) {
+          // Access the Leave array from the response based on the updated LeaveController format
+          console.log("Loaded rejected leaves:", data.data.Leave);
+          setRejectedLeaves(data.data.Leave);
+        } else if (data && data.data && Array.isArray(data.data)) {
+          // Fallback to the old format if needed
+          console.log("Loaded rejected leaves (old format):", data.data);
           setRejectedLeaves(data.data);
         } else {
+          console.log("No rejected leaves found or invalid format:", data);
           setRejectedLeaves([]);
         }
       },
@@ -227,7 +248,7 @@ function LeaveApprovalDashboard() {
       return <div className="flex justify-center py-6">Loading...</div>;
     }
     
-    if (!leaves || leaves.length === 0) {
+    if (!leaves || !Array.isArray(leaves) || leaves.length === 0) {
       return (
         <div className="text-center py-6 text-muted-foreground">
           No leave applications found
@@ -256,7 +277,7 @@ function LeaveApprovalDashboard() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leaves.map((leave) => (
+          {Array.isArray(leaves) && leaves.map((leave) => (
             <TableRow key={leave.id}>
               <TableCell>{leave.staff_name || "Staff"}</TableCell>
               <TableCell>{formatDate(leave.from_date)}</TableCell>
@@ -273,7 +294,7 @@ function LeaveApprovalDashboard() {
                   <Badge className="bg-yellow-500">Pending</Badge>
                 )}
               </TableCell>
-              {activeTab !== "pending" && <TableCell>{leave.remarks || "-"}</TableCell>}
+              {activeTab !== "pending" && <TableCell title={leave.remarks || "-"}>{leave.remarks && leave.remarks.length > 7 ? `${leave.remarks.substring(0, 7)}...` : (leave.remarks || "-")}</TableCell>}
               {activeTab !== "pending" && <TableCell>{leave.approved_by || "-"}</TableCell>}
               {activeTab !== "pending" && (
                 <TableCell>
@@ -311,8 +332,8 @@ function LeaveApprovalDashboard() {
     <div className="space-y-6">
        
       
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-        <TabsList>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 w-full">
+        <TabsList className="w-full grid grid-cols-3">
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="approved">Approved</TabsTrigger>
           <TabsTrigger value="rejected">Rejected</TabsTrigger>

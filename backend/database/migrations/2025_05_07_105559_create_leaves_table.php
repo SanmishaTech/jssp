@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('institute_id');
+            $table->unsignedBigInteger('staff_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             $table->string('date');
             $table->date('from_date');

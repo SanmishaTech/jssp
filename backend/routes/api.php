@@ -38,7 +38,7 @@ use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\ProductCategoriesController;
-use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\Api\LeaveController;
 
 
 
