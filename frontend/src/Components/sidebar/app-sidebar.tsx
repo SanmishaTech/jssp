@@ -1,4 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "../ui/sidebar";
 import {
   Calendar,
   Home,
@@ -12,52 +23,50 @@ import {
   FileText,
   User,
   MapPin,
-  PiggyBank,
   BookMarked,
-  Grid,
-  GraduationCap,
   Banknote,
   UsersRound,
   Landmark,
+  GraduationCap,
+  Grid,
   LogOut,
 } from "lucide-react";
-import background from "../../images/Jeevandeep-logo.jpeg";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/Components/ui/sidebar";
-// Import AlertDialog components from shadcn
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/Components/ui/alert-dialog";
-// Import DropdownMenu and Button components
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-} from "@/Components/ui/dropdown-menu";
-import { Button } from "@/Components/ui/button";
-import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { ThemeSwitch } from "@/Components/theme-switch";
+} from "../ui/dropdown-menu";
+import { ThemeSwitch } from "../theme-switch";
+import background from "../../images/Jeevandeep-logo.jpeg";
 
-const roleBasedItems = {
+// Define TypeScript interfaces for our components
+interface MenuItem {
+  title: string;
+  url?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children?: MenuItem[];
+}
+
+interface AppSidebarProps {
+  role: string;
+}
+
+interface UserData {
+  userName: string;
+  userEmail: string;
+  userAvatar: string | null;
+}
+
+const roleBasedItems: Record<string, MenuItem[]> = {
   admin: [
     {
       title: "Dashboard",
@@ -256,11 +265,11 @@ const roleBasedItems = {
   ],
 };
 
-export function AppSidebar({ role }) {
+export function AppSidebar({ role }: AppSidebarProps) {
   const items = roleBasedItems[role] || [];
   
   // Get user data from localStorage
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<UserData>({
     userName: "User Name", 
     userEmail: "user@example.com",
     userAvatar: null
@@ -284,7 +293,7 @@ export function AppSidebar({ role }) {
   }, []);
 
   // Manage open state for items with dropdown children
-  const [openDropdowns, setOpenDropdowns] = useState({});
+  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   // State to control the AlertDialog in the logo dropdown
   const [openLogoAlert, setOpenLogoAlert] = useState(false);
   // State for profile dropdown
@@ -292,7 +301,7 @@ export function AppSidebar({ role }) {
   
   const navigate = useNavigate();
 
-  const toggleDropdown = (title) => {
+  const toggleDropdown = (title: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
       [title]: !prev[title],
@@ -301,210 +310,182 @@ export function AppSidebar({ role }) {
 
   // Logout function – replace with your actual logout logic
   const handleLogout = () => {
-    // Clear all localStorage items
     localStorage.clear();
-    toast.success("Logged Out Successfully");
-    navigate({ to: "/" });
-     // e.g., clear tokens, call signOut(), or redirect to login
+    toast.success('Logged Out Successfully');
+    navigate({ to: '/' });
   };
 
-  // Profile navigation function
   const handleUpdateProfile = () => {
-    navigate({ to: "/profiles" });
+    navigate({ to: '/profiles' });
     setProfileDropdownOpen(false);
   };
 
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarContent className="flex flex-col h-full">
-        {/* Header area with logo and theme switch */}
         <div className="flex flex-col space-y-3">
-          {/* Logo and dropdown */}
           <div className="flex items-center justify-between p-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center cursor-pointer">
                   <img src={background} alt="Logo" className="w-7 h-7" />
-                  {/* Optionally show text on larger screens */}
                   <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
                 </div>
               </DropdownMenuTrigger>
-              {/* Dropdown content positioned relative to the trigger */}
-              {/* <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-              </DropdownMenuContent> */}
             </DropdownMenu>
-            
-            {/* Theme Switch - Always visible */}
             <ThemeSwitch />
           </div>
-          
-          {/* Divider */}
           <div className="h-px bg-border mx-4" />
         </div>
-        
-        {/* Sidebar navigation items - using flex-1 to allow it to expand */}
-        <SidebarGroup className="flex-1">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) =>
-                item.children ? (
-                  // Render dropdown parent for items with children
-                  <div key={item.title}>
-                    <SidebarMenuItem>
+        <div className="flex-1 overflow-auto">
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item: MenuItem) =>
+                  item.children ? (
+                    <div key={item.title}>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild>
+                          <button
+                            onClick={() => toggleDropdown(item.title)}
+                            className="flex items-center w-full"
+                          >
+                            <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
+                            <span>{item.title}</span>
+                            <svg
+                              className={`ml-auto transition-transform duration-200 text-gray-500 dark:text-blue-200 ${
+                                openDropdowns[item.title] ? 'rotate-90' : ''
+                              }`}
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M7 10l5 5 5-5z" />
+                            </svg>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      {openDropdowns[item.title] && (
+                        <div className="ml-4">
+                          {item.children.map((child: MenuItem) => (
+                            <SidebarMenuItem key={child.title}>
+                              <SidebarMenuButton asChild>
+                                <a href={child.url} className="flex items-center">
+                                  <child.icon className="mr-2 text-gray-600 dark:text-blue-300" />
+                                  <span>{child.title}</span>
+                                </a>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <button
-                          onClick={() => toggleDropdown(item.title)}
-                          className="flex items-center w-full"
-                        >
+                        <a href={item.url} className="flex items-center">
                           <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                           <span>{item.title}</span>
-                          {/* Dropdown arrow indicator */}
-                          <svg
-                            className={`ml-auto transition-transform duration-200 text-gray-500 dark:text-blue-200 ${
-                              openDropdowns[item.title] ? "rotate-90" : ""
-                            }`}
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M7 10l5 5 5-5z" />
-                          </svg>
-                        </button>
+                        </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                    {/* Render nested items if dropdown is open */}
-                    {openDropdowns[item.title] && (
-                      <div className="ml-4">
-                        {item.children.map((child) => (
-                          <SidebarMenuItem key={child.title}>
-                            <SidebarMenuButton asChild>
-                              <a href={child.url} className="flex items-center">
-                                <child.icon className="mr-2 text-gray-600 dark:text-blue-300" />
-                                <span>{child.title}</span>
-                              </a>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  // Render regular menu items
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url} className="flex items-center">
-                        <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        {/* Profile button section at bottom */}
-        <div className="mt-auto border-t border-border p-2">
-          <DropdownMenu open={profileDropdownOpen} onOpenChange={setProfileDropdownOpen}>
-            <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center justify-between rounded-md  hover:bg-accent hover:text-accent-foreground transition-colors data-[collapsed=true]:justify-start data-[collapsed=true]:pl-0">
-                {/* Profile section that adapts to collapsed state */}
-                <div className="flex w-full items-center gap-3 data-[collapsed=true]:justify-start">
-                  {/* Avatar - Always visible */}
-                  <div className="relative flex-shrink-0 h-9 w-9 rounded-full bg-primary/10 data-[collapsed=true]:mr-5">
-                    {userData.userAvatar ? (
-                      <img 
-                        src={userData.userAvatar} 
-                        alt={userData.userName}
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <User className="h-5 w-5" />
-                      </div>
-                    )}
-                    <span className="absolute right-0 bottom-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background"></span>
-                  </div>
-                  
-                  {/* User info - Hidden when collapsed */}
-                  <div className="flex-1 overflow-hidden data-[collapsed=true]:hidden">
-                    <div className="font-medium truncate">{userData.userName}</div>
-                    <div className="text-xs text-muted-foreground truncate">{userData.userEmail}</div>
-                  </div>
-
-                  {/* Dropdown chevron - Hidden when collapsed */}
-                  <svg
-                    className="h-4 w-4 shrink-0 text-muted-foreground transition-transform data-[collapsed=true]:hidden"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
+                  )
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </div>
+        <div className="border-t border-border bg-sidebar dark:bg-slate-800 p-2 sticky bottom-0 mt-auto z-10">
+          <div className="flex items-center gap-3">
+            <div className="relative h-9 w-9 rounded-full bg-primary/10">
+              {userData.userAvatar ? (
+                <img
+                  src={userData.userAvatar}
+                  alt={userData.userName}
+                  className="h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <User className="h-5 w-5" />
                 </div>
-              </button>
-            </DropdownMenuTrigger>
-            
-            <DropdownMenuContent 
-              align="end" 
-              side="right" 
-              sideOffset={5}
-              alignOffset={30} 
-              className="w-56 animate-in slide-in-from-bottom-5 duration-200 origin-top-right data-[side=right]:animate-in data-[side=right]:slide-in-from-left-5"
-              avoidCollisions={true}
+              )}
+              <span className="absolute right-0 bottom-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background"></span>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <div className="font-medium truncate">{userData.userName}</div>
+              <div className="text-xs text-muted-foreground truncate">
+                {userData.userEmail}
+              </div>
+            </div>
+            <button
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent/50"
+              aria-label="Toggle profile menu"
             >
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{userData.userName}</p>
-                  <p className="text-xs text-muted-foreground">{userData.userEmail}</p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {role === "member" && (
-                <DropdownMenuItem onClick={handleUpdateProfile} className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Update Profile</span>
-                </DropdownMenuItem>
-              )}
-              
-              <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="cursor-pointer text-destructive focus:text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You will be logged out from your account.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Log out
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <svg
+                className="h-4 w-4 text-muted-foreground"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+          </div>
         </div>
       </SidebarContent>
+      {profileDropdownOpen && (
+        <div
+          className="fixed left-[calc(var(--sidebar-width)_+_8px)] bottom-16 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none z-50 animate-in fade-in-0 zoom-in-95"
+          style={{ transform: 'translateX(0)' }}
+        >
+          <div className="font-normal px-2 py-1.5 text-sm">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium">{userData.userName}</p>
+              <p className="text-xs text-muted-foreground">{userData.userEmail}</p>
+            </div>
+          </div>
+          <div className="h-px bg-muted my-1" />
+          {role === 'member' && (
+            <button
+              onClick={handleUpdateProfile}
+              className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left"
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>Update Profile</span>
+            </button>
+          )}
+          <button
+            onClick={() => setOpenLogoAlert(true)}
+            className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left text-destructive focus:text-destructive"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </button>
+        </div>
+      )}
+      <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be logged out from your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Log out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sidebar>
   );
 }
 
-// Add a default export for the component
 export default AppSidebar;
