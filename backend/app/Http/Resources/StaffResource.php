@@ -55,6 +55,16 @@ class StaffResource extends JsonResource
                     'url' => asset('storage/' . $image->image_path)
                 ];
             }),
+            'education' => $this->education->map(function($education) {
+                return [
+                    'id' => $education->id,
+                    'qualification' => $education->qualification,
+                    'college_name' => $education->college_name,
+                    'board_university' => $education->board_university,
+                    'passing_year' => $education->passing_year,
+                    'percentage' => $education->percentage,
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // 'user'=> $user,

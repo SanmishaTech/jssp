@@ -23,4 +23,9 @@ class Staff extends Model
     {
         return $this->hasMany(StaffImage::class);
     }
+
+    public function education(): HasMany
+    {
+        return $this->hasMany(StaffEducation::class);
+    }
 }

@@ -33,6 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import EducationQualifications from "./EducationQualifications";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
@@ -48,6 +49,24 @@ const profileFormSchema = z.object({
   password: z.any().optional(),
   images: z.any().optional(),
   delete_existing_images: z.boolean().optional(),
+  delete_existing_education: z.boolean().optional(),
+  deleted_education_ids: z.array(z.number()).optional(),
+  education: z.array(
+    z.object({
+      id: z.number().optional(),
+      qualification: z.string().nonempty("Qualification is required"),
+      college_name: z.string().nonempty("College Name is required"),
+      board_university: z.string().nonempty("Board/University is required"),
+      passing_year: z.string().min(4, "Must be a valid year"),
+      percentage: z.string().refine(
+        (val) => {
+          const num = parseFloat(val);
+          return !isNaN(num) && num >= 0 && num <= 100;
+        },
+        { message: "Percentage must be between 0 and 100" }
+      ),
+    })
+  ).optional(),
 
   gender: z.string().optional(),
   experience: z.string().optional(),
@@ -70,12 +89,45 @@ type ProfileFormValues = z.infer<typeof profileFormSchema> & {
 };
 
 function ProfileForm({ formData }) {
-  const defaultValues: Partial<ProfileFormValues> = formData;
+  const defaultValues: Partial<ProfileFormValues> = {
+    staff_name: '',
+    employee_code: '',
+    is_teaching: '0',
+    date_of_birth: '',
+    address: '',
+    mobile: '',
+    email: '',
+    gender: '',
+    experience: '',
+    highest_qualification: '',
+    pan_number: '',
+    aadhaar_number: '',
+    appointment_date: '',
+    nature_of_appointment: '',
+    subject_type: '',
+    mode_of_payment: 'Online',
+    bank_name: '',
+    account_number: '',
+    ifsc_code: '',
+    salary: '',
+    education: [
+      {
+        qualification: '',
+        college_name: '',
+        board_university: '',
+        passing_year: '',
+        percentage: '',
+      }
+    ],
+    ...formData
+  };
+  
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
+  
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -85,23 +137,50 @@ function ProfileForm({ formData }) {
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
   const [deleteExisting, setDeleteExisting] = useState(false);
 
-  const { reset } = form;
-
+  const { reset, control } = form;
+  
   // Reset form values when formData changes
   useEffect(() => {
-    reset(formData);
-    if (formData?.images) {
-      console.log('Image data received:', formData.images);
+    if (formData) {
+      // Prepare the formData with proper education structure for reset
+      const formDataWithEducation = {
+        ...formData,
+        education: formData.education && formData.education.length > 0 
+          ? formData.education.map(edu => ({
+              id: edu.id,
+              qualification: edu.qualification || '',
+              college_name: edu.college_name || '',
+              board_university: edu.board_university || '',
+              passing_year: edu.passing_year ? edu.passing_year.toString() : '',
+              percentage: edu.percentage ? edu.percentage.toString() : '',
+            }))
+          : [{
+              qualification: '',
+              college_name: '',
+              board_university: '',
+              passing_year: '',
+              percentage: '',
+            }]
+      };
       
-      // Map the images to ensure they have the right structure
-      const processedImages = formData.images.map(img => ({
-        ...img,
-        // If the image_path is already correct, use it, otherwise ensure it's properly formatted
-        image_path: img.image_path || (typeof img.url === 'string' ? img.url.split('/').pop() : `Image ${img.id}`)
-      }));
+      // Reset the form with the prepared data
+      reset(formDataWithEducation);
       
-      setExistingImages(processedImages);
-      setDeletedImageIds([]);
+      if (formData.images) {
+        console.log('Image data received:', formData.images);
+        
+        // Map the images to ensure they have the right structure
+        const processedImages = formData.images.map(img => ({
+          ...img,
+          // If the image_path is already correct, use it, otherwise ensure it's properly formatted
+          image_path: img.image_path || (typeof img.url === 'string' ? img.url.split('/').pop() : `Image ${img.id}`)
+        }));
+        
+        setExistingImages(processedImages);
+        setDeletedImageIds([]);
+      }
+      
+      // Education fields setup is now handled in the EducationQualifications component
     }
   }, [formData, reset]);
 
@@ -143,8 +222,12 @@ function ProfileForm({ formData }) {
     data.name = data.staff_name;
     try {
       const formData = new FormData();
+      
+      // Log the data being submitted
+      console.log('Full data to submit:', data);
+      
       Object.keys(data).forEach(key => {
-        if (key !== 'images') {
+        if (key !== 'images' && key !== 'education') {
           formData.append(key, data[key]);
         }
       });
@@ -162,20 +245,58 @@ function ProfileForm({ formData }) {
         formData.append('deleted_image_ids', JSON.stringify(deletedImageIds));
       }
 
+      // Append education data as JSON
+      if (data.education && data.education.length > 0) {
+        // First clean up any empty fields in the education data
+        const cleanEducation = data.education
+          .map(edu => ({
+            ...edu,
+            // Ensure all values are properly formatted for the backend
+            passing_year: edu.passing_year ? edu.passing_year.toString() : '',
+            percentage: edu.percentage ? edu.percentage.toString() : '',
+          }))
+          .filter(edu => 
+            edu.qualification || 
+            edu.college_name || 
+            edu.board_university || 
+            edu.passing_year || 
+            edu.percentage
+          );
+        
+        console.log('Submitting education data:', cleanEducation);
+        
+        // Make sure to stringify the entire array, not each individual item
+        formData.append('education', JSON.stringify(cleanEducation));
+        
+        // Log the FormData to make sure it's correct (this will show [object Object] but it confirms the entry exists)
+        console.log('FormData education entry exists:', formData.has('education'));
+      } else {
+        console.log('No education data to submit');
+      }
+
+      // Log the FormData entries for debugging
+      console.log('FormData entries:');
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
       const staff_id = localStorage.getItem("staff_id");
-      await axios.post(`/api/staff/${staff_id}?_method=PUT`, formData, {
+      const response = await axios.post(`/api/staff/${staff_id}?_method=PUT`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
 
+      console.log('Server response:', response.data);
       toast.success("Profile Updated Successfully");
       // Navigate to memberdashboard after successful update
       navigate({ to: "/memberdashboard" });
     } catch (error: any) {
+      console.error('Error submitting form:', error);
       if (axios.isAxiosError(error) && error.response) {
         const { errors, message } = error.response.data; // Extract validation errors
+        console.error('Server error response:', error.response.data);
 
         if (errors) {
           // Loop through backend validation errors and set them in the form
@@ -632,6 +753,9 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
 
+          {/* Education Qualifications Component */}
+          <EducationQualifications form={form} />
+
           {/* Add this before the Profile Information Card */}
           <Card className="w-full">
             <CardHeader>
@@ -755,7 +879,25 @@ function ProfileForm({ formData }) {
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button 
+            className="self-center mr-8" 
+            type="button"
+            onClick={() => {
+              // Get current form values
+              const values = form.getValues();
+              console.log('Current form values:', values);
+              
+              // Trigger validation
+              form.trigger().then(isValid => {
+                if (isValid) {
+                  onSubmit(values);
+                } else {
+                  console.log('Form validation errors:', form.formState.errors);
+                  toast.error("Please fix the form errors before submitting");
+                }
+              });
+            }}
+          >
             Update Staff
           </Button>
         </div>
