@@ -300,20 +300,10 @@ function LeaveForm() {
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button
-          onClick={handleBack}
-          variant="outline"
-          size="sm"
-          className="h-8 gap-1"
-        >
-          <MoveLeft className="h-4 w-4" />
-          Back
-        </Button>
-      </div>
       
-      <Tabs defaultValue="apply" className="space-y-4">
-        <TabsList>
+      
+      <Tabs defaultValue="apply" className="space-y-4 w-full">
+        <TabsList className="w-full grid grid-cols-2">
           <TabsTrigger value="apply">Apply for Leave</TabsTrigger>
           <TabsTrigger value="history">Leave History</TabsTrigger>
         </TabsList>
@@ -476,7 +466,7 @@ function LeaveForm() {
                           <TableCell>{formatDate(leave.to_date)}</TableCell>
                           <TableCell>{leave.reason}</TableCell>
                           <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                          <TableCell>{leave.remarks || "-"}</TableCell>
+                          <TableCell title={leave.remarks || "-"}>{leave.remarks && leave.remarks.length > 7 ? `${leave.remarks.substring(0, 7)}...` : (leave.remarks || "-")}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
