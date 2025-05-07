@@ -28,4 +28,9 @@ class Staff extends Model
     {
         return $this->hasMany(StaffEducation::class);
     }
+
+    public function papers(): HasMany
+    {
+        return $this->hasMany(StaffPaper::class);
+    }
 }

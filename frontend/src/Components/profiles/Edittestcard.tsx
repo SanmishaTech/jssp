@@ -34,6 +34,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import EducationQualifications from "./EducationQualifications";
+import PaperUpload from "./PaperUpload";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
@@ -81,7 +82,12 @@ const profileFormSchema = z.object({
   account_number: z.string().optional(),
   ifsc_code: z.string().optional(),
   salary: z.string().optional(),
-  
+  documents: z.any().optional(),
+  delete_existing_documents: z.boolean().optional(),
+  deleted_document_ids: z.array(z.number()).optional(),
+  papers: z.any().optional(),
+  delete_existing_papers: z.boolean().optional(),
+  deleted_paper_ids: z.array(z.number()).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema> & {
@@ -136,6 +142,16 @@ function ProfileForm({ formData }) {
   const [existingImages, setExistingImages] = useState<any[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
   const [deleteExisting, setDeleteExisting] = useState(false);
+  
+  // Document state
+  const [selectedDocuments, setSelectedDocuments] = useState<File[]>([]);
+  const [existingDocuments, setExistingDocuments] = useState<any[]>([]);
+  const [deletedDocumentIds, setDeletedDocumentIds] = useState<number[]>([]);
+  
+  // Papers state (for PDFs only)
+  const [selectedPapers, setSelectedPapers] = useState<File[]>([]);
+  const [existingPapers, setExistingPapers] = useState<any[]>([]);
+  const [deletedPaperIds, setDeletedPaperIds] = useState<number[]>([]);
 
   const { reset, control } = form;
   
@@ -180,7 +196,35 @@ function ProfileForm({ formData }) {
         setDeletedImageIds([]);
       }
       
-      // Education fields setup is now handled in the EducationQualifications component
+      // Handle documents data if available
+      if (formData.documents) {
+        console.log('Documents data received:', formData.documents);
+        
+        // Map the documents to ensure they have the right structure
+        const processedDocuments = formData.documents.map(doc => ({
+          ...doc,
+          // If the document_path is already correct, use it, otherwise ensure it's properly formatted
+          document_path: doc.document_path || (typeof doc.url === 'string' ? doc.url.split('/').pop() : `Document ${doc.id}`)
+        }));
+        
+        setExistingDocuments(processedDocuments);
+        setDeletedDocumentIds([]);
+      }
+      
+      // Handle papers data if available
+      if (formData.papers) {
+        console.log('Papers data received:', formData.papers);
+        
+        // Map the papers to ensure they have the right structure
+        const processedPapers = formData.papers.map(paper => ({
+          ...paper,
+          // If the paper_path is already correct, use it, otherwise ensure it's properly formatted
+          paper_path: paper.paper_path || (typeof paper.url === 'string' ? paper.url.split('/').pop() : `Paper ${paper.id}`)
+        }));
+        
+        setExistingPapers(processedPapers);
+        setDeletedPaperIds([]);
+      }
     }
   }, [formData, reset]);
 
@@ -218,6 +262,45 @@ function ProfileForm({ formData }) {
     };
   }, []);
 
+  // Document handlers
+  const handleAddDocuments = (files: File[]) => {
+    setSelectedDocuments(prev => [...prev, ...files]);
+  };
+  
+  const handleRemoveDocument = (id: number) => {
+    setExistingDocuments(existingDocuments.filter(doc => doc.id !== id));
+    setDeletedDocumentIds([...deletedDocumentIds, id]);
+  };
+  
+  const handleRemoveNewDocument = (index: number) => {
+    setSelectedDocuments(prev => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
+  
+  // Paper handlers
+  const handleAddPapers = (files: File[]) => {
+    console.log('Adding papers to state:', files.map(f => f.name));
+    setSelectedPapers(prev => [...prev, ...files]);
+  };
+  
+  const handleRemovePaper = (id: number) => {
+    console.log('Removing existing paper with ID:', id);
+    setExistingPapers(existingPapers.filter(paper => paper.id !== id));
+    setDeletedPaperIds([...deletedPaperIds, id]);
+  };
+  
+  const handleRemoveNewPaper = (index: number) => {
+    console.log('Removing new paper at index:', index);
+    setSelectedPapers(prev => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated;
+    });
+  };
+
   async function onSubmit(data: ProfileFormValues) {
     data.name = data.staff_name;
     try {
@@ -226,8 +309,9 @@ function ProfileForm({ formData }) {
       // Log the data being submitted
       console.log('Full data to submit:', data);
       
+      // Add all form fields except for files and arrays that need special handling
       Object.keys(data).forEach(key => {
-        if (key !== 'images' && key !== 'education') {
+        if (key !== 'images' && key !== 'education' && key !== 'documents' && key !== 'papers') {
           formData.append(key, data[key]);
         }
       });
@@ -243,6 +327,35 @@ function ProfileForm({ formData }) {
       // Send the list of image IDs to delete
       if (deletedImageIds.length > 0 && !deleteExisting) {
         formData.append('deleted_image_ids', JSON.stringify(deletedImageIds));
+      }
+      
+      // Append each selected paper to the FormData
+      console.log('Selected papers to upload:', selectedPapers);
+      if (selectedPapers.length > 0) {
+        selectedPapers.forEach((paper, index) => {
+          console.log(`Adding paper ${index}:`, paper.name, paper.type, paper.size);
+          formData.append(`papers[${index}]`, paper);
+        });
+      } else {
+        console.log('No papers to upload');
+      }
+      
+      // Send the list of paper IDs to delete
+      if (deletedPaperIds.length > 0) {
+        console.log('Deleted paper IDs:', deletedPaperIds);
+        formData.append('deleted_paper_ids', JSON.stringify(deletedPaperIds));
+      }
+      
+      // Append each selected document to the FormData if DocumentUpload is being used
+      if (selectedDocuments && selectedDocuments.length > 0) {
+        selectedDocuments.forEach((document, index) => {
+          formData.append(`documents[${index}]`, document);
+        });
+        
+        // Send the list of document IDs to delete
+        if (deletedDocumentIds.length > 0) {
+          formData.append('deleted_document_ids', JSON.stringify(deletedDocumentIds));
+        }
       }
 
       // Append education data as JSON
@@ -277,10 +390,15 @@ function ProfileForm({ formData }) {
       // Log the FormData entries for debugging
       console.log('FormData entries:');
       for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
+        if (pair[1] instanceof File) {
+          console.log(pair[0], 'File:', pair[1].name, pair[1].type, pair[1].size + ' bytes');
+        } else {
+          console.log(pair[0], pair[1]);
+        }
       }
 
       const staff_id = localStorage.getItem("staff_id");
+      console.log('Sending data to API endpoint:', `/api/staff/${staff_id}?_method=PUT`);
       const response = await axios.post(`/api/staff/${staff_id}?_method=PUT`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -756,6 +874,18 @@ function ProfileForm({ formData }) {
           {/* Education Qualifications Component */}
           <EducationQualifications form={form} />
 
+          {/* Paper Upload Component (PDF Only) */}
+          <PaperUpload 
+            form={form}
+            existingPapers={existingPapers}
+            onAddPapers={handleAddPapers}
+            onRemovePaper={handleRemovePaper}
+            onRemoveNewPaper={handleRemoveNewPaper}
+          />
+
+          {/* Document Upload Component */}
+          
+
           {/* Add this before the Profile Information Card */}
           <Card className="w-full">
             <CardHeader>
@@ -886,6 +1016,7 @@ function ProfileForm({ formData }) {
               // Get current form values
               const values = form.getValues();
               console.log('Current form values:', values);
+              console.log('Selected papers before submission:', selectedPapers);
               
               // Trigger validation
               form.trigger().then(isValid => {

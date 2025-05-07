@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Staff;
 use App\Models\StaffImage;
 use App\Models\StaffEducation;
+use App\Models\StaffPaper;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -318,6 +319,54 @@ public function index(Request $request): JsonResponse
         } else {
             Log::info('No education data in request for staff ID: ' . $staff->id);
         }
+
+        // Handle paper uploads and deletions
+        if ($request->has('deleted_paper_ids')) {
+            $deletedPaperIds = json_decode($request->input('deleted_paper_ids'), true);
+            Log::info('Deleting paper IDs: ' . $request->input('deleted_paper_ids'));
+            
+            if (is_array($deletedPaperIds) && count($deletedPaperIds) > 0) {
+                foreach ($staff->papers as $paper) {
+                    if (in_array($paper->id, $deletedPaperIds)) {
+                        // Delete the file from storage using the correct path
+                        Log::info('Deleting paper file: ' . $paper->paper_path);
+                        Storage::disk('public')->delete('staff_papers/'.$paper->paper_path);
+                        $paper->delete();
+                    }
+                }
+            }
+        }
+
+        // Add new papers
+        if ($request->hasFile('papers')) {
+            Log::info('Handling paper uploads. Paper count: ' . count($request->file('papers')));
+            
+            foreach ($request->file('papers') as $paper) {
+                // Get original filename and ensure uniqueness
+                $originalName = $paper->getClientOriginalName();
+                $uniqueName = time() . '_' . $originalName;
+                
+                Log::info('Uploading paper: ' . $originalName . ' as ' . $uniqueName);
+                
+                // Ensure the directory exists
+                Storage::disk('public')->makeDirectory('staff_papers', 0755, true, true);
+                
+                // Store the paper in the staff_papers directory with a unique name
+                $path = $paper->storeAs('staff_papers', $uniqueName, 'public');
+                
+                // Get the paper title from the original filename (without extension)
+                $paperTitle = pathinfo($originalName, PATHINFO_FILENAME);
+                
+                // Store the paper info in the database
+                $paperRecord = StaffPaper::create([
+                    'staff_id' => $staff->id,
+                    'paper_path' => $uniqueName,
+                    'paper_title' => $paperTitle
+                ]);
+                
+                Log::info('Paper record created with ID: ' . $paperRecord->id);
+            }
+        }
        
         return response()->json([
             'status' => true,
@@ -365,32 +414,41 @@ public function index(Request $request): JsonResponse
         $path = storage_path('app/public/staff_images/'.$document);
         
         // Log for debugging
-        Log::info('Staff image requested: ' . $document);
+        Log::info('Document requested: ' . $document);
         Log::info('Path being checked: ' . $path);
         Log::info('File exists: ' . (file_exists($path) ? 'Yes' : 'No'));
-    
+
         // Check if the file exists
         if (!file_exists($path)) {
-            // Try alternative path
-            $alternatePath = storage_path('app/public/events/'.$document);
-            Log::info('Trying alternate path: ' . $alternatePath);
-            Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+            // Try staff papers path
+            $paperPath = storage_path('app/public/staff_papers/'.$document);
+            Log::info('Trying paper path: ' . $paperPath);
+            Log::info('File exists at paper path: ' . (file_exists($paperPath) ? 'Yes' : 'No'));
             
-            if (file_exists($alternatePath)) {
-                $path = $alternatePath;
+            if (file_exists($paperPath)) {
+                $path = $paperPath;
             } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Document not found",
-                    'errors' => ['error'=>['Document not found.']]
-                ], 404);
+                // Try alternate path for events
+                $alternatePath = storage_path('app/public/events/'.$document);
+                Log::info('Trying alternate path: ' . $alternatePath);
+                Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+                
+                if (file_exists($alternatePath)) {
+                    $path = $alternatePath;
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Document not found",
+                        'errors' => ['error'=>['Document not found.']]
+                    ], 404);
+                }
             }
         }
-    
+
         // Get the file content and MIME type
         $fileContent = File::get($path);
         $mimeType = File::mimeType($path);
-    
+
         // Create the response for the file download
         $response = Response::make($fileContent, 200);
         $response->header("Content-Type", $mimeType);

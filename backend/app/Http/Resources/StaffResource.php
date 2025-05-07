@@ -65,6 +65,14 @@ class StaffResource extends JsonResource
                     'percentage' => $education->percentage,
                 ];
             }),
+            'papers' => $this->papers->map(function($paper) {
+                return [
+                    'id' => $paper->id,
+                    'paper_title' => $paper->paper_title,
+                    'paper_path' => $paper->paper_path,
+                    'url' => asset('storage/staff_papers/' . $paper->paper_path)
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // 'user'=> $user,
