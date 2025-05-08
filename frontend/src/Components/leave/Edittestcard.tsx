@@ -42,6 +42,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { usePostData } from "@/Components/HTTP/POST";
 import { useGetData } from "@/Components/HTTP/GET";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 // Define the type for a leave application
 interface LeaveApplication {
@@ -97,6 +105,10 @@ function LeaveForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showInstituteSelector, setShowInstituteSelector] = useState(false);
   const [institutes, setInstitutes] = useState<Institute[]>([]);
+  
+  // Add state for dialog
+  const [selectedLeave, setSelectedLeave] = useState<LeaveApplication | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   
   useEffect(() => {
     // Check authentication on component mount
@@ -294,8 +306,24 @@ function LeaveForm() {
     }
   };
   
+  // Format date with time if available
+  const formatDateTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    } catch (error) {
+      return dateString || "-";
+    }
+  };
+  
   const handleBack = () => {
     navigate({ to: "/dashboard" as any });
+  };
+  
+  // Open dialog with leave details
+  const handleLeaveRowClick = (leave: LeaveApplication) => {
+    setSelectedLeave(leave);
+    setDialogOpen(true);
   };
   
   return (
@@ -460,13 +488,25 @@ function LeaveForm() {
                     </TableHeader>
                     <TableBody>
                       {Array.isArray(leaveHistory) && leaveHistory.map((leave) => (
-                        <TableRow key={leave.id}>
+                        <TableRow 
+                          key={leave.id} 
+                          onClick={() => handleLeaveRowClick(leave)} 
+                          className="cursor-pointer hover:bg-muted/50"
+                        >
                           <TableCell>{leave.leave_type}</TableCell>
                           <TableCell>{formatDate(leave.from_date)}</TableCell>
                           <TableCell>{formatDate(leave.to_date)}</TableCell>
-                          <TableCell>{leave.reason}</TableCell>
+                          <TableCell>
+                            <div className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap" title={leave.reason}>
+                              {leave.reason}
+                            </div>
+                          </TableCell>
                           <TableCell>{getStatusBadge(leave.status)}</TableCell>
-                          <TableCell title={leave.remarks || "-"}>{leave.remarks && leave.remarks.length > 7 ? `${leave.remarks.substring(0, 7)}...` : (leave.remarks || "-")}</TableCell>
+                          <TableCell>
+                            <div className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap" title={leave.remarks || "-"}>
+                              {leave.remarks || "-"}
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -477,6 +517,72 @@ function LeaveForm() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Leave Details Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
+            <DialogDescription>
+              Full information about this leave request
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLeave && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Leave Type:</div>
+                <div className="col-span-3 font-semibold">{selectedLeave.leave_type}</div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Period:</div>
+                <div className="col-span-3 font-semibold">
+                  {formatDate(selectedLeave.from_date)} to {formatDate(selectedLeave.to_date)}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-start gap-2">
+                <div className="font-medium text-muted-foreground">Reason:</div>
+                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeave.reason}</div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Status:</div>
+                <div className="col-span-3">{getStatusBadge(selectedLeave.status)}</div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-start gap-2">
+                <div className="font-medium text-muted-foreground">Remarks:</div>
+                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeave.remarks || "-"}</div>
+              </div>
+              
+              {selectedLeave.approved_by && (
+                <>
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <div className="font-medium text-muted-foreground">Approved By:</div>
+                    <div className="col-span-3 font-semibold">{selectedLeave.approved_by}</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <div className="font-medium text-muted-foreground">Approved At:</div>
+                    <div className="col-span-3">{formatDateTime(selectedLeave.approved_at)}</div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          
+          <DialogFooter className="border-t pt-4">
+            <Button 
+              onClick={() => setDialogOpen(false)} 
+              className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

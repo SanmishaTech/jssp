@@ -67,6 +67,10 @@ function LeaveApprovalDashboard() {
   const [actionType, setActionType] = useState<"approve" | "reject" | null>(null);
   const [remarks, setRemarks] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // For details dialog
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [selectedLeaveDetails, setSelectedLeaveDetails] = useState<LeaveApplication | null>(null);
 
   // Use the GET hook for pending leaves
   const { 
@@ -237,6 +241,26 @@ function LeaveApprovalDashboard() {
     }
   };
   
+  // Format date with time for detailed view
+  const formatDateTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    } catch (error) {
+      return dateString || "-";
+    }
+  };
+  
+  // Open details dialog
+  const handleViewDetails = (leave: LeaveApplication, event?: React.MouseEvent) => {
+    // If this is triggered from a button inside a row, stop event propagation
+    if (event) {
+      event.stopPropagation();
+    }
+    setSelectedLeaveDetails(leave);
+    setIsDetailsDialogOpen(true);
+  };
+  
   const renderLeaveList = (leaves: LeaveApplication[], showActions = false) => {
     if (isLoadingCurrentTab()) {
       return <div className="flex justify-center py-6">Loading...</div>;
@@ -272,11 +296,19 @@ function LeaveApprovalDashboard() {
         </TableHeader>
         <TableBody>
           {Array.isArray(leaves) && leaves.map((leave) => (
-            <TableRow key={leave.id}>
+            <TableRow 
+              key={leave.id}
+              className="cursor-pointer hover:bg-muted/50"
+              onClick={() => handleViewDetails(leave)}
+            >
               <TableCell>{leave.staff_name || "Staff"}</TableCell>
               <TableCell>{formatDate(leave.from_date)}</TableCell>
               <TableCell>{formatDate(leave.to_date)}</TableCell>
-              <TableCell>{leave.reason}</TableCell>
+              <TableCell>
+                <div className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap" title={leave.reason}>
+                  {leave.reason}
+                </div>
+              </TableCell>
               <TableCell>
                 {leave.status === "approved" && (
                   <Badge className="bg-green-500">Approved</Badge>
@@ -288,7 +320,11 @@ function LeaveApprovalDashboard() {
                   <Badge className="bg-yellow-500">Pending</Badge>
                 )}
               </TableCell>
-              {activeTab !== "pending" && <TableCell>{leave.remarks || "-"}</TableCell>}
+              {activeTab !== "pending" && <TableCell>
+                <div className="max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap" title={leave.remarks || "-"}>
+                  {leave.remarks || "-"}
+                </div>
+              </TableCell>}
               {activeTab !== "pending" && <TableCell>{leave.approved_by || "-"}</TableCell>}
               {activeTab !== "pending" && (
                 <TableCell>
@@ -296,19 +332,25 @@ function LeaveApprovalDashboard() {
                 </TableCell>
               )}
               {showActions && (
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex space-x-2">
                     <Button
                       size="sm"
                       className="bg-green-500 hover:bg-green-600"
-                      onClick={() => handleAction(leave, "approve")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction(leave, "approve");
+                      }}
                     >
                       Approve
                     </Button>
                     <Button
                       size="sm"
                       variant="destructive"
-                      onClick={() => handleAction(leave, "reject")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction(leave, "reject");
+                      }}
                     >
                       Reject
                     </Button>
@@ -388,9 +430,9 @@ function LeaveApprovalDashboard() {
       
       {/* Approval/Rejection Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold">
               {actionType === "approve" ? "Approve Leave" : "Reject Leave"}
             </DialogTitle>
             <DialogDescription>
@@ -401,22 +443,23 @@ function LeaveApprovalDashboard() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right" htmlFor="remarks">
+              <Label className="text-right font-medium text-muted-foreground" htmlFor="remarks">
                 Remarks
               </Label>
               <Textarea
                 id="remarks"
-                className="col-span-3"
+                className="col-span-3 border-2 shadow-sm focus:shadow-md transition-shadow"
                 placeholder="Enter your remarks"
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="border-t pt-4">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
+              className="shadow-md hover:shadow-lg transition-all"
             >
               Cancel
             </Button>
@@ -425,8 +468,8 @@ function LeaveApprovalDashboard() {
               disabled={isSubmitting || leaveUpdateMutation.isPending}
               className={
                 actionType === "approve"
-                  ? "bg-green-500 hover:bg-green-600"
-                  : ""
+                  ? "bg-green-500 hover:bg-green-600 shadow-md hover:shadow-lg transition-all"
+                  : "shadow-md hover:shadow-lg transition-all"
               }
               variant={actionType === "reject" ? "destructive" : "default"}
             >
@@ -435,6 +478,116 @@ function LeaveApprovalDashboard() {
                 : actionType === "approve"
                 ? "Approve"
                 : "Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Leave Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
+            <DialogDescription>
+              Full information about this leave request
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLeaveDetails && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Staff Name:</div>
+                <div className="col-span-3 font-semibold">{selectedLeaveDetails.staff_name || "Staff"}</div>
+              </div>
+
+             
+              
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Leave Period:</div>
+                <div className="col-span-3 font-semibold">
+                  {formatDate(selectedLeaveDetails.from_date)} to {formatDate(selectedLeaveDetails.to_date)}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-start gap-2">
+                <div className="font-medium text-muted-foreground">Reason:</div>
+                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeaveDetails.reason}</div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-center gap-2">
+                <div className="font-medium text-muted-foreground">Status:</div>
+                <div className="col-span-3">
+                  {selectedLeaveDetails.status === "approved" && (
+                    <Badge className="bg-green-500 shadow-sm">Approved</Badge>
+                  )}
+                  {selectedLeaveDetails.status === "rejected" && (
+                    <Badge className="bg-red-500 shadow-sm">Rejected</Badge>
+                  )}
+                  {selectedLeaveDetails.status === "pending" && (
+                    <Badge className="bg-yellow-500 shadow-sm">Pending</Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-4 items-start gap-2">
+                <div className="font-medium text-muted-foreground">Remarks:</div>
+                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeaveDetails.remarks || "-"}</div>
+              </div>
+              
+              {selectedLeaveDetails.status !== "pending" && (
+                <>
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <div className="font-medium text-muted-foreground">Approved By:</div>
+                    <div className="col-span-3 font-semibold">{selectedLeaveDetails.approved_by || "-"}</div>
+                  </div>
+                  
+                  <div className="grid grid-cols-4 items-center gap-2">
+                    <div className="font-medium text-muted-foreground">Approved At:</div>
+                    <div className="col-span-3">{formatDateTime(selectedLeaveDetails.approved_at)}</div>
+                  </div>
+                </>
+              )}
+              
+              {selectedLeaveDetails.status === "pending" && (
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      // Small delay to avoid visual glitch with dialogs
+                      setTimeout(() => {
+                        handleAction(selectedLeaveDetails, "approve");
+                      }, 100);
+                    }}
+                    className="bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all"
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setIsDetailsDialogOpen(false);
+                      // Small delay to avoid visual glitch with dialogs
+                      setTimeout(() => {
+                        handleAction(selectedLeaveDetails, "reject");
+                      }, 100);
+                    }}
+                    className="shadow-md hover:shadow-lg transition-all"
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+          
+          <DialogFooter className="border-t pt-4">
+            <Button 
+              onClick={() => setIsDetailsDialogOpen(false)} 
+              variant="outline"
+              className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -81,7 +81,7 @@ class LeaveController extends BaseController
         $leave->status = 'pending';
         $leave->remarks = '';
         $leave->approved_by = '';
-        $leave->approved_at = null;
+        $leave->approved_at = '';
         $leave->save();
         
         return $this->sendResponse(["Leave" => new LeaveResource($leave)], "Leave application submitted successfully");
