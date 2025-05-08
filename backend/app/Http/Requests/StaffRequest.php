@@ -36,6 +36,8 @@ class StaffRequest extends FormRequest
             'date_of_birth' => 'required|date',
             'address' => 'required|string',
             'mobile' => 'required|string',
+            'role' => 'required|string|',
+
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', // Max 2MB per image
             'images' => 'array|max:5', // Maximum 5 images allowed
             'education' => 'nullable', // Allow any format initially to debug

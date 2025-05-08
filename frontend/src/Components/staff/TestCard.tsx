@@ -51,6 +51,8 @@ const profileFormSchema = z.object({
     .nonempty("Email is required")
     .email("Invalid email address"),
   password: z.string().nonempty("Password is required"),
+  role: z.string().nonempty("Role is required"), // Add this line
+
   images: z.any().optional(),
 });
 
@@ -60,12 +62,16 @@ type ProfileFormValues = z.infer<typeof profileFormSchema> & {
 };
 
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {};
+const defaultValues: Partial<ProfileFormValues> = {
+  role: "member", // Default role to 'member'
+
+};
 
 function ProfileForm() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
+    
     mode: "onChange",
   });
   const user = localStorage.getItem("user");
@@ -213,7 +219,7 @@ function ProfileForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-4 space-y-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-5 space-y-3">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -269,6 +275,43 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
+
+<FormField
+  control={form.control}
+  name="role"
+  render={({ field }) => (
+    <FormItem className="space-y-3">
+      <FormLabel>User Role</FormLabel>
+      <FormControl>
+        <div className="flex space-x-4">
+          <div className="flex items-center space-x-2">
+            <input
+              type="radio"
+              id="role-member"
+              {...field}
+              value="member"
+              checked={field.value === "member"}
+              className="h-4 w-4"
+            />
+            <label htmlFor="role-member">Member</label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="radio"
+              id="role-cashier"
+              {...field}
+              value="cashier"
+              checked={field.value === "cashier"}
+              className="h-4 w-4"
+            />
+            <label htmlFor="role-cashier">Cashier</label>
+          </div>
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
                 <FormField
                   control={form.control}

@@ -36,6 +36,7 @@ import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
+import { Route as CashierdashboardIndexImport } from './routes/cashierdashboard/index'
 import { Route as CashbookIndexImport } from './routes/cashbook/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
@@ -219,6 +220,12 @@ const CommitteeIndexRoute = CommitteeIndexImport.update({
 const CashiersIndexRoute = CashiersIndexImport.update({
   id: '/cashiers/',
   path: '/cashiers/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CashierdashboardIndexRoute = CashierdashboardIndexImport.update({
+  id: '/cashierdashboard/',
+  path: '/cashierdashboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -478,6 +485,13 @@ declare module '@tanstack/react-router' {
       path: '/cashbook'
       fullPath: '/cashbook'
       preLoaderRoute: typeof CashbookIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashierdashboard/': {
+      id: '/cashierdashboard/'
+      path: '/cashierdashboard'
+      fullPath: '/cashierdashboard'
+      preLoaderRoute: typeof CashierdashboardIndexImport
       parentRoute: typeof rootRoute
     }
     '/cashiers/': {
@@ -844,6 +858,7 @@ export interface FileRoutesByFullPath {
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashbook': typeof CashbookIndexRoute
+  '/cashierdashboard': typeof CashierdashboardIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
@@ -905,6 +920,7 @@ export interface FileRoutesByTo {
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashbook': typeof CashbookIndexRoute
+  '/cashierdashboard': typeof CashierdashboardIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
@@ -967,6 +983,7 @@ export interface FileRoutesById {
   '/bankaccounts/': typeof BankaccountsIndexRoute
   '/calender/': typeof CalenderIndexRoute
   '/cashbook/': typeof CashbookIndexRoute
+  '/cashierdashboard/': typeof CashierdashboardIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
   '/complaints/': typeof ComplaintsIndexRoute
@@ -1030,6 +1047,7 @@ export interface FileRouteTypes {
     | '/bankaccounts'
     | '/calender'
     | '/cashbook'
+    | '/cashierdashboard'
     | '/cashiers'
     | '/committee'
     | '/complaints'
@@ -1090,6 +1108,7 @@ export interface FileRouteTypes {
     | '/bankaccounts'
     | '/calender'
     | '/cashbook'
+    | '/cashierdashboard'
     | '/cashiers'
     | '/committee'
     | '/complaints'
@@ -1150,6 +1169,7 @@ export interface FileRouteTypes {
     | '/bankaccounts/'
     | '/calender/'
     | '/cashbook/'
+    | '/cashierdashboard/'
     | '/cashiers/'
     | '/committee/'
     | '/complaints/'
@@ -1212,6 +1232,7 @@ export interface RootRouteChildren {
   BankaccountsIndexRoute: typeof BankaccountsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
   CashbookIndexRoute: typeof CashbookIndexRoute
+  CashierdashboardIndexRoute: typeof CashierdashboardIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
@@ -1273,6 +1294,7 @@ const rootRouteChildren: RootRouteChildren = {
   BankaccountsIndexRoute: BankaccountsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
   CashbookIndexRoute: CashbookIndexRoute,
+  CashierdashboardIndexRoute: CashierdashboardIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
   ComplaintsIndexRoute: ComplaintsIndexRoute,
@@ -1343,6 +1365,7 @@ export const routeTree = rootRoute
         "/bankaccounts/",
         "/calender/",
         "/cashbook/",
+        "/cashierdashboard/",
         "/cashiers/",
         "/committee/",
         "/complaints/",
@@ -1418,6 +1441,9 @@ export const routeTree = rootRoute
     },
     "/cashbook/": {
       "filePath": "cashbook/index.tsx"
+    },
+    "/cashierdashboard/": {
+      "filePath": "cashierdashboard/index.tsx"
     },
     "/cashiers/": {
       "filePath": "cashiers/index.tsx"

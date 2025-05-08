@@ -268,6 +268,20 @@ const roleBasedItems: Record<string, MenuItem[]> = {
     },
     
   ],
+  cashier: [
+    {
+      title: "Dashboard",
+      url: "/cashierdashboard",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    },
+   
+    
+  ],
 };
 
 export function AppSidebar({ role }: AppSidebarProps) {

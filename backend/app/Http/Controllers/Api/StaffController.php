@@ -75,8 +75,9 @@ public function index(Request $request): JsonResponse
         $user->save();
         
         // Assign the 'member' role
-        $memberRole = Role::where("name", "member")->first();
-        $user->assignRole($memberRole);
+        $roleName = $request->input('role', 'member'); // Default to 'member' if not specified
+        $role = Role::where("name", $roleName)->first();
+        $user->assignRole($role);
         
         // Create a new staff record
         $staff = new Staff();
@@ -193,8 +194,9 @@ public function index(Request $request): JsonResponse
         }
         $user->save();
 
-        $memberRole = Role::where("name","member")->first();
-        $user->assignRole($memberRole);
+        $roleName = $request->input('role', 'member'); // Default to 'member' if not specified
+        $role = Role::where("name", $roleName)->first();
+        $user->assignRole($role);
                        
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');

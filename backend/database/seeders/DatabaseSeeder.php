@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\CreateSuperAdminUserSeeder;
- 
- use Database\Seeders\CreateAdminUserSeeder;
- use Database\Seeders\CreateMemberUserSeeder;
+use Database\Seeders\CreateAdminUserSeeder;
+use Database\Seeders\CreateMemberUserSeeder;
+use Database\Seeders\CreateCashierRoleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateSuperAdminUserSeeder::class);
         $this->call(CreateAdminUserSeeder::class);
         $this->call(CreateMemberUserSeeder::class);
- 
- 
-     }
+        $this->call(CreateCashierRoleSeeder::class);
+    }
 }

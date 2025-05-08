@@ -54,6 +54,8 @@ const Login = () => {
         navigate({ to: "/rootdashboard" });
       } else if (role === "member") {
         navigate({ to: "/memberdashboard" });
+      } else if (role === "cashier") {
+        navigate({ to: "/cashierdashboard" });
       } else {
         navigate({ to: "/staff" });
       }
