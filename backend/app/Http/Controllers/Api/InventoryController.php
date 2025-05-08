@@ -28,11 +28,17 @@ class InventoryController extends BaseController
             $query->where('institute_id', $instituteId);
         }
 
+        // Filter by institute_id if provided in the request
+        if ($request->query('institute_id')) {
+            $instituteId = $request->query('institute_id');
+            $query->where('institute_id', $instituteId);
+        }
+
         if($request->query('search')){
             $searchTerm = $request->query('search');
 
-            $query->where(function($query) use ($searchTerm){
-                $query->where('asset', 'like', '%' . $searchTerm . '%');
+            $query->whereHas('institute', function($query) use ($searchTerm){
+                $query->where('institute_name', 'like', '%' . $searchTerm . '%');
             });
         }
 
@@ -66,8 +72,7 @@ class InventoryController extends BaseController
         }
         
         $inventory->purchase_date = $request->input('purchase_date');
-        $inventory->active_stock = $request->input('active_stock');
-        $inventory->scraped = $request->input('scraped');
+        $inventory->status = $request->input('status');
         $inventory->remarks = $request->input('remarks');
      
         if (!$inventory->save()) {
@@ -119,8 +124,7 @@ class InventoryController extends BaseController
         }
         
         $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
-        $inventory->active_stock = $request->input('active_stock', $inventory->active_stock);
-        $inventory->scraped = $request->input('scraped', $inventory->scraped);
+        $inventory->status = $request->input('status', $inventory->status);
         $inventory->remarks = $request->input('remarks', $inventory->remarks);
         $inventory->save();
     

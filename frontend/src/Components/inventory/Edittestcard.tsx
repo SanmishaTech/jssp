@@ -49,14 +49,12 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
-import { Separator } from "@/components/ui/separator";
-
+ 
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
-  active_stock: z.union([z.boolean(), z.number()]).optional(),
-  scraped: z.union([z.boolean(), z.number()]).optional(),
+  status: z.string().trim().nonempty("Status is Required"),
   remarks: z.string().trim().nonempty("Remarks is Required"),
 });
 
@@ -275,44 +273,29 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                 <FormField
-                        control={form.control}
-                        name="active_stock"
-                        render={({ field }) => (
-                          <FormItem className="space-y-3">
-                            <FormControl>
-                              <div className="flex space-x-4">
-                                <input 
-                                  type="checkbox" 
-                                  checked={field.value === 1 || field.value === true}
-                                  onChange={(e) => field.onChange(e.target.checked)}
-                                />
-                                <label htmlFor="active_stock">Active Stock</label>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                 <FormField
-                        control={form.control}
-                        name="scraped"
-                        render={({ field }) => (
-                          <FormItem className="space-y-3">
-                            <FormControl>
-                              <div className="flex space-x-4">
-                                <input 
-                                  type="checkbox" 
-                                  checked={field.value === 1 || field.value === true}
-                                  onChange={(e) => field.onChange(e.target.checked)}
-                                />
-                                <label htmlFor="scraped">Scraped</label>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || ""}>
+                        <FormControl>
+                                   <SelectTrigger>
+                                     <SelectValue placeholder="Select Status" />
+                                   </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                   <SelectItem value="Active Stock">Active stock</SelectItem>
+                                   <SelectItem value="Discarded">Discarded </SelectItem>
+                                   <SelectItem value="Scraped">Scraped </SelectItem>
+                                 </SelectContent>
+                               </Select>
+                               
+                               <FormMessage />
+                             </FormItem>
+                           )}
+                         />
               </div>
               <FormField
                 control={form.control}

@@ -20,9 +20,8 @@ class InventoryResource extends JsonResource
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             "asset" => $this->asset,
             "purchase_date" => $this->purchase_date,
-            "active_stock" => $this->active_stock,
-            "scraped" => $this->scraped,
-            "remarks" => $this->remarks,
+            "status" => $this->status,
+             "remarks" => $this->remarks,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
          ];

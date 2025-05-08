@@ -92,9 +92,10 @@ export default function Dashboardholiday() {
         description: "Manage Inventory and view their details.",
         headers: [
           { label: "Institute Name", key: "one" },
-          { label: "Asset", key: "two" },
-          { label: "Purchase Date", key: "three" },
-          { label: "Remark", key: "four" },
+          { label: "Status", key: "two" },
+          { label: "Asset", key: "three" },
+          { label: "Purchase Date", key: "four" },
+          { label: "Remark", key: "five" },
 
           { label: "Action", key: "action" },
         ],
@@ -198,9 +199,10 @@ export default function Dashboardholiday() {
     return {
       id: item?.id,
       one: item?.institute_name || "Unknown",
-      two: item?.asset || "NA",
-      three: item?.purchase_date || "NA",
-      four: item?.remarks || "NA",
+      two: item?.status || "Unknown",
+      three: item?.asset || "NA",
+      four: item?.purchase_date || "NA",
+      five: item?.remarks || "NA",
 
       delete: "/inventory/" + item?.id,
     };

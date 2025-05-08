@@ -7,6 +7,7 @@ import { z } from "zod";
 import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -59,6 +60,8 @@ const profileFormSchema = z.object({
   active_stock: z.union([z.boolean(), z.number()]).optional(),
   scraped: z.union([z.boolean(), z.number()]).optional(),
   remarks: z.string().trim().nonempty("Remarks is Required"),
+  status: z.string().default("active"),
+  userId: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -69,7 +72,10 @@ const defaultValues: Partial<ProfileFormValues> = {};
 function ProfileForm() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      status: "Active Stock"
+    },
     mode: "onChange",
   });
   const user = localStorage.getItem("user");
@@ -155,7 +161,7 @@ function ProfileForm() {
               <CardDescription>Provide the details of Asset.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {isSuperAdmin && (
                   <FormField
                     control={form.control}
@@ -277,44 +283,8 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="active_stock"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <input 
-                            type="checkbox" 
-                            checked={field.value === 1 || field.value === true}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                          />
-                          <label htmlFor="active_stock">Active Stock</label>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="scraped"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <input 
-                            type="checkbox" 
-                            checked={field.value === 1 || field.value === true}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                          />
-                          <label htmlFor="scraped">Scraped</label>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                
+                
               </div>
               <FormField
                 control={form.control}
