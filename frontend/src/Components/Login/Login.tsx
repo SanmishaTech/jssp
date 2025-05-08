@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "@tanstack/react-router";
+import { useTheme } from "../theme-provider";
 
 const Login = () => {
   const user = localStorage.getItem("user");
@@ -20,6 +21,7 @@ const Login = () => {
   // }, [user]);
 
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const defaultValues = {
     email: "",
     password: "",
@@ -46,6 +48,11 @@ const Login = () => {
       // Get user role for navigation
       const role = userData.role;
       localStorage.setItem("role", role);
+      
+      // Store the current theme preference
+      const currentTheme = document.documentElement.dataset.theme || 
+                          (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      localStorage.setItem("ui-theme", currentTheme);
       
       // Navigate based on role
       if (role === "admin") {
