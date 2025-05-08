@@ -41,6 +41,7 @@ import { useState, useEffect } from "react";
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Name is Required"),
+  employee_code: z.string().nonempty("Employee Code is Required"),
   is_teaching: z.string().optional(),
   date_of_birth: z.any().optional(),
   address: z.string().nonempty("Address is Required"),
@@ -359,7 +360,7 @@ function ProfileForm() {
             <CardHeader>
               <CardTitle>Profile Details</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="grid grid-cols-2 gap-4 ">
               <FormField
                 control={form.control}
                 name="email"

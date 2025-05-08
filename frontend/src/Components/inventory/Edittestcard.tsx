@@ -51,7 +51,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
  
 const profileFormSchema = z.object({
-  institute_id: z.string().trim().optional(),
+  institute_id: z.string().trim().nonempty("Institute is Required"),
   asset: z.string().trim().nonempty("Asset is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   status: z.string().trim().nonempty("Status is Required"),

@@ -51,9 +51,11 @@ class StaffRequest extends FormRequest
             $rules['education.*.percentage'] = 'required_with:education|string';
         }
 
-        // Add password requirement only for new staff creation
+        // Add password requirement and unique email validation for new staff creation
         if ($this->isMethod('POST')) {
             $rules['password'] = 'required|string|min:6';
+            $rules['email'] = 'required|email|max:255|unique:users,email';
+            $rules['staff_name'] = 'required|string|max:255|unique:staff,staff_name';
         }
 
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {

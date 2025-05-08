@@ -54,7 +54,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_id: z.string().trim().optional(),
+  institute_id: z.string().trim().nonempty("Institute is Required"),
   asset: z.string().trim().nonempty("Asset is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   active_stock: z.union([z.boolean(), z.number()]).optional(),
