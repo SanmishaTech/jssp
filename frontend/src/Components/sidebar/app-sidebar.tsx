@@ -279,6 +279,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/calender",
       icon: Calendar,
     },
+    {
+      title: "Inventory",
+      url: "/inventory",
+      icon: Package,
+    },
    
     
   ],
