@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('institute_id')->nullable();
             $table->string('purchase_date')->nullable();
             $table->string('remarks')->nullable();
+            $table->boolean('active_stock')->nullable();
+            $table->boolean('scraped')->nullable();
             $table->timestamps();
+            
         });
     }
 

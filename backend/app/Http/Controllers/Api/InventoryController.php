@@ -6,6 +6,7 @@ use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\InventoryResource;
 use App\Http\Controllers\Api\BaseController;
 
@@ -14,6 +15,18 @@ class InventoryController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $query = Inventory::query();
+
+        // Get authenticated user
+        $user = Auth::user();
+        
+        // If user is not superadmin, filter by their institute_id
+        if ($user && $user->roles && $user->roles->first() && $user->roles->first()->name !== 'superadmin') {
+            // Get the institute ID from the logged-in user's staff details.
+            $instituteId = $user->staff->institute_id;
+            
+            // Filter inventory based on the institute_id
+            $query->where('institute_id', $instituteId);
+        }
 
         if($request->query('search')){
             $searchTerm = $request->query('search');
@@ -32,8 +45,6 @@ class InventoryController extends BaseController
             'per_page'=> $inventory->perPage(),
             'total'=> $inventory->total(),
         ]], "Inventory retrived successfully");
-
-        
     }
 
     public function store(Request $request): JsonResponse
@@ -42,8 +53,21 @@ class InventoryController extends BaseController
         
         $inventory = new Inventory();
         $inventory->asset = $request->input('asset');
-        $inventory->institute_id = $request->input('institute_id');
-         $inventory->purchase_date = $request->input('purchase_date');
+        
+        // Get authenticated user
+        $user = Auth::user();
+        
+        // If role is superadmin, institute_id comes from input
+        // If role is admin, use the admin's institute_id
+        if ($user && $user->roles && $user->roles->first() && $user->roles->first()->name === 'superadmin') {
+            $inventory->institute_id = $request->input('institute_id');
+        } else {
+            $inventory->institute_id = $user->staff->institute_id;
+        }
+        
+        $inventory->purchase_date = $request->input('purchase_date');
+        $inventory->active_stock = $request->input('active_stock');
+        $inventory->scraped = $request->input('scraped');
         $inventory->remarks = $request->input('remarks');
      
         if (!$inventory->save()) {
@@ -80,17 +104,25 @@ class InventoryController extends BaseController
             return $this->sendError("Inventory not found", ['error' => 'Inventory not found']);
         }
     
-       
-    
-        
-    
-       
         // Update the Institute data
         $inventory->asset = $request->input('asset', $inventory->asset);
-        $inventory->institute_id = $request->input('institute_id', $inventory->institute_id);
-         $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
+        
+        // Get authenticated user
+        $user = Auth::user();
+        
+        // If role is superadmin, institute_id comes from input
+        // If role is admin, use the admin's institute_id
+        if ($user && $user->roles && $user->roles->first() && $user->roles->first()->name === 'superadmin') {
+            $inventory->institute_id = $request->input('institute_id', $inventory->institute_id);
+        } else {
+            $inventory->institute_id = $user->staff->institute_id;
+        }
+        
+        $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
+        $inventory->active_stock = $request->input('active_stock', $inventory->active_stock);
+        $inventory->scraped = $request->input('scraped', $inventory->scraped);
         $inventory->remarks = $request->input('remarks', $inventory->remarks);
-         $inventory->save();
+        $inventory->save();
     
         // Return the updated Institute data
         return $this->sendResponse(

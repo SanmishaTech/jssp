@@ -53,9 +53,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
-  institute_id: z.string().trim().nonempty("Institute Name is Required"),
+  institute_id: z.string().trim().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
+  active_stock: z.union([z.boolean(), z.number()]).optional(),
+  scraped: z.union([z.boolean(), z.number()]).optional(),
   remarks: z.string().trim().nonempty("Remarks is Required"),
 });
 
@@ -73,6 +75,9 @@ function ProfileForm() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  const isSuperAdmin = role === "superadmin";
+  
   const [loadingCourses, setLoadingCourses] = React.useState(false);
   const [courses, setCourses] = React.useState<any[]>([]);
 
@@ -151,88 +156,90 @@ function ProfileForm() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <FormField
-                  control={form.control}
-                  name="institute_id"
-                  render={({ field }) => {
-                    const [open, setOpen] = React.useState(false);
-                    return (
-                      <FormItem className="flex-1">
-                        <FormLabel className="mt-[10px]">
-                          Institutes <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={open}
-                                className="w-full justify-between"
-                              >
-                                {field.value
-                                  ? courses.find((course) => {
-                                      const courseId =
-                                        course.id != null
-                                          ? course.id.toString()
-                                          : "";
-                                      return courseId === field.value;
-                                    })?.institute_name || "Select Institutes..."
-                                  : "Select Institute..."}
-                                <ChevronsUpDown className="opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[300px] p-0">
-                              <Command>
-                                <CommandInput placeholder="Search Institutes..." />
-                                <CommandList>
-                                  <CommandEmpty>
-                                    {loadingCourses
-                                      ? "Loading Institutes..."
-                                      : "No Institute found."}
-                                  </CommandEmpty>
-                                  <CommandGroup>
-                                    {courses.map((course) => {
-                                      const courseId =
-                                        course.id != null
-                                          ? course.id.toString()
-                                          : "";
-                                      return (
-                                        <CommandItem
-                                          key={courseId}
-                                          value={courseId}
-                                          onSelect={(currentValue) => {
-                                            field.onChange(
-                                              currentValue === field.value
-                                                ? ""
-                                                : currentValue
-                                            );
-                                            setOpen(false);
-                                          }}
-                                        >
-                                          {course.institute_name}
-                                          <Check
-                                            className={cn(
-                                              "ml-auto",
-                                              field.value === courseId
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                            )}
-                                          />
-                                        </CommandItem>
-                                      );
-                                    })}
-                                  </CommandGroup>
-                                </CommandList>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
+                {isSuperAdmin && (
+                  <FormField
+                    control={form.control}
+                    name="institute_id"
+                    render={({ field }) => {
+                      const [open, setOpen] = React.useState(false);
+                      return (
+                        <FormItem className="flex-1">
+                          <FormLabel className="mt-[10px]">
+                            Institutes <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-full justify-between"
+                                >
+                                  {field.value
+                                    ? courses.find((course) => {
+                                        const courseId =
+                                          course.id != null
+                                            ? course.id.toString()
+                                            : "";
+                                        return courseId === field.value;
+                                      })?.institute_name || "Select Institutes..."
+                                    : "Select Institute..."}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[300px] p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search Institutes..." />
+                                  <CommandList>
+                                    <CommandEmpty>
+                                      {loadingCourses
+                                        ? "Loading Institutes..."
+                                        : "No Institute found."}
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      {courses.map((course) => {
+                                        const courseId =
+                                          course.id != null
+                                            ? course.id.toString()
+                                            : "";
+                                        return (
+                                          <CommandItem
+                                            key={courseId}
+                                            value={courseId}
+                                            onSelect={(currentValue) => {
+                                              field.onChange(
+                                                currentValue === field.value
+                                                  ? ""
+                                                  : currentValue
+                                              );
+                                              setOpen(false);
+                                            }}
+                                          >
+                                            {course.institute_name}
+                                            <Check
+                                              className={cn(
+                                                "ml-auto",
+                                                field.value === courseId
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                          </CommandItem>
+                                        );
+                                      })}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
@@ -265,6 +272,44 @@ function ProfileForm() {
                           max={new Date().toISOString().split("T")[0]} // Restrict future dates
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="active_stock"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <input 
+                            type="checkbox" 
+                            checked={field.value === 1 || field.value === true}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                          <label htmlFor="active_stock">Active Stock</label>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="scraped"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <input 
+                            type="checkbox" 
+                            checked={field.value === 1 || field.value === true}
+                            onChange={(e) => field.onChange(e.target.checked)}
+                          />
+                          <label htmlFor="scraped">Scraped</label>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
