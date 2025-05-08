@@ -155,12 +155,39 @@ function ProfileForm({ formData }) {
         <div className="space-y-6">
           {/* Institute Information Section */}
           <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Asset Information</CardTitle>
-              <CardDescription>
-                Update the details of this Asset.
-              </CardDescription>
-            </CardHeader>
+             <CardHeader className="flex flex-row justify-between items-start">
+                          <div>
+                            <CardTitle>Asset Information</CardTitle>
+                            <CardDescription>Provide the details of Asset.</CardDescription>
+                          </div>
+                          <div className="min-w-[300px] mt-1 ml-auto pl-[100px]">
+                            <FormField
+                              control={form.control}
+                              name="purchase_date"
+                              render={({ field }) => (
+                                <div className="flex items-center gap-2">
+                                  <div className="min-w-[100px]">
+                                    <FormLabel className="mb-0 mt-0">
+                                      Purchase Date
+                                      <span className="text-red-500">*</span>
+                                    </FormLabel>
+                                  </div>
+                                  <div className="flex-1">
+                                    <FormControl>
+                                      <Input
+                                        type="date"
+                                        max={new Date().toISOString().split("T")[0]} // Restrict future dates
+                                        className="border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-6"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </div>
+                                </div>
+                              )}
+                            />
+                          </div>
+                        </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {isSuperAdmin && (
@@ -254,25 +281,21 @@ function ProfileForm({ formData }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
-                  name="purchase_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Purchase Date
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          max={new Date().toISOString().split("T")[0]} // Restrict future dates
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                 control={form.control}
+                                 name="purchase_price"
+                                 render={({ field }) => (
+                                   <FormItem>
+                                     <FormLabel>
+                                       Purchase Price
+                                       <span className="text-red-500">*</span>
+                                     </FormLabel>
+                                     <FormControl>
+                                       <Input placeholder="Enter Purchase Price..." {...field} />
+                                     </FormControl>
+                                     <FormMessage />
+                                   </FormItem>
+                                 )}
+                               />
                 <FormField
                   control={form.control}
                   name="status"

@@ -72,6 +72,7 @@ class InventoryController extends BaseController
         }
         
         $inventory->purchase_date = $request->input('purchase_date');
+        $inventory->purchase_price = $request->input('purchase_price');
         $inventory->status = $request->input('status');
         $inventory->remarks = $request->input('remarks');
      
@@ -124,6 +125,7 @@ class InventoryController extends BaseController
         }
         
         $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
+        $inventory->purchase_price = $request->input('purchase_price', $inventory->purchase_price);
         $inventory->status = $request->input('status', $inventory->status);
         $inventory->remarks = $request->input('remarks', $inventory->remarks);
         $inventory->save();

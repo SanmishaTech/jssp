@@ -57,6 +57,7 @@ const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
+  purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   active_stock: z.union([z.boolean(), z.number()]).optional(),
   scraped: z.union([z.boolean(), z.number()]).optional(),
   remarks: z.string().trim().nonempty("Remarks is Required"),
@@ -156,9 +157,38 @@ function ProfileForm() {
         <div className="space-y-6">
           {/* Institute Information Section */}
           <Card className="max-w-full p-4">
-            <CardHeader>
-              <CardTitle>Asset Information</CardTitle>
-              <CardDescription>Provide the details of Asset.</CardDescription>
+            <CardHeader className="flex flex-row justify-between items-start">
+              <div>
+                <CardTitle>Asset Information</CardTitle>
+                <CardDescription>Provide the details of Asset.</CardDescription>
+              </div>
+              <div className="min-w-[300px] mt-1 ml-auto pl-[100px]">
+                <FormField
+                  control={form.control}
+                  name="purchase_date"
+                  render={({ field }) => (
+                    <div className="flex items-center gap-2">
+                      <div className="min-w-[100px]">
+                        <FormLabel className="mb-0 mt-0">
+                          Purchase Date
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                      </div>
+                      <div className="flex-1">
+                        <FormControl>
+                          <Input
+                            type="date"
+                            max={new Date().toISOString().split("T")[0]} // Restrict future dates
+                            className="border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-6"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+                    </div>
+                  )}
+                />
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -265,24 +295,21 @@ function ProfileForm() {
                 />
                 <FormField
                   control={form.control}
-                  name="purchase_date"
+                  name="purchase_price"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Purchase Date
+                        Purchase Price
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          type="date"
-                          max={new Date().toISOString().split("T")[0]} // Restrict future dates
-                          {...field}
-                        />
+                        <Input placeholder="Enter Purchase Price..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+               
                 
                 
               </div>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("asset")->nullable();
             $table->string('institute_id')->nullable();
             $table->string('purchase_date')->nullable();
+            $table->string('purchase_price')->nullable();
             $table->string('remarks')->nullable();
             $table->string('status')->nullable();
              $table->timestamps();
