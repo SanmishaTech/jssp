@@ -130,6 +130,29 @@ export default function Dashboard({
 
   // State to manage expanded rows (array of id)
   const [expandedRows, setExpandedRows] = useState([]);
+  
+  // Helper function to check if a row has admin role
+  const hasAdminRole = (row: any) => {
+    // Check various possible ways the role might be stored
+    if (!row) return false;
+    
+    // Check common properties that might contain role information
+    if (row.role === 'admin') return true;
+    if (row.userRole === 'admin') return true;
+    if (row.type === 'admin') return true;
+    if (row.user_role === 'admin') return true;
+    
+    // If there's a specific column for role in the data
+    for (const key in row) {
+      if (typeof row[key] === 'string' && 
+          (row[key].toLowerCase() === 'admin' || 
+           key.toLowerCase().includes('role') && row[key] === 'admin')) {
+        return true;
+      }
+    }
+    
+    return false;
+  };
 
   // Handler to toggle row expansion with debug logs
   const toggleRow = (rowId: string) => {
@@ -335,59 +358,62 @@ export default function Dashboard({
                                   {header.key === "one" ? (
                                     row.one
                                   ) : header.key === "action" ? (
-                                    <Dropdown backdrop="blur" showArrow>
-                                      <DropdownTrigger>
-                                        <button className="p-1 rounded-full opacity-100 group-hover:opacity-100 transition-opacity hover:bg-muted">
-                                          <Ellipsis className="w-5 h-5 text-muted-foreground" />
-                                        </button>
-                                      </DropdownTrigger>
-                                      <DropdownMenu
-                                        aria-label="Actions"
-                                        variant="faded"
-                                        className="w-56"
-                                      >
-                                        <DropdownSection title="Actions">
-                                          <DropdownItem
-                                            key="edit"
-                                            description="Edit staff details"
-                                            onPress={() =>
-                                              navigate({
-                                                to: "/staff/edit/" + row?.id,
-                                              })
-                                            }
-                                            startContent={
-                                              <EditDocumentIcon
-                                                className={iconClasses}
-                                              />
-                                            }
-                                          >
-                                            Edit
-                                          </DropdownItem>
-                                        </DropdownSection>
-                                        <DropdownSection title="Danger zone">
-                                          <DropdownItem
-                                            key="delete"
-                                            className="text-danger"
-                                            color="danger"
-                                            description="This action cannot be undone"
-                                            onPress={() => {
-                                              setEditid(row?.id);
-                                              setToggleopen(true);
-                                            }}
-                                            startContent={
-                                              <DeleteDocumentIcon
-                                                className={cn(
-                                                  iconClasses,
-                                                  "text-danger"
-                                                )}
-                                              />
-                                            }
-                                          >
-                                            Delete
-                                          </DropdownItem>
-                                        </DropdownSection>
-                                      </DropdownMenu>
-                                    </Dropdown>
+                                    // Only show action button if the row doesn't have admin role
+                                    !hasAdminRole(row) ? (
+                                      <Dropdown backdrop="blur" showArrow>
+                                        <DropdownTrigger>
+                                          <button className="p-1 rounded-full opacity-100 group-hover:opacity-100 transition-opacity hover:bg-muted">
+                                            <Ellipsis className="w-5 h-5 text-muted-foreground" />
+                                          </button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu
+                                          aria-label="Actions"
+                                          variant="faded"
+                                          className="w-56"
+                                        >
+                                          <DropdownSection title="Actions">
+                                            <DropdownItem
+                                              key="edit"
+                                              description="Edit staff details"
+                                              onPress={() =>
+                                                navigate({
+                                                  to: "/staff/edit/" + row?.id,
+                                                })
+                                              }
+                                              startContent={
+                                                <EditDocumentIcon
+                                                  className={iconClasses}
+                                                />
+                                              }
+                                            >
+                                              Edit
+                                            </DropdownItem>
+                                          </DropdownSection>
+                                          <DropdownSection title="Danger zone">
+                                            <DropdownItem
+                                              key="delete"
+                                              className="text-danger"
+                                              color="danger"
+                                              description="This action cannot be undone"
+                                              onPress={() => {
+                                                setEditid(row?.id);
+                                                setToggleopen(true);
+                                              }}
+                                              startContent={
+                                                <DeleteDocumentIcon
+                                                  className={cn(
+                                                    iconClasses,
+                                                    "text-danger"
+                                                  )}
+                                                />
+                                              }
+                                            >
+                                              Delete
+                                            </DropdownItem>
+                                          </DropdownSection>
+                                        </DropdownMenu>
+                                      </Dropdown>
+                                    ) : null
                                   ) : header.key === "two" ? (
                                     row.two
                                   ) : header.key === "three" ? (
