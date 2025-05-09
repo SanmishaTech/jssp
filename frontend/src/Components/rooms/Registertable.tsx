@@ -4,9 +4,12 @@ import Dashboard from "./Dashboardreuse";
 import userAvatar from "@/images/Profile.jpg";
 import AddRoomDialog from "./AddRoomDialog";
 import EditRoomDialog from "./EditRoomDialog";
+import RoomInventoryDialog from "./RoomInventoryDialog";
 
 interface Room {
   id: string;
+  room_number?: string;
+  room_name?: string;
   total_fees: string;
   cash: string;
   upi: string;
@@ -24,6 +27,15 @@ interface ApiResponse {
     Room: Room[];
     Pagination: PaginationData;
   };
+}
+
+interface TableData {
+  id: string;
+  one: string;
+  two: string;
+  three?: string;
+  inventory?: string;
+  delete: string;
 }
 
 interface DashboardConfig {
@@ -74,13 +86,7 @@ interface DashboardProps {
       to: number;
     };
   };
-  tableData: Array<{
-    id: string;
-    one: string;
-    two: string;
-    three: string;
-    delete: string;
-  }>;
+  tableData: TableData[];
   onAddProduct: () => void;
   onExport: () => void;
   onFilterChange: (value: string) => void;
@@ -112,7 +118,9 @@ export default function Dashboardholiday() {
   const token = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isInventoryDialogOpen, setIsInventoryDialogOpen] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string>("");
+  const [selectedRoomName, setSelectedRoomName] = useState<string>("");
   const typeofschema = {
     medium_code: "String",
     medium_title: "String",
@@ -182,10 +190,12 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Room Number", key: "one" },
           { label: "Room Name", key: "two" },
+          { label: "Inventory", key: "inventory" },
           { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
+          { label: "Inventory", value: "inventory" },
           { label: "Delete", value: "delete" },
         ],
         pagination: {
@@ -220,6 +230,10 @@ export default function Dashboardholiday() {
     if (action === "edit") {
       setSelectedRoomId(product.id);
       setIsEditDialogOpen(true);
+    } else if (action === "inventory") {
+      setSelectedRoomId(product.id);
+      setSelectedRoomName(product.room_name || "Unknown Room");
+      setIsInventoryDialogOpen(true);
     } else if (action === "delete") {
       try {
         const response = await axios.delete(`/api/rooms/${product.id}`, {
@@ -274,6 +288,7 @@ export default function Dashboardholiday() {
     id: item.id,
     one: item.room_number || "Unknown",
     two: item.room_name || "NA",
+    inventory: "View Inventory",
     delete: "/rooms/" + item.id,
   }));
 
@@ -320,6 +335,13 @@ export default function Dashboardholiday() {
         backdrop="blur"
         fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
         roomId={selectedRoomId}
+      />
+      <RoomInventoryDialog
+        isOpen={isInventoryDialogOpen}
+        onOpen={setIsInventoryDialogOpen}
+        backdrop="blur"
+        roomId={selectedRoomId}
+        roomName={selectedRoomName}
       />
     </div>
   );

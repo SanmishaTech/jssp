@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('purchase_price')->nullable();
             $table->string('remarks')->nullable();
             $table->string('status')->nullable();
+            $table->string('scraped_amount')->nullable();
              $table->timestamps();
         });
     }

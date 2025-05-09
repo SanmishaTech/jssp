@@ -125,6 +125,7 @@ export default function Dashboard({
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [roomFilter, setRoomFilter] = useState("");
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -161,7 +162,18 @@ export default function Dashboard({
   };
 
   const handleSearchClick = () => {
-    onSearch(localSearchTerm);
+    onSearch(localSearchTerm, roomFilter);
+  };
+
+  const handleRoomFilterInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRoomFilter(e.target.value);
+  };
+
+  const handleRoomFilterKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearchClick();
+    }
   };
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,32 +234,56 @@ export default function Dashboard({
               <div className="flex items-center gap-3 self-end">
                 <div className="flex items-center gap-3 ml-auto">
                   <div className="relative flex items-center gap-2">
-                    <div className="relative flex-1 md:w-[300px]">
+                    <div className="relative flex-1 md:w-[200px]">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="search"
                         placeholder={searchPlaceholder}
-                        className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
+                        className="w-full rounded-l-md bg-background pl-10 border-muted focus-visible:ring-primary"
                         value={localSearchTerm}
                         onChange={handleSearchInput}
-                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
+                        onKeyDown={handleKeyDown}
                       />
                       {localSearchTerm && (
                         <button
                           className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
                           onClick={() => {
                             setLocalSearchTerm("");
-                            onSearch("");
+                            onSearch("", roomFilter);
                           }}
                         >
                           <X size={16} />
                         </button>
                       )}
                     </div>
+                    
+                    <div className="relative flex-1 md:w-[200px]">
+                      <ListFilter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="search"
+                        placeholder="Filter by room..."
+                        className="w-full bg-background pl-10 border-muted focus-visible:ring-primary"
+                        value={roomFilter}
+                        onChange={handleRoomFilterInput}
+                        onKeyDown={handleRoomFilterKeyDown}
+                      />
+                      {roomFilter && (
+                        <button
+                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
+                          onClick={() => {
+                            setRoomFilter("");
+                            onSearch(localSearchTerm, "");
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                    
                     <Button
                       color="primary"
                       variant="solid"
-                      className="h-10 rounded-r-full"
+                      className="h-10 rounded-r-md"
                       onPress={handleSearchClick}
                     >
                       Search
@@ -403,7 +439,7 @@ export default function Dashboard({
                                   ) : header.key === "five" ? (
                                     row.five
                                   ) : header.key === "six" ? (
-                                    `₹${row.six}`
+                                    row.six
                                   ) : (
                                     row[header.key]
                                   )}

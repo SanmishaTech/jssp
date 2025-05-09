@@ -43,11 +43,21 @@ export default function Dashboardholiday() {
   }, [token]); // Only re-run when token changes
 
   // Separate fetchData function that can be reused
-  const fetchData = async (query: string = "", page: number = 1) => {
+  const fetchData = async (query: string = "", roomFilter: string = "", page: number = 1) => {
     try {
       setLoading(true);
+      let url = `/api/inventory?page=${page}`;
+      
+      if (query) {
+        url += `&search=${query}`;
+      }
+      
+      if (roomFilter) {
+        url += `&room=${roomFilter}`;
+      }
+      
       const response = await axios.get(
-        `/api/inventory${query ? `?search=${query}&` : "?"}page=${page}`,
+        url,
         {
           headers: {
             "Content-Type": "application/json",
@@ -92,10 +102,11 @@ export default function Dashboardholiday() {
         description: "Manage Inventory and view their details.",
         headers: [
           { label: "Institute Name", key: "one" },
-          { label: "Status", key: "two" },
-          { label: "Asset", key: "three" },
-          { label: "Purchase Date", key: "four" },
-          { label: "Remark", key: "five" },
+          { label: "Room", key: "two" },
+          { label: "Status", key: "three" },
+          { label: "Asset", key: "four" },
+          { label: "Purchase Date", key: "five" },
+          { label: "Remark", key: "six" },
 
           { label: "Action", key: "action" },
         ],
@@ -152,10 +163,10 @@ export default function Dashboardholiday() {
     }
   };
 
-  const handleSearch = async (query: string) => {
+  const handleSearch = async (query: string, roomFilter: string = "") => {
     setSearchQuery(query);
     setPaginationState((prev) => ({ ...prev, currentPage: 1 })); // Reset to first page when searching
-    await fetchData(query, 1);
+    await fetchData(query, roomFilter, 1);
   };
 
   const handleNextPage = () => {
@@ -173,7 +184,7 @@ export default function Dashboardholiday() {
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= paginationState.totalPages) {
       setPaginationState((prev) => ({ ...prev, currentPage: page }));
-      fetchData(searchQuery, page);
+      fetchData(searchQuery, "", page); // Using empty string for roomFilter for now
     }
   };
 
@@ -199,10 +210,11 @@ export default function Dashboardholiday() {
     return {
       id: item?.id,
       one: item?.institute_name || "Unknown",
-      two: item?.status || "Unknown",
-      three: item?.asset || "NA",
-      four: item?.purchase_date || "NA",
-      five: item?.remarks || "NA",
+      two: item?.room_name || "Unknown",
+      three: item?.status || "Unknown",
+      four: item?.asset || "NA",
+      five: item?.purchase_date || "NA",
+      six: item?.remarks || "NA",
 
       delete: "/inventory/" + item?.id,
     };

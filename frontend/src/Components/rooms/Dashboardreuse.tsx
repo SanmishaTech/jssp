@@ -94,8 +94,13 @@ interface TableData {
   id: string;
   one: string;
   two: string;
-  three: string;
+  three?: string;
+  inventory?: string;
+  four?: string;
+  five?: string;
+  six?: string;
   delete: string;
+  [key: string]: any;
 }
 
 interface DashboardProps {
@@ -420,6 +425,15 @@ export default function Dashboard({
                                     </Dropdown>
                                   ) : header.key === "two" ? (
                                     row.two
+                                  ) : header.key === "inventory" ? (
+                                    <Button
+                                      size="sm"
+                                      variant="flat"
+                                      color="primary"
+                                      onPress={() => onProductAction("inventory", row)}
+                                    >
+                                      {row.inventory || "View Inventory"}
+                                    </Button>
                                   ) : header.key === "three" ? (
                                     row.three
                                   ) : header.key === "four" ? (

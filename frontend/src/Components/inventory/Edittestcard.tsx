@@ -52,11 +52,13 @@ import { useParams } from "@tanstack/react-router";
  
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
-  room_id: z.string().trim().optional(),
+  room_id: z.string().trim().nonempty("Room is Required"),
   asset: z.string().trim().nonempty("Asset is Required"),
   quantity: z.string().trim().nonempty("Quantity is Required"),
+  purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   status: z.string().trim().nonempty("Status is Required"),
+  scraped_amount: z.string().trim().optional(),
   remarks: z.string().trim().nonempty("Remarks is Required"),
 });
 
@@ -71,6 +73,9 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
+  
+  // Watch the status field to conditionally render the scraped_amount field
+  const watchStatus = form.watch("status");
   const { id } = useParams({ from: "/inventory/edit/$id" });
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = React.useState<any[]>([]);
@@ -126,6 +131,11 @@ function ProfileForm({ formData }) {
   useEffect(() => {
     formData.name = formData?.user?.name;
     formData.email = formData?.user?.email;
+    
+    // Ensure room_id is a string
+    if (formData?.room_id !== undefined && formData?.room_id !== null) {
+      formData.room_id = formData.room_id.toString();
+    }
     
     // Log the formData to debug
     console.log('Form data received:', formData);
@@ -332,10 +342,10 @@ function ProfileForm({ formData }) {
                                                      key={room.id}
                                                      value={room.id.toString()}
                                                      onSelect={(value) => {
-                                                       field.onChange(
-                                                         value === field.value?.toString() ? "" : value
-                                                       );
-                                                       console.log('Selected room ID:', value);
+                                                       // Ensure value is always a string and never empty
+                                                       const stringValue = value.toString();
+                                                       field.onChange(stringValue);
+                                                       console.log('Selected room ID:', stringValue);
                                                      }}
                                                    >
                                                      {room.room_name}
@@ -432,6 +442,24 @@ function ProfileForm({ formData }) {
                              </FormItem>
                            )}
                          />
+                         {watchStatus === "Scraped" && (
+                           <FormField
+                             control={form.control}
+                             name="scraped_amount"
+                             render={({ field }) => (
+                               <FormItem>
+                                 <FormLabel>
+                                   Scraped Amount
+                                   <span className="text-red-500">*</span>
+                                 </FormLabel>
+                                 <FormControl>
+                                   <Input placeholder="Enter Scraped Amount..." {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                               </FormItem>
+                             )}
+                           />
+                         )}
               </div>
               <FormField
                 control={form.control}
