@@ -25,8 +25,7 @@ axios.interceptors.response.use(
       // Clear token and redirect to login
       localStorage.removeItem("token");
       toast.error("Session expired. Please login again.");
-      window.location.href = "/login";
-    }
+     }
     return Promise.reject(error);
   }
 );

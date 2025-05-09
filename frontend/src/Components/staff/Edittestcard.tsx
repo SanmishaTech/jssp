@@ -42,6 +42,7 @@ const profileFormSchema = z.object({
   date_of_birth: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
+  role: z.string().optional(),
   email: z
     .string()
     .nonempty("Email is required")
@@ -78,8 +79,7 @@ function ProfileForm({ formData }) {
   useEffect(() => {
     reset(formData);
     if (formData?.images) {
-      console.log('Image data received:', formData.images);
-      
+       
       // Map the images to ensure they have the right structure
       const processedImages = formData.images.map(img => ({
         ...img,
@@ -306,6 +306,43 @@ function ProfileForm({ formData }) {
 
                 <FormField
                   control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="role-member"
+                              {...field}
+                              value="member"
+                              checked={field.value === "member"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="role-member">Staff</label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="role-cashier"
+                              {...field}
+                              value="cashier"
+                              checked={field.value === "cashier"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="role-cashier">Cashier</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="date_of_birth"
                   render={({ field }) => (
                     <FormItem>
@@ -367,8 +404,7 @@ function ProfileForm({ formData }) {
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium text-gray-700">Existing Images</h4>
                     {existingImages.map((img) => {
-                      console.log('Image object:', img);
-                      return (
+                       return (
                       <div key={img.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
                         <a 
                           href={`/api/staff-file/${img.image_path}`} 

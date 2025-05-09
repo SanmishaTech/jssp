@@ -116,8 +116,7 @@ export default function Dashboard({
   onKeyPress,
   searchQuery,
 }) {
-  console.log("This is inside the dashboard", tableData);
-  const navigate = useNavigate();
+   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
   const [editid, setEditid] = useState();
   const [toggledelete, setToggledelete] = useState();

@@ -76,21 +76,21 @@ const profileFormSchema = z.object({
     })
   ).optional(),
 
-  gender: z.string().optional(),
-  experience: z.string().optional(),
-  highest_qualification: z.string().optional(),
+  gender: z.any().optional(),
+  experience: z.any().optional(),
+  highest_qualification: z.any().optional(),
  pan_number: z
     .string()
     .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "PAN must be in format: AAAPA1234A"),
-  aadhaar_number: z.string().optional(),
+  aadhaar_number: z.any().optional(),
   appointment_date: z.any().optional(),
-  nature_of_appointment: z.string().optional(),
-  subject_type: z.string().optional(),
-  mode_of_payment: z.string().optional(),
-  bank_name: z.string().optional(),
-  account_number: z.string().optional(),
-  ifsc_code: z.string().optional(),
-  salary: z.string().optional(),
+  nature_of_appointment: z.any().optional(),
+  subject_type: z.any().optional(),
+  mode_of_payment: z.any().optional(),
+  bank_name: z.any().optional(),
+  account_number: z.any().optional(),
+  ifsc_code: z.any().optional(),
+  salary: z.any().optional(),
   documents: z.any().optional(),
   delete_existing_documents: z.boolean().optional(),
   deleted_document_ids: z.array(z.number()).optional(),
@@ -963,7 +963,7 @@ function ProfileForm({ formData }) {
         
         <div className="flex justify-end w-full gap-3">
           <Button
-            onClick={() => navigate({ to: "/staff" })}
+            onClick={() => navigate({ to: "/staffdashboard" })}
             className="self-center"
             type="button"
           >

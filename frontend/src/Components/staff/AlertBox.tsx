@@ -24,11 +24,9 @@ export default function AlertDialogbox({
   };
   const token = localStorage.getItem("token");
 
-  console.log("This is Delete url", url);
-  const queryClient = useQueryClient();
+   const queryClient = useQueryClient();
   const DeleteApi = async () => {
-    console.log("This is Delete url", `/api/${url}`);
-    await axios.delete(`/api/staff/${url}`, {
+     await axios.delete(`/api/staff/${url}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -41,8 +39,7 @@ export default function AlertDialogbox({
   };
 
   useEffect(() => {
-    console.log("Fetching idasdsadasdasd", isOpen);
-  }, [isOpen]);
+   }, [isOpen]);
 
   return (
     <>

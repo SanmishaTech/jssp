@@ -115,8 +115,7 @@ function LeaveForm() {
     const token = localStorage.getItem("token");
     if (!token) {
       toast.error("You are not authenticated. Please login again.");
-      navigate({ to: "/login" as any });
-    }
+     }
   }, [navigate]);
   
   // Handle institute-related errors
@@ -174,8 +173,7 @@ function LeaveForm() {
           if (status === 401) {
             toast.error("Your session has expired. Please login again.");
             localStorage.removeItem("token");
-            navigate({ to: "/login" as any });
-            return;
+             return;
           }
           
           if (status === 400 && data.message === "User does not have an associated institute") {

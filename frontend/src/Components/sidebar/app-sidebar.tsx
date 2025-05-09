@@ -45,7 +45,6 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ThemeSwitch } from "../theme-switch";
 import background from "../../images/Jeevandeep-logo.jpeg";
 
 // Define TypeScript interfaces for our components
@@ -379,7 +378,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 </div>
               </DropdownMenuTrigger>
             </DropdownMenu>
-            <ThemeSwitch />
+            
           </div>
           <div className="h-px bg-border mx-4" />
         </div>

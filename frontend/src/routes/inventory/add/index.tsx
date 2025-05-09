@@ -6,7 +6,6 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/inventory/add/")({
   beforeLoad: async ({ fetch }) => {
     const role = localStorage.getItem("role");
-    console.log("current Role institutes", role);
     if (role !== "cashier" && role !== "admin" && role !== "superadmin") {
       toast.error("You are not authorized to access this page.");
       throw redirect({

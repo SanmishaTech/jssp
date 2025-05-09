@@ -116,8 +116,7 @@ export default function Dashboard({
   onKeyPress,
   searchQuery,
 }) {
-  console.log("This is inside the dashboard", tableData);
-  const navigate = useNavigate();
+   const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
   const [editid, setEditid] = useState();
   const [toggledelete, setToggledelete] = useState();
@@ -133,21 +132,18 @@ export default function Dashboard({
   const [expandedRows, setExpandedRows] = useState([]);
 
   // Handler to toggle row expansion with debug logs
-  const toggleRow = (rowId) => {
+  const toggleRow = (rowId: string) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
-        console.log(`Collapsing row with id: ${rowId}`);
         return prev.filter((id) => id !== rowId);
       } else {
-        console.log(`Expanding row with id: ${rowId}`);
         return [...prev, rowId];
       }
     });
   };
 
   const handleEdit = async (id, url) => {
-    console.log("Edit clicked");
-    setToggleedit(true);
+     setToggleedit(true);
     setEditid({
       id: id,
       url: url,
@@ -156,8 +152,7 @@ export default function Dashboard({
   };
 
   const handleDelete = (id) => {
-    console.log("Delete clicked");
-    // Implement delete functionality here
+     // Implement delete functionality here
   };
 
   const handleSearchClick = () => {

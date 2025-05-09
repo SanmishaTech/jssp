@@ -106,15 +106,13 @@ function ProfileForm() {
         setCourses(coursesData);
       })
       .catch((error) => {
-        console.error("Error fetching courses:", error);
-        toast.error("Failed to fetch courses");
+         toast.error("Failed to fetch courses");
       })
       .finally(() => setLoadingCourses(false));
 
     // Fetch rooms
     setLoadingRooms(true);
-    console.log("Fetching rooms...");
-    axios
+     axios
       .get("/api/rooms", {
         headers: {
           "Content-Type": "application/json",
@@ -123,17 +121,14 @@ function ProfileForm() {
       })
       .then((response) => {
         // Log the entire response to see its structure
-        console.log("Room API response:", response.data);
-        
+         
         // Extract rooms from the correct path in the response
         const roomsData = response.data.data.Room || [];
-        console.log("Extracted room data:", roomsData);
-        
+         
         setRooms(roomsData);
       })
       .catch((error) => {
-        console.error("Error fetching rooms:", error);
-        toast.error("Failed to fetch rooms");
+         toast.error("Failed to fetch rooms");
       })
       .finally(() => setLoadingRooms(false));
   }, [token]);
@@ -328,8 +323,7 @@ function ProfileForm() {
                               >
                                 {field.value
                                   ? (Array.isArray(rooms) && rooms.length > 0 && rooms.find((room) => {
-                                      console.log("Checking room:", room, "against field value:", field.value);
-                                      if (!room) return false;
+                                       if (!room) return false;
                                       const roomId = room.id != null ? room.id.toString() : "";
                                       return roomId === field.value;
                                     })?.room_name) || "Select Room..."
@@ -350,22 +344,18 @@ function ProfileForm() {
                                   </CommandEmpty>
                                   <CommandGroup>
                                     {(() => {
-                                      console.log("Rendering rooms:", rooms);
                                       return Array.isArray(rooms) && rooms.length > 0 ? (
                                       rooms.map((room) => {
                                         if (!room || room.id == null) {
-                                          console.log("Skipping invalid room:", room);
                                           return null;
                                         }
                                         const roomId = room.id.toString();
-                                        console.log("Rendering room:", room.room_name, "with ID:", roomId);
                                         return (
                                           <CommandItem
                                             key={roomId}
                                             value={roomId}
                                             onSelect={(currentValue: string) => {
-                                              console.log("Selected room:", room.room_name, "with value:", currentValue);
-                                              field.onChange(
+                                               field.onChange(
                                                 currentValue === field.value
                                                   ? ""
                                                   : currentValue

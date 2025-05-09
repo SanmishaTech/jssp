@@ -22,8 +22,7 @@ export default function AlertDialogbox({
     onOpen();
   };
 
-  console.log("This is Delete url", url);
-  const queryClient = useQueryClient();
+   const queryClient = useQueryClient();
   const token = localStorage.getItem("token");
 
   const DeleteApi = async () => {
@@ -39,8 +38,7 @@ export default function AlertDialogbox({
   };
 
   useEffect(() => {
-    console.log("Fetching idasdsadasdasd", isOpen);
-  }, [isOpen]);
+   }, [isOpen]);
 
   return (
     <>

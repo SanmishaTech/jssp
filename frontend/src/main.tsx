@@ -8,7 +8,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "./index.css";
-import { ThemeProvider } from "./Components/theme-provider";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -39,8 +38,7 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <ThemeProvider defaultTheme="system">
-        <QueryClientProvider client={queryClient}>
+         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
             <RouterProvider router={router} />
             {/* <ReactQueryDevtools
@@ -49,7 +47,6 @@ if (!rootElement.innerHTML) {
             /> */}
           </Provider>
         </QueryClientProvider>
-      </ThemeProvider>
-    </StrictMode>
+     </StrictMode>
   );
 }
