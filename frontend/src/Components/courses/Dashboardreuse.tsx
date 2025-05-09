@@ -171,23 +171,21 @@ export default function Dashboard({
   const toggleRow = (rowId: string) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
-        console.log(`Collapsing row with id: ${rowId}`);
-        return prev.filter((id) => id !== rowId);
+         return prev.filter((id) => id !== rowId);
       } else {
-        console.log(`Expanding row with id: ${rowId}`);
-        return [...prev, rowId];
+         return [...prev, rowId];
       }
     });
   };
 
   const handleEdit = async (id: string, url: string) => {
-    console.log("Edit clicked");
     setToggleedit(true);
     setEditid(id);
   };
 
   const handleDelete = (id: string) => {
-    console.log("Delete clicked");
+    setToggledelete(true);
+    setEditid(id);
   };
 
   const handleSearchClick = () => {
@@ -395,7 +393,7 @@ export default function Dashboard({
                                             Edit
                                           </DropdownItem>
                                         </DropdownSection>
-                                        <DropdownSection title="Danger zone">
+                                        {/* <DropdownSection title="Danger zone">
                                           <DropdownItem
                                             key="delete"
                                             className="text-danger"
@@ -416,7 +414,7 @@ export default function Dashboard({
                                           >
                                             Delete
                                           </DropdownItem>
-                                        </DropdownSection>
+                                        </DropdownSection> */}
                                       </DropdownMenu>
                                     </Dropdown>
                                   ) : header.key === "two" ? (

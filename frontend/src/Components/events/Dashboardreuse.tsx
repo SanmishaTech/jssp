@@ -178,17 +178,14 @@ export function Dashboard({
   const toggleRow = (rowId: any) => {
     setExpandedRows((prev) => {
       if (prev.includes(rowId)) {
-        console.log(`Collapsing row with _id: ${rowId}`);
         return prev.filter((id) => id !== rowId);
       } else {
-        console.log(`Expanding row with _id: ${rowId}`);
         return [...prev, rowId];
       }
     });
   };
 
   const handleEdit = async (id: any, url: string) => {
-    console.log("Edit clicked");
     setToggleedit(true);
     setEditid({
       id: id,
@@ -198,7 +195,6 @@ export function Dashboard({
   };
 
   const handleDelete = (id: any) => {
-    console.log("Delete clicked");
     // Implement delete functionality here
   };
 
@@ -453,7 +449,7 @@ export function Dashboard({
                                         Edit
                                       </Button>
                                       <DropdownMenuSeparator />
-                                      <AlertDialogbox url={row?.delete} />
+                                      {/* <AlertDialogbox url={row?.delete} /> */}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : header.key === "two" ? (

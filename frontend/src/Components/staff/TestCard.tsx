@@ -64,7 +64,14 @@ type ProfileFormValues = z.infer<typeof profileFormSchema> & {
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
   role: "member", // Default role to 'member'
-
+  // Initialize other fields to prevent uncontrolled to controlled warnings
+  staff_name: "",
+  employee_code: "",
+  is_teaching: "",
+  address: "",
+  mobile: "",
+  email: "",
+  password: ""
 };
 
 function ProfileForm() {
@@ -190,24 +197,24 @@ function ProfileForm() {
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="is_teaching"
+                                id="is_teaching_0"
                                 {...field}
                                 value="0"
                                 checked={field.value === "0"}
                                 className="h-4 w-4"
                               />
-                              <label htmlFor="teaching">Teaching</label>
+                              <label htmlFor="is_teaching_0">Teaching</label>
                             </div>
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="is_teaching"
+                                id="is_teaching_1"
                                 {...field}
                                 value="1"
                                 checked={field.value === "1"}
                                 className="h-4 w-4"
                               />
-                              <label htmlFor="1">Non-Teaching</label>
+                              <label htmlFor="is_teaching_1">Non-Teaching</label>
                             </div>
                           </div>
                         </FormControl>
@@ -292,6 +299,7 @@ function ProfileForm() {
               value="member"
               checked={field.value === "member"}
               className="h-4 w-4"
+              onChange={(e) => field.onChange(e.target.value)}
             />
             <label htmlFor="role-member">Staff</label>
           </div>
@@ -303,6 +311,7 @@ function ProfileForm() {
               value="cashier"
               checked={field.value === "cashier"}
               className="h-4 w-4"
+              onChange={(e) => field.onChange(e.target.value)}
             />
             <label htmlFor="role-cashier">Cashier</label>
           </div>
@@ -371,6 +380,8 @@ function ProfileForm() {
                   multiple
                   onChange={handleImageChange}
                   disabled={selectedImages.length >= 5}
+                  value="" // Ensure it's always controlled with an empty string
+                  key={`file-input-${selectedImages.length}`} // Force re-render when selectedImages changes
                 />
 
                 <div className="space-y-2 mt-4">

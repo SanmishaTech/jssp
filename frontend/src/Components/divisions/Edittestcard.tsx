@@ -83,7 +83,6 @@ const defaultValues: FormValues = {
 };
 
 function ProfileForm({ formData }: { formData: FormValues }) {
-  console.log("Form Data received:", formData); // Debug log
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -168,7 +167,6 @@ function ProfileForm({ formData }: { formData: FormValues }) {
 
   // Reset form when formData changes
   useEffect(() => {
-    console.log("Resetting form with data:", formData); // Debug log
     if (formData) {
       form.reset(formData);
     }
@@ -490,8 +488,6 @@ export default function SettingsProfilePage() {
         });
 
         const divisionData = response.data.data.Division;
-        console.log("Raw API Response:", response.data); // Debug log
-        console.log("Division Data:", divisionData); // Debug log
 
         if (!divisionData) {
           throw new Error("No data received from API");
@@ -505,7 +501,6 @@ export default function SettingsProfilePage() {
           division: divisionData.division || "",
         };
 
-        console.log("Formatted Data:", formattedData); // Debug log
         setFormData(formattedData);
       } catch (error) {
         console.error("Error fetching division:", error);

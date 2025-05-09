@@ -82,8 +82,7 @@ export default function RoomInventoryDialog({
       }
       
       const apiUrl = `/api/inventory?room=${roomId}${statusFilter}&page=${currentPage}`;
-      console.log(`Fetching inventory data from: ${apiUrl}`);
-      
+       
       const response = await axios.get(apiUrl, {
         headers: {
           "Content-Type": "application/json",
@@ -93,8 +92,7 @@ export default function RoomInventoryDialog({
       
       const items = response.data.data.Inventory || [];
       const paginationData = response.data.data.Pagination || null;
-      console.log(`Received ${items.length} inventory items for ${selectedTab} tab`);
-      console.log('Pagination data:', paginationData);
+      
       setInventoryItems(items);
       setPagination(paginationData);
       setLoading(false);
@@ -123,8 +121,7 @@ export default function RoomInventoryDialog({
           <Tabs 
             selectedKey={selectedTab} 
             onSelectionChange={(key) => {
-              console.log(`Changing tab from ${selectedTab} to ${key}`);
-              setSelectedTab(key as TabKey);
+               setSelectedTab(key as TabKey);
             }}
             className="mb-4"
             color="default"
@@ -178,8 +175,7 @@ export default function RoomInventoryDialog({
                 initialPage={currentPage}
                 page={currentPage}
                 onChange={(page) => {
-                  console.log(`Changing page to ${page}`);
-                  setCurrentPage(page);
+                   setCurrentPage(page);
                 }}
                 classNames={{
                   cursor: "bg-primary text-white",

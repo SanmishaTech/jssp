@@ -138,24 +138,20 @@ export default function Dashboardholiday() {
 
   // Handlers for actions
   const handleAddProduct = () => {
-    // console.log("Add Registration clicked");
-    // console.log("AS");
+   
     navigate({ to: "/inventory/add" });
     // For example, navigate to an add registration page or open a modal
   };
 
   const handleExport = () => {
-    // console.log("Export clicked");
     // Implement export functionality such as exporting data as CSV or PDF
   };
 
   const handleFilterChange = (filterValue) => {
-    // console.log(`Filter changed: ${filterValue}`);
     // You can implement filtering logic here, possibly refetching data with filters applied
   };
 
   const handleProductAction = (action, product) => {
-    // console.log(`Action: ${action} on registration:`, product);
     if (action === "edit") {
       // Navigate to edit page or open edit modal
     } else if (action === "delete") {

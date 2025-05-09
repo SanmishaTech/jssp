@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Modal,
@@ -103,17 +103,32 @@ export default function EditAcademicYearDialog({
     if (isOpen && academicYearId) {
       const fetchAcademicYearData = async () => {
         try {
-          const response = await axios.get(`/api/academic_years/${academicYearId}`, {
+           const response = await axios.get(`/api/academic_years/${academicYearId}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           });
-          const academicYearData = response.data.data.AcademicYears;
-          form.reset(academicYearData);
+          
+           
+          if (response.data && response.data.data && response.data.data.AcademicYears) {
+            const academicYearData = response.data.data.AcademicYears;
+            form.reset(academicYearData);
+          } else {
+            console.error('Unexpected API response structure:', response.data);
+            toast.error("Invalid data format received from server");
+          }
         } catch (error) {
           console.error("Error fetching academic year:", error);
-          toast.error("Failed to load academic year data");
+          
+          if (axios.isAxiosError(error)) {
+            console.error('Response status:', error.response?.status);
+            console.error('Response data:', error.response?.data);
+            toast.error(error.response?.data?.message || "Failed to load academic year data");
+          } else {
+            toast.error("An unexpected error occurred");
+          }
+          
           onClose();
         }
       };

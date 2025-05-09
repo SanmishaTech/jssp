@@ -155,7 +155,6 @@ export default function CommitteeForm() {
           },
         });
         // Debug: log the response to verify its structure
-        console.log("Staff API response:", response.data.data.Staff);
         // Adjust this line based on your actual API response structure:
         const fetchedStaff =
           response.data.data?.Staff || response.data.Staff || [];

@@ -104,7 +104,6 @@ export default function AddSubjectDialog({
         }
         
         setCourses(coursesData);
-        console.log("Fetched courses:", coursesData);
       } catch (error) {
         toast.error("Failed to fetch courses");
         console.error(error);
@@ -130,7 +129,6 @@ export default function AddSubjectDialog({
         }
         
         setSemesters(semestersData);
-        console.log("Fetched semesters:", semestersData);
       } catch (error) {
         toast.error("Failed to fetch semesters");
         console.error(error);

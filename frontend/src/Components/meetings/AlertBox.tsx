@@ -23,10 +23,8 @@ export default function AlertDialogbox({
     onOpen();
   };
 
-  console.log("This is Delete url", url);
   const queryClient = useQueryClient();
   const DeleteApi = async () => {
-    console.log("This is Delete url", `/api/${url}`);
     await axios.delete(`/api/meetings/${url}`, {
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +37,6 @@ export default function AlertDialogbox({
   };
 
   useEffect(() => {
-    console.log("Fetching idasdsadasdasd", isOpen);
   }, [isOpen]);
 
   return (

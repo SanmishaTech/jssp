@@ -317,7 +317,7 @@ export default function Dashboardholiday() {
         onOpen={setIsEditDialogOpen}
         backdrop="blur"
         fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
-        subjectId={selectedSubjectId}
+        academicYearId={selectedSubjectId}
       />
     </div>
   );

@@ -137,9 +137,7 @@ function ProfileForm({ formData }) {
       formData.room_id = formData.room_id.toString();
     }
     
-    // Log the formData to debug
-    console.log('Form data received:', formData);
-    console.log('Room ID from formData:', formData?.room_id);
+
     
     reset(formData);
   }, [formData, reset]);
@@ -345,7 +343,6 @@ function ProfileForm({ formData }) {
                                                        // Ensure value is always a string and never empty
                                                        const stringValue = value.toString();
                                                        field.onChange(stringValue);
-                                                       console.log('Selected room ID:', stringValue);
                                                      }}
                                                    >
                                                      {room.room_name}
@@ -510,7 +507,6 @@ export default function SettingsProfilePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('API Response:', response.data);
       setFormData(response.data.data);
     };
     if (id) {

@@ -37,7 +37,7 @@ class AcademicYearRequest extends FormRequest
          
             $rules['academic_year'] = [
                 'required',
-                'unique:academic_years,academic_year,' .$this->route('academic_year'),
+                'unique:academic_years,academic_year,' . $this->route('id'),
             ];
          }
         

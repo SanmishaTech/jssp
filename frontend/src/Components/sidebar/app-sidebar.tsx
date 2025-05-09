@@ -91,11 +91,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
           url: "/academicyears",
           icon: BookMarked,
         },
-        {
-          title: "Subjects",
-          url: "/subjects",
-          icon: BookMarked,
-        },
+       
         {
           title: "Courses",
           url: "/courses",
@@ -105,6 +101,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
           title: "Semester",
           url: "/semester",
           icon: Calendar,
+        },
+        {
+          title: "Subjects",
+          url: "/subjects",
+          icon: BookMarked,
         },
         {
           title: "Room Number",

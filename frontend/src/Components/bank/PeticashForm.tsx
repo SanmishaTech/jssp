@@ -164,22 +164,7 @@ export default function BankForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <Input
-               placeholder="Amount associated with the note (optional)"
-              type="number"
-              min="0"
-              step="0.01"
-              name="note_amount"
-              value={formData.note_amount}
-              onChange={handleInputChange}
-              startContent={
-                <div className="pointer-events-none flex items-center">
-                  <span className="text-default-400">₹</span>
-                </div>
-              }
-            />
-          </div>
+           
         </CardBody>
         <CardFooter>
           <Button

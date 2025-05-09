@@ -208,11 +208,9 @@ export default function Dashboardholiday() {
   };
 
   const handleExport = () => {
-    console.log("Export clicked");
   };
 
   const handleFilterChange = (filterValue: string) => {
-    console.log(`Filter changed: ${filterValue}`);
   };
 
   const handleProductAction = async (action: string, product: Subject) => {

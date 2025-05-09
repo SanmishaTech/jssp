@@ -53,7 +53,7 @@ interface FormFieldProps {
   };
 }
 
-const formatAcademicYear = (value: string) => {
+const formatAcademicYear = (value: string = '') => {
   // Remove all non-digit characters
   const digits = value.replace(/\D/g, '');
   
@@ -75,7 +75,9 @@ export default function AddAcademicYearDialog({
   backdrop = "blur",
   fetchData,
 }: AddAcademicYearDialogProps) {
-  const defaultValues: Partial<ProfileFormValues> = {};
+  const defaultValues: Partial<ProfileFormValues> = {
+    academic_year: ''
+  };
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -93,7 +95,7 @@ export default function AddAcademicYearDialog({
 
   // Handle input change with formatting
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    const formatted = formatAcademicYear(e.target.value);
+    const formatted = formatAcademicYear(e.target.value || '');
     field.onChange(formatted);
   };
 
@@ -167,6 +169,7 @@ export default function AddAcademicYearDialog({
                             <Input 
                               placeholder="Enter year (e.g., 2025 will become 2025-26)" 
                               {...field} 
+                              value={field.value || ''}
                               onChange={(e) => handleInputChange(e, field)} 
                             />
                           </FormControl>

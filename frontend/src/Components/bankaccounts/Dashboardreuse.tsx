@@ -413,7 +413,7 @@ export default function Dashboard({
                                             Edit
                                           </DropdownItem>
                                         </DropdownSection>
-                                        <DropdownSection title="Danger zone">
+                                        {/* <DropdownSection title="Danger zone">
                                           <DropdownItem
                                             key="delete"
                                             className="text-danger"
@@ -434,7 +434,7 @@ export default function Dashboard({
                                           >
                                             Delete
                                           </DropdownItem>
-                                        </DropdownSection>
+                                        </DropdownSection> */}
                                       </DropdownMenu>
                                     </Dropdown>
                                   ) : (

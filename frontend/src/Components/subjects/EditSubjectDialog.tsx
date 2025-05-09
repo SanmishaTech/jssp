@@ -112,7 +112,6 @@ export default function EditSubjectDialog({
             },
           });
           
-          console.log("API Response:", response.data);
           const data = response.data.data.Subject;
           setSubjectData(data);
         } catch (error) {
@@ -148,7 +147,6 @@ export default function EditSubjectDialog({
           }
           
           setCourses(coursesData);
-          console.log("Fetched courses:", coursesData);
           
           // Fetch semesters
           const semestersResponse = await axios.get('/api/semesters', {
@@ -167,7 +165,6 @@ export default function EditSubjectDialog({
           }
           
           setSemesters(semestersData);
-          console.log("Fetched semesters:", semestersData);
         } catch (error) {
           console.error("Error fetching data:", error);
           toast.error("Failed to load required data");
@@ -199,16 +196,11 @@ export default function EditSubjectDialog({
         sub_subjects: sub_subjects.length > 0 ? sub_subjects : [{ sub_subject_name: "" }]
       };
       
-      console.log("Setting form data:", formattedData);
-      console.log("Available semesters:", semesters);
-      console.log("Looking for semester ID:", formattedData.semester_id);
-      
       // Check if the semester exists in our list
       const semesterExists = semesters.some(
         sem => sem.id.toString() === formattedData.semester_id
       );
       
-      console.log("Semester exists in list:", semesterExists);
       
       // Set the form values
       form.reset(formattedData);
@@ -217,7 +209,6 @@ export default function EditSubjectDialog({
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      console.log("Submitting data:", data);
       await axios.patch(`/api/subjects/${subjectId}`, data, {
         headers: {
           "Content-Type": "application/json",

@@ -20,6 +20,8 @@ class SubjectResource extends JsonResource
             'course_id' => $this->course_id,
             'semester_id' => $this->semester_id,
             'subject_name' => $this->subject_name,
+            'medium_code' => $this->course,
+            'semester' => $this->semester,
             'sub_subject' => $this->subSubjects->map(function ($subSubject) {
                 return [
                     'id' => $subSubject->id,
