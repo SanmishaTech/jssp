@@ -19,6 +19,8 @@ class InventoryResource extends JsonResource
             "institute_id" =>$this->institute_id,
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             "asset" => $this->asset,
+            "quantity" => $this->quantity,
+            "room_id" => $this->room_id,
             "purchase_date" => $this->purchase_date,
             "purchase_price" => $this->purchase_price,
             "status" => $this->status,
@@ -26,6 +28,5 @@ class InventoryResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
          ];
-       
     }
 }

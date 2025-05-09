@@ -52,7 +52,9 @@ import { useParams } from "@tanstack/react-router";
  
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
+  room_id: z.string().trim().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
+  quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   status: z.string().trim().nonempty("Status is Required"),
   remarks: z.string().trim().nonempty("Remarks is Required"),
@@ -72,6 +74,8 @@ function ProfileForm({ formData }) {
   const { id } = useParams({ from: "/inventory/edit/$id" });
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = React.useState<any[]>([]);
+  const [rooms, setRooms] = React.useState<any[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
   const [open, setOpen] = useState(false);
   const role = localStorage.getItem("role");
   const isSuperAdmin = role === "superadmin";
@@ -97,12 +101,36 @@ function ProfileForm({ formData }) {
         toast.error("Failed to fetch courses");
       })
       .finally(() => setLoading(false));
+
+    // Fetch rooms
+    setLoadingRooms(true);
+    axios
+      .get("/api/rooms", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const roomsData = response.data.data.Room || [];
+        setRooms(roomsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching rooms:", error);
+        toast.error("Failed to fetch rooms");
+      })
+      .finally(() => setLoadingRooms(false));
   }, []);
 
   // Reset form values when formData changes
   useEffect(() => {
     formData.name = formData?.user?.name;
     formData.email = formData?.user?.email;
+    
+    // Log the formData to debug
+    console.log('Form data received:', formData);
+    console.log('Room ID from formData:', formData?.room_id);
+    
     reset(formData);
   }, [formData, reset]);
 
@@ -264,6 +292,74 @@ function ProfileForm({ formData }) {
                     )}
                   />
                 )}
+
+                <FormField
+                                 control={form.control}
+                                 name="room_id"
+                                 render={({ field }) => (
+                                   <FormItem className="flex-1">
+                                     <FormLabel className="mt-[10px]">
+                                       Room Title <span className="text-red-500">*</span>
+                                     </FormLabel>
+                                     <FormControl>
+                                       <Popover>
+                                         <PopoverTrigger asChild>
+                                           <Button
+                                             variant="outline"
+                                             role="combobox"
+                                             className="w-full justify-between"
+                                           >
+                                             {field.value
+                                               ? rooms.find(
+                                                   (room) => room.id.toString() === (field.value?.toString() || '')
+                                                 )?.room_name || "Select Room..."
+                                               : "Select Room..."}
+                                             <ChevronsUpDown className="opacity-50" />
+                                           </Button>
+                                         </PopoverTrigger>
+                                         <PopoverContent className="w-[300px] p-0">
+                                           <Command>
+                                             <CommandInput placeholder="Search room..." />
+                                             <CommandList>
+                                               <CommandEmpty>
+                                                 {loadingRooms
+                                                   ? "Loading rooms..."
+                                                   : "No room found."}
+                                               </CommandEmpty>
+                                               <CommandGroup>
+                                                 {rooms.map((room) => (
+                                                   <CommandItem
+                                                     key={room.id}
+                                                     value={room.id.toString()}
+                                                     onSelect={(value) => {
+                                                       field.onChange(
+                                                         value === field.value?.toString() ? "" : value
+                                                       );
+                                                       console.log('Selected room ID:', value);
+                                                     }}
+                                                   >
+                                                     {room.room_name}
+                                                     <Check
+                                                       className={cn(
+                                                         "ml-auto",
+                                                         field.value?.toString() === room.id.toString()
+                                                           ? "opacity-100"
+                                                           : "opacity-0"
+                                                       )}
+                                                     />
+                                                   </CommandItem>
+                                                 ))}
+                                               </CommandGroup>
+                                             </CommandList>
+                                           </Command>
+                                         </PopoverContent>
+                                       </Popover>
+                                     </FormControl>
+                                     <FormMessage />
+                                   </FormItem>
+                                 )}
+                               />
+
                 <FormField
                   control={form.control}
                   name="asset"
@@ -281,21 +377,38 @@ function ProfileForm({ formData }) {
                   )}
                 />
                 <FormField
-                                 control={form.control}
-                                 name="purchase_price"
-                                 render={({ field }) => (
-                                   <FormItem>
-                                     <FormLabel>
-                                       Purchase Price
-                                       <span className="text-red-500">*</span>
-                                     </FormLabel>
-                                     <FormControl>
-                                       <Input placeholder="Enter Purchase Price..." {...field} />
-                                     </FormControl>
-                                     <FormMessage />
-                                   </FormItem>
-                                 )}
-                               />
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Quantity
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="Enter Quantity..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="purchase_price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Purchase Price
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Purchase Price..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="status"
@@ -369,6 +482,7 @@ export default function SettingsProfilePage() {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('API Response:', response.data);
       setFormData(response.data.data);
     };
     if (id) {

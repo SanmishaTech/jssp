@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger("room_id")->nullable();
             $table->string("asset")->nullable();
+            $table->string("quantity")->nullable();
             $table->string('institute_id')->nullable();
             $table->string('purchase_date')->nullable();
             $table->string('purchase_price')->nullable();
             $table->string('remarks')->nullable();
             $table->string('status')->nullable();
              $table->timestamps();
-            
         });
     }
 

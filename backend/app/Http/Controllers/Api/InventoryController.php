@@ -59,6 +59,8 @@ class InventoryController extends BaseController
         
         $inventory = new Inventory();
         $inventory->asset = $request->input('asset');
+        $inventory->quantity = $request->input('quantity');
+        $inventory->room_id = $request->input('room_id');
         
         // Get authenticated user
         $user = Auth::user();
@@ -112,7 +114,8 @@ class InventoryController extends BaseController
     
         // Update the Institute data
         $inventory->asset = $request->input('asset', $inventory->asset);
-        
+        $inventory->quantity = $request->input('quantity', $inventory->quantity);
+        $inventory->room_id = $request->input('room_id', $inventory->room_id);        
         // Get authenticated user
         $user = Auth::user();
         

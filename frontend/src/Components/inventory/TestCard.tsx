@@ -55,7 +55,9 @@ import { Separator } from "@/components/ui/separator";
 
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
+  room_id: z.string().trim().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
+  quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   active_stock: z.union([z.boolean(), z.number()]).optional(),
@@ -87,6 +89,8 @@ function ProfileForm() {
   
   const [loadingCourses, setLoadingCourses] = React.useState(false);
   const [courses, setCourses] = React.useState<any[]>([]);
+  const [loadingRooms, setLoadingRooms] = React.useState(false);
+  const [rooms, setRooms] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     setLoadingCourses(true);
@@ -106,6 +110,32 @@ function ProfileForm() {
         toast.error("Failed to fetch courses");
       })
       .finally(() => setLoadingCourses(false));
+
+    // Fetch rooms
+    setLoadingRooms(true);
+    console.log("Fetching rooms...");
+    axios
+      .get("/api/rooms", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        // Log the entire response to see its structure
+        console.log("Room API response:", response.data);
+        
+        // Extract rooms from the correct path in the response
+        const roomsData = response.data.data.Room || [];
+        console.log("Extracted room data:", roomsData);
+        
+        setRooms(roomsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching rooms:", error);
+        toast.error("Failed to fetch rooms");
+      })
+      .finally(() => setLoadingRooms(false));
   }, [token]);
 
   async function onSubmit(data: ProfileFormValues) {
@@ -279,6 +309,103 @@ function ProfileForm() {
 
                 <FormField
                   control={form.control}
+                  name="room_id"
+                  render={({ field }: { field: any }) => {
+                    const [open, setOpen] = React.useState(false);
+                    return (
+                      <FormItem className="flex-1">
+                        <FormLabel className="mt-[10px]">
+                          Room Title <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-full justify-between"
+                              >
+                                {field.value
+                                  ? (Array.isArray(rooms) && rooms.length > 0 && rooms.find((room) => {
+                                      console.log("Checking room:", room, "against field value:", field.value);
+                                      if (!room) return false;
+                                      const roomId = room.id != null ? room.id.toString() : "";
+                                      return roomId === field.value;
+                                    })?.room_name) || "Select Room..."
+                                  : "Select Room..."}
+                                <ChevronsUpDown className="opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[300px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search room..." />
+                                <CommandList>
+                                  <CommandEmpty>
+                                    {loadingRooms
+                                      ? "Loading rooms..."
+                                      : Array.isArray(rooms) && rooms.length === 0
+                                        ? "No rooms available. Please add rooms first."
+                                        : "No matching rooms found."}
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {(() => {
+                                      console.log("Rendering rooms:", rooms);
+                                      return Array.isArray(rooms) && rooms.length > 0 ? (
+                                      rooms.map((room) => {
+                                        if (!room || room.id == null) {
+                                          console.log("Skipping invalid room:", room);
+                                          return null;
+                                        }
+                                        const roomId = room.id.toString();
+                                        console.log("Rendering room:", room.room_name, "with ID:", roomId);
+                                        return (
+                                          <CommandItem
+                                            key={roomId}
+                                            value={roomId}
+                                            onSelect={(currentValue: string) => {
+                                              console.log("Selected room:", room.room_name, "with value:", currentValue);
+                                              field.onChange(
+                                                currentValue === field.value
+                                                  ? ""
+                                                  : currentValue
+                                              );
+                                              setOpen(false);
+                                            }}
+                                          >
+                                            {room.room_name}
+                                            <Check
+                                              className={cn(
+                                                "ml-auto",
+                                                field.value === roomId
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                          </CommandItem>
+                                        );
+                                      })
+                                    ) : (
+                                      <CommandItem disabled>
+                                        No rooms available
+                                      </CommandItem>
+                                    );
+                                    })()}
+                                  
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  control={form.control}
                   name="asset"
                   render={({ field }) => (
                     <FormItem>
@@ -288,6 +415,22 @@ function ProfileForm() {
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Asset..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Quantity
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="Enter Asset..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
