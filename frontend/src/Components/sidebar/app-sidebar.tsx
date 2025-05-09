@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
@@ -322,8 +322,30 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const [openLogoAlert, setOpenLogoAlert] = useState(false);
   // State for profile dropdown
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+  const profileTriggerRef = useRef<HTMLDivElement>(null);
   
   const navigate = useNavigate();
+  
+  // Handle click outside to close profile dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileDropdownOpen &&
+        profileDropdownRef.current && 
+        !profileDropdownRef.current.contains(event.target as Node) &&
+        profileTriggerRef.current &&
+        !profileTriggerRef.current.contains(event.target as Node)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
 
   const toggleDropdown = (title: string) => {
     setOpenDropdowns((prev) => ({
@@ -420,7 +442,12 @@ export function AppSidebar({ role }: AppSidebarProps) {
           </SidebarGroup>
         </div>
         <div className="border-t border-border bg-sidebar dark:bg-slate-800 p-2 sticky bottom-0 mt-auto z-10">
-          <div className="flex items-center gap-3">
+          <div 
+            ref={profileTriggerRef}
+            className="flex items-center gap-3 cursor-pointer hover:bg-accent/20 rounded-md p-1"
+            onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+            aria-label="Toggle profile menu"
+          >
             <div className="relative h-9 w-9 rounded-full bg-primary/10">
               {userData.userAvatar ? (
                 <img
@@ -441,10 +468,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 {userData.userEmail}
               </div>
             </div>
-            <button
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+            <div
               className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent/50"
-              aria-label="Toggle profile menu"
             >
               <svg
                 className="h-4 w-4 text-muted-foreground"
@@ -458,12 +483,13 @@ export function AppSidebar({ role }: AppSidebarProps) {
               >
                 <path d="m6 9 6 6 6-6" />
               </svg>
-            </button>
+            </div>
           </div>
         </div>
       </SidebarContent>
       {profileDropdownOpen && (
         <div
+          ref={profileDropdownRef}
           className="fixed left-[calc(var(--sidebar-width)_+_8px)] bottom-16 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none z-50 animate-in fade-in-0 zoom-in-95"
           style={{ transform: 'translateX(0)' }}
         >

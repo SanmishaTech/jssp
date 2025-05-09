@@ -61,12 +61,13 @@ const profileFormSchema = z.object({
   education: z.array(
     z.object({
       id: z.number().optional(),
-      qualification: z.string().nonempty("Qualification is required"),
-      college_name: z.string().nonempty("College Name is required"),
-      board_university: z.string().nonempty("Board/University is required"),
-      passing_year: z.string().min(4, "Must be a valid year"),
-      percentage: z.string().refine(
+      qualification: z.string().optional(),
+      college_name: z.string().optional(),
+      board_university: z.string().optional(),
+      passing_year: z.string().optional(),
+      percentage: z.string().optional().refine(
         (val) => {
+          if (!val) return true; // Allow empty values
           const num = parseFloat(val);
           return !isNaN(num) && num >= 0 && num <= 100;
         },

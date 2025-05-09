@@ -281,7 +281,7 @@ function ProfileForm() {
   name="role"
   render={({ field }) => (
     <FormItem className="space-y-3">
-      <FormLabel>User Role</FormLabel>
+      <FormLabel>Role</FormLabel>
       <FormControl>
         <div className="flex space-x-4">
           <div className="flex items-center space-x-2">
@@ -293,7 +293,7 @@ function ProfileForm() {
               checked={field.value === "member"}
               className="h-4 w-4"
             />
-            <label htmlFor="role-member">Member</label>
+            <label htmlFor="role-member">Staff</label>
           </div>
           <div className="flex items-center space-x-2">
             <input

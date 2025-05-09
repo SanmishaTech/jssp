@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
-import { toast } from "sonner";
 
 interface EducationQualificationsProps {
   form: UseFormReturn<any>;
@@ -42,11 +41,6 @@ export default function EducationQualifications({ form }: EducationQualification
 
   // Function to handle removal of an education field
   const removeEducationField = (index: number) => {
-    if (fields.length <= 1) {
-      toast.error("You must have at least one education record");
-      return;
-    }
-    
     remove(index);
   };
 
@@ -167,7 +161,6 @@ export default function EducationQualifications({ form }: EducationQualification
                         type="button"
                         onClick={() => removeEducationField(index)}
                         className="bg-blue-300 hover:bg-blue-600 text-white"
-                        disabled={fields.length === 1}
                       >
                         <X className="w-4 h-4" />
                       </Button>
