@@ -284,6 +284,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/inventory",
       icon: Package,
     },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
    
     
   ],
