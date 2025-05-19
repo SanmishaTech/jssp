@@ -60,6 +60,10 @@ const Login = () => {
         navigate({ to: "/cashierdashboard" });
       } else if (role === "admission") {
         navigate({ to: "/admissiondashboard" });
+      } else if (role === "accountant") {
+        navigate({ to: "/accountantdashboard" });
+      } else if (role === "backoffice") {
+        navigate({ to: "/backofficedashboard" });
       } else {
         navigate({ to: "/staff" });
       }

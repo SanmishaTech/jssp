@@ -10,6 +10,9 @@ use Database\Seeders\CreateSuperAdminUserSeeder;
 use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\CreateMemberUserSeeder;
 use Database\Seeders\CreateCashierRoleSeeder;
+use Database\Seeders\AdmissionSeeder;
+use Database\Seeders\AccountantSeeder;
+use Database\Seeders\BackOfficeSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -29,5 +32,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateMemberUserSeeder::class);
         $this->call(CreateCashierRoleSeeder::class);
         $this->call(AdmissionSeeder::class);
+        $this->call(AccountantSeeder::class);
+        $this->call(BackOfficeSeeder::class);
     }
 }

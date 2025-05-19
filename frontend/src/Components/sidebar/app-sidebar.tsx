@@ -66,6 +66,38 @@ interface UserData {
 }
 
 const roleBasedItems: Record<string, MenuItem[]> = {
+  superadmin: [
+    {
+      title: "Dashboard",
+      url: "/rootdashboard",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    },
+    {
+      title: "Trustees",
+      url: "/trusties",
+      icon: User,
+    },
+    {
+      title: "Institutes",
+      url: "/institutes",
+      icon: Building,
+    },
+    {
+      title: "Inventory",
+      url: "/inventory",
+      icon: Package,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+  ],
   admin: [
     {
       title: "Dashboard",
@@ -202,38 +234,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       ],
     },
   ],
-  superadmin: [
-    {
-      title: "Dashboard",
-      url: "/rootdashboard",
-      icon: Home,
-    },
-    {
-      title: "Calender",
-      url: "/calender",
-      icon: Calendar,
-    },
-    {
-      title: "Trustees",
-      url: "/trusties",
-      icon: User,
-    },
-    {
-      title: "Institutes",
-      url: "/institutes",
-      icon: Building,
-    },
-    {
-      title: "Inventory",
-      url: "/inventory",
-      icon: Package,
-    },
-    {
-      title: "Complaints",
-      url: "/complaints",
-      icon: MessageCircle,
-    },
-  ],
+  
   member: [
     {
       title: "Dashboard",
@@ -267,6 +268,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: FileText,
     },
     
+    
   ],
   cashier: [
     {
@@ -285,6 +287,76 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/leave",
       icon: FileText,
     },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+    
+  ],
+  accountant: [
+    
+    {
+      title: "Dashboard",
+      url: "/accountantdashboard",
+      icon: Home,
+    },
+     {
+      title: "Bank",
+      url: "/bank",
+      icon: BookText,
+    },
+    {
+      title: "Bank Accounts",
+      url: "/bankaccounts",
+      icon: BookText,
+    },
+    {
+      title: "CashBook",
+      url: "/cashbook",
+      icon: Landmark,
+    },
+    {
+      title: "Cashier",
+      url: "/cashiers",
+      icon: Banknote,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+     
+  ],
+  backoffice: [
+    
+    {
+      title: "Dashboard",
+      url: "/backofficedashboard",
+      icon: Home,
+    },
+    {
+      title: "Inventory",
+      url: "/inventory",
+      icon: Home,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+      
+     
   ],
   admission: [
     {
@@ -332,6 +404,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
           url: "/students",
           icon: UsersRound,
         },
+        
        
       ],
       
@@ -340,6 +413,16 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       title: "Admission Information",
       url: "/admissions",
       icon: BookText,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
     },
      
   ],
@@ -556,7 +639,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </div>
           </div>
           <div className="h-px bg-muted my-1" />
-          {role === 'member' && (
+          {(role === 'member' || role === 'cashier' || role === 'backoffice' || role === 'accountant' || role === 'admission' || role === 'admin') && (
             <button
               onClick={handleUpdateProfile}
               className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left"

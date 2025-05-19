@@ -131,8 +131,10 @@ export default function ResponsiveLabDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold ">Welcome,(Staff)</h1>
-        </div>
+          <h1 className="text-2xl md:text-3xl font-bold">
+            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} ({localStorage.getItem('role') || 'Staff'})
+          </h1>
+          </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-accent/40">

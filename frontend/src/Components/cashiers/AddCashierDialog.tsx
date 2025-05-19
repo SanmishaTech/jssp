@@ -109,7 +109,7 @@ export default function AddCashierDialog({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader>Add Cashier</ModalHeader>
+            <ModalHeader>Add Cash</ModalHeader>
             <ModalBody>
               <Form {...form}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

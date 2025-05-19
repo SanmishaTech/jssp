@@ -124,15 +124,15 @@ export default function ResponsiveLabDashboard() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-x-hidden">
+    <div className="flex h-screen ">
       {/* Sidebar for larger screens */}
       {/* <Sidebar className="hidden md:block w-64 shadow-md" /> */}
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">
-            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} ({localStorage.getItem('role') || 'Superadmin'})
+          <h1 className="text-2xl md:text-3xl font-bold">
+            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} ({localStorage.getItem('role') || 'Staff'})
           </h1>
         </div>
 

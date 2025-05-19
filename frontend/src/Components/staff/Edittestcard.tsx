@@ -308,17 +308,26 @@ function ProfileForm({ formData }) {
                   control={form.control}
                   name="role"
                   render={({ field }) => (
-                    <FormItem className="space-y-3">
+                    <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
+                            <SelectValue placeholder="Select Role">
+                              {field.value ? field.value.charAt(0).toUpperCase() + field.value.slice(1) : ''}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="member">Staff</SelectItem>
                           <SelectItem value="cashier">Cashier</SelectItem>
+                          <SelectItem value="admission">Admission</SelectItem>
+                          <SelectItem value="accountant">Accountant</SelectItem>
+                          <SelectItem value="backoffice">Back Office</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
