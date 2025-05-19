@@ -85,6 +85,11 @@ import {
   Avatar,
   Tooltip,
   useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "@heroui/react";
 
 export const description =
@@ -98,6 +103,13 @@ interface TableData {
   delete: string;
 }
 
+interface TableHeader {
+  label: string;
+  key: string;
+  hiddenOn?: string;
+  sortable?: boolean;
+}
+
 interface DashboardProps {
   breadcrumbs: Array<{ label: string; href?: string }>;
   searchPlaceholder: string;
@@ -105,7 +117,7 @@ interface DashboardProps {
   tableColumns: {
     title: string;
     description: string;
-    headers: Array<{ label: string; key: string }>;
+    headers: Array<TableHeader>;
     actions: Array<{ label: string; value: string }>;
     pagination: {
       currentPage: number;
@@ -137,7 +149,20 @@ export default function Dashboard({
   searchPlaceholder = "Search...",
   fetchData,
   userAvatar = "/placeholder-user.jpg",
-  tableColumns = {},
+  tableColumns = {
+    title: "",
+    description: "",
+    headers: [],
+    actions: [],
+    pagination: {
+      currentPage: 1,
+      lastPage: 1,
+      perPage: 10,
+      total: 0,
+      from: 0,
+      to: 0
+    }
+  },
   tableData = [],
   onAddProduct = () => {},
   onExport = () => {},
@@ -160,6 +185,9 @@ export default function Dashboard({
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -203,6 +231,81 @@ export default function Dashboard({
       e.preventDefault(); // Prevent form submission
       handleSearchClick();
     }
+  };
+
+  const handleOpenReportDialog = () => {
+    // Initialize with today's date and 7 days prior as default range
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(today.getDate() - 7);
+    
+    setToDate(today.toISOString().split('T')[0]);
+    setFromDate(lastWeek.toISOString().split('T')[0]);
+    setIsReportDialogOpen(true);
+  };
+
+  const handleGenerateReport = () => {
+    // Construct the URL with search parameters and date range
+    const token = localStorage.getItem("token");
+    let reportUrl = `/api/cashiers-report`;
+    
+    // Start building query params
+    const queryParams = [];
+    
+    // Add search parameter if it exists
+    if (localSearchTerm) {
+      queryParams.push(`search=${encodeURIComponent(localSearchTerm)}`);
+    }
+    
+    // Add date range parameters if they exist
+    if (fromDate) {
+      queryParams.push(`from_date=${encodeURIComponent(fromDate)}`);
+    }
+    
+    if (toDate) {
+      queryParams.push(`to_date=${encodeURIComponent(toDate)}`);
+    }
+    
+    // Append query params to URL
+    if (queryParams.length > 0) {
+      reportUrl += `?${queryParams.join('&')}`;
+    }
+    
+    // Add authorization header through fetch
+    fetch(reportUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      // Create a blob URL and download it
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `cashier_report_${fromDate}_to_${toDate}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+      // Close the dialog
+      setIsReportDialogOpen(false);
+      
+      // Clean up the URL object after the download is complete
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    })
+    .catch(error => {
+      console.error('Error downloading report:', error);
+      alert('Failed to download report. Please try again.');
+    });
   };
 
   return (
@@ -282,6 +385,15 @@ export default function Dashboard({
                     >
                       Search
                     </Button>
+                    <Button
+                      color="secondary"
+                      variant="solid"
+                      className="h-10 rounded-full ml-2"
+                      startContent={<FileText size={16} />}
+                      onPress={handleOpenReportDialog}
+                    >
+                      Report
+                    </Button>
                   </div>
                 </div>
                 <Button
@@ -330,6 +442,48 @@ export default function Dashboard({
                   typeofschema={typeofschema}
                 />
               ) : (
+                <>
+                {/* Report Dialog */}
+                <Modal isOpen={isReportDialogOpen} onOpenChange={setIsReportDialogOpen} placement="center">
+                  <ModalContent>
+                    <ModalHeader>
+                      <h3 className="text-lg font-semibold">Generate Cashier Report</h3>
+                    </ModalHeader>
+                    <ModalBody>
+                      <div className="grid gap-4 py-2">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <span className="text-right font-medium text-sm">From Date</span>
+                          <Input
+                            id="from-date"
+                            type="date"
+                            value={fromDate}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFromDate(e.target.value)}
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <span className="text-right font-medium text-sm">To Date</span>
+                          <Input
+                            id="to-date"
+                            type="date"
+                            value={toDate}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setToDate(e.target.value)}
+                            className="col-span-3"
+                          />
+                        </div>
+                      </div>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button variant="flat" color="default" onPress={() => setIsReportDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button color="primary" onPress={handleGenerateReport}>
+                        Download PDF
+                      </Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
+                
                 <Card className="bg-card border border-border shadow-sm overflow-hidden">
                   <CardContent className="p-0">
                     <Table>
@@ -471,6 +625,7 @@ export default function Dashboard({
                     </div>
                   </CardFooter>
                 </Card>
+                </>
               )}
             </TabsContent>
             {/* Add more TabsContent as needed */}

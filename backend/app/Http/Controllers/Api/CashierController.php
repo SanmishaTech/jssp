@@ -173,4 +173,101 @@ class CashierController extends BaseController
             "Cashier retrieved successfully"
         );
     }
+    
+    /**
+     * Generate a PDF report of cashier data with date range filtering
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function generateReport(Request $request)
+    {
+        try {
+            $instituteId = Auth::user()->staff->institute_id;
+            
+            $query = Cashier::where('institute_id', $instituteId);
+            
+            // Apply date range filter if provided
+            if ($request->query('from_date') && $request->query('to_date')) {
+                $fromDate = $request->query('from_date');
+                $toDate = $request->query('to_date');
+                
+                // Add one day to to_date to include the end date in results (up to 23:59:59)
+                $endDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
+                
+                $query->whereBetween('created_at', [$fromDate, $endDate]);
+            } 
+            // For backward compatibility - single date filter
+            else if ($request->query('date')) {
+                $date = $request->query('date');
+                $query->whereDate('created_at', $date);
+            }
+            
+            // Apply search filter if provided
+            if ($request->query('search')) {
+                $searchTerm = $request->query('search');
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('total_fees', 'like', '%' . $searchTerm . '%');
+                });
+            }
+            
+            $cashiers = $query->get();
+            
+            // Calculate total cash
+            $totalCash = $cashiers->sum('cash');
+            $totalUpi = $cashiers->sum('upi');
+            $totalCheque = $cashiers->sum('cheque');
+            $totalFees = $cashiers->sum('total_fees');
+            
+            // Set date range for report title
+            $reportDateRange = 'Full Report';
+            if ($request->query('from_date') && $request->query('to_date')) {
+                $reportDateRange = date('d M Y', strtotime($request->query('from_date'))) . 
+                    ' to ' . date('d M Y', strtotime($request->query('to_date')));
+            } else if ($request->query('date')) {
+                $reportDateRange = date('d M Y', strtotime($request->query('date')));
+            }
+            
+            $data = [
+                'cashiers' => $cashiers,
+                'totalCash' => $totalCash,
+                'totalUpi' => $totalUpi,
+                'totalCheque' => $totalCheque,
+                'totalFees' => $totalFees,
+                'dateRange' => $reportDateRange,
+                'date' => now()->format('Y-m-d'),
+                'title' => 'Cashier Report',
+                'institute' => Auth::user()->staff->institute->institute_name ?? 'N/A'
+            ];
+            
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cashier_report', $data);
+            $pdf->setPaper('a4', 'portrait');
+            $pdf->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'sans-serif'
+            ]);
+            
+            // Generate filename with date range
+            $filename = 'cashier_report';
+            if ($request->query('from_date') && $request->query('to_date')) {
+                $filename .= '_' . $request->query('from_date') . '_to_' . $request->query('to_date');
+            } else if ($request->query('date')) {
+                $filename .= '_' . $request->query('date');
+            } else {
+                $filename .= '_' . now()->format('Y-m-d');
+            }
+            $filename .= '.pdf';
+            
+            return $pdf->stream($filename, [
+                'Attachment' => true,
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"'
+            ]);  
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('PDF generation error: ' . $e->getMessage());
+            return $this->sendError("Failed to generate PDF report", ['error' => $e->getMessage()]);
+        }
+    }
 }
