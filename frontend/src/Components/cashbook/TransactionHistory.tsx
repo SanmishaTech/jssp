@@ -20,8 +20,13 @@ import {
   DropdownMenu,
   DropdownItem,
   cn,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "@heroui/react";
-import { Calendar, ChevronDown, Filter } from "lucide-react";
+import { Calendar, ChevronDown, Filter, X } from "lucide-react";
 import { formattedDate } from "../../utils";
 
 interface TransactionHistoryProps {
@@ -50,6 +55,8 @@ export default function TransactionHistory({
   const [totalPages, setTotalPages] = useState(1);
   const [typeFilter, setTypeFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   const fetchTransactions = async () => {
     setLoading(true);
@@ -129,6 +136,16 @@ export default function TransactionHistory({
         {type}
       </Chip>
     );
+  };
+
+  const handleRowClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTransaction(null);
   };
 
   return (
@@ -216,23 +233,21 @@ export default function TransactionHistory({
               </TableHeader>
               <TableBody>
                 {transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
+                  <TableRow 
+                    key={transaction.id}
+                    className="hover:bg-default-100 cursor-pointer"
+                    onClick={() => handleRowClick(transaction)}
+                  >
                     <TableCell title={transaction.description}>
-                      {transaction.description.length > 20 
-                        ? `${transaction.description.substring(0, 20)}...` 
+                      {transaction.description.length > 40 
+                        ? `${transaction.description.substring(0, 40)}...` 
                         : transaction.description}
                     </TableCell>
                     <TableCell>
                       {renderTransactionType(transaction.type)}
                     </TableCell>
                     <TableCell>
-                      <span
-                        className={
-                          transaction.type === "credit"
-                            ? "text-success"
-                            : "text-danger"
-                        }
-                      >
+                      <span className={transaction.type === "credit" ? "text-success" : "text-danger"}>
                         {transaction.type === "credit" ? "+" : "-"}₹
                         {transaction.amount}
                       </span>
@@ -245,6 +260,7 @@ export default function TransactionHistory({
                 ))}
               </TableBody>
             </Table>
+            
             <div className="flex justify-center p-4">
               <Pagination
                 total={totalPages}
@@ -260,6 +276,58 @@ export default function TransactionHistory({
           </div>
         )}
       </CardBody>
+      
+      {/* Transaction Details Modal */}
+      {selectedTransaction && (
+        <Modal size="lg" backdrop="blur" isOpen={isModalOpen} onClose={closeModal}>
+          <ModalContent className={cn(
+            selectedTransaction.type === 'credit'
+              ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg text-white'
+              : 'bg-gradient-to-br from-red-400 to-red-600 shadow-lg text-white',
+            'rounded-lg p-4'
+          )}>
+            <>
+              <ModalHeader className="w-full flex justify-end items-center">
+                <span className="text-sm">{formattedDate(selectedTransaction.created_at)}</span>
+              </ModalHeader>
+              <ModalBody className="text-center">
+                <h4 className="text-lg font-semibold mb-4 underline">Transaction Details</h4>
+                <div className="flex flex-col gap-3 text-left max-w-md mx-auto">
+                  <div className="flex justify-between">
+                    <span>Transaction ID:</span>
+                    <span className="font-medium">#{selectedTransaction.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Type:</span>
+                    <span className="font-medium">
+                      {selectedTransaction.type.charAt(0).toUpperCase() + selectedTransaction.type.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Amount:</span>
+                    <span className="font-bold text-lg">
+                       ₹{parseFloat(selectedTransaction.amount).toFixed(2)}
+                    </span>
+                  </div>
+                 
+                  <div className="pt-2 border-t border-white/20 mt-2">
+                    <p className="text-center font-medium">Description</p>
+                    <p className="text-center">{selectedTransaction.description}</p>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter className="justify-center">
+                <Button 
+                  onPress={closeModal}
+                  className="bg-white/20 hover:bg-white/30 text-white"
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          </ModalContent>
+        </Modal>
+      )}
     </Card>
   );
 }
