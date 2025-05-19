@@ -196,7 +196,7 @@ export default function AddCashierDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit(onSubmit)}>
-                Add Cashier
+                Add Cash
               </Button>
             </ModalFooter>
           </>

@@ -189,7 +189,7 @@ export default function Dashboardholiday() {
         title: "Admission Information",
         description: "Manage Admission and view their details.",
         headers: [
-          { label: "Total Valuation", key: "one" },
+          { label: "Total Admission", key: "one" },
           { label: "University Upload", key: "two" },
           { label: "Received PRN", key: "three" },
           { label: "Timestamp", key: "four" },

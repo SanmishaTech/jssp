@@ -56,7 +56,7 @@ export default function PeticashDashboard() {
           // If no ID was provided, use the first peticash record
           setPeticash(data.data.banks[0]);
         } else {
-          setError("No bank found. Please create one first.");
+          setError("No transaction found. Please add amount first.");
         }
       } else {
         setError(data.message || "Failed to fetch bank data");
@@ -102,7 +102,7 @@ export default function PeticashDashboard() {
           href="/bank/add"
           startContent={<PlusCircle size={16} />}
         >
-          Create Bank
+          Add Amount
         </Button>
       </div>
     );

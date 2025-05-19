@@ -1,15 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import {
-  Bell,
-  FlaskConical,
-  LayoutDashboard,
-  Menu,
-  Settings,
-  Users,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { useGetData } from "../HTTP/GET";
+import { Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +22,6 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useNavigate } from "@tanstack/react-router";
 import {
   Table,
   TableBody,
@@ -39,44 +33,32 @@ import {
 import axios from "axios";
 import userAvatar from "@/images/Profile.jpg";
 
-// Updated data structure based on your requirements
-const recentTests = [
-  {
-    id: "T001",
-    contact_person: "John Doe",
-    follow_up_remark: "Schedule Meetings",
-    status: "Completed",
-    follow_up_type: "High",
-  },
-  {
-    id: "T002",
-    contact_person: "Jane Smith",
-    follow_up_remark: "Maintain Records",
-    status: "Completed",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T003",
-    contact_person: "Bob Johnson",
-    follow_up_remark: "Campus Cleanliness",
-    status: "In Progress",
-    follow_up_type: "Low",
-  },
-  {
-    id: "T004",
-    contact_person: "Alice Brown",
-    follow_up_remark: "Assist Students",
-    status: "Completed",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T005",
-    contact_person: "Charlie Davis",
-    follow_up_remark: "Organize Events",
-    status: "Completed",
-    follow_up_type: "High",
-  },
-];
+interface LeaveApplication {
+  id: number;
+  staff_name?: string;
+  from_date: string;
+  to_date: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  remarks: string;
+  approved_by: string;
+  approved_at: string;
+}
+
+interface Meeting {
+  id: number;
+  venue: string;
+  synopsis: string;
+  date: string;
+  time: string;
+}
+
+interface StaffMember {
+  id: number;
+  lead_status: string;
+  follow_up_type: string;
+  staff_type: string;
+}
 
 const testVolumeData = [
   { name: "Jan", tests: 165 },
@@ -90,13 +72,36 @@ const testVolumeData = [
 export default function ResponsiveLabDashboard() {
   const [myLeads, setMyLeads] = useState(0);
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
+  const User = user ? JSON.parse(user) : null;
   const navigate = useNavigate();
-  const [leads, setLeads] = useState([]);
-  const [meetings, setMeetings] = useState([]);
-
+  const [leads, setLeads] = useState<StaffMember[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [pendingLeaves, setPendingLeaves] = useState<LeaveApplication[]>([]);
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
   const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
+  const [teachingCount, setTeachingCount] = useState(0);
+  const [nonTeachingCount, setNonTeachingCount] = useState(0);
+
+  // Fetch pending leaves
+  useGetData({
+    endpoint: '/api/leaves/status/pending',
+    params: {
+      queryKey: ['leaves-pending'],
+      onSuccess: (data: any) => {
+        if (data?.data?.Leave && Array.isArray(data.data.Leave)) {
+          setPendingLeaves(data.data.Leave);
+        } else if (data?.data && Array.isArray(data.data)) {
+          setPendingLeaves(data.data);
+        } else {
+          setPendingLeaves([]);
+        }
+      },
+      onError: (error) => {
+        console.error("Error fetching pending leaves:", error);
+        setPendingLeaves([]);
+      }
+    }
+  });
 
   // Fetch staff leads
   useEffect(() => {
@@ -126,9 +131,6 @@ export default function ResponsiveLabDashboard() {
   }, []);
 
   // Fetch meetings
-
-  const [teachingCount, setTeachingCount] = useState(0);
-  const [nonTeachingCount, setNonTeachingCount] = useState(0);
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
@@ -167,9 +169,10 @@ export default function ResponsiveLabDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold">
+          <h1 className="text-2xl md:text-3xl font-bold">
             Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} ({localStorage.getItem('role') || 'Staff'})
-          </h1>        </div>
+          </h1>
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-accent/40">
@@ -219,52 +222,58 @@ export default function ResponsiveLabDashboard() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
-            <CardHeader>
-              <CardTitle>My Open Tasks</CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle>Leave Approvals</CardTitle>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate({ to: '/leaveapproval' })}
+                className="text-primary hover:text-primary/80"
+              >
+                See All
+              </Button>
             </CardHeader>
-            <CardContent className="overflow-x-auto ">
+            <CardContent className="overflow-x-auto p-0">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Task ID</TableHead>
-                    <TableHead>Contact Name</TableHead>
-                    <TableHead>Task</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
+                    <TableHead className="w-[120px]">Staff Name</TableHead>
+                    <TableHead>Leave Dates</TableHead>
+                    <TableHead>Reason</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentTests.map((test) => (
-                    <TableRow key={test.id}>
-                      <TableCell className="font-medium">{test.id}</TableCell>
-                      <TableCell>{test.contact_person}</TableCell>
-                      <TableCell>{test.follow_up_remark}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            test.status === "Completed"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {test.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            test.follow_up_type === "Low"
-                              ? "success"
-                              : test.follow_up_type === "High"
-                                ? "destructive"
-                                : "outline"
-                          }
-                        >
-                          {test.follow_up_type}
-                        </Badge>
+                  {pendingLeaves.length > 0 ? (
+                    pendingLeaves.slice(0, 5).map((leave) => (
+                      <TableRow 
+                        key={leave.id}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => navigate({ to: '/leaveapproval' })}
+                      >
+                        <TableCell className="font-medium">
+                          {leave.staff_name || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          {new Date(leave.from_date).toLocaleDateString()} - {new Date(leave.to_date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate">
+                          {leave.reason}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="secondary">
+                            {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                        No pending leave requests
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

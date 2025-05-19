@@ -189,14 +189,33 @@ public function index(Request $request): JsonResponse
         $user->name = $request->input('name', $user->name);
         $user->email = $request->input('email');
         $user->active = $request->input('active', 1);
-        if ($request->has('password')) {
+        
+        // Only update password if a new one is provided
+        if ($request->filled('password')) {
             $user->password = Hash::make($request->input('password'));
+            \Log::info('Password updated for user ID: ' . $user->id);
+        } else {
+            // Keep the existing password by removing it from the fillable attributes
+            $user->makeHidden('password');
         }
+        
         $user->save();
 
+        // Update user role
         $roleName = $request->input('role', 'member'); // Default to 'member' if not specified
+        \Log::info('Updating role for user ' . $user->id . ' to: ' . $roleName);
+        
+        // Remove all current roles
+        $user->roles()->detach();
+        
+        // Assign the new role
         $role = Role::where("name", $roleName)->first();
-        $user->assignRole($role);
+        if ($role) {
+            $user->assignRole($role);
+            \Log::info('Successfully assigned role: ' . $roleName);
+        } else {
+            \Log::error('Role not found: ' . $roleName);
+        }
                        
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
@@ -220,6 +239,7 @@ public function index(Request $request): JsonResponse
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
+       
         $staff->save();
 
         // Handle image uploads and deletions

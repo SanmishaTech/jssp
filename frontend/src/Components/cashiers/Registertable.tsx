@@ -186,18 +186,18 @@ export default function Dashboardholiday() {
         { label: "Cashier" },
       ],
 
-      searchPlaceholder: "Search Cashier...",
+      searchPlaceholder: "Search...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
         title: "Cashier",
-        description: "Manage Cashier and view their details.",
+        description: "Manage Cash and view their details.",
         headers: [
           { label: "Total Fees", key: "one" },
           { label: "Cheque", key: "two" },
           { label: "Cash", key: "three" },
           { label: "UPI", key: "four" },
           { label: "Timestamp", key: "five" },
-          { label: "Action", key: "action" },
+          // { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
@@ -292,7 +292,7 @@ export default function Dashboardholiday() {
     three: item.cash || "NA",
     four: item.upi || "NA",
     five: item.created_at ? formatDateTime(item.created_at) : "NA",
-    delete: "/cashiers/" + item.id,
+    // delete: "/cashiers/" + item.id,
   }));
 
   const dashboardProps: DashboardProps = {

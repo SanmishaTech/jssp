@@ -291,7 +291,7 @@ export default function Dashboard({
                   onPress={onAddProduct}
                   className="h-9"
                 >
-                  Add New Cashiers
+                  Add Cash
                 </Button>
               </div>
             </div>
@@ -325,7 +325,7 @@ export default function Dashboard({
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
                   title="No cashiers Available"
-                  description="You can add a new cashiers to get started."
+                  description="You can add a new cash to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />

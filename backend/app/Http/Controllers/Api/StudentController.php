@@ -60,8 +60,7 @@ class StudentController extends BaseController
         // Create a new staff record and assign the institute_id from the logged-in admin
         $student = new Student();
         $student->institute_id = Auth::user()->staff->institute_id;  
-        $student->subject_id  = $request->input('subject_id');
-        $student->division_id = $request->input('division_id');
+         $student->division_id = $request->input('division_id');
         $student->student_name = $request->input('student_name');
         $student->prn = $request->input('prn');
         $student->save();
@@ -94,8 +93,7 @@ class StudentController extends BaseController
        
                        
         $student->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
-         $student->subject_id  = $request->input('subject_id');
-        $student->division_id = $request->input('division_id');
+         $student->division_id = $request->input('division_id');
         $student->student_name = $request->input('student_name');
         $student->prn = $request->input('prn');
         $student->save();
@@ -241,8 +239,7 @@ class StudentController extends BaseController
                     $student = new Student();
                     $student->student_name = trim($row[$columnMap['student_name']]);
                     $student->prn = trim($row[$columnMap['prn']]);
-                    $student->subject_id = $subject->id;
-                    $student->division_id = $division->id;
+                     $student->division_id = $division->id;
                     $student->institute_id = $instituteId;
                     $student->save();
                     

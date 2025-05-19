@@ -133,11 +133,22 @@ function ProfileForm({ formData }) {
     data.name = data.staff_name;
     try {
       const formData = new FormData();
+      
+      // Explicitly append all form fields including role
       Object.keys(data).forEach(key => {
         if (key !== 'images') {
-          formData.append(key, data[key]);
+          const value = data[key];
+          // Convert all values to string and handle undefined/null
+          if (value !== undefined && value !== null) {
+            formData.append(key, String(value));
+          }
         }
       });
+      
+      // Ensure role is included in the form data
+      if (data.role) {
+        formData.set('role', data.role);
+      }
 
       // Append each selected image to the FormData
       selectedImages.forEach((image, index) => {

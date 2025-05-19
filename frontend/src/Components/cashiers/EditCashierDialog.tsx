@@ -113,8 +113,8 @@ export default function EditCashierDialog({
             total_fees: cashierData.total_fees ?? "",
           });
         } catch (error) {
-          console.error("Error fetching cashier:", error);
-          toast.error("Failed to load cashier data");
+          console.error("Error fetching cash:", error);
+          toast.error("Failed to load cash data");
           onClose();
         }
       };
@@ -130,7 +130,7 @@ export default function EditCashierDialog({
           Authorization: `Bearer ${token}`,
         },
       });
-      toast.success("Cashier Updated Successfully");
+      toast.success("Cash Updated Successfully");
       onClose();
       fetchData();
     } catch (error) {
@@ -158,7 +158,7 @@ export default function EditCashierDialog({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Edit Cashier
+              Edit Cash
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -242,7 +242,7 @@ export default function EditCashierDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={() => handleSubmit(onSubmit)()}>
-                Update Cashier
+                Update Cash
               </Button>
             </ModalFooter>
           </>

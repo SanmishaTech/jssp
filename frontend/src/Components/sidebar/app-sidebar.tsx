@@ -301,26 +301,28 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/accountantdashboard",
       icon: Home,
     },
+    {
+      title: "Bank Accounts",
+      url: "/bankaccounts",
+      icon: BookText,
+    },
      {
       title: "Bank",
       url: "/bank",
       icon: BookText,
     },
     {
-      title: "Bank Accounts",
-      url: "/bankaccounts",
-      icon: BookText,
+      title: "Cashier",
+      url: "/cashiers",
+      icon: Banknote,
     },
+   
     {
       title: "CashBook",
       url: "/cashbook",
       icon: Landmark,
     },
-    {
-      title: "Cashier",
-      url: "/cashiers",
-      icon: Banknote,
-    },
+   
     {
       title: "Leave Application",
       url: "/leave",

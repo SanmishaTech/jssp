@@ -69,8 +69,7 @@ interface Semester {
 const formSchema = z.object({
   student_name: z.string().nonempty("Student Name is required"),
   prn: z.string().nonempty("PRN is required"),
-  subject_id: z.string().nonempty("Subject is required"),
-  division_id: z.string().nonempty("Division is required"),
+   division_id: z.string().nonempty("Division is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -78,8 +77,7 @@ type FormValues = z.infer<typeof formSchema>;
 const defaultValues: FormValues = {
   student_name: "",
   prn: "",
-  subject_id: "",
-  division_id: "",
+   division_id: "",
 };
 
 function ProfileForm({ formData }: { formData: FormValues }) {
@@ -223,7 +221,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <div className=" grid grid-cols-2 gap-3">
+        <div className=" grid grid-cols-3 gap-3">
           <FormField
             control={form.control}
             name="student_name"
@@ -335,86 +333,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
             }}
           />
 
-          {/* Course Title Field */}
-          <FormField
-            control={form.control}
-            name="subject_id"
-            render={({ field }) => {
-              const [open, setOpen] = React.useState(false);
-              return (
-                <FormItem className="flex-1">
-                  <FormLabel className="mt-[0px]">
-                    Subject <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={open}
-                          className="w-full justify-between"
-                        >
-                          {field.value
-                            ? courses.find((course) => {
-                                const courseId = course.id?.toString() || "";
-                                return courseId === field.value;
-                              })?.subject_name || "Select Subject..."
-                            : "Select Subject..."}
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[300px] p-0">
-                        <Command>
-                          <CommandInput placeholder="Search subject..." />
-                          <CommandList>
-                            <CommandEmpty>
-                              {loadingCourses
-                                ? "Loading subjects..."
-                                : "No subject found."}
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {courses.map((course) => {
-                                const courseId = course.id?.toString() || "";
-                                return (
-                                  <CommandItem
-                                    key={courseId}
-                                    value={courseId}
-                                    onSelect={(currentValue) => {
-                                      field.onChange(
-                                        currentValue === field.value
-                                          ? ""
-                                          : currentValue
-                                      );
-                                      // Set the selected division when a division is selected
-                                      const selectedDiv = rooms.find(room => room.id?.toString() === (currentValue === field.value ? "" : currentValue));
-                                      setSelectedDivision(selectedDiv || null);
-                                      setOpen(false);
-                                    }}
-                                  >
-                                    {course.subject_name}
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        field.value === courseId
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                );
-                              })}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
-          />
+        
         </div>
 
         {/* Division Details Section */}

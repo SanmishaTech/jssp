@@ -124,7 +124,7 @@ export default function BankForm() {
     <Card className="max-w-2xl mx-auto shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between">
         <h3 className="text-xl font-semibold">
-          {id ? "Edit Bank" : "Create Bank"}
+          {id ? "Edit Bank" : "Bank"}
         </h3>
         <Button
           variant="flat"
@@ -138,7 +138,7 @@ export default function BankForm() {
         <CardBody className="gap-6 flex flex-col">
           <div className="flex flex-col gap-1">
             <Input
-               placeholder="Enter the total fund amount"
+               placeholder=" Enter the total fund amount"
               type="number"
               min="0.01"
               step="0.01"
@@ -156,8 +156,7 @@ export default function BankForm() {
 
           <div className="flex flex-col gap-1">
             <Textarea
-              label="Note"
-              placeholder="Add a note about this bank (optional)"
+               placeholder="Add a note about this transaction (optional)"
               name="note"
               value={formData.note}
               onChange={handleInputChange}
@@ -175,7 +174,7 @@ export default function BankForm() {
             className="w-full"
             startContent={<Save size={16} />}
           >
-            {id ? "Update Bank" : "Create Bank"}
+            {id ? "Update Bank" : "Save "}
           </Button>
         </CardFooter>
       </form>
