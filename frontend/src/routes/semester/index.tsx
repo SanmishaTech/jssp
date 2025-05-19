@@ -4,16 +4,16 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/semester/")({
   beforeLoad: async ({ fetch }) => {
-    // const role = localStorage.getItem("role");
-    // if (role !== "superadmin") {
-    //   toast.error("You are not authorized to access this page.");
-    //   throw redirect({
-    //     to: "/",
-    //     search: {
-    //       redirect: location.href,
-    //     },
-    //   });
-    // }
+    const role = localStorage.getItem("role");
+    if (role !== "admin" && role !== "admission") {
+      toast.error("You are not authorized to access this page.");
+      throw redirect({
+        to: "/",
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
   },
   component: RouteComponent,
 });

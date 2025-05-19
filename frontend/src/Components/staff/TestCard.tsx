@@ -284,43 +284,27 @@ function ProfileForm() {
                 />
 
 <FormField
-  control={form.control}
-  name="role"
-  render={({ field }) => (
-    <FormItem className="space-y-3">
-      <FormLabel>Role</FormLabel>
-      <FormControl>
-        <div className="flex space-x-4">
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="role-member"
-              {...field}
-              value="member"
-              checked={field.value === "member"}
-              className="h-4 w-4"
-              onChange={(e) => field.onChange(e.target.value)}
-            />
-            <label htmlFor="role-member">Staff</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="role-cashier"
-              {...field}
-              value="cashier"
-              checked={field.value === "cashier"}
-              className="h-4 w-4"
-              onChange={(e) => field.onChange(e.target.value)}
-            />
-            <label htmlFor="role-cashier">Cashier</label>
-          </div>
-        </div>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="member">Staff</SelectItem>
+                          <SelectItem value="cashier">Cashier</SelectItem>
+                          <SelectItem value="admission">Admission</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

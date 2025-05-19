@@ -310,32 +310,17 @@ function ProfileForm({ formData }) {
                   render={({ field }) => (
                     <FormItem className="space-y-3">
                       <FormLabel>Role</FormLabel>
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="role-member"
-                              {...field}
-                              value="member"
-                              checked={field.value === "member"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="role-member">Staff</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="role-cashier"
-                              {...field}
-                              value="cashier"
-                              checked={field.value === "cashier"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="role-cashier">Cashier</label>
-                          </div>
-                        </div>
-                      </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="member">Staff</SelectItem>
+                          <SelectItem value="cashier">Cashier</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

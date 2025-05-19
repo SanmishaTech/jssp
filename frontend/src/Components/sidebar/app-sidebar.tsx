@@ -274,23 +274,74 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/cashierdashboard",
       icon: Home,
     },
+   
     {
-      title: "Calender",
-      url: "/calender",
-      icon: Calendar,
-    },
-    {
-      title: "Inventory",
-      url: "/inventory",
-      icon: Package,
+      title: "Cashier",
+      url: "/cashiers",
+      icon: Banknote,
     },
     {
       title: "Leave Application",
       url: "/leave",
       icon: FileText,
     },
-   
-    
+  ],
+  admission: [
+    {
+      title: "Dashboard",
+      url: "/admissiondashboard",
+      icon: Home,
+    },
+    {
+      title: "Academic Information",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Acadamic Year",
+          url: "/academicyears",
+          icon: BookMarked,
+        },
+       
+        {
+          title: "Courses",
+          url: "/courses",
+          icon: BookText,
+        },
+        {
+          title: "Semester",
+          url: "/semester",
+          icon: Calendar,
+        },
+        {
+          title: "Subjects",
+          url: "/subjects",
+          icon: BookMarked,
+        },
+        {
+          title: "Room Number",
+          url: "/rooms",
+          icon: MapPin,
+        },
+        {
+          title: "Division",
+          url: "/divisions",
+          icon: Grid,
+        },
+        {
+          title: "Students",
+          url: "/students",
+          icon: UsersRound,
+        },
+       
+      ],
+      
+    },
+    {
+      title: "Admission Information",
+      url: "/admissions",
+      icon: BookText,
+    },
+     
   ],
 };
 
