@@ -226,11 +226,23 @@ function LeaveApprovalDashboard() {
     
     const status = actionType === "approve" ? "approved" : "rejected";
     
+    // Get role and format display text
+    const role = localStorage.getItem("role") || "";
+    let formattedRole;
+    
+    if (role === "superadmin") {
+      formattedRole = "Super Admin";
+    } else if (role === "admin") {
+      formattedRole = "Principal";
+    } else {
+      formattedRole = role.charAt(0).toUpperCase() + role.slice(1);
+    }
+    
     // Prepare update data
     const updateData = {
       status,
       remarks,
-      approved_by: localStorage.getItem("user_name") || "Admin",
+      approved_by: formattedRole,
       approved_at: new Date().toISOString(),
     };
     

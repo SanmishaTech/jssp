@@ -73,6 +73,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: Home,
     },
     {
+      title: "Leave Approval",
+      url: "/leaveapproval",
+      icon: FileText,
+    },
+    {
       title: "Calender",
       url: "/calender",
       icon: Calendar,
@@ -164,6 +169,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
     {
       title: "Leave Approval",
       url: "/leaveapproval",
+      icon: FileText,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
       icon: FileText,
     },
     {

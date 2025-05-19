@@ -17,9 +17,22 @@ class LeaveController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-        $instituteId = Auth::user()->staff->institute_id;
+        $user = Auth::user();
+        $role = $user->roles->first()->name ?? null;
         
-        $query = Leave::where('institute_id', $instituteId);
+        // Initialize query
+        $query = Leave::query();
+        
+        if ($role === 'superadmin') {
+            // For superadmin, only show admin's leave applications
+            $query->whereHas('staff.user.roles', function($q) {
+                $q->where('name', 'admin');
+            });
+        } else {
+            // For other roles, filter by institute
+            $instituteId = $user->staff->institute_id;
+            $query->where('institute_id', $instituteId);
+        }
         
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -100,7 +113,9 @@ class LeaveController extends BaseController
     
     public function getByMember(): JsonResponse
     {
-        $staff = Auth::user()->staff;
+        $user = Auth::user();
+        $staff = $user->staff;
+        $role = $user->roles->first()->name ?? null;
         
         if (!$staff) {
             return $this->sendError('User does not have an associated staff record');
@@ -109,15 +124,22 @@ class LeaveController extends BaseController
         $staffId = $staff->id;
         $instituteId = $staff->institute_id;
         
-        if (!$instituteId) {
+        if (!$instituteId && $role !== 'superadmin') {
             return $this->sendError('User does not have an associated institute');
         }
         
-        // Filter leaves by both institute_id and staff_id
-        $leaves = Leave::where('institute_id', $instituteId)
-            ->where('staff_id', $staffId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // For superadmin, get only admin's leave applications
+        if ($role === 'superadmin') {
+            $query = Leave::whereHas('staff.user.roles', function($q) {
+                $q->where('name', 'admin');
+            });
+        } else {
+            // For others, get their own applications
+            $query = Leave::where('staff_id', $staffId);
+            $query->where('institute_id', $instituteId);
+        }
+        
+        $leaves = $query->orderBy('created_at', 'desc')->get();
             
         return $this->sendResponse(["Leave" => LeaveResource::collection($leaves)], "Leave applications retrieved successfully");
     }
@@ -128,16 +150,37 @@ class LeaveController extends BaseController
             return $this->sendError('Invalid status value');
         }
 
-        $instituteId = Auth::user()->staff->institute_id;
+        $user = Auth::user();
+        $role = $user->roles->first()->name ?? null;
+        $staff = $user->staff;
+        $instituteId = $staff ? $staff->institute_id : null;
+        $staffId = $staff ? $staff->id : null;
         
-        if (!$instituteId) {
+        if (!$instituteId && $role !== 'superadmin') {
             return $this->sendError('User does not have an associated institute');
         }
         
-        $leaves = Leave::where('status', $status)
-            ->where('institute_id', $instituteId)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Initialize query with status filter
+        $query = Leave::where('status', $status);
+        
+        if ($role === 'superadmin') {
+            // For superadmin, only show admin's leave applications
+            $query->whereHas('staff.user.roles', function($q) {
+                $q->where('name', 'admin');
+            });
+        } else if ($role === 'admin') {
+            // For admin, show all institute applications except their own
+            $query->where('institute_id', $instituteId)
+                  ->where(function($q) use ($staffId) {
+                      // Exclude admin's own applications from approval page
+                      $q->where('staff_id', '!=', $staffId);
+                  });
+        } else {
+            // For other roles, filter by institute
+            $query->where('institute_id', $instituteId);
+        }
+        
+        $leaves = $query->orderBy('created_at', 'desc')->get();
             
         return $this->sendResponse(["Leave" => LeaveResource::collection($leaves)], "Leave applications retrieved successfully");
     }
@@ -183,11 +226,24 @@ class LeaveController extends BaseController
     
     public function allLeaves(): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $instituteId = Auth::user()->staff->institute_id;
-    
-        // Filter leaves based on the institute_id.
-        $leaves = Leave::where('institute_id', $instituteId)->get();
+        $user = Auth::user();
+        $role = $user->roles->first()->name ?? null;
+        
+        // Initialize query
+        $query = Leave::query();
+        
+        if ($role === 'superadmin') {
+            // For superadmin, only show admin's leave applications
+            $query->whereHas('staff.user.roles', function($q) {
+                $q->where('name', 'admin');
+            });
+        } else {
+            // For other roles, filter by institute
+            $instituteId = $user->staff->institute_id;
+            $query->where('institute_id', $instituteId);
+        }
+        
+        $leaves = $query->get();
     
         return $this->sendResponse(
             ["Leave" => LeaveResource::collection($leaves)],

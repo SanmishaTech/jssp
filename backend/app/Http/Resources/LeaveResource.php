@@ -6,6 +6,7 @@ use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class LeaveResource extends JsonResource
 {
@@ -19,10 +20,22 @@ class LeaveResource extends JsonResource
         // Get staff details if staff_id exists
         $staff = null;
         $staffName = null;
+        $staffRole = null;
         
         if ($this->staff_id) {
             $staff = Staff::find($this->staff_id);
             $staffName = $staff ? $staff->staff_name : null;
+            
+            // Get staff role
+            if ($staff && $staff->user_id) {
+                $role = DB::table('model_has_roles')
+                    ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                    ->where('model_has_roles.model_id', $staff->user_id)
+                    ->select('roles.name')
+                    ->first();
+                    
+                $staffRole = $role ? $role->name : null;
+            }
         }
         
         // Get institute name if institute_id exists
@@ -41,6 +54,7 @@ class LeaveResource extends JsonResource
             'institute_name' => $instituteName,
             'staff_id' => $this->staff_id,
             'staff_name' => $staffName,
+            'staff_role' => $staffRole,
             'date' => $this->date,
             'from_date' => $this->from_date,
             'to_date' => $this->to_date,

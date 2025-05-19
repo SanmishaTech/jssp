@@ -7,7 +7,7 @@ export const Route = createFileRoute("/leave/")({
   beforeLoad: async ({ fetch }) => {
     const role = localStorage.getItem("role");
     console.log("current Role", role);
-    if (role !== "member" && role !== "cashier" && role !== "admission" && role !== "backoffice" && role !== "accountant") {
+    if (role !== "member" && role !== "cashier" && role !== "admission" && role !== "backoffice" && role !== "accountant" && role !== "admin" ) {
       toast.error("You are not authorized to access this page.");
       throw redirect({
         to: "/",

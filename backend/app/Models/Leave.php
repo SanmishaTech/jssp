@@ -44,4 +44,12 @@ class Leave extends Model
     {
         return $this->belongsTo(Institute::class);
     }
+    
+    /**
+     * Get the staff member that owns the leave application.
+     */
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class);
+    }
 }
