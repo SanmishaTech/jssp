@@ -42,8 +42,7 @@ import { useState, useEffect } from "react";
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Name is Required"),
   employee_code: z.string().nonempty("Employee Code is Required"),
-  is_teaching: z.string().optional(),
-  date_of_birth: z.any().optional(),
+   date_of_birth: z.any().optional(),
   address: z.string().nonempty("Address is Required"),
   mobile: z.string().optional(),
   email: z
@@ -84,8 +83,7 @@ const defaultValues: Partial<ProfileFormValues> = {
   // Initialize other fields to prevent uncontrolled to controlled warnings
   staff_name: "",
   employee_code: "",
-  is_teaching: "",
-  address: "",
+   address: "",
   mobile: "",
   email: "",
   password: ""
@@ -414,43 +412,7 @@ function ProfileForm() {
                 <div>
                   <CardTitle>Staff Information</CardTitle>
                 </div>
-                <div className="flex space-x-4 flex-row-reverse">
-                  <FormField
-                    control={form.control}
-                    name="is_teaching"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormControl>
-                          <div className="flex space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="radio"
-                                id="is_teaching_0"
-                                {...field}
-                                value="0"
-                                checked={field.value === "0"}
-                                className="h-4 w-4"
-                              />
-                              <label htmlFor="is_teaching_0">Teaching</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="radio"
-                                id="is_teaching_1"
-                                {...field}
-                                value="1"
-                                checked={field.value === "1"}
-                                className="h-4 w-4"
-                              />
-                              <label htmlFor="is_teaching_1">Non-Teaching</label>
-                            </div>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                 
               </div>
             </CardHeader>
             <CardContent>

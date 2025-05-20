@@ -85,8 +85,7 @@ public function index(Request $request): JsonResponse
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
         $staff->employee_code = $request->input('employee_code');
-        $staff->is_teaching = $request->input('is_teaching');
-        $staff->date_of_birth = $request->input('date_of_birth');
+         $staff->date_of_birth = $request->input('date_of_birth');
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
@@ -242,8 +241,7 @@ public function index(Request $request): JsonResponse
         $staff->institute_id = Auth::user()->staff->institute_id;
         $staff->staff_name = $request->input('staff_name');
         $staff->employee_code = $request->input('employee_code');
-        $staff->is_teaching = $request->input('is_teaching');
-        $staff->date_of_birth = $request->input('date_of_birth');
+         $staff->date_of_birth = $request->input('date_of_birth');
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
