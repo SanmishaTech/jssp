@@ -42,6 +42,7 @@ const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
   employee_code: z.string().nonempty("Employee Code Required"),
    date_of_birth: z.any().optional(),
+   academic_years_id: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
   role: z.string().optional(),
@@ -79,7 +80,9 @@ function ProfileForm({ formData }) {
   const [deleteExisting, setDeleteExisting] = useState(false);
   const [courses, setCourses] = useState<{key: string, name: string}[]>([]);
   const [subjects, setSubjects] = useState<{key: string, name: string}[]>([]);
+  const [academicYears, setAcademicYears] = useState<{id: number, academic_year: string}[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<{key: string, name: string}[]>([]);
+  const [isTeachingStaff, setIsTeachingStaff] = useState<boolean>(false);
 
   const { reset } = form;
   const navigate = useNavigate();
@@ -90,6 +93,11 @@ function ProfileForm({ formData }) {
     // Process course_id and subject_id to match the format Select components expect
     if (formData) {
       const formDataCopy = { ...formData };
+      
+      // Check if this is a teaching staff and set the state accordingly
+      if (formData.role === "teachingstaff") {
+        setIsTeachingStaff(true);
+      }
       
       // Handle course_id
       if (formData.course_id && Array.isArray(formData.course_id)) {
@@ -307,9 +315,41 @@ function ProfileForm({ formData }) {
       }
     };
     
+    const fetchAcademicYears = async () => {
+      try {
+        const response = await axios.get('/api/all_academic_years', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log('Academic Years API response:', response.data);
+        
+        // Handle the specific response structure for academic years
+        if (response.data?.status && response.data?.data?.AcademicYears && Array.isArray(response.data.data.AcademicYears)) {
+          // Map the academic year data to the format expected by the select element
+          const mappedAcademicYears = response.data.data.AcademicYears.map((year: { 
+            id: number, 
+            academic_year: string 
+          }) => ({
+            id: year.id,
+            academic_year: year.academic_year || 'Unnamed Academic Year'
+          }));
+          
+          console.log('Mapped academic years:', mappedAcademicYears);
+          setAcademicYears(mappedAcademicYears);
+        } else {
+          console.log('Unexpected academic years response structure:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching academic years:', error);
+      }
+    };
+    
     fetchCourses();
     fetchSemesters();
     fetchSubjects();
+    fetchAcademicYears();
   }, [token, form, formData]);
 
   // Custom tag renderer for MultipleSelect
@@ -567,7 +607,10 @@ function ProfileForm({ formData }) {
                     <FormItem>
                       <FormLabel>Role</FormLabel>
                       <Select 
-                        onValueChange={field.onChange} 
+                        onValueChange={(value: string) => {
+                          field.onChange(value);
+                          setIsTeachingStaff(value === "teachingstaff");
+                        }} 
                         value={field.value}
                         defaultValue={field.value}
                       >
@@ -584,6 +627,8 @@ function ProfileForm({ formData }) {
                           <SelectItem value="admission">Admission</SelectItem>
                           <SelectItem value="accountant">Accountant</SelectItem>
                           <SelectItem value="backoffice">Back Office</SelectItem>
+                           <SelectItem value="teachingstaff">Teaching Staff</SelectItem>
+                                                    <SelectItem value="nonteachingstaff">Non-Teaching Staff</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -618,109 +663,142 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-2">
+
+                <FormField
+                  control={form.control}
+                  name="academic_years_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Academic Year</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value?.toString() || ""}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Academic Year..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {academicYears.map((academicYear) => (
+                              <SelectItem
+                                key={academicYear.id.toString()}
+                                value={academicYear.id.toString()}
+                              >
+                                {academicYear.academic_year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {isTeachingStaff && (
+                  <div className="flex gap-2">
                     <FormField
-                  control={form.control}
-                  name="course_id"
-                  render={({ field }) => {
-                    // Check value for debugging
-                    console.log("Current field value:", field.value);
+                      control={form.control}
+                      name="course_id"
+                      render={({ field }) => {
+                        // Check value for debugging
+                        console.log("Current field value:", field.value);
+                        
+                        return (
+                          <FormItem className="space-y-3">
+                            <FormLabel>Courses</FormLabel>
+                            <FormControl>
+                              <CourseSelect
+                                tags={courses}
+                                onChange={(selectedItems: {key: string, name: string}[]) => {
+                                  field.onChange(selectedItems);
+                                  setSelectedCourses(selectedItems);
+                                  console.log("Selected courses updated:", selectedItems);
+                                }}
+                                defaultValue={selectedCourses.length > 0 ? selectedCourses : (field.value || [])}
+                                placeholder="Select courses"
+                                customTag={customTag}
+                                emptyIndicator={
+                                  <p className="text-center text-muted-foreground py-6 text-sm">
+                                    No courses available.
+                                  </p>
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
                     
-                    return (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Courses</FormLabel>
-                        <FormControl>
-                          <CourseSelect
-                            tags={courses}
-                            onChange={(selectedItems: {key: string, name: string}[]) => {
-                              field.onChange(selectedItems);
-                              setSelectedCourses(selectedItems);
-                              console.log("Selected courses updated:", selectedItems);
-                            }}
-                            defaultValue={selectedCourses.length > 0 ? selectedCourses : (field.value || [])}
-                            placeholder="Select courses"
-                            customTag={customTag}
-                            emptyIndicator={
-                              <p className="text-center text-muted-foreground py-6 text-sm">
-                                No courses available.
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="semester_id"
-                  render={({ field }) => {
-                    // Check value for debugging
-                    console.log("Current semester field value:", field.value);
+                    <FormField
+                      control={form.control}
+                      name="semester_id"
+                      render={({ field }) => {
+                        // Check value for debugging
+                        console.log("Current semester field value:", field.value);
+                        
+                        return (
+                          <FormItem className="space-y-3">
+                            <FormLabel>Semesters</FormLabel>
+                            <FormControl>
+                              <SemesterSelect
+                                tags={semesters}
+                                onChange={(selectedItems: {key: string, name: string}[]) => {
+                                  field.onChange(selectedItems);
+                                  setSelectedSemesters(selectedItems);
+                                  console.log("Selected semesters updated:", selectedItems);
+                                }}
+                                defaultValue={selectedSemesters.length > 0 ? selectedSemesters : (field.value || [])}
+                                placeholder="Select semesters"
+                                customTag={customTag}
+                                emptyIndicator={
+                                  <p className="text-center text-muted-foreground py-6 text-sm">
+                                    No semesters available.
+                                  </p>
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
                     
-                    return (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Semesters</FormLabel>
-                        <FormControl>
-                          <SemesterSelect
-                            tags={semesters}
-                            onChange={(selectedItems: {key: string, name: string}[]) => {
-                              field.onChange(selectedItems);
-                              setSelectedSemesters(selectedItems);
-                              console.log("Selected semesters updated:", selectedItems);
-                            }}
-                            defaultValue={selectedSemesters.length > 0 ? selectedSemesters : (field.value || [])}
-                            placeholder="Select semesters"
-                            customTag={customTag}
-                            emptyIndicator={
-                              <p className="text-center text-muted-foreground py-6 text-sm">
-                                No semesters available.
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="subject_id"
-                  render={({ field }) => {
-                    // Check value for debugging
-                    console.log("Current subject field value:", field.value);
-                    
-                    return (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Subjects</FormLabel>
-                        <FormControl>
-                          <SubjectSelect
-                            tags={subjects}
-                            onChange={(selectedItems: {key: string, name: string}[]) => {
-                              field.onChange(selectedItems);
-                              setSelectedSubjects(selectedItems);
-                              console.log("Selected subjects updated:", selectedItems);
-                            }}
-                            defaultValue={selectedSubjects.length > 0 ? selectedSubjects : (field.value || [])}
-                            placeholder="Select subjects"
-                            customTag={customTag}
-                            emptyIndicator={
-                              <p className="text-center text-muted-foreground py-6 text-sm">
-                                No subjects available.
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />  
-                </div>
+                    <FormField
+                      control={form.control}
+                      name="subject_id"
+                      render={({ field }) => {
+                        // Check value for debugging
+                        console.log("Current subject field value:", field.value);
+                        
+                        return (
+                          <FormItem className="space-y-3">
+                            <FormLabel>Subjects</FormLabel>
+                            <FormControl>
+                              <SubjectSelect
+                                tags={subjects}
+                                onChange={(selectedItems: {key: string, name: string}[]) => {
+                                  field.onChange(selectedItems);
+                                  setSelectedSubjects(selectedItems);
+                                  console.log("Selected subjects updated:", selectedItems);
+                                }}
+                                defaultValue={selectedSubjects.length > 0 ? selectedSubjects : (field.value || [])}
+                                placeholder="Select subjects"
+                                customTag={customTag}
+                                emptyIndicator={
+                                  <p className="text-center text-muted-foreground py-6 text-sm">
+                                    No subjects available.
+                                  </p>
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />  
+                  </div>
+                )}
               </div>
               <FormField
                 control={form.control}

@@ -6,13 +6,15 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
-use Database\Seeders\CreateSuperAdminUserSeeder;
-use Database\Seeders\CreateAdminUserSeeder;
-use Database\Seeders\CreateMemberUserSeeder;
-use Database\Seeders\CreateCashierRoleSeeder;
 use Database\Seeders\AdmissionSeeder;
 use Database\Seeders\AccountantSeeder;
 use Database\Seeders\BackOfficeSeeder;
+use Database\Seeders\TeachingStaffSeeder;
+use Database\Seeders\CreateAdminUserSeeder;
+use Database\Seeders\CreateMemberUserSeeder;
+use Database\Seeders\NonTeachingStaffSeeder;
+use Database\Seeders\CreateCashierRoleSeeder;
+use Database\Seeders\CreateSuperAdminUserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,5 +36,8 @@ class DatabaseSeeder extends Seeder
         $this->call(AdmissionSeeder::class);
         $this->call(AccountantSeeder::class);
         $this->call(BackOfficeSeeder::class);
+        $this->call(TeachingStaffSeeder::class);
+        $this->call(NonTeachingStaffSeeder::class);
+
     }
 }

@@ -43,6 +43,7 @@ const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Name is Required"),
   employee_code: z.string().nonempty("Employee Code is Required"),
    date_of_birth: z.any().optional(),
+   academic_years_id: z.any().optional(),
   address: z.string().nonempty("Address is Required"),
   mobile: z.string().optional(),
   email: z
@@ -82,6 +83,7 @@ const defaultValues: Partial<ProfileFormValues> = {
   subject_id: [], // Default empty subject_id array
   // Initialize other fields to prevent uncontrolled to controlled warnings
   staff_name: "",
+  academic_years_id: "",
   employee_code: "",
    address: "",
   mobile: "",
@@ -109,9 +111,11 @@ function ProfileForm() {
   const [courses, setCourses] = useState<{key: string, name: string}[]>([]);
   const [semesters, setSemesters] = useState<{key: string, name: string}[]>([]);
   const [subjects, setSubjects] = useState<{key: string, name: string}[]>([]);
+  const [academicYears, setAcademicYears] = useState<{id: number, academic_year: string}[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<{key: string, name: string}[]>([]);
   const [selectedSemesters, setSelectedSemesters] = useState<{key: string, name: string}[]>([]);
   const [selectedSubjects, setSelectedSubjects] = useState<{key: string, name: string}[]>([]);
+  const [isTeachingStaff, setIsTeachingStaff] = useState<boolean>(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -244,10 +248,44 @@ function ProfileForm() {
       }
     };
 
+    const fetchAcademicYears = async () => {
+      try {
+        const response = await axios.get('/api/all_academic_years', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log('Academic Years API response:', response.data);
+        
+        // Handle the specific response structure for academic years
+        if (response.data?.status && response.data?.data?.AcademicYears && Array.isArray(response.data.data.AcademicYears)) {
+          // Map the academic year data to the format expected by the select element
+          const mappedAcademicYears = response.data.data.AcademicYears.map((year: { 
+            id: number, 
+            academic_year: string 
+          }) => ({
+            id: year.id,
+            academic_year: year.academic_year || 'Unnamed Academic Year'
+          }));
+          
+          console.log('Mapped academic years:', mappedAcademicYears);
+          setAcademicYears(mappedAcademicYears);
+        } else {
+          console.log('Unexpected academic years response structure:', response.data);
+          // Don't show error toast to avoid multiple errors if API is not ready
+        }
+      } catch (error) {
+        console.error('Error fetching academic years:', error);
+        // Don't show error toast to avoid multiple errors if API is not ready
+      }
+    };
+
     if (token) {
       fetchCourses();
       fetchSemesters();
       fetchSubjects();
+      fetchAcademicYears();
     }
   }, [token]);
 
@@ -479,7 +517,13 @@ function ProfileForm() {
                   render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "role"> }) => (
                     <FormItem className="space-y-3">
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={(value: string) => {
+                          field.onChange(value);
+                          setIsTeachingStaff(value === "teachingstaff");
+                        }} 
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a role" />
@@ -491,6 +535,8 @@ function ProfileForm() {
                           <SelectItem value="admission">Admission</SelectItem>
                           <SelectItem value="accountant">Accountant</SelectItem>
                           <SelectItem value="backoffice">Back Office</SelectItem>
+                          <SelectItem value="teachingstaff">Teaching Staff</SelectItem>
+                          <SelectItem value="nonteachingstaff">Non-Teaching Staff</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -525,78 +571,108 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-5">
-                {/* Course selection completely isolated */}
-                       <FormItem className="space-y-3">
-                        <FormLabel>Courses</FormLabel>
-                        <FormControl>
-                          <CourseSelect
-                            tags={courses}
-                            onChange={(selectedItems: {key: string, name: string}[]) => {
-                              // Only update the local state, not the form field directly
-                              setSelectedCourses(selectedItems);
-                              // Update the form value separately
-                              form.setValue('course_id', selectedItems, {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: false
-                              });
-                              console.log("Selected courses:", selectedItems);
-                            }}
-                            defaultValue={selectedCourses}
-                            placeholder="Select courses"
-                            customTag={customTag}
-                            emptyIndicator={
-                              <p className="text-center text-muted-foreground py-6 text-sm">
-                                No courses available.
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        {form.formState.errors.course_id && (
-                          <div className="text-sm text-red-500">
-                            {String(form.formState.errors.course_id.message)}
-                          </div>
-                        )}
-                      </FormItem>
-                     
-                    
-                    {/* Semester selection completely isolated */}
-                       <FormItem className="space-y-3">
-                        <FormLabel>Semesters</FormLabel>
-                        <FormControl>
-                          <SemesterSelect
-                            tags={semesters}
-                            onChange={(selectedItems: {key: string, name: string}[]) => {
-                              // Only update the local state, not the form field directly
-                              setSelectedSemesters(selectedItems);
-                              // Update the form value separately
-                              form.setValue('semester_id', selectedItems, {
-                                shouldDirty: true,
-                                shouldTouch: true,
-                                shouldValidate: false
-                              });
-                              console.log("Selected semesters:", selectedItems);
-                            }}
-                            defaultValue={selectedSemesters}
-                            placeholder="Select semesters"
-                            customTag={customTag}
-                            emptyIndicator={
-                              <p className="text-center text-muted-foreground py-6 text-sm">
-                                No semesters available.
-                              </p>
-                            }
-                          />
-                        </FormControl>
-                        {form.formState.errors.semester_id && (
-                          <div className="text-sm text-red-500">
-                            {String(form.formState.errors.semester_id.message)}
-                          </div>
-                        )}
-                      </FormItem>
-                     
-                    {/* Subject selection completely isolated */}
-                    <div className="w-full">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">
+                      Academic Year
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        {...form.register("academic_years_id")}
+                        className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                      >
+                        {academicYears.map((academicYear) => (
+                          <option
+                            key={academicYear.id.toString()}
+                            value={academicYear.id.toString()}
+                          >
+                            {academicYear.academic_year}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {form.formState.errors.academic_years_id && (
+                      <p className="mt-1 text-sm text-red-500">
+                        {form.formState.errors.academic_years_id.message}
+                      </p>
+                    )}
+                  </div>
+                {isTeachingStaff && (
+                  <div className="flex gap-5">
+                  
+                
+               
+                  {/* Course selection completely isolated */}
+                         <FormItem className="space-y-3">
+                          <FormLabel>Courses</FormLabel>
+                          <FormControl>
+                            <CourseSelect
+                              tags={courses}
+                              onChange={(selectedItems: {key: string, name: string}[]) => {
+                                // Only update the local state, not the form field directly
+                                setSelectedCourses(selectedItems);
+                                // Update the form value separately
+                                form.setValue('course_id', selectedItems, {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                  shouldValidate: false
+                                });
+                                console.log("Selected courses:", selectedItems);
+                              }}
+                              defaultValue={selectedCourses}
+                              placeholder="Select courses"
+                              customTag={customTag}
+                              emptyIndicator={
+                                <p className="text-center text-muted-foreground py-6 text-sm">
+                                  No courses available.
+                                </p>
+                              }
+                            />
+                          </FormControl>
+                          {form.formState.errors.course_id && (
+                            <div className="text-sm text-red-500">
+                              {String(form.formState.errors.course_id.message)}
+                            </div>
+                          )}
+                        </FormItem>
+                       
+                      
+                      {/* Semester selection completely isolated */}
+                         <FormItem className="space-y-3">
+                          <FormLabel>Semesters</FormLabel>
+                          <FormControl>
+                            <SemesterSelect
+                              tags={semesters}
+                              onChange={(selectedItems: {key: string, name: string}[]) => {
+                                // Only update the local state, not the form field directly
+                                setSelectedSemesters(selectedItems);
+                                // Update the form value separately
+                                form.setValue('semester_id', selectedItems, {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                  shouldValidate: false
+                                });
+                                console.log("Selected semesters:", selectedItems);
+                              }}
+                              defaultValue={selectedSemesters}
+                              placeholder="Select semesters"
+                              customTag={customTag}
+                              emptyIndicator={
+                                <p className="text-center text-muted-foreground py-6 text-sm">
+                                  No semesters available.
+                                </p>
+                              }
+                            />
+                          </FormControl>
+                          {form.formState.errors.semester_id && (
+                            <div className="text-sm text-red-500">
+                              {String(form.formState.errors.semester_id.message)}
+                            </div>
+                          )}
+                        </FormItem>
+                       
+                      {/* Subject selection completely isolated */}
+                      <div className="w-full">
                       <FormItem className="space-y-3">
                         <FormLabel>Subjects</FormLabel>
                         <FormControl>
@@ -631,7 +707,7 @@ function ProfileForm() {
                       </FormItem>
                     </div>
                 </div>
-               
+                )}  
               </div>
               <FormField
                 control={form.control}

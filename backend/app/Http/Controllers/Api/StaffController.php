@@ -89,7 +89,7 @@ public function index(Request $request): JsonResponse
         $staff->address = $request->input('address');
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
-        
+        $staff->academic_years_id = $request->input('academic_years_id');
         $staff->gender = $request->input('gender');
         $staff->experience = $request->input('experience');
         $staff->highest_qualification = $request->input('highest_qualification');
@@ -247,6 +247,7 @@ public function index(Request $request): JsonResponse
         $staff->mobile = $request->input('mobile');
         $staff->gender = $request->input('gender');
         $staff->experience = $request->input('experience');
+        $staff->academic_years_id = $request->input('academic_years_id');
         $staff->highest_qualification = $request->input('highest_qualification');
         $staff->pan_number = $request->input('pan_number');
         $staff->aadhaar_number = $request->input('aadhaar_number');
