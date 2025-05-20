@@ -95,9 +95,7 @@ public function index(Request $request): JsonResponse
         $staff->highest_qualification = $request->input('highest_qualification');
         $staff->pan_number = $request->input('pan_number');
         $staff->aadhaar_number = $request->input('aadhaar_number');
-        $staff->appointment_date = $request->input('appointment_date');
-        $staff->nature_of_appointment = $request->input('nature_of_appointment');
-        $staff->subject_type = $request->input('subject_type');
+          $staff->subject_type = $request->input('subject_type');
         $staff->mode_of_payment = $request->input('mode_of_payment');
         $staff->bank_name = $request->input('bank_name');
         $staff->account_holder_name = $request->input('account_holder_name');
@@ -260,9 +258,7 @@ public function index(Request $request): JsonResponse
         $staff->highest_qualification = $request->input('highest_qualification');
         $staff->pan_number = $request->input('pan_number');
         $staff->aadhaar_number = $request->input('aadhaar_number');
-        $staff->appointment_date = $request->input('appointment_date');
-        $staff->nature_of_appointment = $request->input('nature_of_appointment');
-        $staff->subject_type = $request->input('subject_type');
+          $staff->subject_type = $request->input('subject_type');
         $staff->mode_of_payment = $request->input('mode_of_payment');
         $staff->bank_name = $request->input('bank_name');
         $staff->account_holder_name = $request->input('account_holder_name');

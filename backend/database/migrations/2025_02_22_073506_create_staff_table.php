@@ -28,9 +28,7 @@ return new class extends Migration
             $table->string('highest_qualification')->nullable();
             $table->string('pan_number')->nullable();
             $table->string('aadhaar_number')->nullable();
-            $table->string('appointment_date')->nullable();
-            $table->string('nature_of_appointment')->nullable();
-            $table->string('subject_type')->nullable();
+              $table->string('subject_type')->nullable();
             $table->string('mode_of_payment')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('account_holder_name')->nullable();

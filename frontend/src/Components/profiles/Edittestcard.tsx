@@ -46,8 +46,7 @@ import {
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
   employee_code: z.string().nonempty("Employee Code Required"),
-  is_teaching: z.any().optional(),
-  date_of_birth: z.any().optional(),
+   date_of_birth: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
   email: z
@@ -83,13 +82,9 @@ const profileFormSchema = z.object({
   medical_history: z.any().optional(),
   medical_image: z.any().optional(),
   delete_medical_image: z.boolean().optional(),
- pan_number: z
-    .string()
-    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "PAN must be in format: AAAPA1234A"),
-  aadhaar_number: z.any().optional(),
-  appointment_date: z.any().optional(),
-  nature_of_appointment: z.any().optional(),
-  subject_type: z.any().optional(),
+ pan_number: z.any().optional(),
+   aadhaar_number: z.any().optional(),
+    subject_type: z.any().optional(),
   mode_of_payment: z.any().optional(),
   bank_name: z.any().optional(),
   account_number: z.any().optional(),
@@ -105,6 +100,8 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema> & {
   name?: string;
+  subject_id?: string | string[] | number[];
+  course_id?: string | string[] | number[];
 };
 
 // Define field props type for form fields
@@ -132,8 +129,7 @@ function ProfileForm({ formData }) {
   const defaultValues: Partial<ProfileFormValues> = {
     staff_name: '',
     employee_code: '',
-    is_teaching: '0',
-    date_of_birth: '',
+     date_of_birth: '',
     address: '',
     mobile: '',
     email: '',
@@ -142,9 +138,7 @@ function ProfileForm({ formData }) {
     highest_qualification: '',
     pan_number: '',
     aadhaar_number: '',
-    appointment_date: '',
-    nature_of_appointment: '',
-    subject_type: '',
+      subject_type: '',
     mode_of_payment: 'Online',
     bank_name: '',
     account_number: '',
@@ -379,9 +373,18 @@ function ProfileForm({ formData }) {
       console.log('Full data to submit:', data);
       
       // Add all form fields except for files and arrays that need special handling
-      Object.keys(data).forEach(key => {
+      (Object.keys(data) as Array<keyof ProfileFormValues>).forEach(key => {
         if (key !== 'images' && key !== 'education' && key !== 'documents' && key !== 'papers' && key !== 'medical_image') {
-          formData.append(key, data[key]);
+          // Handle subject_id and course_id specifically to ensure they're sent as JSON arrays
+          if ((key === 'subject_id' || key === 'course_id') && data[key]) {
+            // Convert comma-separated string to array if it's a string
+            const value = typeof data[key] === 'string' 
+              ? (data[key] as string).split(',').map((item: string) => item.trim()).filter(Boolean)
+              : Array.isArray(data[key]) ? (data[key] as any[]) : [];
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, data[key] as any);
+          }
         }
       });
 
@@ -542,45 +545,8 @@ function ProfileForm({ formData }) {
                           <span className="text-muted-foreground">{form.getValues("employee_code") || "N/A"}</span>
                       </div>
                     </div>
-                    <div className="flex space-x-4 flex-row-reverse">
-                      <FormField
-                        control={form.control}
-                        name="is_teaching"
-                        render={({ field }) => (
-                          <FormItem className="space-y-3">
-                            <FormControl>
-                              <div className="flex space-x-4">
-                                <div className="flex items-center space-x-2">
-                                  <input
-                                    type="radio"
-                                    id="teaching"
-                                    {...field}
-                                    value={0}
-                                    checked={Number(field.value) === 0}
-                                    className="h-4 w-4"
-                                    disabled
-                                  />
-                                  <label htmlFor="teaching">Teaching</label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <input
-                                    type="radio"
-                                    id="non_teaching"
-                                    {...field}
-                                    value={1}
-                                    checked={Number(field.value) === 1}
-                                    className="h-4 w-4"
-                                    disabled
-                                  />
-                                  <label htmlFor="non_teaching">Non-Teaching</label>
-                                </div>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <div>Staff Role: {formData?.role ? formData.role.charAt(0).toUpperCase() + formData.role.slice(1) : "N/A"}</div>
+                   
                   </div>
                 </CardHeader>
                 
@@ -752,38 +718,9 @@ function ProfileForm({ formData }) {
     </FormItem>
   )}
 />
+ 
 
-<FormField
-  control={form.control}
-  name="appointment_date"
-  render={({ field }: Pick<FieldProps, 'field'>) => (
-    <FormItem>
-      <FormLabel>Appointment Date</FormLabel>
-      <FormControl>
-        <Input
-          type="date"
-          min={new Date().toISOString().split("T")[0]} // today
-          {...field}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-                     <FormField
-                      control={form.control}
-                      name="nature_of_appointment"
-                      render={({ field }) => (
-                        <FormItem >
-                          <FormLabel>Nature of Appointment</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Nature of Appointment..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                     
                      <FormField
                       control={form.control}
                       name="subject_type"
@@ -962,8 +899,7 @@ function ProfileForm({ formData }) {
                       <div className="space-y-2">
                         <h4 className="text-sm font-medium text-gray-700">Existing Images</h4>
                         {existingImages.map((img) => {
-                          console.log('Image object:', img);
-                          return (
+                           return (
                           <div key={img.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
                             <a 
                               href={`/api/staff-file/${img.image_path}`} 

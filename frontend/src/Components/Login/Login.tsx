@@ -64,7 +64,7 @@ const Login = () => {
         navigate({ to: "/accountantdashboard" });
       } else if (role === "backoffice") {
         navigate({ to: "/backofficedashboard" });
-      } else if (role === "teaching staff") {
+      } else if (role === "teachingstaff") {
         navigate({ to: "/backofficedashboard" });
       } else if (role === "nonteaching staff") {
         navigate({ to: "/backofficedashboard" });
