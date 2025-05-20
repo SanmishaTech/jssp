@@ -176,7 +176,7 @@ export default function PeticashForm() {
             className="w-full"
             startContent={<Save size={16} />}
           >
-            {id ? "Update CashBook" : "Create CashBook"}
+            {id ? "Update CashBook" : "Create Transaction"}
           </Button>
         </CardFooter>
       </form>

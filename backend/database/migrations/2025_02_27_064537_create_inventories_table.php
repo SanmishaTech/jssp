@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('remarks')->nullable();
             $table->string('status')->nullable();
             $table->string('scraped_amount')->nullable();
+            $table->string('scraped_quantity')->nullable();
              $table->timestamps();
         });
     }

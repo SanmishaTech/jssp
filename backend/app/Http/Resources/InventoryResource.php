@@ -26,6 +26,7 @@ class InventoryResource extends JsonResource
             "purchase_price" => $this->purchase_price,
             "status" => $this->status,
             "scraped_amount" => $this->scraped_amount,
+            "scraped_quantity" => $this->scraped_quantity,
              "remarks" => $this->remarks,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

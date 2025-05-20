@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DetailsDialog from "./DetailsDialog";
 import { Link } from "@tanstack/react-router";
 import {
   File,
@@ -107,7 +108,7 @@ export default function Dashboard({
   Searchitem,
   currentPage,
   handlePrevPage,
-  tableData = [],
+  tableData = [], // This will be an array of inventory items with various properties
   onAddProduct = () => {},
   onExport = () => {},
   onFilterChange = () => {},
@@ -115,7 +116,7 @@ export default function Dashboard({
   onSearch,
   onKeyPress,
   searchQuery,
-}) {
+}: any) {
    const navigate = useNavigate();
   const [toggleedit, setToggleedit] = useState(false);
   const [editid, setEditid] = useState();
@@ -131,6 +132,10 @@ export default function Dashboard({
 
   // State to manage expanded rows (array of id)
   const [expandedRows, setExpandedRows] = useState([]);
+  
+  // State for selected row and details dialog
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
 
   // Handler to toggle row expansion with debug logs
   const toggleRow = (rowId) => {
@@ -313,6 +318,13 @@ export default function Dashboard({
                 fetchData={fetchData}
                 onOpen={setToggleopen}
               />
+              
+              {/* Details Dialog */}
+              <DetailsDialog 
+                isOpen={detailsDialogOpen}
+                onOpenChange={setDetailsDialogOpen}
+                item={selectedItem}
+              />
 
               {/* <Additem
                 typeofschema={typeofschema}
@@ -360,7 +372,12 @@ export default function Dashboard({
                       <TableBody>
                         {tableData?.map((row) => (
                           <React.Fragment key={row.id}>
-                            <TableRow>
+                            <TableRow 
+                              className="cursor-pointer hover:bg-muted/50"
+                              onClick={() => {
+                                setSelectedItem(row);
+                                setDetailsDialogOpen(true);
+                              }}>
                               {tableColumns?.headers?.map((header, index) => (
                                 <TableCell
                                   key={index}
@@ -435,6 +452,10 @@ export default function Dashboard({
                                     row.five
                                   ) : header.key === "six" ? (
                                     row.six
+                                  ) : header.key === "seven" ? (
+                                    row.seven && row.seven.length > 51 
+                                      ? `${row.seven.substring(0, 51)}...` 
+                                      : row.seven
                                   ) : (
                                     row[header.key]
                                   )}

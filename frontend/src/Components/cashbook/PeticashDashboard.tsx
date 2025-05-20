@@ -59,7 +59,7 @@ export default function PeticashDashboard() {
           // If no ID was provided, use the first peticash record
           setPeticash(data.data.Peticash[0]);
         } else {
-          setError("No cashbook found. Please create one first.");
+          setError("No cashbook transaction found. Please create one first.");
         }
       } else {
         setError(data.message || "Failed to fetch cashbook data");
@@ -105,7 +105,7 @@ export default function PeticashDashboard() {
           href="/peticash/add"
           startContent={<PlusCircle size={16} />}
         >
-          Create CashBook
+          Create CashBook Transaction
         </Button>
       </div>
     );
@@ -121,7 +121,7 @@ export default function PeticashDashboard() {
           href="/peticash/add"
           startContent={<PlusCircle size={16} />}
         >
-          Create CashBook
+          Create CashBook Transaction
         </Button>
       </div>
     );

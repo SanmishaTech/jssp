@@ -663,8 +663,7 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-
-                <FormField
+                 <FormField
                   control={form.control}
                   name="academic_years_id"
                   render={({ field }) => (
@@ -694,8 +693,13 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
+
+               
                 {isTeachingStaff && (
+                  
                   <div className="flex gap-2">
+                    
+                    
                     <FormField
                       control={form.control}
                       name="course_id"

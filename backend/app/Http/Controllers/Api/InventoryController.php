@@ -126,6 +126,7 @@ class InventoryController extends BaseController
         $inventory->purchase_price = $request->input('purchase_price');
         $inventory->status = $request->input('status');
         $inventory->scraped_amount = $request->input('scraped_amount');
+        $inventory->scraped_quantity = $request->input('scraped_quantity');
         $inventory->remarks = $request->input('remarks');
      
         if (!$inventory->save()) {
@@ -155,43 +156,83 @@ class InventoryController extends BaseController
 
     public function update(Request $request, string $id): JsonResponse
     {
-         $inventory = Inventory::find($id);
+        $inventory = Inventory::find($id);
     
-        // If the institute is not found, return an error
+        // If the inventory is not found, return an error
         if (!$inventory) {
             return $this->sendError("Inventory not found", ['error' => 'Inventory not found']);
         }
-    
-        // Update the Institute data
-        $inventory->asset = $request->input('asset', $inventory->asset);
-        $inventory->quantity = $request->input('quantity', $inventory->quantity);
-        $inventory->room_id = $request->input('room_id', $inventory->room_id);        
-        // Get authenticated user
-        $user = Auth::user();
         
-        // If role is superadmin, institute_id comes from input
-        // If role is admin, use the admin's institute_id
-        if ($user && $user->roles && $user->roles->first() && $user->roles->first()->name === 'superadmin') {
-            $inventory->institute_id = $request->input('institute_id', $inventory->institute_id);
+        // Check if we are scraping some quantity from this inventory
+        $newStatus = $request->input('status', $inventory->status);
+        $scrapedQuantity = $request->input('scraped_quantity');
+        $originalQuantity = $inventory->quantity;
+        
+        // If status is set to Scraped and a specific quantity is being scraped
+        if ($newStatus === 'Scraped' && !empty($scrapedQuantity) && $scrapedQuantity > 0 && $scrapedQuantity < $originalQuantity) {
+            // Create a new record for the scraped inventory
+            $scrapedInventory = new Inventory();
+            $scrapedInventory->asset = $inventory->asset;
+            $scrapedInventory->quantity = $scrapedQuantity;
+            $scrapedInventory->room_id = $inventory->room_id;
+            $scrapedInventory->institute_id = $inventory->institute_id;
+            $scrapedInventory->purchase_date = $inventory->purchase_date;
+            $scrapedInventory->purchase_price = $inventory->purchase_price;
+            $scrapedInventory->status = 'Scraped';
+            $scrapedInventory->scraped_amount = $request->input('scraped_amount');
+            $scrapedInventory->scraped_quantity = $scrapedQuantity;
+            $scrapedInventory->remarks = $request->input('remarks', $inventory->remarks) . ' (Scraped from inventory ID: ' . $inventory->id . ')';
+            $scrapedInventory->save();
+            
+            // Update the original inventory with reduced quantity and keep it as active
+            $inventory->quantity = $originalQuantity - $scrapedQuantity;
+            $inventory->status = 'Active Stock'; // Reset to active since the scraped part is now in a separate record
+            $inventory->scraped_amount = null; // Clear scraped amount as it's moved to the new record
+            $inventory->scraped_quantity = null; // Clear scraped quantity as it's moved to the new record
+            $inventory->remarks = $request->input('remarks', $inventory->remarks) . ' (Quantity reduced by ' . $scrapedQuantity . ' units that were scraped)';
+            $inventory->save();
+            
+            // Return both records
+            return $this->sendResponse(
+                [
+                    "Inventory" => new InventoryResource($inventory),
+                    "ScrapedInventory" => new InventoryResource($scrapedInventory)
+                ],
+                "Inventory updated and scraped inventory created successfully"
+            );
         } else {
-            $inventory->institute_id = $user->staff->institute_id;
-        }
+            // Regular update without creating a new scraped record
+            $inventory->asset = $request->input('asset', $inventory->asset);
+            $inventory->quantity = $request->input('quantity', $inventory->quantity);
+            $inventory->room_id = $request->input('room_id', $inventory->room_id);        
+            
+            // Get authenticated user
+            $user = Auth::user();
+            
+            // If role is superadmin, institute_id comes from input
+            // If role is admin, use the admin's institute_id
+            if ($user && $user->roles && $user->roles->first() && $user->roles->first()->name === 'superadmin') {
+                $inventory->institute_id = $request->input('institute_id', $inventory->institute_id);
+            } else {
+                $inventory->institute_id = $user->staff->institute_id;
+            }
+            
+            $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
+            $inventory->purchase_price = $request->input('purchase_price', $inventory->purchase_price);
+            $inventory->status = $newStatus;
+            $inventory->scraped_amount = $request->input('scraped_amount', $inventory->scraped_amount);
+            $inventory->scraped_quantity = $request->input('scraped_quantity', $inventory->scraped_quantity);
+            $inventory->remarks = $request->input('remarks', $inventory->remarks);
+            $inventory->save();
         
-        $inventory->purchase_date = $request->input('purchase_date', $inventory->purchase_date);
-        $inventory->purchase_price = $request->input('purchase_price', $inventory->purchase_price);
-        $inventory->status = $request->input('status', $inventory->status);
-        $inventory->scraped_amount = $request->input('scraped_amount', $inventory->scraped_amount);
-        $inventory->remarks = $request->input('remarks', $inventory->remarks);
-        $inventory->save();
-    
-        // Return the updated Institute data
-        return $this->sendResponse(
-            [
-                "Inventory" => new InventoryResource($inventory),
-              
-            ],
-            "Inventory Updated Successfully"
-        );
+            // Return the updated inventory data
+            return $this->sendResponse(
+                [
+                    "Inventory" => new InventoryResource($inventory),
+                ],
+                "Inventory Updated Successfully"
+            );
+        }
     }
 
 

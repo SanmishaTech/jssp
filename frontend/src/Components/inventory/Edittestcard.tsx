@@ -52,13 +52,14 @@ import { useParams } from "@tanstack/react-router";
  
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
-  room_id: z.string().trim().nonempty("Room is Required"),
+  room_id: z.any().optional(),
   asset: z.string().trim().nonempty("Asset is Required"),
   quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   status: z.string().trim().nonempty("Status is Required"),
-  scraped_amount: z.string().trim().optional(),
+  scraped_amount: z.any().optional(),
+  scraped_quantity: z.any().optional(),
   remarks: z.string().trim().nonempty("Remarks is Required"),
 });
 
@@ -430,6 +431,7 @@ function ProfileForm({ formData }) {
                                  </FormControl>
                                  <SelectContent>
                                    <SelectItem value="Active Stock">Active stock</SelectItem>
+                                   <SelectItem value="Inactive Stock">Inactive stock</SelectItem>
                                    <SelectItem value="Discarded">Discarded </SelectItem>
                                    <SelectItem value="Scraped">Scraped </SelectItem>
                                  </SelectContent>
@@ -440,6 +442,7 @@ function ProfileForm({ formData }) {
                            )}
                          />
                          {watchStatus === "Scraped" && (
+                           <>
                            <FormField
                              control={form.control}
                              name="scraped_amount"
@@ -456,6 +459,23 @@ function ProfileForm({ formData }) {
                                </FormItem>
                              )}
                            />
+                           <FormField
+                             control={form.control}
+                             name="scraped_quantity"
+                             render={({ field }) => (
+                               <FormItem>
+                                 <FormLabel>
+                                   Scraped Quantity
+                                   <span className="text-red-500">*</span>
+                                 </FormLabel>
+                                 <FormControl>
+                                   <Input placeholder="Enter Scraped Quantity..." {...field} />
+                                 </FormControl>
+                                 <FormMessage />
+                               </FormItem>
+                             )}
+                           />
+                           </>
                          )}
               </div>
               <FormField

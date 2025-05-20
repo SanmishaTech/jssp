@@ -670,7 +670,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
         </div>
       )}
       <AlertDialog open={openLogoAlert} onOpenChange={setOpenLogoAlert}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>

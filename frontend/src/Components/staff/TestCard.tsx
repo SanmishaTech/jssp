@@ -1,12 +1,12 @@
 import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm, ControllerRenderProps, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
- import { CourseSelect } from "@/components/ui/course-select";
+import { CourseSelect } from "@/components/ui/course-select";
 import { SemesterSelect } from "@/components/ui/semester-select";
 import { SubjectSelect } from "@/components/ui/subject-select";
 
@@ -571,35 +571,42 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Academic Year
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <select
-                        {...form.register("academic_years_id")}
-                        className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                      >
-                        {academicYears.map((academicYear) => (
-                          <option
-                            key={academicYear.id.toString()}
-                            value={academicYear.id.toString()}
-                          >
-                            {academicYear.academic_year}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {form.formState.errors.academic_years_id && (
-                      <p className="mt-1 text-sm text-red-500">
-                        {form.formState.errors.academic_years_id.message}
-                      </p>
+                 <FormField
+                    control={form.control}
+                    name="academic_years_id"
+                    render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "academic_years_id"> }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Academic Year<span className="text-red-500">*</span></FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select academic year" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {academicYears.map((academicYear) => (
+                              <SelectItem
+                                key={academicYear.id.toString()}
+                                value={academicYear.id.toString()}
+                              >
+                                {academicYear.academic_year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
+                 
                 {isTeachingStaff && (
                   <div className="flex gap-5">
-                  
+                    
+                   
+                 
                 
                
                   {/* Course selection completely isolated */}

@@ -14,11 +14,23 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+interface InventoryItem {
+  id?: string;
+  institute_name?: string;
+  room_name?: string;
+  status?: string;
+  asset?: string;
+  quantity?: string | number;
+  purchase_date?: string;
+  remarks?: string;
+  [key: string]: any;
+}
+
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const [config, setConfig] = useState(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -99,14 +111,15 @@ export default function Dashboardholiday() {
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
         title: "Inventory",
-        description: "Manage Inventory and view their details.",
+        description: "Manage Inventory and view their details. Click on any row to see complete details.",
         headers: [
           { label: "Institute Name", key: "one" },
           { label: "Room", key: "two" },
           { label: "Status", key: "three" },
           { label: "Asset", key: "four" },
-          { label: "Purchase Date", key: "five" },
-          { label: "Remark", key: "six" },
+          { label: "Quantity", key: "five" },
+          { label: "Purchase Date", key: "six" },
+          { label: "Remark", key: "seven" },
 
           { label: "Action", key: "action" },
         ],
@@ -209,10 +222,11 @@ export default function Dashboardholiday() {
       two: item?.room_name || "Unknown",
       three: item?.status || "Unknown",
       four: item?.asset || "NA",
-      five: item?.purchase_date || "NA",
-      six: item?.remarks || "NA",
-
+      five: item?.quantity || "NA",
+      six: item?.purchase_date || "NA",
+      seven: item?.remarks || "NA",
       delete: "/inventory/" + item?.id,
+      scraped_amount: item?.scraped_amount || "", // Add scraped amount from the API
     };
   });
 
