@@ -37,6 +37,9 @@ return new class extends Migration
             $table->string('account_number')->nullable();
             $table->string('ifsc_code')->nullable();
             $table->string('salary')->nullable();
+            $table->json('course_id')->nullable(); // Store multiple course IDs as JSON array
+            $table->json('semester_id')->nullable(); // Store multiple semester IDs as JSON array
+            $table->json('subject_id')->nullable(); // Store multiple subject IDs as JSON array
             $table->timestamps();
         });
     }

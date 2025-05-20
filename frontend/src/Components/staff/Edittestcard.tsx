@@ -4,6 +4,9 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CourseSelect } from "@/components/ui/course-select";
+import { SemesterSelect } from "@/components/ui/semester-select";
+import { SubjectSelect } from "@/components/ui/subject-select";
 
 import {
   Card,
@@ -43,6 +46,9 @@ const profileFormSchema = z.object({
   address: z.string().optional(),
   mobile: z.string().optional(),
   role: z.string().optional(),
+  course_id: z.array(z.any()).optional(), // Added course_id array field
+  semester_id: z.array(z.any()).optional(), // Added semester_id array field
+  subject_id: z.array(z.any()).optional(), // Added subject_id array field
   email: z
     .string()
     .nonempty("Email is required")
@@ -72,14 +78,52 @@ function ProfileForm({ formData }) {
   const [existingImages, setExistingImages] = useState<any[]>([]);
   const [deletedImageIds, setDeletedImageIds] = useState<number[]>([]);
   const [deleteExisting, setDeleteExisting] = useState(false);
+  const [courses, setCourses] = useState<{key: string, name: string}[]>([]);
+  const [subjects, setSubjects] = useState<{key: string, name: string}[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<{key: string, name: string}[]>([]);
 
   const { reset } = form;
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   // Reset form values when formData changes
   useEffect(() => {
-    reset(formData);
+    // Process course_id and subject_id to match the format Select components expect
+    if (formData) {
+      const formDataCopy = { ...formData };
+      
+      // Handle course_id
+      if (formData.course_id && Array.isArray(formData.course_id)) {
+        // Store original course_id for reference (as IDs only)
+        const originalCourseIds = formData.course_id;
+        console.log("Original course_id from API:", originalCourseIds);
+        
+        // We'll update this once courses are loaded
+        formDataCopy.course_id = [];
+        
+        // Save the IDs to match with courses when they load
+        sessionStorage.setItem('original_course_ids', JSON.stringify(originalCourseIds));
+      }
+      
+      // Handle subject_id
+      if (formData.subject_id && Array.isArray(formData.subject_id)) {
+        // Store original subject_id for reference (as IDs only)
+        const originalSubjectIds = formData.subject_id;
+        console.log("Original subject_id from API:", originalSubjectIds);
+        
+        // We'll update this once subjects are loaded
+        formDataCopy.subject_id = [];
+        
+        // Save the IDs to match with subjects when they load
+        sessionStorage.setItem('original_subject_ids', JSON.stringify(originalSubjectIds));
+      }
+      
+      reset(formDataCopy);
+    } else {
+      reset(formData);
+    }
+
     if (formData?.images) {
-       
       // Map the images to ensure they have the right structure
       const processedImages = formData.images.map(img => ({
         ...img,
@@ -92,8 +136,191 @@ function ProfileForm({ formData }) {
     }
   }, [formData, reset]);
 
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  // Store selected courses and semesters in state for better control
+  const [selectedCourses, setSelectedCourses] = useState<{key: string, name: string}[]>([]);
+  const [selectedSemesters, setSelectedSemesters] = useState<{key: string, name: string}[]>([]);
+  const [semesters, setSemesters] = useState<{key: string, name: string}[]>([]);
+
+  // Fetch courses and semesters when component mounts
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await axios.get('/api/courses', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log('Course API response:', response.data);
+        
+        // Handle the specific response structure
+        if (response.data?.status && response.data?.data?.Course && Array.isArray(response.data.data.Course)) {
+          // Map the course data to the format expected by MultipleSelect
+          const mappedCourses = response.data.data.Course.map((course: { id: number, medium_title?: string, medium_code?: string }) => ({
+            key: String(course.id),
+            name: course.medium_title || course.medium_code || 'Unnamed Course'
+          }));
+          
+          console.log('Mapped courses:', mappedCourses);
+          setCourses(mappedCourses);
+          
+          // Get saved course IDs from session storage or directly from formData
+          const courseIdsFromFormData = formData?.course_id || [];
+          console.log('Course IDs from formData:', courseIdsFromFormData);
+          
+          if (Array.isArray(courseIdsFromFormData) && courseIdsFromFormData.length > 0) {
+            // If they're already objects with key/name, use them directly
+            if (typeof courseIdsFromFormData[0] === 'object' && courseIdsFromFormData[0].key) {
+              console.log('Using course objects directly:', courseIdsFromFormData);
+              setSelectedCourses(courseIdsFromFormData);
+              form.setValue('course_id', courseIdsFromFormData);
+            } 
+            // If they're strings (IDs), map them to objects
+            else {
+              const selectedCourses = mappedCourses.filter(course => 
+                courseIdsFromFormData.includes(course.key)
+              );
+              
+              console.log('Mapped selected courses:', selectedCourses);
+              setSelectedCourses(selectedCourses);
+              form.setValue('course_id', selectedCourses, { shouldDirty: false, shouldValidate: false });
+            }
+          }
+        } else {
+          console.log('Unexpected response structure:', response.data);
+          toast.error('Could not find courses in the response');
+        }
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        toast.error('Failed to load courses');
+      }
+    };
+    
+    const fetchSemesters = async () => {
+      try {
+        const response = await axios.get('/api/semesters', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log('Semester API response:', response.data);
+        
+        // Handle the specific response structure for semesters (might be different from courses)
+        if (response.data?.status && response.data?.data?.Semester && Array.isArray(response.data.data.Semester)) {
+          // Map the semester data to the format expected by MultipleSelect based on the actual API response
+          const mappedSemesters = response.data.data.Semester.map((semester: { 
+            id: number, 
+            semester: string, 
+            course_name: string 
+          }) => ({
+            key: String(semester.id),
+            name: semester.semester || 'Unnamed Semester'
+          }));
+          
+          console.log('Mapped semesters:', mappedSemesters);
+          setSemesters(mappedSemesters);
+          
+          // Get saved semester IDs from directly from formData
+          const semesterIdsFromFormData = formData?.semester_id || [];
+          console.log('Semester IDs from formData:', semesterIdsFromFormData);
+          
+          if (Array.isArray(semesterIdsFromFormData) && semesterIdsFromFormData.length > 0) {
+            // If they're already objects with key/name, use them directly
+            if (typeof semesterIdsFromFormData[0] === 'object' && semesterIdsFromFormData[0].key) {
+              console.log('Using semester objects directly:', semesterIdsFromFormData);
+              setSelectedSemesters(semesterIdsFromFormData);
+              form.setValue('semester_id', semesterIdsFromFormData);
+            } 
+            // If they're strings (IDs), map them to objects
+            else {
+              const selectedSemesters = mappedSemesters.filter(semester => 
+                semesterIdsFromFormData.includes(semester.key)
+              );
+              
+              console.log('Mapped selected semesters:', selectedSemesters);
+              setSelectedSemesters(selectedSemesters);
+              form.setValue('semester_id', selectedSemesters, { shouldDirty: false, shouldValidate: false });
+            }
+          }
+        } else {
+          console.log('Unexpected semester response structure:', response.data);
+          // Don't show error toast for semesters to avoid multiple errors if API is not ready
+        }
+      } catch (error) {
+        console.error('Error fetching semesters:', error);
+        // Don't show error toast for semesters to avoid multiple errors if API is not ready
+      }
+    };
+    
+    const fetchSubjects = async () => {
+      try {
+        const response = await axios.get('/api/subjects', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        console.log('Subject API response:', response.data);
+        
+        if (response.data?.status && response.data?.data?.Subject && Array.isArray(response.data.data.Subject)) {
+          // Map the subject data
+          const mappedSubjects = response.data.data.Subject.map((subject: { 
+            id: number, 
+            subject_name: string,
+            subject_code: string
+          }) => ({
+            key: String(subject.id),
+            name: subject.subject_name || subject.subject_code || 'Unnamed Subject'
+          }));
+          
+          console.log('Mapped subjects:', mappedSubjects);
+          setSubjects(mappedSubjects);
+          
+          // Check for original subject_id values to select
+          const originalSubjectIds = sessionStorage.getItem('original_subject_ids');
+          if (originalSubjectIds) {
+            try {
+              const subjectIds = JSON.parse(originalSubjectIds);
+              
+              // Match ids with the subject objects
+              let matchedSubjects: {key: string, name: string}[] = [];
+              
+              if (Array.isArray(subjectIds)) {
+                // If the IDs are stored directly in the array
+                matchedSubjects = mappedSubjects.filter(subject => 
+                  subjectIds.includes(subject.key) || subjectIds.includes(Number(subject.key))
+                );
+              }
+              
+              console.log('Matched subjects based on IDs:', matchedSubjects);
+              setSelectedSubjects(matchedSubjects);
+              form.setValue('subject_id', matchedSubjects);
+            } catch (e) {
+              console.error('Error parsing stored subject IDs:', e);
+            }
+          }
+        } else {
+          console.log('Unexpected subject response structure:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
+    };
+    
+    fetchCourses();
+    fetchSemesters();
+    fetchSubjects();
+  }, [token, form, formData]);
+
+  // Custom tag renderer for MultipleSelect
+  const customTag = (item: {key: string, name: string}) => {
+    return (
+      <span className="text-nowrap">
+        {item.name}
+      </span>
+    );
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -134,9 +361,9 @@ function ProfileForm({ formData }) {
     try {
       const formData = new FormData();
       
-      // Explicitly append all form fields including role
+      // Explicitly append all form fields except images, course_id, and semester_id
       Object.keys(data).forEach(key => {
-        if (key !== 'images') {
+        if (key !== 'images' && key !== 'course_id' && key !== 'semester_id' && key !== 'subject_id') {
           const value = data[key];
           // Convert all values to string and handle undefined/null
           if (value !== undefined && value !== null) {
@@ -144,6 +371,66 @@ function ProfileForm({ formData }) {
           }
         }
       });
+      
+      // Handle course_id separately to extract just the IDs
+      if (data.course_id && Array.isArray(data.course_id) && data.course_id.length > 0) {
+        // Extract just the course IDs from the objects
+        const courseIds = data.course_id.map(course => {
+          // If it's an object with a key property, return the key
+          if (typeof course === 'object' && course !== null && 'key' in course) {
+            return course.key;
+          }
+          // If it's already just a string ID, return it directly
+          return course;
+        });
+        
+        // Send the course IDs as a JSON string
+        formData.append('course_id', JSON.stringify(courseIds));
+        console.log('Course IDs being sent:', courseIds);
+      } else {
+        // If no courses selected, send an empty array
+        formData.append('course_id', JSON.stringify([]));
+      }
+      
+      // Handle semester_id separately to extract just the IDs (similar to course_id)
+      if (data.semester_id && Array.isArray(data.semester_id) && data.semester_id.length > 0) {
+        // Extract just the semester IDs from the objects
+        const semesterIds = data.semester_id.map(semester => {
+          // If it's an object with a key property, return the key
+          if (typeof semester === 'object' && semester !== null && 'key' in semester) {
+            return semester.key;
+          }
+          // If it's already just a string ID, return it directly
+          return semester;
+        });
+        
+        // Send the semester IDs as a JSON string
+        formData.append('semester_id', JSON.stringify(semesterIds));
+        console.log('Semester IDs being sent:', semesterIds);
+      } else {
+        // If no semesters selected, send an empty array
+        formData.append('semester_id', JSON.stringify([]));
+      }
+      
+      // Handle subject_id separately to extract just the IDs (similar to course_id and semester_id)
+      if (data.subject_id && Array.isArray(data.subject_id) && data.subject_id.length > 0) {
+        // Extract just the subject IDs from the objects
+        const subjectIds = data.subject_id.map(subject => {
+          // If it's an object with a key property, return the key
+          if (typeof subject === 'object' && subject !== null && 'key' in subject) {
+            return subject.key;
+          }
+          // If it's already just a string ID, return it directly
+          return subject;
+        });
+        
+        // Send the subject IDs as a JSON string
+        formData.append('subject_id', JSON.stringify(subjectIds));
+        console.log('Subject IDs being sent:', subjectIds);
+      } else {
+        // If no subjects selected, send an empty array
+        formData.append('subject_id', JSON.stringify([]));
+      }
       
       // Ensure role is included in the form data
       if (data.role) {
@@ -257,7 +544,7 @@ function ProfileForm({ formData }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-4 space-y-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-5 space-y-3">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -346,6 +633,8 @@ function ProfileForm({ formData }) {
                   )}
                 />
 
+             
+
                 <FormField
                   control={form.control}
                   name="date_of_birth"
@@ -371,6 +660,109 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
+                <div className="flex gap-2">
+                    <FormField
+                  control={form.control}
+                  name="course_id"
+                  render={({ field }) => {
+                    // Check value for debugging
+                    console.log("Current field value:", field.value);
+                    
+                    return (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Courses</FormLabel>
+                        <FormControl>
+                          <CourseSelect
+                            tags={courses}
+                            onChange={(selectedItems: {key: string, name: string}[]) => {
+                              field.onChange(selectedItems);
+                              setSelectedCourses(selectedItems);
+                              console.log("Selected courses updated:", selectedItems);
+                            }}
+                            defaultValue={selectedCourses.length > 0 ? selectedCourses : (field.value || [])}
+                            placeholder="Select courses"
+                            customTag={customTag}
+                            emptyIndicator={
+                              <p className="text-center text-muted-foreground py-6 text-sm">
+                                No courses available.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="semester_id"
+                  render={({ field }) => {
+                    // Check value for debugging
+                    console.log("Current semester field value:", field.value);
+                    
+                    return (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Semesters</FormLabel>
+                        <FormControl>
+                          <SemesterSelect
+                            tags={semesters}
+                            onChange={(selectedItems: {key: string, name: string}[]) => {
+                              field.onChange(selectedItems);
+                              setSelectedSemesters(selectedItems);
+                              console.log("Selected semesters updated:", selectedItems);
+                            }}
+                            defaultValue={selectedSemesters.length > 0 ? selectedSemesters : (field.value || [])}
+                            placeholder="Select semesters"
+                            customTag={customTag}
+                            emptyIndicator={
+                              <p className="text-center text-muted-foreground py-6 text-sm">
+                                No semesters available.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="subject_id"
+                  render={({ field }) => {
+                    // Check value for debugging
+                    console.log("Current subject field value:", field.value);
+                    
+                    return (
+                      <FormItem className="space-y-3">
+                        <FormLabel>Subjects</FormLabel>
+                        <FormControl>
+                          <SubjectSelect
+                            tags={subjects}
+                            onChange={(selectedItems: {key: string, name: string}[]) => {
+                              field.onChange(selectedItems);
+                              setSelectedSubjects(selectedItems);
+                              console.log("Selected subjects updated:", selectedItems);
+                            }}
+                            defaultValue={selectedSubjects.length > 0 ? selectedSubjects : (field.value || [])}
+                            placeholder="Select subjects"
+                            customTag={customTag}
+                            emptyIndicator={
+                              <p className="text-center text-muted-foreground py-6 text-sm">
+                                No subjects available.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />  
+                </div>
               </div>
               <FormField
                 control={form.control}

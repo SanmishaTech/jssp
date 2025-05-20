@@ -105,6 +105,28 @@ public function index(Request $request): JsonResponse
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
+        
+        // Handle course_id as JSON array
+        if ($request->has('course_id')) {
+            $courseIds = $request->input('course_id');
+            // Ensure we're storing it as JSON
+            $staff->course_id = is_array($courseIds) ? json_encode($courseIds) : $courseIds;
+        }
+        
+        // Handle semester_id as JSON array
+        if ($request->has('semester_id')) {
+            $semesterIds = $request->input('semester_id');
+            // Ensure we're storing it as JSON
+            $staff->semester_id = is_array($semesterIds) ? json_encode($semesterIds) : $semesterIds;
+        }
+        
+        // Handle subject_id as JSON array
+        if ($request->has('subject_id')) {
+            $subjectIds = $request->input('subject_id');
+            // Ensure we're storing it as JSON
+            $staff->subject_id = is_array($subjectIds) ? json_encode($subjectIds) : $subjectIds;
+        }
+        
         $staff->save();
 
         // Handle multiple image uploads
@@ -239,6 +261,27 @@ public function index(Request $request): JsonResponse
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
+
+        // Handle course_id as JSON array
+        if ($request->has('course_id')) {
+            $courseIds = $request->input('course_id');
+            // Ensure we're storing it as JSON
+            $staff->course_id = is_array($courseIds) ? json_encode($courseIds) : $courseIds;
+        }
+        
+        // Handle semester_id as JSON array
+        if ($request->has('semester_id')) {
+            $semesterIds = $request->input('semester_id');
+            // Ensure we're storing it as JSON
+            $staff->semester_id = is_array($semesterIds) ? json_encode($semesterIds) : $semesterIds;
+        }
+        
+        // Handle subject_id as JSON array
+        if ($request->has('subject_id')) {
+            $subjectIds = $request->input('subject_id');
+            // Ensure we're storing it as JSON
+            $staff->subject_id = is_array($subjectIds) ? json_encode($subjectIds) : $subjectIds;
+        }
        
         $staff->save();
 

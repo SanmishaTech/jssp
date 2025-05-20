@@ -29,6 +29,7 @@ class StaffResource extends JsonResource
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'role'         => $role,
             'staff_name' =>$this->staff_name,
+            
             'employee_code' => $this->employee_code,
             'is_teaching' => $this->is_teaching,
             'date_of_birth' => $this->date_of_birth,
@@ -49,6 +50,9 @@ class StaffResource extends JsonResource
             'salary' => $this->salary,
             'mobile' => $this->mobile,
             'email' => $this->email,
+            'course_id' => $this->course_id ? json_decode($this->course_id, true) : [],
+            'semester_id' => $this->semester_id ? json_decode($this->semester_id, true) : [],
+            'subject_id' => $this->subject_id ? json_decode($this->subject_id, true) : [],
             'password' => $this->password,
             'images' => $this->images->map(function($image) {
                 return [
