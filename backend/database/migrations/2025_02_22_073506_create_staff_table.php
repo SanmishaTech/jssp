@@ -40,6 +40,9 @@ return new class extends Migration
             $table->json('course_id')->nullable(); // Store multiple course IDs as JSON array
             $table->json('semester_id')->nullable(); // Store multiple semester IDs as JSON array
             $table->json('subject_id')->nullable(); // Store multiple subject IDs as JSON array
+            $table->string('medical_history')->nullable();
+            $table->string('medical_image_path')->nullable(); // Store medical image path
+
             $table->timestamps();
         });
     }

@@ -104,7 +104,16 @@ public function index(Request $request): JsonResponse
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
+        $staff->medical_history = $request->input('medical_history');
         
+        // Handle medical image upload
+        if ($request->hasFile('medical_image')) {
+            $image = $request->file('medical_image');
+            $originalName = time() . '_' . $image->getClientOriginalName();
+            $path = $image->storeAs('staff_medical_images', $originalName, 'public');
+            $staff->medical_image_path = $originalName;
+        }
+
         // Handle course_id as JSON array
         if ($request->has('course_id')) {
             $courseIds = $request->input('course_id');
@@ -260,6 +269,26 @@ public function index(Request $request): JsonResponse
         $staff->account_number = $request->input('account_number');
         $staff->ifsc_code = $request->input('ifsc_code');
         $staff->salary = $request->input('salary');
+        $staff->medical_history = $request->input('medical_history');
+
+        // Handle medical image upload
+        if ($request->hasFile('medical_image')) {
+            // Delete existing medical image if there is one
+            if ($staff->medical_image_path) {
+                Storage::disk('public')->delete('staff_medical_images/' . $staff->medical_image_path);
+            }
+            
+            $image = $request->file('medical_image');
+            $originalName = time() . '_' . $image->getClientOriginalName();
+            $path = $image->storeAs('staff_medical_images', $originalName, 'public');
+            $staff->medical_image_path = $originalName;
+        }
+        
+        // Delete medical image without replacement if requested
+        if ($request->input('delete_medical_image') === 'true' && $staff->medical_image_path) {
+            Storage::disk('public')->delete('staff_medical_images/' . $staff->medical_image_path);
+            $staff->medical_image_path = null;
+        }
 
         // Handle course_id as JSON array
         if ($request->has('course_id')) {
@@ -494,19 +523,28 @@ public function index(Request $request): JsonResponse
             if (file_exists($paperPath)) {
                 $path = $paperPath;
             } else {
-                // Try alternate path for events
-                $alternatePath = storage_path('app/public/events/'.$document);
-                Log::info('Trying alternate path: ' . $alternatePath);
-                Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+                // Try medical images path
+                $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
+                Log::info('Trying medical image path: ' . $medicalImagePath);
+                Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
                 
-                if (file_exists($alternatePath)) {
-                    $path = $alternatePath;
+                if (file_exists($medicalImagePath)) {
+                    $path = $medicalImagePath;
                 } else {
-                    return response()->json([
-                        'status' => false,
-                        'message' => "Document not found",
-                        'errors' => ['error'=>['Document not found.']]
-                    ], 404);
+                    // Try alternate path for events
+                    $alternatePath = storage_path('app/public/events/'.$document);
+                    Log::info('Trying alternate path: ' . $alternatePath);
+                    Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+                    
+                    if (file_exists($alternatePath)) {
+                        $path = $alternatePath;
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message' => "Document not found",
+                            'errors' => ['error'=>['Document not found.']]
+                        ], 404);
+                    }
                 }
             }
         }

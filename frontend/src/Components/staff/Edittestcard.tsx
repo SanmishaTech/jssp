@@ -609,7 +609,38 @@ function ProfileForm({ formData }) {
                       <Select 
                         onValueChange={(value: string) => {
                           field.onChange(value);
-                          setIsTeachingStaff(value === "teachingstaff");
+                          const isTeaching = value === "teachingstaff";
+                          setIsTeachingStaff(isTeaching);
+                          
+                          // If changing from teaching staff to another role, clear related fields
+                          if (!isTeaching) {
+                            // Clear academic year
+                            form.setValue('academic_years_id', "", {
+                              shouldDirty: true,
+                              shouldTouch: true
+                            });
+                            
+                            // Clear courses
+                            setSelectedCourses([]);
+                            form.setValue('course_id', [], {
+                              shouldDirty: true,
+                              shouldTouch: true
+                            });
+                            
+                            // Clear semesters
+                            setSelectedSemesters([]);
+                            form.setValue('semester_id', [], {
+                              shouldDirty: true,
+                              shouldTouch: true
+                            });
+                            
+                            // Clear subjects
+                            setSelectedSubjects([]);
+                            form.setValue('subject_id', [], {
+                              shouldDirty: true,
+                              shouldTouch: true
+                            });
+                          }
                         }} 
                         value={field.value}
                         defaultValue={field.value}

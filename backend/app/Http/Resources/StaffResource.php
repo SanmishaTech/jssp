@@ -77,6 +77,9 @@ class StaffResource extends JsonResource
                     'url' => asset('storage/staff_papers/' . $paper->paper_path)
                 ];
             }),
+            'medical_history' => $this->medical_history,
+            'medical_image_path' => $this->medical_image_path,
+            'medical_image_url' => $this->medical_image_path ? asset('storage/staff_medical_images/' . $this->medical_image_path) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             // 'user'=> $user,

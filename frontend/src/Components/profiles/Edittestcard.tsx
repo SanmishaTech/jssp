@@ -35,6 +35,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import EducationQualifications from "./EducationQualifications";
 import PaperUpload from "./PaperUpload";
+import MedicalImageUpload from "./MedicalImageUpload";
 import {
   Tabs,
   TabsContent,
@@ -61,11 +62,11 @@ const profileFormSchema = z.object({
   education: z.array(
     z.object({
       id: z.number().optional(),
-      qualification: z.string().optional(),
-      college_name: z.string().optional(),
-      board_university: z.string().optional(),
-      passing_year: z.string().optional(),
-      percentage: z.string().optional().refine(
+      qualification: z.any().optional(),
+      college_name: z.any().optional(),
+      board_university: z.any().optional(),
+      passing_year: z.any().optional(),
+      percentage: z.any().optional().refine(
         (val) => {
           if (!val) return true; // Allow empty values
           const num = parseFloat(val);
@@ -79,6 +80,9 @@ const profileFormSchema = z.object({
   gender: z.any().optional(),
   experience: z.any().optional(),
   highest_qualification: z.any().optional(),
+  medical_history: z.any().optional(),
+  medical_image: z.any().optional(),
+  delete_medical_image: z.boolean().optional(),
  pan_number: z
     .string()
     .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "PAN must be in format: AAAPA1234A"),
@@ -103,6 +107,27 @@ type ProfileFormValues = z.infer<typeof profileFormSchema> & {
   name?: string;
 };
 
+// Define field props type for form fields
+type FieldProps = {
+  field: {
+    value: any;
+    onChange: (value: any) => void;
+    onBlur: () => void;
+    name: string;
+    ref: React.RefObject<any>;
+  };
+  fieldState: {
+    invalid: boolean;
+    isTouched: boolean;
+    isDirty: boolean;
+    error?: {
+      type: string;
+      message?: string;
+    };
+  };
+  formState: any;
+};
+
 function ProfileForm({ formData }) {
   const defaultValues: Partial<ProfileFormValues> = {
     staff_name: '',
@@ -125,6 +150,7 @@ function ProfileForm({ formData }) {
     account_number: '',
     ifsc_code: '',
     salary: '',
+    medical_history: '',
     education: [
       {
         qualification: '',
@@ -161,6 +187,11 @@ function ProfileForm({ formData }) {
   const [selectedPapers, setSelectedPapers] = useState<File[]>([]);
   const [existingPapers, setExistingPapers] = useState<any[]>([]);
   const [deletedPaperIds, setDeletedPaperIds] = useState<number[]>([]);
+
+  // Medical image state
+  const [selectedMedicalImage, setSelectedMedicalImage] = useState<File | null>(null);
+  const [existingMedicalImage, setExistingMedicalImage] = useState<any>(null);
+  const [deleteMedicalImage, setDeleteMedicalImage] = useState(false);
 
   const { reset, control } = form;
   
@@ -233,6 +264,17 @@ function ProfileForm({ formData }) {
         
         setExistingPapers(processedPapers);
         setDeletedPaperIds([]);
+      }
+      
+      // Handle medical image if available
+      if (formData.medical_image_path) {
+        console.log('Medical image data received:', formData.medical_image_path);
+        setExistingMedicalImage({
+          id: 'medical_image',
+          image_path: formData.medical_image_path
+        });
+      } else {
+        setExistingMedicalImage(null);
       }
     }
   }, [formData, reset]);
@@ -309,6 +351,24 @@ function ProfileForm({ formData }) {
       return updated;
     });
   };
+  
+  // Medical image handlers
+  const handleAddMedicalImage = (file: File) => {
+    console.log('Adding medical image to state:', file.name);
+    setSelectedMedicalImage(file);
+  };
+  
+  const handleRemoveMedicalImage = () => {
+    console.log('Removing medical image');
+    if (existingMedicalImage) {
+      // If there's an existing image, mark it for deletion
+      setDeleteMedicalImage(true);
+      setExistingMedicalImage(null);
+    } else {
+      // If it's a newly added image, just clear it
+      setSelectedMedicalImage(null);
+    }
+  };
 
   async function onSubmit(data: ProfileFormValues) {
     data.name = data.staff_name;
@@ -320,7 +380,7 @@ function ProfileForm({ formData }) {
       
       // Add all form fields except for files and arrays that need special handling
       Object.keys(data).forEach(key => {
-        if (key !== 'images' && key !== 'education' && key !== 'documents' && key !== 'papers') {
+        if (key !== 'images' && key !== 'education' && key !== 'documents' && key !== 'papers' && key !== 'medical_image') {
           formData.append(key, data[key]);
         }
       });
@@ -337,6 +397,15 @@ function ProfileForm({ formData }) {
       if (deletedImageIds.length > 0 && !deleteExisting) {
         formData.append('deleted_image_ids', JSON.stringify(deletedImageIds));
       }
+      
+      // Handle medical image upload
+      if (selectedMedicalImage) {
+        console.log('Adding medical image to form:', selectedMedicalImage.name);
+        formData.append('medical_image', selectedMedicalImage);
+      }
+      
+      // Handle deleting medical image if requested
+      formData.append('delete_medical_image', deleteMedicalImage.toString());
       
       // Append each selected paper to the FormData
       console.log('Selected papers to upload:', selectedPapers);
@@ -453,10 +522,11 @@ function ProfileForm({ formData }) {
         className="space-y-8 pb-[2rem]"
       >
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="profile">Profile Information</TabsTrigger>
-            <TabsTrigger value="education">Educational Qualifications</TabsTrigger>
-            <TabsTrigger value="papers">Papers</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Profile Information</TabsTrigger>
+            <TabsTrigger value="education" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Educational Qualifications</TabsTrigger>
+            <TabsTrigger value="papers" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Papers</TabsTrigger>
+            <TabsTrigger value="medical" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Medical History</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
@@ -663,7 +733,7 @@ function ProfileForm({ formData }) {
 <FormField
   control={form.control}
   name="aadhaar_number"
-  render={({ field }) => (
+  render={({ field }: Pick<FieldProps, 'field'>) => (
     <FormItem className="flex flex-col justify-center min-h-[100px]">
       <FormLabel>Aadhaar Number</FormLabel>
       <FormControl>
@@ -686,7 +756,7 @@ function ProfileForm({ formData }) {
 <FormField
   control={form.control}
   name="appointment_date"
-  render={({ field }) => (
+  render={({ field }: Pick<FieldProps, 'field'>) => (
     <FormItem>
       <FormLabel>Appointment Date</FormLabel>
       <FormControl>
@@ -957,6 +1027,50 @@ function ProfileForm({ formData }) {
                 onRemovePaper={handleRemovePaper}
                 onRemoveNewPaper={handleRemoveNewPaper}
               />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="medical" className="mt-4">
+            <div className="max-w-full p-4 space-y-6">
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Medical History</CardTitle>
+                  <CardDescription>Enter staff medical history and health information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="medical_history"
+                    render={({ field }: Pick<FieldProps, 'field'>) => (
+                      <FormItem>
+                        <FormLabel>Medical History</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter medical history, conditions, or important health information..."
+                            className="min-h-[200px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Include relevant medical conditions, allergies, or health information that may be important.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  {/* Medical Image Upload Component */}
+                  <div className="mt-6">
+                    <h3 className="text-sm font-medium mb-2">Medical Image</h3>
+                    <p className="text-sm text-gray-500 mb-4">Upload a medical image related to the staff's medical history</p>
+                    <MedicalImageUpload 
+                      existingMedicalImage={existingMedicalImage}
+                      onAddMedicalImage={handleAddMedicalImage}
+                      onRemoveMedicalImage={handleRemoveMedicalImage}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
