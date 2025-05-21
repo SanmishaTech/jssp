@@ -230,9 +230,23 @@ function ProfileForm({ formData }) {
         setDeletedImageIds([]);
       }
       
-      // Handle documents data if available
-      if (formData.documents) {
-        console.log('Documents data received:', formData.documents);
+      // Handle certificates data if available
+      if (formData.certificates) {
+        console.log('Certificates data received:', formData.certificates);
+        
+        // Map the certificates to ensure they have the right structure
+        const processedCertificates = formData.certificates.map(cert => ({
+          ...cert,
+          // If the certificate_path is already correct, use it, otherwise ensure it's properly formatted
+          certificate_path: cert.certificate_path || (typeof cert.url === 'string' ? cert.url.split('/').pop() : `Certificate ${cert.id}`)
+        }));
+        
+        setExistingDocuments(processedCertificates);
+        setDeletedDocumentIds([]);
+      }
+      // For backward compatibility - handle documents data if available
+      else if (formData.documents) {
+        console.log('Legacy documents data received:', formData.documents);
         
         // Map the documents to ensure they have the right structure
         const processedDocuments = formData.documents.map(doc => ({
@@ -427,15 +441,15 @@ function ProfileForm({ formData }) {
         formData.append('deleted_paper_ids', JSON.stringify(deletedPaperIds));
       }
       
-      // Append each selected document to the FormData if DocumentUpload is being used
+      // Append each selected education certificate to the FormData
       if (selectedDocuments && selectedDocuments.length > 0) {
         selectedDocuments.forEach((document, index) => {
-          formData.append(`documents[${index}]`, document);
+          formData.append(`certificates[${index}]`, document);
         });
         
-        // Send the list of document IDs to delete
+        // Send the list of certificate IDs to delete
         if (deletedDocumentIds.length > 0) {
-          formData.append('deleted_document_ids', JSON.stringify(deletedDocumentIds));
+          formData.append('deleted_certificate_ids', JSON.stringify(deletedDocumentIds));
         }
       }
 
@@ -525,11 +539,11 @@ function ProfileForm({ formData }) {
         className="space-y-8 pb-[2rem]"
       >
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profile" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Profile Information</TabsTrigger>
-            <TabsTrigger value="education" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Educational Qualifications</TabsTrigger>
-            <TabsTrigger value="papers" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Papers</TabsTrigger>
-            <TabsTrigger value="medical" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">Medical History</TabsTrigger>
+          <TabsList className="grid grid-cols-4 h-auto w-full">
+            <TabsTrigger className="px-4 py-2" value="profile">Staff Profile</TabsTrigger>
+            <TabsTrigger className="px-4 py-2" value="education">Education</TabsTrigger>
+            <TabsTrigger className="px-4 py-2" value="papers">Papers</TabsTrigger>
+            <TabsTrigger className="px-4 py-2" value="medical">Medical History</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
@@ -948,8 +962,14 @@ function ProfileForm({ formData }) {
           
           <TabsContent value="education" className="mt-4">
             <div className="max-w-full p-4 space-y-6">
-              {/* Education Qualifications Component */}
-              <EducationQualifications form={form} />
+              {/* Education Qualifications Component with Certificate Upload */}
+              <EducationQualifications 
+                form={form} 
+                existingDocuments={existingDocuments}
+                onAddDocuments={handleAddDocuments}
+                onRemoveDocument={handleRemoveDocument}
+                onRemoveNewDocument={handleRemoveNewDocument}
+              />
             </div>
           </TabsContent>
           
@@ -965,6 +985,8 @@ function ProfileForm({ formData }) {
               />
             </div>
           </TabsContent>
+          
+
           
           <TabsContent value="medical" className="mt-4">
             <div className="max-w-full p-4 space-y-6">

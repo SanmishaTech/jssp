@@ -7,6 +7,7 @@ use App\Models\Staff;
 use App\Models\StaffImage;
 use App\Models\StaffEducation;
 use App\Models\StaffPaper;
+use App\Models\StaffEducationCertificate;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -162,6 +163,53 @@ public function index(Request $request): JsonResponse
                     'board_university' => $educationData['board_university'],
                     'passing_year' => $educationData['passing_year'],
                     'percentage' => $educationData['percentage'],
+                ]);
+            }
+        }
+        
+        // Handle paper uploads
+        if ($request->hasFile('papers')) {
+            foreach ($request->file('papers') as $paper) {
+                // Get original filename and ensure uniqueness
+                $originalName = $paper->getClientOriginalName();
+                $uniqueName = time() . '_' . $originalName;
+                
+                // Store the paper in the staff_papers directory with a unique name
+                $path = $paper->storeAs('staff_papers', $uniqueName, 'public');
+                
+                // Get the paper title from the original filename (without extension)
+                $paperTitle = pathinfo($originalName, PATHINFO_FILENAME);
+                
+                // Store the paper info in the database
+                StaffPaper::create([
+                    'staff_id' => $staff->id,
+                    'paper_path' => $uniqueName,
+                    'paper_title' => $paperTitle
+                ]);
+            }
+        }
+        
+        // Handle education certificate uploads
+        if ($request->hasFile('certificates')) {
+            foreach ($request->file('certificates') as $certificate) {
+                // Get original filename and ensure uniqueness
+                $originalName = $certificate->getClientOriginalName();
+                $uniqueName = time() . '_' . $originalName;
+                
+                // Ensure the directory exists
+                Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
+                
+                // Store the certificate in the staff_education_certificates directory with a unique name
+                $path = $certificate->storeAs('staff_education_certificates', $uniqueName, 'public');
+                
+                // Get the certificate title from the original filename (without extension)
+                $certificateTitle = pathinfo($originalName, PATHINFO_FILENAME);
+                
+                // Store the certificate info in the database
+                StaffEducationCertificate::create([
+                    'staff_id' => $staff->id,
+                    'certificate_path' => $uniqueName,
+                    'certificate_title' => $certificateTitle
                 ]);
             }
         }
@@ -458,6 +506,57 @@ public function index(Request $request): JsonResponse
                 Log::info('Paper record created with ID: ' . $paperRecord->id);
             }
         }
+
+        // Handle education certificate uploads and deletions
+        if ($request->has('deleted_certificate_ids')) {
+            $deletedCertificateIds = json_decode($request->input('deleted_certificate_ids'), true);
+            Log::info('Deleting certificate IDs: ' . $request->input('deleted_certificate_ids'));
+            
+            if (is_array($deletedCertificateIds) && count($deletedCertificateIds) > 0) {
+                foreach ($staff->educationCertificates as $certificate) {
+                    if (in_array($certificate->id, $deletedCertificateIds)) {
+                        // Delete the file from storage using the correct path
+                        Log::info('Deleting certificate file: ' . $certificate->certificate_path);
+                        Storage::disk('public')->delete('staff_education_certificates/'.$certificate->certificate_path);
+                        $certificate->delete();
+                    }
+                }
+            }
+        }
+
+        // Add new education certificates
+        Log::info('Checking for certificates in request: ' . ($request->hasFile('certificates') ? 'YES' : 'NO'));
+        Log::info('Request files: ' . json_encode(array_keys($request->allFiles())));
+        
+        if ($request->hasFile('certificates')) {
+            Log::info('Handling certificate uploads. Certificate count: ' . count($request->file('certificates')));
+            
+            foreach ($request->file('certificates') as $certificate) {
+                // Get original filename and ensure uniqueness
+                $originalName = $certificate->getClientOriginalName();
+                $uniqueName = time() . '_' . $originalName;
+                
+                Log::info('Uploading certificate: ' . $originalName . ' as ' . $uniqueName);
+                
+                // Ensure the directory exists
+                Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
+                
+                // Store the certificate in the staff_education_certificates directory with a unique name
+                $path = $certificate->storeAs('staff_education_certificates', $uniqueName, 'public');
+                
+                // Get the certificate title from the original filename (without extension)
+                $certificateTitle = pathinfo($originalName, PATHINFO_FILENAME);
+                
+                // Store the certificate info in the database
+                $certificateRecord = StaffEducationCertificate::create([
+                    'staff_id' => $staff->id,
+                    'certificate_path' => $uniqueName,
+                    'certificate_title' => $certificateTitle
+                ]);
+                
+                Log::info('Certificate record created with ID: ' . $certificateRecord->id);
+            }
+        }
        
         return response()->json([
             'status' => true,
@@ -519,27 +618,36 @@ public function index(Request $request): JsonResponse
             if (file_exists($paperPath)) {
                 $path = $paperPath;
             } else {
-                // Try medical images path
-                $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
-                Log::info('Trying medical image path: ' . $medicalImagePath);
-                Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
+                // Try staff education certificates path
+                $certificatePath = storage_path('app/public/staff_education_certificates/'.$document);
+                Log::info('Trying certificate path: ' . $certificatePath);
+                Log::info('File exists at certificate path: ' . (file_exists($certificatePath) ? 'Yes' : 'No'));
                 
-                if (file_exists($medicalImagePath)) {
-                    $path = $medicalImagePath;
+                if (file_exists($certificatePath)) {
+                    $path = $certificatePath;
                 } else {
-                    // Try alternate path for events
-                    $alternatePath = storage_path('app/public/events/'.$document);
-                    Log::info('Trying alternate path: ' . $alternatePath);
-                    Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+                    // Try medical images path
+                    $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
+                    Log::info('Trying medical image path: ' . $medicalImagePath);
+                    Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
                     
-                    if (file_exists($alternatePath)) {
-                        $path = $alternatePath;
+                    if (file_exists($medicalImagePath)) {
+                        $path = $medicalImagePath;
                     } else {
-                        return response()->json([
-                            'status' => false,
-                            'message' => "Document not found",
-                            'errors' => ['error'=>['Document not found.']]
-                        ], 404);
+                        // Try alternate path for events
+                        $alternatePath = storage_path('app/public/events/'.$document);
+                        Log::info('Trying alternate path: ' . $alternatePath);
+                        Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
+                        
+                        if (file_exists($alternatePath)) {
+                            $path = $alternatePath;
+                        } else {
+                            return response()->json([
+                                'status' => false,
+                                'message' => "Document not found",
+                                'errors' => ['error'=>['Document not found.']]
+                            ], 404);
+                        }
                     }
                 }
             }

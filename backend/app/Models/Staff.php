@@ -33,4 +33,9 @@ class Staff extends Model
     {
         return $this->hasMany(StaffPaper::class);
     }
+
+    public function educationCertificates(): HasMany
+    {
+        return $this->hasMany(StaffEducationCertificate::class);
+    }
 }

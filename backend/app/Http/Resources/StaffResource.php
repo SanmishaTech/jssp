@@ -77,6 +77,14 @@ class StaffResource extends JsonResource
                     'url' => asset('storage/staff_papers/' . $paper->paper_path)
                 ];
             }),
+            'certificates' => $this->educationCertificates->map(function($certificate) {
+                return [
+                    'id' => $certificate->id,
+                    'certificate_title' => $certificate->certificate_title,
+                    'certificate_path' => $certificate->certificate_path,
+                    'url' => asset('storage/staff_education_certificates/' . $certificate->certificate_path)
+                ];
+            }),
             'medical_history' => $this->medical_history,
             'medical_image_path' => $this->medical_image_path,
             'medical_image_url' => $this->medical_image_path ? asset('storage/staff_medical_images/' . $this->medical_image_path) : null,
