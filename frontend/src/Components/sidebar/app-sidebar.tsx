@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
   Sidebar,
@@ -53,6 +53,7 @@ interface MenuItem {
   url?: string;
   icon: React.ComponentType<{ className?: string }>;
   children?: MenuItem[];
+  className?: string;
 }
 
 interface AppSidebarProps {
@@ -442,7 +443,9 @@ const roleBasedItems: Record<string, MenuItem[]> = {
 
 export function AppSidebar({ role }: AppSidebarProps) {
   const items = roleBasedItems[role] || [];
-  
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+
   // Get user data from localStorage
   const [userData, setUserData] = useState<UserData>({
     userName: "User Name", 
@@ -498,6 +501,19 @@ export function AppSidebar({ role }: AppSidebarProps) {
     };
   }, [profileDropdownOpen]);
 
+  useEffect(() => {
+    items.forEach(item => {
+      if (item.children) {
+        const hasActiveChild = item.children.some(child => 
+          child.url && currentPath.startsWith(child.url)
+        );
+        if (hasActiveChild) {
+          setOpenDropdowns(prev => ({ ...prev, [item.title]: true }));
+        }
+      }
+    });
+  }, [currentPath]);
+
   const toggleDropdown = (title: string) => {
     setOpenDropdowns((prev) => ({
       ...prev,
@@ -545,7 +561,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                         <SidebarMenuButton asChild>
                           <button
                             onClick={() => toggleDropdown(item.title)}
-                            className="flex items-center w-full"
+                            className={`flex items-center w-full ${item.children?.some(child => child.url && currentPath.startsWith(child.url)) ? "bg-blue-100 text-blue-600" : ""}`}
                           >
                             <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                             <span>{item.title}</span>
@@ -567,7 +583,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                           {item.children.map((child: MenuItem) => (
                             <SidebarMenuItem key={child.title}>
                               <SidebarMenuButton asChild>
-                                <a href={child.url} className="flex items-center">
+                                <a href={child.url} className={`flex items-center ${child.url && currentPath.startsWith(child.url) ? "bg-blue-100 text-blue-600" : ""}`}>
                                   <child.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                                   <span>{child.title}</span>
                                 </a>
@@ -580,7 +596,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                   ) : (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <a href={item.url} className="flex items-center">
+                        <a href={item.url} className={`flex items-center ${item.url && currentPath.startsWith(item.url) ? "bg-blue-100 text-blue-600" : ""}`}>
                           <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                           <span>{item.title}</span>
                         </a>
