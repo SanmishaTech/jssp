@@ -596,7 +596,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                   ) : (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <a href={item.url} className={`flex items-center ${item.url && currentPath.startsWith(item.url) ? "bg-blue-100 text-blue-600" : ""}`}>
+                        <a href={item.url} className={`flex items-center ${item.url && currentPath === item.url ? "bg-blue-100 text-blue-600" : ""}`}>
                           <item.icon className="mr-2 text-gray-600 dark:text-blue-300" />
                           <span>{item.title}</span>
                         </a>
