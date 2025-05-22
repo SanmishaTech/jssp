@@ -69,8 +69,8 @@ export const CourseSelect = ({
 
   return (
     <AnimatePresence mode={'popLayout'}>
-      <div className={'flex w-[300px] flex-col gap-2'}>
-        <motion.div
+      <div className={'flex w-full sm:w-[300px] lg:w-[235px] flex-col gap-2'}>
+      <motion.div
           layout
           ref={containerRef}
           className='selected no-scrollbar flex h-12 w-full items-center overflow-x-scroll scroll-smooth rounded-md border border-solid border-gray-200 bg-gray-50 p-2'
