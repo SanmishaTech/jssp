@@ -15,15 +15,12 @@ import { Route as IndexImport } from './routes/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as SubjectsIndexImport } from './routes/subjects/index'
 import { Route as StudentsIndexImport } from './routes/students/index'
-import { Route as StaffdashboardIndexImport } from './routes/staffdashboard/index'
 import { Route as StaffIndexImport } from './routes/staff/index'
 import { Route as SemesterIndexImport } from './routes/semester/index'
 import { Route as ScholarshipsIndexImport } from './routes/scholarships/index'
-import { Route as RootdashboardIndexImport } from './routes/rootdashboard/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as ProfilesIndexImport } from './routes/profiles/index'
 import { Route as PeticashIndexImport } from './routes/peticash/index'
-import { Route as MemberdashboardIndexImport } from './routes/memberdashboard/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as LeaveapprovalIndexImport } from './routes/leaveapproval/index'
@@ -32,19 +29,16 @@ import { Route as InventoryIndexImport } from './routes/inventory/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
 import { Route as EventsIndexImport } from './routes/events/index'
 import { Route as DivisionsIndexImport } from './routes/divisions/index'
+import { Route as DashboardsIndexImport } from './routes/dashboards/index'
 import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
-import { Route as CashierdashboardIndexImport } from './routes/cashierdashboard/index'
 import { Route as CashbookIndexImport } from './routes/cashbook/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
 import { Route as BankIndexImport } from './routes/bank/index'
-import { Route as BackofficedashboardIndexImport } from './routes/backofficedashboard/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
-import { Route as AdmissiondashboardIndexImport } from './routes/admissiondashboard/index'
-import { Route as AccountantdashboardIndexImport } from './routes/accountantdashboard/index'
 import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
 import { Route as CashbookIdImport } from './routes/cashbook/$id'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
@@ -100,12 +94,6 @@ const StudentsIndexRoute = StudentsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const StaffdashboardIndexRoute = StaffdashboardIndexImport.update({
-  id: '/staffdashboard/',
-  path: '/staffdashboard/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const StaffIndexRoute = StaffIndexImport.update({
   id: '/staff/',
   path: '/staff/',
@@ -124,12 +112,6 @@ const ScholarshipsIndexRoute = ScholarshipsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const RootdashboardIndexRoute = RootdashboardIndexImport.update({
-  id: '/rootdashboard/',
-  path: '/rootdashboard/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const RoomsIndexRoute = RoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
@@ -145,12 +127,6 @@ const ProfilesIndexRoute = ProfilesIndexImport.update({
 const PeticashIndexRoute = PeticashIndexImport.update({
   id: '/peticash/',
   path: '/peticash/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const MemberdashboardIndexRoute = MemberdashboardIndexImport.update({
-  id: '/memberdashboard/',
-  path: '/memberdashboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -202,6 +178,12 @@ const DivisionsIndexRoute = DivisionsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardsIndexRoute = DashboardsIndexImport.update({
+  id: '/dashboards/',
+  path: '/dashboards/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const CoursesIndexRoute = CoursesIndexImport.update({
   id: '/courses/',
   path: '/courses/',
@@ -223,12 +205,6 @@ const CommitteeIndexRoute = CommitteeIndexImport.update({
 const CashiersIndexRoute = CashiersIndexImport.update({
   id: '/cashiers/',
   path: '/cashiers/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const CashierdashboardIndexRoute = CashierdashboardIndexImport.update({
-  id: '/cashierdashboard/',
-  path: '/cashierdashboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -256,27 +232,9 @@ const BankIndexRoute = BankIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const BackofficedashboardIndexRoute = BackofficedashboardIndexImport.update({
-  id: '/backofficedashboard/',
-  path: '/backofficedashboard/',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   id: '/admissions/',
   path: '/admissions/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AdmissiondashboardIndexRoute = AdmissiondashboardIndexImport.update({
-  id: '/admissiondashboard/',
-  path: '/admissiondashboard/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AccountantdashboardIndexRoute = AccountantdashboardIndexImport.update({
-  id: '/accountantdashboard/',
-  path: '/accountantdashboard/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -473,32 +431,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AcademicyearsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/accountantdashboard/': {
-      id: '/accountantdashboard/'
-      path: '/accountantdashboard'
-      fullPath: '/accountantdashboard'
-      preLoaderRoute: typeof AccountantdashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/admissiondashboard/': {
-      id: '/admissiondashboard/'
-      path: '/admissiondashboard'
-      fullPath: '/admissiondashboard'
-      preLoaderRoute: typeof AdmissiondashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/admissions/': {
       id: '/admissions/'
       path: '/admissions'
       fullPath: '/admissions'
       preLoaderRoute: typeof AdmissionsIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/backofficedashboard/': {
-      id: '/backofficedashboard/'
-      path: '/backofficedashboard'
-      fullPath: '/backofficedashboard'
-      preLoaderRoute: typeof BackofficedashboardIndexImport
       parentRoute: typeof rootRoute
     }
     '/bank/': {
@@ -529,13 +466,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CashbookIndexImport
       parentRoute: typeof rootRoute
     }
-    '/cashierdashboard/': {
-      id: '/cashierdashboard/'
-      path: '/cashierdashboard'
-      fullPath: '/cashierdashboard'
-      preLoaderRoute: typeof CashierdashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/cashiers/': {
       id: '/cashiers/'
       path: '/cashiers'
@@ -562,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/courses'
       fullPath: '/courses'
       preLoaderRoute: typeof CoursesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboards/': {
+      id: '/dashboards/'
+      path: '/dashboards'
+      fullPath: '/dashboards'
+      preLoaderRoute: typeof DashboardsIndexImport
       parentRoute: typeof rootRoute
     }
     '/divisions/': {
@@ -620,13 +557,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeetingsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/memberdashboard/': {
-      id: '/memberdashboard/'
-      path: '/memberdashboard'
-      fullPath: '/memberdashboard'
-      preLoaderRoute: typeof MemberdashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/peticash/': {
       id: '/peticash/'
       path: '/peticash'
@@ -648,13 +578,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/rootdashboard/': {
-      id: '/rootdashboard/'
-      path: '/rootdashboard'
-      fullPath: '/rootdashboard'
-      preLoaderRoute: typeof RootdashboardIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/scholarships/': {
       id: '/scholarships/'
       path: '/scholarships'
@@ -674,13 +597,6 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/staff'
       preLoaderRoute: typeof StaffIndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/staffdashboard/': {
-      id: '/staffdashboard/'
-      path: '/staffdashboard'
-      fullPath: '/staffdashboard'
-      preLoaderRoute: typeof StaffdashboardIndexImport
       parentRoute: typeof rootRoute
     }
     '/students/': {
@@ -895,19 +811,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
-  '/accountantdashboard': typeof AccountantdashboardIndexRoute
-  '/admissiondashboard': typeof AdmissiondashboardIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
-  '/backofficedashboard': typeof BackofficedashboardIndexRoute
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashbook': typeof CashbookIndexRoute
-  '/cashierdashboard': typeof CashierdashboardIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
+  '/dashboards': typeof DashboardsIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
   '/institutes': typeof InstitutesIndexRoute
@@ -916,15 +829,12 @@ export interface FileRoutesByFullPath {
   '/leaveapproval': typeof LeaveapprovalIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
-  '/memberdashboard': typeof MemberdashboardIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/rooms': typeof RoomsIndexRoute
-  '/rootdashboard': typeof RootdashboardIndexRoute
   '/scholarships': typeof ScholarshipsIndexRoute
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
-  '/staffdashboard': typeof StaffdashboardIndexRoute
   '/students': typeof StudentsIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/trusties': typeof TrustiesIndexRoute
@@ -960,19 +870,16 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
-  '/accountantdashboard': typeof AccountantdashboardIndexRoute
-  '/admissiondashboard': typeof AdmissiondashboardIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
-  '/backofficedashboard': typeof BackofficedashboardIndexRoute
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
   '/cashbook': typeof CashbookIndexRoute
-  '/cashierdashboard': typeof CashierdashboardIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
+  '/dashboards': typeof DashboardsIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
   '/institutes': typeof InstitutesIndexRoute
@@ -981,15 +888,12 @@ export interface FileRoutesByTo {
   '/leaveapproval': typeof LeaveapprovalIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
-  '/memberdashboard': typeof MemberdashboardIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/rooms': typeof RoomsIndexRoute
-  '/rootdashboard': typeof RootdashboardIndexRoute
   '/scholarships': typeof ScholarshipsIndexRoute
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
-  '/staffdashboard': typeof StaffdashboardIndexRoute
   '/students': typeof StudentsIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/trusties': typeof TrustiesIndexRoute
@@ -1026,19 +930,16 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears/': typeof AcademicyearsIndexRoute
-  '/accountantdashboard/': typeof AccountantdashboardIndexRoute
-  '/admissiondashboard/': typeof AdmissiondashboardIndexRoute
   '/admissions/': typeof AdmissionsIndexRoute
-  '/backofficedashboard/': typeof BackofficedashboardIndexRoute
   '/bank/': typeof BankIndexRoute
   '/bankaccounts/': typeof BankaccountsIndexRoute
   '/calender/': typeof CalenderIndexRoute
   '/cashbook/': typeof CashbookIndexRoute
-  '/cashierdashboard/': typeof CashierdashboardIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
   '/complaints/': typeof ComplaintsIndexRoute
   '/courses/': typeof CoursesIndexRoute
+  '/dashboards/': typeof DashboardsIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
   '/events/': typeof EventsIndexRoute
   '/institutes/': typeof InstitutesIndexRoute
@@ -1047,15 +948,12 @@ export interface FileRoutesById {
   '/leaveapproval/': typeof LeaveapprovalIndexRoute
   '/login/': typeof LoginIndexRoute
   '/meetings/': typeof MeetingsIndexRoute
-  '/memberdashboard/': typeof MemberdashboardIndexRoute
   '/peticash/': typeof PeticashIndexRoute
   '/profiles/': typeof ProfilesIndexRoute
   '/rooms/': typeof RoomsIndexRoute
-  '/rootdashboard/': typeof RootdashboardIndexRoute
   '/scholarships/': typeof ScholarshipsIndexRoute
   '/semester/': typeof SemesterIndexRoute
   '/staff/': typeof StaffIndexRoute
-  '/staffdashboard/': typeof StaffdashboardIndexRoute
   '/students/': typeof StudentsIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
@@ -1093,19 +991,16 @@ export interface FileRouteTypes {
     | '/'
     | '/cashbook/$id'
     | '/academicyears'
-    | '/accountantdashboard'
-    | '/admissiondashboard'
     | '/admissions'
-    | '/backofficedashboard'
     | '/bank'
     | '/bankaccounts'
     | '/calender'
     | '/cashbook'
-    | '/cashierdashboard'
     | '/cashiers'
     | '/committee'
     | '/complaints'
     | '/courses'
+    | '/dashboards'
     | '/divisions'
     | '/events'
     | '/institutes'
@@ -1114,15 +1009,12 @@ export interface FileRouteTypes {
     | '/leaveapproval'
     | '/login'
     | '/meetings'
-    | '/memberdashboard'
     | '/peticash'
     | '/profiles'
     | '/rooms'
-    | '/rootdashboard'
     | '/scholarships'
     | '/semester'
     | '/staff'
-    | '/staffdashboard'
     | '/students'
     | '/subjects'
     | '/trusties'
@@ -1157,19 +1049,16 @@ export interface FileRouteTypes {
     | '/'
     | '/cashbook/$id'
     | '/academicyears'
-    | '/accountantdashboard'
-    | '/admissiondashboard'
     | '/admissions'
-    | '/backofficedashboard'
     | '/bank'
     | '/bankaccounts'
     | '/calender'
     | '/cashbook'
-    | '/cashierdashboard'
     | '/cashiers'
     | '/committee'
     | '/complaints'
     | '/courses'
+    | '/dashboards'
     | '/divisions'
     | '/events'
     | '/institutes'
@@ -1178,15 +1067,12 @@ export interface FileRouteTypes {
     | '/leaveapproval'
     | '/login'
     | '/meetings'
-    | '/memberdashboard'
     | '/peticash'
     | '/profiles'
     | '/rooms'
-    | '/rootdashboard'
     | '/scholarships'
     | '/semester'
     | '/staff'
-    | '/staffdashboard'
     | '/students'
     | '/subjects'
     | '/trusties'
@@ -1221,19 +1107,16 @@ export interface FileRouteTypes {
     | '/'
     | '/cashbook/$id'
     | '/academicyears/'
-    | '/accountantdashboard/'
-    | '/admissiondashboard/'
     | '/admissions/'
-    | '/backofficedashboard/'
     | '/bank/'
     | '/bankaccounts/'
     | '/calender/'
     | '/cashbook/'
-    | '/cashierdashboard/'
     | '/cashiers/'
     | '/committee/'
     | '/complaints/'
     | '/courses/'
+    | '/dashboards/'
     | '/divisions/'
     | '/events/'
     | '/institutes/'
@@ -1242,15 +1125,12 @@ export interface FileRouteTypes {
     | '/leaveapproval/'
     | '/login/'
     | '/meetings/'
-    | '/memberdashboard/'
     | '/peticash/'
     | '/profiles/'
     | '/rooms/'
-    | '/rootdashboard/'
     | '/scholarships/'
     | '/semester/'
     | '/staff/'
-    | '/staffdashboard/'
     | '/students/'
     | '/subjects/'
     | '/trusties/'
@@ -1287,19 +1167,16 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CashbookIdRoute: typeof CashbookIdRoute
   AcademicyearsIndexRoute: typeof AcademicyearsIndexRoute
-  AccountantdashboardIndexRoute: typeof AccountantdashboardIndexRoute
-  AdmissiondashboardIndexRoute: typeof AdmissiondashboardIndexRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
-  BackofficedashboardIndexRoute: typeof BackofficedashboardIndexRoute
   BankIndexRoute: typeof BankIndexRoute
   BankaccountsIndexRoute: typeof BankaccountsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
   CashbookIndexRoute: typeof CashbookIndexRoute
-  CashierdashboardIndexRoute: typeof CashierdashboardIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
   CoursesIndexRoute: typeof CoursesIndexRoute
+  DashboardsIndexRoute: typeof DashboardsIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
@@ -1308,15 +1185,12 @@ export interface RootRouteChildren {
   LeaveapprovalIndexRoute: typeof LeaveapprovalIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MeetingsIndexRoute: typeof MeetingsIndexRoute
-  MemberdashboardIndexRoute: typeof MemberdashboardIndexRoute
   PeticashIndexRoute: typeof PeticashIndexRoute
   ProfilesIndexRoute: typeof ProfilesIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
-  RootdashboardIndexRoute: typeof RootdashboardIndexRoute
   ScholarshipsIndexRoute: typeof ScholarshipsIndexRoute
   SemesterIndexRoute: typeof SemesterIndexRoute
   StaffIndexRoute: typeof StaffIndexRoute
-  StaffdashboardIndexRoute: typeof StaffdashboardIndexRoute
   StudentsIndexRoute: typeof StudentsIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
@@ -1352,19 +1226,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CashbookIdRoute: CashbookIdRoute,
   AcademicyearsIndexRoute: AcademicyearsIndexRoute,
-  AccountantdashboardIndexRoute: AccountantdashboardIndexRoute,
-  AdmissiondashboardIndexRoute: AdmissiondashboardIndexRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
-  BackofficedashboardIndexRoute: BackofficedashboardIndexRoute,
   BankIndexRoute: BankIndexRoute,
   BankaccountsIndexRoute: BankaccountsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
   CashbookIndexRoute: CashbookIndexRoute,
-  CashierdashboardIndexRoute: CashierdashboardIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
   ComplaintsIndexRoute: ComplaintsIndexRoute,
   CoursesIndexRoute: CoursesIndexRoute,
+  DashboardsIndexRoute: DashboardsIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
@@ -1373,15 +1244,12 @@ const rootRouteChildren: RootRouteChildren = {
   LeaveapprovalIndexRoute: LeaveapprovalIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MeetingsIndexRoute: MeetingsIndexRoute,
-  MemberdashboardIndexRoute: MemberdashboardIndexRoute,
   PeticashIndexRoute: PeticashIndexRoute,
   ProfilesIndexRoute: ProfilesIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
-  RootdashboardIndexRoute: RootdashboardIndexRoute,
   ScholarshipsIndexRoute: ScholarshipsIndexRoute,
   SemesterIndexRoute: SemesterIndexRoute,
   StaffIndexRoute: StaffIndexRoute,
-  StaffdashboardIndexRoute: StaffdashboardIndexRoute,
   StudentsIndexRoute: StudentsIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
@@ -1426,19 +1294,16 @@ export const routeTree = rootRoute
         "/",
         "/cashbook/$id",
         "/academicyears/",
-        "/accountantdashboard/",
-        "/admissiondashboard/",
         "/admissions/",
-        "/backofficedashboard/",
         "/bank/",
         "/bankaccounts/",
         "/calender/",
         "/cashbook/",
-        "/cashierdashboard/",
         "/cashiers/",
         "/committee/",
         "/complaints/",
         "/courses/",
+        "/dashboards/",
         "/divisions/",
         "/events/",
         "/institutes/",
@@ -1447,15 +1312,12 @@ export const routeTree = rootRoute
         "/leaveapproval/",
         "/login/",
         "/meetings/",
-        "/memberdashboard/",
         "/peticash/",
         "/profiles/",
         "/rooms/",
-        "/rootdashboard/",
         "/scholarships/",
         "/semester/",
         "/staff/",
-        "/staffdashboard/",
         "/students/",
         "/subjects/",
         "/trusties/",
@@ -1496,17 +1358,8 @@ export const routeTree = rootRoute
     "/academicyears/": {
       "filePath": "academicyears/index.tsx"
     },
-    "/accountantdashboard/": {
-      "filePath": "accountantdashboard/index.tsx"
-    },
-    "/admissiondashboard/": {
-      "filePath": "admissiondashboard/index.tsx"
-    },
     "/admissions/": {
       "filePath": "admissions/index.tsx"
-    },
-    "/backofficedashboard/": {
-      "filePath": "backofficedashboard/index.tsx"
     },
     "/bank/": {
       "filePath": "bank/index.tsx"
@@ -1520,9 +1373,6 @@ export const routeTree = rootRoute
     "/cashbook/": {
       "filePath": "cashbook/index.tsx"
     },
-    "/cashierdashboard/": {
-      "filePath": "cashierdashboard/index.tsx"
-    },
     "/cashiers/": {
       "filePath": "cashiers/index.tsx"
     },
@@ -1534,6 +1384,9 @@ export const routeTree = rootRoute
     },
     "/courses/": {
       "filePath": "courses/index.tsx"
+    },
+    "/dashboards/": {
+      "filePath": "dashboards/index.tsx"
     },
     "/divisions/": {
       "filePath": "divisions/index.tsx"
@@ -1559,9 +1412,6 @@ export const routeTree = rootRoute
     "/meetings/": {
       "filePath": "meetings/index.tsx"
     },
-    "/memberdashboard/": {
-      "filePath": "memberdashboard/index.tsx"
-    },
     "/peticash/": {
       "filePath": "peticash/index.tsx"
     },
@@ -1571,9 +1421,6 @@ export const routeTree = rootRoute
     "/rooms/": {
       "filePath": "rooms/index.tsx"
     },
-    "/rootdashboard/": {
-      "filePath": "rootdashboard/index.tsx"
-    },
     "/scholarships/": {
       "filePath": "scholarships/index.tsx"
     },
@@ -1582,9 +1429,6 @@ export const routeTree = rootRoute
     },
     "/staff/": {
       "filePath": "staff/index.tsx"
-    },
-    "/staffdashboard/": {
-      "filePath": "staffdashboard/index.tsx"
     },
     "/students/": {
       "filePath": "students/index.tsx"

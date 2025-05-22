@@ -70,7 +70,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
   superadmin: [
     {
       title: "Dashboard",
-      url: "/rootdashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {
@@ -107,7 +107,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
   admin: [
     {
       title: "Dashboard",
-      url: "/staffdashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {
@@ -249,7 +249,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
   member: [
     {
       title: "Dashboard",
-      url: "/memberdashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {
@@ -284,7 +284,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
   cashier: [
     {
       title: "Dashboard",
-      url: "/cashierdashboard",
+      url: "/dashboards",
       icon: Home,
     },
    
@@ -309,7 +309,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
     
     {
       title: "Dashboard",
-      url: "/accountantdashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {
@@ -350,7 +350,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
     
     {
       title: "Dashboard",
-      url: "/backofficedashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {
@@ -374,7 +374,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
   admission: [
     {
       title: "Dashboard",
-      url: "/admissiondashboard",
+      url: "/dashboards",
       icon: Home,
     },
     {

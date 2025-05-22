@@ -46,32 +46,7 @@ const Login = () => {
       // Get user role for navigation
       const role = userData.role;
       localStorage.setItem("role", role);
-      
-      
-      
-      // Navigate based on role
-      if (role === "admin") {
-        navigate({ to: "/staffdashboard" });
-      } else if (role === "superadmin") {
-        navigate({ to: "/rootdashboard" });
-      } else if (role === "member") {
-        navigate({ to: "/memberdashboard" });
-      } else if (role === "cashier") {
-        navigate({ to: "/cashierdashboard" });
-      } else if (role === "admission") {
-        navigate({ to: "/admissiondashboard" });
-      } else if (role === "accountant") {
-        navigate({ to: "/accountantdashboard" });
-      } else if (role === "backoffice") {
-        navigate({ to: "/backofficedashboard" });
-      } else if (role === "teachingstaff") {
-        navigate({ to: "/backofficedashboard" });
-      } else if (role === "nonteaching staff") {
-        navigate({ to: "/backofficedashboard" });
-      } else {
-        navigate({ to: "/staff" });
-      }
-      
+        navigate({ to: "/dashboards" });
       toast.success("Successfully Logged In");
     } catch (err) {
       console.error("Error logging in:", err);

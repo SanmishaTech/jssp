@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { Button } from "../ui/button";
@@ -170,7 +170,7 @@ export default function ResponsiveLabDashboard() {
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">
-            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} ({localStorage.getItem('role') || 'Staff'})
+            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} 
           </h1>
         </div>
 
@@ -314,75 +314,6 @@ export default function ResponsiveLabDashboard() {
                     </button>
                   </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
-          <Card className="col-span-full lg:col-span-4 bg-accent/40">
-            <CardHeader>
-              <CardTitle>Volume Over Time</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={testVolumeData}>
-                  <XAxis
-                    dataKey="name"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `${value}`}
-                  />
-                  <Bar dataKey="tests" fill="#adfa1d" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          <Card className="col-span-full lg:col-span-3 bg-accent/40">
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>
-              <CardDescription>Key performance indicators</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Accuracy</div>
-                    <div className="text-sm text-muted-foreground">98.2%</div>
-                  </div>
-                  <div>+0.2%</div>
-                </div>
-                <Progress value={98} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Turnaround Time</div>
-                    <div className="text-sm text-muted-foreground">
-                      24.5 hours
-                    </div>
-                  </div>
-                  <div>-1.5h</div>
-                </div>
-                <Progress value={82} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Utilization</div>
-                    <div className="text-sm text-muted-foreground">87.3%</div>
-                  </div>
-                  <div>+3.7%</div>
-                </div>
-                <Progress value={87} className="h-2" />
               </div>
             </CardContent>
           </Card>
