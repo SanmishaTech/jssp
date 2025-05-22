@@ -476,7 +476,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       children: [
         {
           title: "Subject Hour Allocation",
-          url: "#",
+          url: "/subjecthours",
           icon: BookMarked,
         },
        

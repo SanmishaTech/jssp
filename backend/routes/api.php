@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\MeetingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
+use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\DivisionController;
@@ -137,6 +138,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/leaves/member', [LeaveController::class, 'getByMember']);
     Route::get('/leaves/status/{status}', [LeaveController::class, 'getByStatus']);
     Route::put('/leaves/{id}', [LeaveController::class, 'update']);
+});
+
+// Subject Hours Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/staff-sub-subject-hours', [SubjectHoursController::class, 'index']);
+    Route::post('/staff-sub-subject-hours/batch', [SubjectHoursController::class, 'storeBatch']);
 });
 
  

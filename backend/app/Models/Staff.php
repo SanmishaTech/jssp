@@ -9,6 +9,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Staff extends Model
 {
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'course_id' => 'array',
+        'semester_id' => 'array',
+        'subject_id' => 'array',
+    ];
+    
     public function institute()
     {
         return $this->belongsTo(Institute::class, "institute_id");
