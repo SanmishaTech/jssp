@@ -368,8 +368,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/complaints",
       icon: MessageCircle,
     },
-      
-     
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    }, 
   ],
   admission: [
     {
@@ -438,6 +441,85 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: MessageCircle,
     },
      
+  ],
+  teachingstaff: [
+    
+    {
+      title: "Dashboard",
+      url: "/dashboards",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    }, 
+    {
+      title: "Inventory",
+      url: "/inventory",
+      icon: Home,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+    
+    {
+      title: "Set Teaching Plan",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Subject Hour Allocation",
+          url: "#",
+          icon: BookMarked,
+        },
+       
+        {
+          title: "Time Table",
+          url: "#",
+          icon: BookText,
+        },
+     
+       
+      ],
+    },
+ 
+    
+  ],
+  nonteachingstaff: [
+    
+    {
+      title: "Dashboard",
+      url: "/dashboards",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    }, 
+    {
+      title: "Inventory",
+      url: "/inventory",
+      icon: Home,
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+   
   ],
 };
 

@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 import {
   Card,
@@ -30,9 +33,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
-import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 import EducationQualifications from "./EducationQualifications";
 import PaperUpload from "./PaperUpload";
 import MedicalImageUpload from "./MedicalImageUpload";
@@ -164,7 +164,104 @@ function ProfileForm({ formData }) {
   });
   
   const navigate = useNavigate();
+  const [academicYears, setAcademicYears] = useState<{id: string, academic_year: string}[]>([]);
+  const [courses, setCourses] = useState<{id: string, name: string}[]>([]);
+  const [semesters, setSemesters] = useState<{id: string, name: string}[]>([]);
+  const [subjects, setSubjects] = useState<{id: string, name: string}[]>([]);
   const token = localStorage.getItem("token");
+
+  // Fetch academic years
+  const fetchAcademicYears = async () => {
+    try {
+      const response = await axios.get('/api/academic_years', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data?.data?.AcademicYears) {
+        setAcademicYears(Array.isArray(response.data.data.AcademicYears) 
+          ? response.data.data.AcademicYears 
+          : []);
+      }
+    } catch (error) {
+      console.error('Error fetching academic years:', error);
+    }
+  };
+
+  // Fetch courses
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get('/api/courses', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data?.data?.Course) {
+        setCourses(Array.isArray(response.data.data.Course) 
+          ? response.data.data.Course.map((course: any) => ({
+              id: course.id,
+              name: course.medium_title || course.name || String(course.id)
+            }))
+          : []);
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
+
+  // Fetch semesters
+  const fetchSemesters = async () => {
+    try {
+      const response = await axios.get('/api/semesters', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data?.data?.Semester) {
+        setSemesters(Array.isArray(response.data.data.Semester) 
+          ? response.data.data.Semester.map((semester: any) => ({
+              id: semester.id,
+              name: semester.semester || semester.semester || String(semester.id)
+            }))
+          : []);
+      }
+    } catch (error) {
+      console.error('Error fetching semesters:', error);
+    }
+  };
+
+  // Fetch subjects
+  const fetchSubjects = async () => {
+    try {
+      const response = await axios.get('/api/subjects', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.data?.data?.Subject) {
+        setSubjects(Array.isArray(response.data.data.Subject) 
+          ? response.data.data.Subject.map((subject: any) => ({
+              id: subject.id,
+              name: subject.subject_name || subject.name || String(subject.id)
+            }))
+          : []);
+      }
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+    }
+  };
+
+  // Helper function to get name by ID
+  const getNameById = (id: string | number | undefined, items: {id: string | number, name?: string, academic_year?: string}[]) => {
+    if (!id) return 'N/A';
+    const item = items.find(item => String(item.id) === String(id));
+    if (!item) return String(id);
+    return item.name || item.academic_year || String(id);
+  };
+
+  // Helper function to get names for multiple IDs
+  const getNamesByIds = (ids: string | string[] | number[] | undefined, items: {id: string | number, name?: string}[]) => {
+    if (!ids || (Array.isArray(ids) && ids.length === 0)) return 'N/A';
+    const idArray = Array.isArray(ids) ? ids : [ids];
+    return idArray
+      .map(id => {
+        const item = items.find(item => String(item.id) === String(id));
+        return item?.name || String(id);
+      })
+      .join(', ');
+  };
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -192,6 +289,12 @@ function ProfileForm({ formData }) {
   // Reset form values when formData changes
   useEffect(() => {
     if (formData) {
+      // Fetch related data
+      fetchAcademicYears();
+      fetchCourses();
+      fetchSemesters();
+      fetchSubjects();
+      
       // Prepare the formData with proper education structure for reset
       const formDataWithEducation = {
         ...formData,
@@ -790,6 +893,34 @@ function ProfileForm({ formData }) {
                       </FormItem>
                     )}
                   />
+                  
+                  {/* Academic Information */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 p-4 bg-gray-50 rounded-md">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Academic Year</h4>
+                      <p className="text-sm">
+                        {getNameById(formData?.academic_years_id, academicYears)}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Course</h4>
+                      <p className="text-sm">
+                        {getNamesByIds(formData?.course_id || [], courses)}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Semester</h4>
+                      <p className="text-sm">
+                        {getNameById(formData?.semester_id, semesters)}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Subject</h4>
+                      <p className="text-sm">
+                        {getNamesByIds(formData?.subject_id || [], subjects)}
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             
