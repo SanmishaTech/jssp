@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 interface StaffInfo {
   id: number;
@@ -28,12 +29,13 @@ interface Semester {
 interface Subject {
   id: number;
   subject_name: string;
-  sub_subject?: SubSubject[];
+  sub_subjects?: SubSubject[];
 }
 
 interface SubSubject {
   id: number;
   sub_subject_name: string;
+  hours?: number;
 }
 
 export default function SubjectHoursDisplay() {
@@ -49,55 +51,7 @@ export default function SubjectHoursDisplay() {
 
   // We'll get staff assignments directly from the subject hours API
 
-  // Fetch reference data (academic years, courses, semesters, subjects)
-  useEffect(() => {
-    const fetchReferenceData = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch academic years
-        const yearsResponse = await axios.get('/api/academic_years', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (yearsResponse.data?.data?.AcademicYears) {
-          setAcademicYears(yearsResponse.data.data.AcademicYears);
-        }
-        
-        // Fetch courses
-        const coursesResponse = await axios.get('/api/courses', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (coursesResponse.data?.data?.Course) {
-          setCourses(coursesResponse.data.data.Course);
-        }
-        
-        // Fetch semesters
-        const semestersResponse = await axios.get('/api/semesters', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (semestersResponse.data?.data?.Semester) {
-          setSemesters(semestersResponse.data.data.Semester);
-        }
-        
-        // Fetch subjects
-        const subjectsResponse = await axios.get('/api/subjects', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (subjectsResponse.data?.data?.Subject) {
-          setSubjects(subjectsResponse.data.data.Subject);
-        }
-        
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching reference data:', error);
-        setError('Failed to load reference data. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReferenceData();
-  }, [token]);
+  // We'll only fetch data from the staff-sub-subject-hours endpoint to avoid conflicts
 
   // We don't need to separately fetch sub-subjects as they come with the subject hours data
   useEffect(() => {
@@ -147,6 +101,19 @@ export default function SubjectHoursDisplay() {
           
           if (response.data.data.staff_assignments.subjects.length > 0) {
             setSubjects(response.data.data.staff_assignments.subjects);
+            
+            // Initialize editingHours with existing values
+            const initialHours: Record<string, number> = {};
+            response.data.data.staff_assignments.subjects.forEach((subject: Subject) => {
+              if (subject.sub_subjects) {
+                subject.sub_subjects.forEach((subSubject: SubSubject) => {
+                  if (subSubject.hours !== undefined) {
+                    initialHours[`${subject.id}-${subSubject.id}`] = subSubject.hours;
+                  }
+                });
+              }
+            });
+            setEditingHours(initialHours);
           }
           
           if (response.data.data.staff_assignments.academic_year) {
@@ -189,7 +156,7 @@ export default function SubjectHoursDisplay() {
 
   const saveAllHours = async () => {
     if (Object.keys(editingHours).length === 0) {
-      alert('No changes to save.');
+      toast.warning('No changes to save.');
       return;
     }
     
@@ -219,14 +186,16 @@ export default function SubjectHoursDisplay() {
       // Clear all editing states
       setEditingHours({});
       
-      // Show success message
-      alert('All hours saved successfully!');
+      // Show success toast message
+      toast.success('All hours saved successfully!');
       
-      // Optionally refresh the data
-      // fetchSubjectHoursAndAssignments();
+      // Refresh the page after a short delay to allow the toast to be seen
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error('Error saving hours:', error);
-      alert('Failed to save hours. Please try again.');
+      toast.error('Failed to save hours. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -366,11 +335,11 @@ export default function SubjectHoursDisplay() {
                     
                     return (
                       <React.Fragment key={subjectId}>
-                        {subject.sub_subject?.length ? (
-                          subject.sub_subject.map((subSubject, idx) => (
+                        {subject.sub_subjects?.length ? (
+                          subject.sub_subjects.map((subSubject, idx) => (
                             <tr key={`${subjectId}-${subSubject.id}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                               {idx === 0 && (
-                                <td rowSpan={subject.sub_subject?.length} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 align-top">
+                                <td rowSpan={subject.sub_subjects?.length} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 align-top">
                                   {subject.subject_name}
                                 </td>
                               )}
@@ -382,7 +351,7 @@ export default function SubjectHoursDisplay() {
                                   type="number"
                                   min="0"
                                   className="w-20 px-2 py-1 border rounded focus:ring-blue-500 focus:border-blue-500"
-                                  value={editingHours[`${subjectId}-${subSubject.id}`] ?? ''}
+                                  value={editingHours[`${subjectId}-${subSubject.id}`] !== undefined ? editingHours[`${subjectId}-${subSubject.id}`] : (subSubject.hours || '')}
                                   onChange={(e) => handleHoursChange(subjectId, subSubject.id, e.target.value)}
                                   placeholder="0"
                                 />

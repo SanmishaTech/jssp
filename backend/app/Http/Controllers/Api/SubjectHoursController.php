@@ -12,9 +12,51 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubjectHoursController extends Controller
 {
+    /**
+     * Helper method to parse fields that could be JSON strings or arrays
+     */
+    private function parseArrayField($field)
+    {
+        if (empty($field)) {
+            return [];
+        }
+        
+        // If it's already an array, return it
+        if (is_array($field)) {
+            return $field;
+        }
+        
+        // If it's a JSON string (possibly double-encoded), try to decode it
+        try {
+            // First try a single decode
+            $decoded = json_decode($field, true);
+            
+            // If it's still a string that looks like JSON, try decoding again
+            if (is_string($decoded) && (str_starts_with($decoded, '[') || str_starts_with($decoded, '{'))) {
+                $decoded = json_decode($decoded, true);
+            }
+            
+            // If we have a valid array now, return it
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+            
+            // If the field is a string with comma-separated values
+            if (is_string($field) && strpos($field, ',') !== false) {
+                return array_map('trim', explode(',', $field));
+            }
+            
+            // Last resort: wrap the single value in an array
+            return [$field];
+        } catch (\Exception $e) {
+            Log::error("Error parsing array field: " . $e->getMessage());
+            return [];
+        }
+    }
     /**
      * Get subject hours for authenticated staff
      */
@@ -46,41 +88,52 @@ class SubjectHoursController extends Controller
             $academicYear = \App\Models\AcademicYears::find($staffData->academic_years_id);
         }
         
-        // Ensure course_id is an array and not empty before querying
-        if (!empty($staffData->course_id) && is_array($staffData->course_id)) {
+        // Parse course_id properly - could be a JSON string or already an array
+        $courseIds = $this->parseArrayField($staffData->course_id);
+        if (!empty($courseIds)) {
             try {
-                $courses = \App\Models\Course::whereIn('id', $staffData->course_id)->get();
+                $courses = \App\Models\Course::whereIn('id', $courseIds)->get();
             } catch (\Exception $e) {
                 // Log error and continue
                 \Log::error('Error fetching courses: ' . $e->getMessage());
             }
         }
         
-        // Ensure semester_id is an array and not empty before querying
-        if (!empty($staffData->semester_id) && is_array($staffData->semester_id)) {
+        // Parse semester_id properly - could be a JSON string or already an array
+        $semesterIds = $this->parseArrayField($staffData->semester_id);
+        if (!empty($semesterIds)) {
             try {
-                $semesters = \App\Models\Semester::whereIn('id', $staffData->semester_id)->get();
+                $semesters = \App\Models\Semester::whereIn('id', $semesterIds)->get();
             } catch (\Exception $e) {
                 // Log error and continue
                 \Log::error('Error fetching semesters: ' . $e->getMessage());
             }
         }
         
-        // Ensure subject_id is an array and not empty before querying
-        if (!empty($staffData->subject_id) && is_array($staffData->subject_id)) {
+        // Parse subject_id properly - could be a JSON string or already an array
+        $subjectIds = $this->parseArrayField($staffData->subject_id);
+        if (!empty($subjectIds)) {
             try {
-                $subjects = Subject::with('subSubjects')->whereIn('id', $staffData->subject_id)->get();
+                // Get subjects with their sub-subjects
+                $subjects = Subject::with('subSubjects')->whereIn('id', $subjectIds)->get();
+                
+                // Rename 'subSubjects' to 'sub_subjects' in the response
+                $subjects->each(function ($subject) {
+                    $subject->sub_subjects = $subject->subSubjects;
+                    unset($subject->subSubjects);
+                });
                 
                 // Get hours for each sub-subject
                 foreach ($subjects as $subject) {
-                    if ($subject->subSubjects) {
-                        foreach ($subject->subSubjects as $subSubject) {
+                    if ($subject->sub_subjects) {
+                        foreach ($subject->sub_subjects as $subSubject) {
                             $hours = SubjectHours::where([
                                 'staff_id' => $staff->id,
                                 'subject_id' => $subject->id,
                                 'sub_subject_id' => $subSubject->id
                             ])->first();
                             
+                            // Ensure hours are set explicitly to show in the response
                             $subSubject->hours = $hours ? $hours->hours : 0;
                         }
                     }
@@ -97,17 +150,10 @@ class SubjectHoursController extends Controller
             'data' => [
                 'staff_assignments' => [
                     'staff_id' => $staff->id,
-                    'staff_raw_data' => [
-                        'model_data' => [
-                            'course_id' => $staffData->course_id,
-                            'semester_id' => $staffData->semester_id,
-                            'subject_id' => $staffData->subject_id,
-                        ],
-                        'db_data' => [
-                            'course_id' => $rawStaffData->course_id ?? null,
-                            'semester_id' => $rawStaffData->semester_id ?? null,
-                            'subject_id' => $rawStaffData->subject_id ?? null,
-                        ]
+                    'parsed_ids' => [
+                        'course_ids' => $courseIds,
+                        'semester_ids' => $semesterIds,
+                        'subject_ids' => $subjectIds,
                     ],
                     'academic_year' => $academicYear,
                     'courses' => $courses,
