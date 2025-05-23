@@ -138,25 +138,7 @@ const Edittestcard: React.FC = () => {
     { id: 'computer', name: 'Computer Science' },
   ];
 
-  const today = new Date();
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(today.getMonth() - 6);
-  const sixMonthsFromNow = new Date();
-  sixMonthsFromNow.setMonth(today.getMonth() + 6);
-
-  // Format dates as YYYY-MM-DD for the input element
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
-
-  const [selectedDate, setSelectedDate] = useState(formatDate(today));
   const [selectedStaff, setSelectedStaff] = useState<string>('');
-  
-  // Dialog state
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [currentSlot, setCurrentSlot] = useState<{dayId: string; slotId: string; index: number} | null>(null);
-  const [slotDetails, setSlotDetails] = useState<{subject: string; description: string}>({ subject: '', description: '' });
 
   // Sample staff data
   const staffMembers = [
@@ -166,47 +148,90 @@ const Edittestcard: React.FC = () => {
     { id: '4', name: 'Emily Davis' },
   ];
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(e.target.value);
+  // Add week selection state with proper initialization
+  const [selectedWeek, setSelectedWeek] = useState<Date>(() => {
+    const now = new Date();
+    // Get current week's Monday
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+    return monday;
+  });
+
+  // Function to get ISO week string for input
+  const getWeekValue = (date: Date) => {
+    const year = date.getFullYear();
+    const firstDay = new Date(date);
+    firstDay.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1));
+    
+    // Calculate week number
+    const weekNumber = Math.ceil(
+      ((firstDay.getTime() - new Date(year, 0, 1).getTime()) / 86400000 + 1) / 7
+    );
+    
+    return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
   };
 
-  // Handle opening the edit dialog
+  // Function to get dates for the current week
+  const getWeekDates = (date: Date) => {
+    const startDate = new Date(date);
+    startDate.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1)); // Monday
+
+    return Array(7).fill(0).map((_, i) => {
+      const dayDate = new Date(startDate);
+      dayDate.setDate(startDate.getDate() + i);
+      return dayDate;
+    });
+  };
+
+  // Get current week dates
+  const weekDates = getWeekDates(selectedWeek);
+
+  // Update days array to include dates
+  const daysWithDates = days.map((day, index) => ({
+    ...day,
+    date: weekDates[index].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }));
+
+  // Dialog state
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [currentSlot, setCurrentSlot] = useState<{dayId: string; slotId: string; index: number} | null>(null);
+  const [slotDetails, setSlotDetails] = useState<{subject: string; description: string}>({ subject: '', description: '' });
+
   const handleEditClick = (dayId: string, slotId: string, index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentSlot({ dayId, slotId, index });
-    
+
     // Get current details if they exist
     const slot = timeSlots[index];
     const details = slot.details || { subject: '', description: '' };
-    
+
     setSlotDetails(details);
     setIsEditDialogOpen(true);
   };
 
-  // Handle opening the view dialog
   const handleViewClick = (dayId: string, slotId: string, index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentSlot({ dayId, slotId, index });
-    
+
     // Get current details if they exist
     const slot = timeSlots[index];
     const details = slot.details || { subject: '', description: '' };
-    
+
     setSlotDetails(details);
     setIsViewDialogOpen(true);
   };
 
-  // Handle saving the details
   const handleSaveDetails = () => {
     if (!currentSlot) return;
-    
+
     // Update the time slot with the new details
     const updatedTimeSlots = [...timeSlots];
     updatedTimeSlots[currentSlot.index] = {
       ...updatedTimeSlots[currentSlot.index],
       details: slotDetails
     };
-    
+
     // Close the dialog
     setIsEditDialogOpen(false);
   };
@@ -218,18 +243,27 @@ const Edittestcard: React.FC = () => {
           Teacher's Weekly Schedule
         </h4>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">
-              Select Date:
-            </span>
-            <Input
-              type="date"
-              value={selectedDate}
-              onChange={handleDateChange}
-              min={formatDate(sixMonthsAgo)}
-              max={formatDate(sixMonthsFromNow)}
-              className="py-2 px-3 rounded-md border border-gray-300 text-sm h-[38px] w-[150px]"
-            />
+          <div className="flex flex-col gap-4 mb-6">
+            <div>
+              <label htmlFor="week" className="block text-sm font-medium text-gray-700 mb-1">
+                Select Week
+              </label>
+              <Input
+                id="week"
+                type="week"
+                value={getWeekValue(selectedWeek)}
+                onChange={(e) => {
+                  const [year, week] = e.target.value.match(/\d+/g)?.map(Number) || [];
+                  if (year && week) {
+                    const date = new Date(year, 0, 1 + (week - 1) * 7);
+                    date.setDate(date.getDate() + (1 - date.getDay()));
+                    setSelectedWeek(date);
+                  }
+                }}
+                onKeyDown={(e) => e.preventDefault()} // Prevent manual input
+                className="w-full"
+              />
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">
@@ -252,13 +286,14 @@ const Edittestcard: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="flex gap-2 mb-3 justify-between">
-        {days.map(day => (
+        {daysWithDates.map(day => (
           <div key={day.id} className="flex-1 text-center">
             <h6 className={`text-base font-bold ${day.isHoliday ? 'text-red-500' : ''}`}>
               {day.day}
             </h6>
+            <p className="text-xs text-gray-500">{day.date}</p>
             {day.isHoliday && (
               <p className="text-xs text-red-400">Holiday</p>
             )}
@@ -268,12 +303,12 @@ const Edittestcard: React.FC = () => {
 
       <div className="flex gap-2 mb-2">
         <div className="flex flex-1 gap-2">
-          {days.map((day) => (
+          {daysWithDates.map((day) => (
             <div key={day.id} className="flex-1 flex flex-col gap-1">
               {timeSlots.map((slot, index) => {
                 const classId = schedule.find(d => d.id === day.id)?.slots[index];
                 const classInfo = classes.find(c => c.id === classId);
-                
+
                 return (
                   <React.Fragment key={slot.id}>
                     {slot.isBreak ? (
@@ -313,8 +348,7 @@ const Edittestcard: React.FC = () => {
           ))}
         </div>
       </div>
-      
-    
+
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px] bg-white">
@@ -324,7 +358,7 @@ const Edittestcard: React.FC = () => {
               Update the details for this time slot. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="subject" className="text-right">
@@ -348,7 +382,7 @@ const Edittestcard: React.FC = () => {
                 </Select>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-center gap-4">
               <label htmlFor="description" className="text-right">
                 Description
@@ -364,7 +398,7 @@ const Edittestcard: React.FC = () => {
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button 
               type="button" 
@@ -386,7 +420,7 @@ const Edittestcard: React.FC = () => {
               Details for this time slot.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <span className="text-right font-medium">Subject:</span>
@@ -396,7 +430,7 @@ const Edittestcard: React.FC = () => {
                   'Not selected'}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-4 items-start gap-4">
               <span className="text-right font-medium">Description:</span>
               <div className="col-span-3 whitespace-pre-wrap break-words">
