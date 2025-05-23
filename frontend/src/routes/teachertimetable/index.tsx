@@ -1,6 +1,6 @@
 //ts-nocheck
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import SubjectHoursDisplay from "../../Components/teachertimetable/Edittestcard";
+import SubjectHoursDisplay from "../../Components/teachertimetable/TeacherTimetable";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/teachertimetable/")({

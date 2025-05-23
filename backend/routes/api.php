@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SubjectHoursController;
+use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\DivisionController;
@@ -146,4 +147,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/staff-sub-subject-hours/batch', [SubjectHoursController::class, 'storeBatch']);
 });
 
- 
+// Teacher Timetable Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('teacher-timetables', TeacherTimetableController::class);
+    Route::get('/teacher-timetables-by-staff-week', [TeacherTimetableController::class, 'getByStaffAndWeek']);
+    Route::patch('/teacher-timetables/{timetableId}/slots/{slotId}', [TeacherTimetableController::class, 'updateSlot']);
+    Route::get('/teaching-staff', [TeacherTimetableController::class, 'getTeachingStaff']);
+});

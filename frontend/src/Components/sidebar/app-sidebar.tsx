@@ -111,6 +111,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: Home,
     },
     {
+      title: "Time Table",
+      url: "/teachertimetable",
+      icon: BookText,
+    },
+    {
       title: "Staff",
       url: "/staff",
       icon: Users,

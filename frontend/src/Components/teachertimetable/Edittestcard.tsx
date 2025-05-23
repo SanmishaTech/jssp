@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Eye, Edit } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Eye, Edit, Loader2 } from 'lucide-react';
 
 // Import Shadcn UI components
 import {
@@ -22,13 +23,37 @@ import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
+// Type definitions
 type TimeSlot = {
   id: string;
   time: string;
   isBreak?: boolean;
-  details?: {
-    subject: string;
-    description: string;
+};
+
+type ApiTeacherTimetable = {
+  id: number;
+  staff_id: number;
+  week_start_date: string;
+  status: string;
+  slots: ApiTimetableSlot[];
+  staff?: {
+    id: number;
+    name: string;
+  };
+};
+
+type ApiTimetableSlot = {
+  id: number;
+  teacher_timetable_id: number;
+  day: string;
+  time_slot: string;
+  slot_id: string;
+  is_break: boolean;
+  subject_id: string | null;
+  description: string | null;
+  subject?: {
+    id: number;
+    name: string;
   };
 };
 
@@ -47,6 +72,7 @@ type SlotProps = {
   onEditClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
 };
 
+// UI Components
 const TimeSlot = ({ children, day, slot, index, onViewClick, onEditClick }: SlotProps) => (
   <Card className="p-2 text-center min-h-[100px] flex items-center justify-center relative">
     <div className="absolute top-1 right-1 flex gap-1">
@@ -83,7 +109,11 @@ const BreakSlot = ({ children }: { children: React.ReactNode }) => (
   </Card>
 );
 
+// Main component
 const Edittestcard: React.FC = () => {
+  // API URL base
+  const API_BASE = process.env.REACT_APP_API_URL || '/api';
+  
   // Generate time slots from 10 AM to 5 PM
   const timeSlots: TimeSlot[] = [
     { id: '10', time: '10:00 AM - 11:00 AM' },
@@ -104,7 +134,14 @@ const Edittestcard: React.FC = () => {
     { id: 'saturday', day: 'Saturday (Holiday)', isHoliday: true },
     { id: 'sunday', day: 'Sunday (Holiday)', isHoliday: true }
   ];
-
+  
+  // State variables for API data
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [staffMembers, setStaffMembers] = useState<{id: string; name: string}[]>([]);
+  const [classes, setClasses] = useState<{id: string; name: string}[]>([]);
+  const [timetableId, setTimetableId] = useState<number | null>(null);
+  
   // Initialize schedule with empty slots
   const [schedule, setSchedule] = useState<DaySchedule[]>(() =>
     days.map(day => ({
@@ -113,40 +150,7 @@ const Edittestcard: React.FC = () => {
     }))
   );
 
-  const handleClassRemove = (dayId: string, slotIndex: number) => {
-    setSchedule(prevSchedule => {
-      const newSchedule = [...prevSchedule];
-      const day = newSchedule.find(d => d.id === dayId);
-      if (day) {
-        const newSlots = [...day.slots];
-        newSlots[slotIndex] = null;
-        day.slots = newSlots;
-      }
-      return newSchedule;
-    });
-  };
-
-  // Sample classes/subjects that can be scheduled
-  const classes = [
-    { id: 'math', name: 'Mathematics' },
-    { id: 'physics', name: 'Physics' },
-    { id: 'chemistry', name: 'Chemistry' },
-    { id: 'biology', name: 'Biology' },
-    { id: 'english', name: 'English' },
-    { id: 'history', name: 'History' },
-    { id: 'geography', name: 'Geography' },
-    { id: 'computer', name: 'Computer Science' },
-  ];
-
   const [selectedStaff, setSelectedStaff] = useState<string>('');
-
-  // Sample staff data
-  const staffMembers = [
-    { id: '1', name: 'John Doe' },
-    { id: '2', name: 'Jane Smith' },
-    { id: '3', name: 'Robert Johnson' },
-    { id: '4', name: 'Emily Davis' },
-  ];
 
   // Add week selection state with proper initialization
   const [selectedWeek, setSelectedWeek] = useState<Date>(() => {
@@ -156,13 +160,215 @@ const Edittestcard: React.FC = () => {
     monday.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
     return monday;
   });
-
-  // Function to get ISO week string for input
-  const getWeekValue = (date: Date) => {
-    const year = date.getFullYear();
-    const firstDay = new Date(date);
-    firstDay.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1));
+  
+  // Dialog state
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [currentSlot, setCurrentSlot] = useState<{dayId: string; slotId: string; index: number} | null>(null);
+  const [slotDetails, setSlotDetails] = useState<{subject: string; description: string}>({ subject: '', description: '' });
+  
+  // Fetch staff data from API
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/all_staff`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.data && Array.isArray(response.data)) {
+          setStaffMembers(response.data.map(staff => ({
+            id: staff.id.toString(),
+            name: staff.user?.name || 'Unknown',
+          })));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching staff:', err);
+        setError('Failed to load staff data');
+        setLoading(false);
+      }
+    };
     
+    fetchStaff();
+  }, [API_BASE]);
+  
+  // Fetch subjects data from API
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/all_subjects`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.data && Array.isArray(response.data)) {
+          setClasses(response.data.map(subject => ({
+            id: subject.id.toString(),
+            name: subject.name,
+          })));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching subjects:', err);
+        setError('Failed to load subject data');
+        setLoading(false);
+      }
+    };
+    
+    fetchSubjects();
+  }, [API_BASE]);
+  
+  // Fetch timetable data when staff and week are selected
+  useEffect(() => {
+    if (selectedStaff && selectedWeek) {
+      fetchTimetable();
+    }
+  }, [selectedStaff, selectedWeek]);
+  
+  // Function to fetch timetable data
+  const fetchTimetable = async () => {
+    if (!selectedStaff || !selectedWeek) {
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      const weekStartDate = getWeekDates(selectedWeek)[0].toISOString().split('T')[0]; // Get Monday's date in YYYY-MM-DD format
+      
+      const response = await axios.get(`${API_BASE}/teacher-timetables-by-staff-week`, {
+        params: {
+          staff_id: selectedStaff,
+          week_start_date: weekStartDate,
+        },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.data && response.data.data) {
+        const timetableData = response.data.data as ApiTeacherTimetable;
+        setTimetableId(timetableData.id);
+        
+        // Reset the schedule with empty slots
+        const emptySchedule = days.map(day => ({
+          ...day,
+          slots: Array(timeSlots.length).fill(null),
+        }));
+        
+        // Fill in the slots from the API data
+        if (timetableData.slots && Array.isArray(timetableData.slots)) {
+          timetableData.slots.forEach(slot => {
+            const dayIndex = days.findIndex(d => d.id === slot.day.toLowerCase());
+            const slotIndex = timeSlots.findIndex(t => t.id === slot.slot_id);
+            
+            if (dayIndex !== -1 && slotIndex !== -1) {
+              emptySchedule[dayIndex].slots[slotIndex] = slot.subject_id;
+            }
+          });
+        }
+        
+        setSchedule(emptySchedule);
+      } else {
+        // No timetable found for this staff and week
+        setTimetableId(null);
+        // Reset the schedule with empty slots
+        setSchedule(days.map(day => ({
+          ...day,
+          slots: Array(timeSlots.length).fill(null),
+        })));
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching timetable:', err);
+      setError('Failed to load timetable data');
+      setLoading(false);
+      
+      // Reset the schedule with empty slots on error
+      setSchedule(days.map(day => ({
+        ...day,
+    }
+    
+    setLoading(false);
+    alert('Timetable saved successfully');
+  } catch (err) {
+    console.error('Error saving timetable:', err);
+    setError('Failed to save timetable data');
+    setLoading(false);
+    alert('Failed to save timetable. Please try again.');
+  }
+};
+
+const handleSaveDetails = async () => {
+  if (currentSlot) {
+    // Update the local state first
+    setSchedule(prevSchedule => {
+      const newSchedule = [...prevSchedule];
+      const day = newSchedule.find(d => d.id === currentSlot.dayId);
+      if (day) {
+        const newSlots = [...day.slots];
+        newSlots[currentSlot.index] = slotDetails.subject;
+        day.slots = newSlots;
+      }
+      return newSchedule;
+    });
+    
+    // If we have a timetable ID and slot data, update the slot in the backend
+    if (timetableId) {
+      try {
+        setLoading(true);
+        const timeSlot = timeSlots[currentSlot.index];
+        
+        // Find the slot ID in the backend
+        const response = await axios.get(`${API_BASE}/teacher-timetables/${timetableId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.data && response.data.data && response.data.data.slots) {
+          const timetableData = response.data.data as ApiTeacherTimetable;
+          const slotToUpdate = timetableData.slots.find(
+            slot => slot.day === currentSlot.dayId && slot.slot_id === timeSlot.id
+          );
+          
+          if (slotToUpdate) {
+            // Update the slot
+            await axios.patch(`${API_BASE}/teacher-timetables/${timetableId}/slots/${slotToUpdate.id}`, {
+              subject_id: slotDetails.subject,
+              description: slotDetails.description
+            }, {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+              }
+            });
+          } else {
+            // Slot doesn't exist yet, we'll need to save the whole timetable
+            await saveTimetable();
+          }
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error updating slot:', err);
+        setError('Failed to update slot data');
+        setLoading(false);
+      }
+    }
+  }
+  
+  setIsEditDialogOpen(false);
+};
     // Calculate week number
     const weekNumber = Math.ceil(
       ((firstDay.getTime() - new Date(year, 0, 1).getTime()) / 86400000 + 1) / 7
