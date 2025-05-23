@@ -7,17 +7,17 @@ use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\LeadsController;
+use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\MeetingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
-use App\Http\Controllers\Api\SubjectHoursController;
-use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\TrusteeController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\DivisionController;
@@ -39,8 +39,9 @@ use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\SubjectHoursController;
+use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
-use App\Http\Controllers\Api\LeaveController;
 
 
 
@@ -61,6 +62,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('courses', CourseController::class);
    Route::get('/all_courses', [CourseController::class, 'allCourses'])->name("courses.all");
+  
+   Route::resource('holiday', HolidayController::class);
+   Route::get('/all_holiday', [HolidayController::class, 'allHoliday'])->name("holidays.all");
 
    Route::resource('semesters', SemesterController::class);
    Route::get('/all_semesters', [SemesterController::class, 'allSemesters'])->name("semesters.all");
