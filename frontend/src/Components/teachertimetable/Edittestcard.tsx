@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, DropResult, DroppableProvided } from 'react-beautiful-dnd';
-import { 
-  Typography, 
-  Box, 
-  Paper, 
-  FormControl, 
-  IconButton
-} from '@mui/material';
 import { Eye, Edit } from 'lucide-react';
-import { styled } from '@mui/material/styles';
 
 // Import Shadcn UI components
 import {
@@ -27,6 +18,9 @@ import {
   SelectValue,
 } from '../ui/select';
 import { Textarea } from '../ui/textarea';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 type TimeSlot = {
   id: string;
@@ -44,26 +38,50 @@ type DaySchedule = {
   slots: (string | null)[];
 };
 
-const TimeSlot = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  minHeight: 70,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  position: 'relative',
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
+type SlotProps = {
+  children: React.ReactNode;
+  day: { id: string };
+  slot: { id: string };
+  index: number;
+  onViewClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
+  onEditClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
+};
 
-const BreakSlot = styled(TimeSlot)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[200],
-  color: theme.palette.text.secondary,
-  fontStyle: 'italic',
-}));
+const TimeSlot = ({ children, day, slot, index, onViewClick, onEditClick }: SlotProps) => (
+  <Card className="p-2 text-center min-h-[100px] flex items-center justify-center relative">
+    <div className="absolute top-1 right-1 flex gap-1">
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-6 w-6 p-0"
+        onClick={(e) => {
+          e.stopPropagation();
+          onViewClick(day.id, slot.id, index, e);
+        }}
+      >
+        <Eye className="h-4 w-4" />
+      </Button>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-6 w-6 p-0"
+        onClick={(e) => {
+          e.stopPropagation();
+          onEditClick(day.id, slot.id, index, e);
+        }}
+      >
+        <Edit className="h-4 w-4" />
+      </Button>
+    </div>
+    {children}
+  </Card>
+);
+
+const BreakSlot = ({ children }: { children: React.ReactNode }) => (
+  <Card className="p-2 text-center min-h-[100px] flex items-center justify-center bg-gray-200 text-gray-500 italic">
+    {children}
+  </Card>
+);
 
 const Edittestcard: React.FC = () => {
   // Generate time slots from 10 AM to 5 PM
@@ -78,11 +96,13 @@ const Edittestcard: React.FC = () => {
   ];
 
   const days = [
-    { id: 'mon', day: 'Monday' },
-    { id: 'tue', day: 'Tuesday' },
-    { id: 'wed', day: 'Wednesday' },
-    { id: 'thu', day: 'Thursday' },
-    { id: 'fri', day: 'Friday' },
+    { id: 'monday', day: 'Monday' },
+    { id: 'tuesday', day: 'Tuesday' },
+    { id: 'wednesday', day: 'Wednesday' },
+    { id: 'thursday', day: 'Thursday' },
+    { id: 'friday', day: 'Friday' },
+    { id: 'saturday', day: 'Saturday (Holiday)', isHoliday: true },
+    { id: 'sunday', day: 'Sunday (Holiday)', isHoliday: true }
   ];
 
   // Initialize schedule with empty slots
@@ -92,42 +112,6 @@ const Edittestcard: React.FC = () => {
       slots: Array(timeSlots.length).fill(null),
     }))
   );
-
-  const handleDragEnd = (result: DropResult) => {
-    const { source, destination, draggableId } = result;
-
-    // Dropped outside the list or no change in position
-    if (!destination || 
-        (source.droppableId === destination.droppableId && 
-         source.index === destination.index)) {
-      return;
-    }
-
-    const dayIndex = days.findIndex(day => day.id === destination.droppableId);
-    if (dayIndex === -1) return;
-
-    // Don't allow dropping on break time
-    if (timeSlots[destination.index].isBreak) return;
-
-    setSchedule(prevSchedule => {
-      const newSchedule = [...prevSchedule];
-      const day = newSchedule.find(d => d.id === destination.droppableId);
-      
-      if (day) {
-        const newSlots = [...day.slots];
-        // Remove from source if it was dragged from another slot
-        const sourceDayIndex = days.findIndex(d => d.id === source.droppableId);
-        if (sourceDayIndex !== -1) {
-          newSchedule[sourceDayIndex].slots[source.index] = null;
-        }
-        // Add to destination
-        newSlots[destination.index] = draggableId;
-        day.slots = newSlots;
-      }
-      
-      return newSchedule;
-    });
-  };
 
   const handleClassRemove = (dayId: string, slotIndex: number) => {
     setSchedule(prevSchedule => {
@@ -228,45 +212,33 @@ const Edittestcard: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h4">
+    <div className="p-3">
+      <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+        <h4 className="text-lg font-bold">
           Teacher's Weekly Schedule
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="subtitle1" color="textSecondary">
-            Select Date:
-          </Typography>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={handleDateChange}
-            min={formatDate(sixMonthsAgo)}
-            max={formatDate(sixMonthsFromNow)}
-            style={{
-              padding: '8px 12px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-              fontSize: '14px',
-              fontFamily: 'Roboto, sans-serif',
-              height: '40px',
-              boxSizing: 'border-box'
-            }}
-          />
-          <Typography variant="subtitle1" color="textSecondary" sx={{ ml: 2 }}>
-            Select Staff:
-          </Typography>
-          <FormControl variant="outlined" size="small" sx={{ minWidth: 200 }}>
+        </h4>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              Select Date:
+            </span>
+            <Input
+              type="date"
+              value={selectedDate}
+              onChange={handleDateChange}
+              min={formatDate(sixMonthsAgo)}
+              max={formatDate(sixMonthsFromNow)}
+              className="py-2 px-3 rounded-md border border-gray-300 text-sm h-[38px] w-[150px]"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              Select Staff:
+            </span>
             <select
               value={selectedStaff}
               onChange={(e) => setSelectedStaff(e.target.value)}
-              style={{
-                height: '40px',
-                padding: '8px 12px',
-                fontSize: '14px',
-                borderRadius: '4px',
-                border: '1px solid #ccc'
-              }}
+              className="py-2 px-3 rounded-md border border-gray-300 text-sm h-[38px] w-[150px]"
             >
               <option value="">
                 Select a staff member
@@ -277,127 +249,70 @@ const Edittestcard: React.FC = () => {
                 </option>
               ))}
             </select>
-          </FormControl>
-        </Box>
-      </Box>
+          </div>
+        </div>
+      </div>
       
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Box sx={{ display: 'flex', gap: 2, mb: 3, justifyContent: 'space-between' }}>
-          {days.map(day => (
-            <Box key={day.id} sx={{ flex: 1, textAlign: 'center' }}>
-              <Typography variant="h6">{day.day}</Typography>
-            </Box>
-          ))}
-        </Box>
+      <div className="flex gap-2 mb-3 justify-between">
+        {days.map(day => (
+          <div key={day.id} className="flex-1 text-center">
+            <h6 className={`text-base font-bold ${day.isHoliday ? 'text-red-500' : ''}`}>
+              {day.day}
+            </h6>
+            {day.isHoliday && (
+              <p className="text-xs text-red-400">Holiday</p>
+            )}
+          </div>
+        ))}
+      </div>
 
-        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-          <Box sx={{ display: 'flex', flex: 1, gap: 2 }}>
-            {days.map((day) => (
-              <Droppable key={day.id} droppableId={day.id} isDropDisabled={false} isCombineEnabled={false}>
-                {(provided: DroppableProvided) => (
-                  <Box
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}
-                  >
-                    {timeSlots.map((slot, index) => {
-                      const classId = schedule.find(d => d.id === day.id)?.slots[index];
-                      const classInfo = classes.find(c => c.id === classId);
-                      
-                      return (
-                        <React.Fragment key={slot.id}>
-                          {slot.isBreak ? (
-                            <BreakSlot>
-                              <Box sx={{ 
-                                position: 'absolute', 
-                                top: 2, 
-                                right: 2, 
-                                display: 'flex',
-                                zIndex: 1
-                              }}>
-                                <IconButton 
-                                  size="small" 
-                                  sx={{ p: 0.5 }}
-                                  onClick={(e) => handleViewClick(day.id, slot.id, index, e)}
-                                >
-                                  <Eye size={16} />
-                                </IconButton>
-                                <IconButton 
-                                  size="small" 
-                                  sx={{ p: 0.5 }}
-                                  onClick={(e) => handleEditClick(day.id, slot.id, index, e)}
-                                >
-                                  <Edit size={16} />
-                                </IconButton>
-                              </Box>
-                              <Typography variant="caption">Lunch Break</Typography>
-                            </BreakSlot>
-                          ) : (
-                            <Droppable droppableId={`${day.id}-${slot.id}`} direction="horizontal" isDropDisabled={false} isCombineEnabled={false}>
-                              {(provided: DroppableProvided) => (
-                                <TimeSlot 
-                                  ref={provided.innerRef}
-                                  {...provided.droppableProps}
-                                >
-                                  <Box sx={{ 
-                                    position: 'absolute', 
-                                    top: 2, 
-                                    right: 2, 
-                                    display: 'flex',
-                                    zIndex: 1
-                                  }}>
-                                    <IconButton 
-                                      size="small" 
-                                      sx={{ p: 0.5 }}
-                                      onClick={(e) => handleViewClick(day.id, slot.id, index, e)}
-                                    >
-                                      <Eye size={16} />
-                                    </IconButton>
-                                    <IconButton 
-                                      size="small" 
-                                      sx={{ p: 0.5 }}
-                                      onClick={(e) => handleEditClick(day.id, slot.id, index, e)}
-                                    >
-                                      <Edit size={16} />
-                                    </IconButton>
-                                  </Box>
-                                  {classInfo ? (
-                                    <Box
-                                      sx={{
-                                        bgcolor: 'primary.main',
-                                        color: 'primary.contrastText',
-                                        p: 1,
-                                        borderRadius: 1,
-                                        cursor: 'pointer',
-                                        '&:hover': {
-                                          opacity: 0.9,
-                                        },
-                                      }}
-                                      onClick={() => handleClassRemove(day.id, index)}
-                                    >
-                                      {classInfo.name}
-                                    </Box>
-                                  ) : (
-                                    <Typography variant="caption" color="textSecondary">
-                                      {slot.time}
-                                    </Typography>
-                                  )}
-                                  {provided.placeholder}
-                                </TimeSlot>
-                              )}
-                            </Droppable>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            ))}
-          </Box>
-        </Box>
-      </DragDropContext>
+      <div className="flex gap-2 mb-2">
+        <div className="flex flex-1 gap-2">
+          {days.map((day) => (
+            <div key={day.id} className="flex-1 flex flex-col gap-1">
+              {timeSlots.map((slot, index) => {
+                const classId = schedule.find(d => d.id === day.id)?.slots[index];
+                const classInfo = classes.find(c => c.id === classId);
+                
+                return (
+                  <React.Fragment key={slot.id}>
+                    {slot.isBreak ? (
+                      <BreakSlot 
+                        children={
+                          <span className="text-xs">
+                            Lunch Break
+                          </span>
+                        }
+                      />
+                    ) : (
+                      <TimeSlot 
+                        day={day} 
+                        slot={slot} 
+                        index={index}
+                        onViewClick={handleViewClick}
+                        onEditClick={handleEditClick}
+                      >
+                        {classInfo ? (
+                          <div
+                            className="bg-blue-500 text-white p-1 rounded-md cursor-pointer hover:opacity-90"
+                            onClick={() => handleClassRemove(day.id, index)}
+                          >
+                            {classInfo.name}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-500">
+                            {slot.time}
+                          </span>
+                        )}
+                      </TimeSlot>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
       
     
       {/* Edit Dialog */}
@@ -451,13 +366,13 @@ const Edittestcard: React.FC = () => {
           </div>
           
           <DialogFooter>
-            <button 
+            <Button 
               type="button" 
               onClick={handleSaveDetails}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-blue-500 text-white shadow hover:bg-blue-500/90 h-9 px-4 py-2"
             >
               Save changes
-            </button>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -491,7 +406,7 @@ const Edittestcard: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </Box>
+    </div>
   );
 };
 
