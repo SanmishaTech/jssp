@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
+import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
 import { Route as SubjectsIndexImport } from './routes/subjects/index'
 import { Route as SubjecthoursIndexImport } from './routes/subjecthours/index'
 import { Route as StudentsIndexImport } from './routes/students/index'
@@ -80,6 +81,12 @@ const IndexRoute = IndexImport.update({
 const TrustiesIndexRoute = TrustiesIndexImport.update({
   id: '/trusties/',
   path: '/trusties/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TeachertimetableIndexRoute = TeachertimetableIndexImport.update({
+  id: '/teachertimetable/',
+  path: '/teachertimetable/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -627,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubjectsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/teachertimetable/': {
+      id: '/teachertimetable/'
+      path: '/teachertimetable'
+      fullPath: '/teachertimetable'
+      preLoaderRoute: typeof TeachertimetableIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/trusties/': {
       id: '/trusties/'
       path: '/trusties'
@@ -852,6 +866,7 @@ export interface FileRoutesByFullPath {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -912,6 +927,7 @@ export interface FileRoutesByTo {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -973,6 +989,7 @@ export interface FileRoutesById {
   '/students/': typeof StudentsIndexRoute
   '/subjecthours/': typeof SubjecthoursIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
+  '/teachertimetable/': typeof TeachertimetableIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -1035,6 +1052,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/teachertimetable'
     | '/trusties'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1094,6 +1112,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/teachertimetable'
     | '/trusties'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1153,6 +1172,7 @@ export interface FileRouteTypes {
     | '/students/'
     | '/subjecthours/'
     | '/subjects/'
+    | '/teachertimetable/'
     | '/trusties/'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1214,6 +1234,7 @@ export interface RootRouteChildren {
   StudentsIndexRoute: typeof StudentsIndexRoute
   SubjecthoursIndexRoute: typeof SubjecthoursIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
+  TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   CashbookEditIdRoute: typeof CashbookEditIdRoute
   CommitteeEditIdRoute: typeof CommitteeEditIdRoute
@@ -1274,6 +1295,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentsIndexRoute: StudentsIndexRoute,
   SubjecthoursIndexRoute: SubjecthoursIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
+  TeachertimetableIndexRoute: TeachertimetableIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   CashbookEditIdRoute: CashbookEditIdRoute,
   CommitteeEditIdRoute: CommitteeEditIdRoute,
@@ -1343,6 +1365,7 @@ export const routeTree = rootRoute
         "/students/",
         "/subjecthours/",
         "/subjects/",
+        "/teachertimetable/",
         "/trusties/",
         "/cashbook/edit/$id",
         "/committee/edit/$id",
@@ -1461,6 +1484,9 @@ export const routeTree = rootRoute
     },
     "/subjects/": {
       "filePath": "subjects/index.tsx"
+    },
+    "/teachertimetable/": {
+      "filePath": "teachertimetable/index.tsx"
     },
     "/trusties/": {
       "filePath": "trusties/index.tsx"

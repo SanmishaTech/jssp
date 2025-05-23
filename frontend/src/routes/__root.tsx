@@ -24,7 +24,17 @@ export const Route = createRootRoute({
       <ErrorBoundary>
         <ErrorProvider>
           <>
-            <Toaster />
+            <Toaster 
+              position="top-right"
+              closeButton
+              toastOptions={{
+                style: {
+                  marginTop: '1rem',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                },
+              }}
+            />
             <div className={shouldShowSidebar ? "flex pt-2" : "flex"}>
               {shouldShowSidebar && (
                 <div className="text-white">
