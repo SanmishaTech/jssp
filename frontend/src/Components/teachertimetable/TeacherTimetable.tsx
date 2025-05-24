@@ -61,11 +61,23 @@ type DaySchedule = {
   id: string;
   day: string;
   slots: (string | null)[];
+  isHoliday?: boolean;
+  holidayInfo?: {
+    title: string;
+    description?: string;
+  };
 };
 
 type SlotProps = {
   children: React.ReactNode;
-  day: { id: string };
+  day: { 
+    id: string;
+    isHoliday?: boolean;
+    holidayInfo?: {
+      title: string;
+      description?: string;
+    };
+  };
   slot: { id: string };
   index: number;
   onViewClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
@@ -73,39 +85,59 @@ type SlotProps = {
 };
 
 // UI Components
-const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClick }: SlotProps) => (
-  <Card className="p-2 text-center min-h-[100px] flex items-center justify-center relative">
-    <div className="absolute top-1 right-1 flex gap-1">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-6 w-6 p-0"
-        onClick={(e) => {
-          e.stopPropagation();
-          onViewClick(day.id, slot.id, index, e);
-        }}
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="h-6 w-6 p-0"
-        onClick={(e) => {
-          e.stopPropagation();
-          onEditClick(day.id, slot.id, index, e);
-        }}
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-    </div>
-    {children}
-  </Card>
-);
+const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClick }: SlotProps) => {
+  // Check if the day is a holiday or has holiday info
+  const isHoliday = day.isHoliday;
+  const holidayInfo = day.holidayInfo;
+  
+  return (
+    <Card 
+      className={`p-2 text-center min-h-[100px] max-h-[150px] w-full max-w-full flex items-center justify-center relative ${isHoliday ? 'bg-red-100' : ''}`}
+    >
+      {isHoliday && (
+        <div className="absolute top-0 left-0 w-full bg-red-500 text-white text-xs py-1 font-semibold truncate">
+          {holidayInfo ? holidayInfo.title : 'Weekly Holiday'}
+        </div>
+      )}
+      {!isHoliday && (
+        <div className="absolute top-1 right-1 flex gap-1">
+                    {window.localStorage.getItem('role') === 'admin' && (
+
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-6 w-6 p-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewClick(day.id, slot.id, index, e);
+            }}
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+           )}
+          {window.localStorage.getItem('role') === 'admin' && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 w-6 p-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditClick(day.id, slot.id, index, e);
+              }}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
+      {children}
+    </Card>
+  );
+};
 
 const BreakSlot = ({ children }: { children: React.ReactNode }) => (
-  <Card className="p-2 text-center min-h-[100px] flex items-center justify-center bg-gray-200 text-gray-500 italic">
-    {children}
+  <Card className="p-2 text-center min-h-[100px] max-h-[150px] w-full max-w-full flex items-center justify-center bg-gray-200 text-gray-500 italic overflow-hidden">
+    <div className="truncate">{children}</div>
   </Card>
 );
 
@@ -113,6 +145,10 @@ const BreakSlot = ({ children }: { children: React.ReactNode }) => (
 const TeacherTimetable: React.FC = () => {
   // API URL base
   const API_BASE = '/api';
+  
+  // Check if user is admin
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [staffName, setStaffName] = useState<string>('');
   
   // Generate time slots from 10 AM to 5 PM
   const timeSlots: TimeSlot[] = [
@@ -125,15 +161,13 @@ const TeacherTimetable: React.FC = () => {
     { id: '16', time: '4:00 PM - 5:00 PM' },
   ];
 
-  const days = [
-    { id: 'monday', day: 'Monday' },
-    { id: 'tuesday', day: 'Tuesday' },
-    { id: 'wednesday', day: 'Wednesday' },
-    { id: 'thursday', day: 'Thursday' },
-    { id: 'friday', day: 'Friday' },
-    { id: 'saturday', day: 'Saturday (Holiday)', isHoliday: true },
-    { id: 'sunday', day: 'Sunday (Holiday)', isHoliday: true }
-  ];
+  // Define the Day type to ensure type safety
+  type Day = {
+    id: string;
+    day: string;
+    dayIndex: number;
+    isHoliday?: boolean;
+  };
   
   // State variables for API data
   const [loading, setLoading] = useState<boolean>(false);
@@ -141,10 +175,82 @@ const TeacherTimetable: React.FC = () => {
   const [staffMembers, setStaffMembers] = useState<{id: string; name: string}[]>([]);
   const [subjects, setSubjects] = useState<{id: string; name: string}[]>([]);
   const [timetableId, setTimetableId] = useState<number | null>(null);
+  const [holidays, setHolidays] = useState<Array<{id: number; institute_id: number; from_date: string; to_date: string; title: string; description: string}>>([]);
+  
+  // State for days array to track holidays
+  const [days, setDays] = useState<Day[]>([
+    { id: 'monday', day: 'Monday', dayIndex: 1 },
+    { id: 'tuesday', day: 'Tuesday', dayIndex: 2 },
+    { id: 'wednesday', day: 'Wednesday', dayIndex: 3 },
+    { id: 'thursday', day: 'Thursday', dayIndex: 4 },
+    { id: 'friday', day: 'Friday', dayIndex: 5 },
+    { id: 'saturday', day: 'Saturday', isHoliday: false, dayIndex: 6 },
+    { id: 'sunday', day: 'Sunday', isHoliday: true, dayIndex: 0 }
+  ]);
+  
+  // Function to fetch weekly holidays
+  const fetchWeeklyHolidays = async () => {
+    try {
+      console.log('Fetching weekly holidays...');
+      const token = localStorage.getItem('token');
+      console.log('Auth token available:', !!token);
+      
+      const response = await axios.get(`${API_BASE}/weekly-holidays`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      console.log('Weekly holidays API response:', response.data);
+      
+      if (response.data.status) {
+        const holidayData = response.data.data.WeeklyHoliday;
+        console.log('Weekly holidays data:', holidayData);
+        console.log('Holiday days from API:', holidayData.holiday_days);
+        
+        if (holidayData && Array.isArray(holidayData.holiday_days)) {
+          // Get holiday days from API
+          const holidayDays = holidayData.holiday_days as number[];
+          
+          // Create a deep copy of days to avoid reference issues
+          const daysCopy = [...days].map(day => ({ ...day }));
+          
+          // Mark each day as holiday if it's in the API response
+          daysCopy.forEach((day: Day) => {
+            if (holidayDays.includes(day.dayIndex)) {
+              day.isHoliday = true;
+              console.log(`Marking ${day.day} as holiday (dayIndex: ${day.dayIndex})`);
+            }
+          });
+          
+          console.log('Updated days with holidays:', daysCopy);
+          
+          // Apply the updated days to the schedule
+          setSchedule(prevSchedule => {
+            const newSchedule = prevSchedule.map((scheduleDay, index) => {
+              const updatedDay = daysCopy[index];
+              return {
+                ...scheduleDay,
+                isHoliday: updatedDay.isHoliday
+              };
+            });
+            console.log('Updated schedule:', newSchedule);
+            return newSchedule;
+          });
+          
+          // Force a re-render by updating the days array
+          setDays(daysCopy);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching weekly holidays:', error);
+    }
+  };
   
   // Initialize schedule with empty slots
-  const [schedule, setSchedule] = useState<DaySchedule[]>(() =>
-    days.map(day => ({
+  const [schedule, setSchedule] = useState<DaySchedule[]>(() => 
+    days.map((day: Day) => ({
       ...day,
       slots: Array(timeSlots.length).fill(null),
     }))
@@ -152,6 +258,7 @@ const TeacherTimetable: React.FC = () => {
 
   // Initialize selectedStaff from localStorage or empty string if not found
   const [selectedStaff, setSelectedStaff] = useState<string>(() => {
+    // We'll set this based on user data for non-admins, but start with saved value
     const savedStaff = localStorage.getItem('teacherTimetable_selectedStaff');
     return savedStaff || '';
   });
@@ -188,6 +295,16 @@ const TeacherTimetable: React.FC = () => {
     );
     
     return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
+  };
+
+  // Type definition for holiday object
+  type Holiday = {
+    id: number;
+    institute_id: number;
+    from_date: string;
+    to_date: string;
+    title: string;
+    description: string;
   };
 
   // Function to get dates for the current week
@@ -276,13 +393,177 @@ const TeacherTimetable: React.FC = () => {
       localStorage.setItem('teacherTimetable_selectedWeek', selectedWeek.toISOString());
     }
   }, [selectedWeek]);
+
+// Fetch subjects data from API
+useEffect(() => {
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE}/all_subjects`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.data && response.data.status && response.data.data && response.data.data.Subject) {
+        setSubjects(response.data.data.Subject.map((subject: any) => ({
+          id: subject.id.toString(),
+          name: subject.subject_name,
+        })));
+      }
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching subjects:', err);
+      setError('Failed to load subject data');
+      setLoading(false);
+    }
+  };
+  
+  fetchSubjects();
+}, [API_BASE]);
+
+// Save selectedStaff to localStorage when it changes
+useEffect(() => {
+  if (selectedStaff) {
+    localStorage.setItem('teacherTimetable_selectedStaff', selectedStaff);
+  }
+}, [selectedStaff]);
+
+// Save selectedWeek to localStorage when it changes
+useEffect(() => {
+  if (selectedWeek) {
+    localStorage.setItem('teacherTimetable_selectedWeek', selectedWeek.toISOString());
+  }
+}, [selectedWeek]);
+
+  // Fetch holidays from API
+  const fetchHolidays = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE}/all_holiday`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.data && response.data.status && response.data.data && response.data.data.Holiday) {
+        const holidayData = response.data.data.Holiday;
+        console.log('Fetched holidays:', holidayData);
+        
+        // Store holidays in state - this will trigger the holiday update effect
+        setHolidays(holidayData);
+      }
+    } catch (err) {
+      console.error('Error fetching holidays:', err);
+      setError('Failed to load holiday data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initialize when component mounts
+  useEffect(() => {
+    // Get the initial date for the current week
+    const currentDate = new Date();
+    setSelectedWeek(currentDate);
+    
+    // Check if user is admin from localStorage
+    const userRole = localStorage.getItem('role');
+    setIsAdmin(userRole === 'admin');
+    
+    // Get user info from localStorage
+    const userInfo = localStorage.getItem('user');
+    if (userInfo) {
+      try {
+        const userData = JSON.parse(userInfo);
+        setStaffName(userData.name || '');
+        
+        // For non-admin users, auto-select their staff ID
+        if (userRole !== 'admin' && userData.id) {
+          // If we have the staff ID in user data, use it
+          setSelectedStaff(userData.id.toString());
+        }
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+      }
+    }
+    
+    // Fetch holidays
+    fetchHolidays();
+    
+    // Fetch staff list
+    const fetchStaff = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/teaching-staff`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.data && Array.isArray(response.data)) {
+          setStaffMembers(response.data.map((staff: any) => ({
+            id: staff.id.toString(),
+            name: staff.user?.name || 'Unknown',
+          })));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching teaching staff:', err);
+        setError('Failed to load teaching staff data');
+        setLoading(false);
+      }
+    };
+    
+    fetchStaff();
+    
+    // Fetch subjects
+    const fetchSubjects = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE}/all_subjects`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.data && response.data.status && response.data.data && response.data.data.Subject) {
+          setSubjects(response.data.data.Subject.map((subject: any) => ({
+            id: subject.id.toString(),
+            name: subject.subject_name,
+          })));
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching subjects:', err);
+        setError('Failed to load subject data');
+        setLoading(false);
+      }
+    };
+    
+    fetchSubjects();
+    
+    // Fetch weekly holidays
+    fetchWeeklyHolidays();
+  }, []);
   
   // Fetch timetable data when staff and week are selected
   useEffect(() => {
     if (selectedStaff && selectedWeek) {
+      // First ensure we have holiday data applied before fetching timetable
+      if (holidays.length > 0) {
+        updateScheduleWithHolidays();
+      }
+      // Then fetch timetable data
       fetchTimetable();
+      
+      // For non-admin users, the staff name should already be set from localStorage
     }
-  }, [selectedStaff, selectedWeek]);
+  }, [selectedStaff, selectedWeek, staffMembers, isAdmin]);
   
   // Function to fetch timetable data
   const fetchTimetable = async () => {
@@ -293,12 +574,32 @@ const TeacherTimetable: React.FC = () => {
     setLoading(true);
     setError(null); // Clear any previous errors
     const weekStartDate = getWeekDates(selectedWeek)[0].toISOString().split('T')[0]; // Get Monday's date in YYYY-MM-DD format
+    const currentWeekDates = getWeekDates(selectedWeek);
     
-    // Create an empty schedule regardless of API response
-    const emptySchedule = days.map(day => ({
-      ...day,
-      slots: Array(timeSlots.length).fill(null),
-    }));
+    // Create an empty schedule with holiday information preserved
+    const emptySchedule = days.map((day, index) => {
+      // Get current date for this day
+      const currentDate = currentWeekDates[index];
+      const dateStr = currentDate.toISOString().split('T')[0];
+      
+      // Check if this date falls within any holiday period
+      const holiday = holidays.find((h: Holiday) => {
+        const fromDate = new Date(h.from_date).toISOString().split('T')[0];
+        const toDate = h.to_date ? new Date(h.to_date).toISOString().split('T')[0] : fromDate;
+        return dateStr >= fromDate && dateStr <= toDate;
+      });
+      
+      // Preserve holiday information if found
+      const isHolidayDay = !!holiday;
+      const holidayInfo = holiday ? { title: holiday.title, description: holiday.description } : undefined;
+      
+      return {
+        ...day,
+        slots: Array(timeSlots.length).fill(null),
+        isHoliday: isHolidayDay || day.isHoliday,
+        holidayInfo: holidayInfo
+      };
+    });
     
     try {
       // Try to fetch the timetable data, but don't let a 404 cause an error
@@ -361,8 +662,19 @@ const TeacherTimetable: React.FC = () => {
         setTimetableId(null);
       }
       
-      // Always set the schedule, whether we found a timetable or not
-      setSchedule(emptySchedule);
+      // Set the schedule but ensure we preserve holiday information
+      setSchedule(prevSchedule => {
+        // Map through the emptySchedule but keep any existing holiday information
+        return emptySchedule.map((newDay, index) => {
+          const currentDay = prevSchedule[index];
+          return {
+            ...newDay,
+            // Preserve holiday information from current schedule
+            isHoliday: currentDay?.isHoliday || newDay.isHoliday,
+            holidayInfo: currentDay?.holidayInfo || newDay.holidayInfo
+          };
+        });
+      });
       
       setLoading(false);
     } catch (err) {
@@ -370,11 +682,19 @@ const TeacherTimetable: React.FC = () => {
       setError('Failed to load timetable data');
       setLoading(false);
       
-      // Reset the schedule with empty slots on error
-      setSchedule(days.map(day => ({
-        ...day,
-        slots: Array(timeSlots.length).fill(null),
-      })));
+      // Reset the schedule with empty slots on error but preserve holiday information
+      setSchedule(prevSchedule => {
+        return days.map((day, index) => {
+          const currentDay = prevSchedule[index];
+          return {
+            ...day,
+            slots: Array(timeSlots.length).fill(null),
+            // Preserve holiday information from current schedule
+            isHoliday: currentDay?.isHoliday || day.isHoliday,
+            holidayInfo: currentDay?.holidayInfo || undefined
+          };
+        });
+      });
     }
   };
   
@@ -548,6 +868,52 @@ const TeacherTimetable: React.FC = () => {
     setIsEditDialogOpen(false);
   };
   
+  // Effect to update schedule with holidays when week changes or holidays are loaded
+  useEffect(() => {
+    if (holidays.length > 0) {
+      // Apply holiday information to the schedule
+      updateScheduleWithHolidays();
+      
+      // We don't call fetchTimetable here anymore to avoid race conditions
+      // It will be called separately after this effect completes
+    }
+  }, [selectedWeek, holidays]);
+  
+  // Function to update the schedule with holiday information without fetching timetable
+  const updateScheduleWithHolidays = () => {
+    // Get current week dates
+    const currentWeekDates = getWeekDates(selectedWeek);
+    
+    setSchedule(prevSchedule => {
+      const updatedSchedule = [...prevSchedule];
+      
+      // Check each day in the schedule against holiday dates
+      updatedSchedule.forEach((day, index) => {
+        const currentDate = currentWeekDates[index];
+        const dateStr = currentDate.toISOString().split('T')[0];
+        
+        // Check if this date falls within any holiday period
+        const holiday = holidays.find((h: Holiday) => {
+          const fromDate = new Date(h.from_date).toISOString().split('T')[0];
+          const toDate = h.to_date ? new Date(h.to_date).toISOString().split('T')[0] : fromDate;
+          return dateStr >= fromDate && dateStr <= toDate;
+        });
+        
+        if (holiday) {
+          // Mark this day as a holiday with the holiday info
+          day.isHoliday = true;
+          day.holidayInfo = {
+            title: holiday.title,
+            description: holiday.description
+          };
+          console.log(`Marking ${day.day} (${dateStr}) as holiday: ${holiday.title}`);
+        }
+      });
+      
+      return updatedSchedule;
+    });
+  };
+  
   // Update days array to include dates
   const daysWithDates = days.map((day, index) => ({
     ...day,
@@ -573,20 +939,24 @@ const TeacherTimetable: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label htmlFor="staff" className="block text-sm font-medium text-gray-700 mb-1">
-            Select Staff
+            {isAdmin ? 'Select Staff' : 'Staff'}
           </label>
-          <Select value={selectedStaff} onValueChange={setSelectedStaff}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a staff member" />
-            </SelectTrigger>
-            <SelectContent>
-              {staffMembers.map(staff => (
-                <SelectItem key={staff.id} value={staff.id}>
-                  {staff.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {isAdmin ? (
+            <Select value={selectedStaff} onValueChange={setSelectedStaff}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a staff member" />
+              </SelectTrigger>
+              <SelectContent>
+                {staffMembers.map(staff => (
+                  <SelectItem key={staff.id} value={staff.id}>
+                    {staff.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="w-full p-2 border rounded-md bg-gray-50">{staffName}</div>
+          )}
         </div>
         
         <div>
@@ -631,64 +1001,120 @@ const TeacherTimetable: React.FC = () => {
       
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
-          {/* Timetable header */}
-          <div className="grid grid-cols-[150px_repeat(7,1fr)] gap-2 mb-2">
-            <div className="p-2 font-bold">Time Slot</div>
+          {/* Force equal width columns with fixed sizes */}
+          <div className="grid grid-cols-[repeat(7,minmax(120px,1fr))] gap-2 mb-2 table-fixed">
             {daysWithDates.map(day => (
-              <div key={day.id} className="p-2 font-bold text-center">
-                {day.day}
-                <div className="text-xs font-normal">{day.date}</div>
+              <div key={day.id} className="p-2 font-bold text-center w-full overflow-hidden">
+                <div className="truncate">{day.day}</div>
+                <div className="text-xs font-normal truncate">{day.date}</div>
               </div>
             ))}
           </div>
           
           {/* Timetable body */}
-          <div className="grid grid-cols-[150px_repeat(7,1fr)] gap-2">
+          <div className="grid grid-cols-[repeat(7,minmax(120px,1fr))] gap-2 table-fixed">
             {timeSlots.map((slot, slotIndex) => (
               <React.Fragment key={slot.id}>
-                <div className="p-2 flex items-center">{slot.time}</div>
                 {days.map(day => {
                   const dayObj = schedule.find(d => d.id === day.id);
                   const subjectId = dayObj ? dayObj.slots[slotIndex] : null;
-                  // Add debugging to help track subject data
-                  console.log(`Rendering day=${day.id} slot=${slotIndex} subjectId=${subjectId}`);
                   // Ensure consistent type comparison (convert to string if needed)
                   const subject = subjectId ? subjects.find(s => s.id === subjectId.toString()) : null;
-                  if (subjectId && !subject) {
-                    console.log(`Subject with ID ${subjectId} not found in subjects list:`, subjects);
+                  
+                  // Get the current date for this day of the week
+                  const currentDate = weekDates[days.findIndex(d => d.id === day.id)];
+                  const dateStr = currentDate.toISOString().split('T')[0];
+                  
+                  // Check directly against the holidays array
+                  let isHoliday = dayObj?.isHoliday || false;
+                  let holidayInfo = dayObj?.holidayInfo;
+                  
+                  // ALWAYS check directly against the holidays array
+                  const matchingHoliday = holidays.find((h) => {
+                    const fromDate = new Date(h.from_date).toISOString().split('T')[0];
+                    const toDate = h.to_date ? new Date(h.to_date).toISOString().split('T')[0] : fromDate;
+                    return dateStr >= fromDate && dateStr <= toDate;
+                  });
+                  
+                  // If we found a holiday, override the schedule settings
+                  if (matchingHoliday) {
+                    isHoliday = true;
+                    holidayInfo = {
+                      title: matchingHoliday.title,
+                      description: matchingHoliday.description
+                    };
                   }
                   
-                  if (slot.isBreak || day.isHoliday) {
+                  // Also check if the day is marked as a weekly holiday in our days array
+                  const dayData = days.find(d => d.id === day.id);
+                  if (dayData && dayData.isHoliday) {
+                    isHoliday = true;
+                    if (!holidayInfo) {
+                      holidayInfo = {
+                        title: 'Weekly Holiday',
+                        description: `${dayData.day} Off`
+                      };
+                    }
+                  }
+                  
+                  if (slot.isBreak) {
+                    // Render break slot
                     return (
                       <BreakSlot key={`${day.id}-${slot.id}`}>
-                        {slot.isBreak ? 'Break' : 'Holiday'}
+                        Lunch Break
                       </BreakSlot>
                     );
-                  }
-                  
-                  return (
-                    <TimeSlotComponent
-                      key={`${day.id}-${slot.id}`}
-                      day={day}
-                      slot={slot}
-                      index={slotIndex}
-                      onViewClick={handleViewClick}
-                      onEditClick={handleEditClick}
-                    >
-                      {subject ? (
-                        <div>
-                          <div className="font-medium">{subject.name}</div>
-                          <div className="text-xs text-gray-500">
-                            {/* You could display more details here if needed */}
-                          </div>
+                  } else if (isHoliday) {
+                    // Render holiday slot
+                    return (
+                      <TimeSlotComponent 
+                        key={`${day.id}-${slot.id}`}
+                        day={{ 
+                          id: day.id, 
+                          isHoliday: true, 
+                          holidayInfo 
+                        }} 
+                        slot={slot} 
+                        index={slotIndex}
+                        onViewClick={handleViewClick}
+                        onEditClick={handleEditClick}
+                      >
+                        <div className="flex flex-col items-center w-full overflow-hidden">
+                          <span className="text-red-600 font-medium truncate w-full text-center">{holidayInfo ? 'Holiday' : 'Weekly Holiday'}</span>
+                          <span className="text-xs tex  t-gray-600 font-semibold truncate w-full text-center">{holidayInfo ? holidayInfo.title : `${day.day} Off`}</span>
+                         
                         </div>
-                      ) : (
-                        <span className="text-gray-400">
-                          {slot.time}
-                        </span>
-                      )}
-                    </TimeSlotComponent>
-                  );
+                      </TimeSlotComponent>
+                    );
+                  } else {
+                    // Render regular slot
+                    return (
+                      <TimeSlotComponent 
+                        key={`${day.id}-${slot.id}`}
+                        day={{ 
+                          id: day.id,
+                          isHoliday: false
+                        }} 
+                        slot={slot} 
+                        index={slotIndex}
+                        onViewClick={handleViewClick}
+                        onEditClick={handleEditClick}
+                      >
+                        {subject ? (
+                          <div>
+                            <div className="font-medium">{subject.name}</div>
+                            <div className="text-xs text-gray-500">
+                              {/* You could display more details here if needed */}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">
+                            {slot.time}
+                          </span>
+                        )}
+                      </TimeSlotComponent>
+                    );
+                  }
                 })}
               </React.Fragment>
             ))}
