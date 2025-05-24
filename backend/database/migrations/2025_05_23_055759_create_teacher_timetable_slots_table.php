@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('slot_id')->comment('Identifier for the time slot: 10, 11, etc.');
             $table->boolean('is_break')->default(false)->comment('Whether this is a break slot');
             $table->foreignId('subject_id')->nullable()->constrained('subjects')->nullOnDelete();
-            $table->text('description')->nullable()->comment('Optional description or notes');
+            $table->foreignId('division_id')->nullable()->constrained('divisions')->nullOnDelete()->comment('The division ID for this class');
             $table->timestamps();
             
             // Unique constraint to prevent duplicate slots for the same timetable, day and time slot

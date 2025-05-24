@@ -100,7 +100,7 @@ class TeacherTimetableController extends Controller
                     'slot_id' => $slotData['slot_id'],
                     'is_break' => $slotData['is_break'] ?? false,
                     'subject_id' => $slotData['subject_id'] ?? null,
-                    'description' => $slotData['description'] ?? null,
+                    'division_id' => $slotData['division_id'] ?? null,
                 ]);
             }
 
@@ -193,7 +193,7 @@ class TeacherTimetableController extends Controller
                         'slot_id' => $slotData['slot_id'],
                         'is_break' => $slotData['is_break'] ?? false,
                         'subject_id' => $slotData['subject_id'] ?? null,
-                        'description' => $slotData['description'] ?? null,
+                        'division_id' => $slotData['division_id'] ?? null,
                     ]);
                 }
             }
@@ -277,7 +277,7 @@ class TeacherTimetableController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'subject_id' => 'nullable|exists:subjects,id',
-            'description' => 'nullable|string',
+            'division_id' => 'nullable|exists:divisions,id',
         ]);
 
         if ($validator->fails()) {
@@ -297,8 +297,8 @@ class TeacherTimetableController extends Controller
             $slot->subject_id = $request->subject_id;
         }
 
-        if ($request->has('description')) {
-            $slot->description = $request->description;
+        if ($request->has('division_id')) {
+            $slot->division_id = $request->division_id;
         }
 
         $slot->save();

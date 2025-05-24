@@ -22,7 +22,7 @@ class TeacherTimetableSlot extends Model
         'slot_id',
         'is_break',
         'subject_id',
-        'description',
+        'division_id',
     ];
 
     /**
@@ -48,5 +48,13 @@ class TeacherTimetableSlot extends Model
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);
+    }
+    
+    /**
+     * Get the division associated with the slot.
+     */
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class);
     }
 }

@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { Textarea } from '../ui/textarea';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -50,17 +49,26 @@ type ApiTimetableSlot = {
   slot_id: string;
   is_break: boolean;
   subject_id: string | null;
-  description: string | null;
+  division_id: string | null;
   subject?: {
     id: string;
     subject_name: string;
   };
+  division?: {
+    id: string;
+    division_name: string;
+  };
+};
+
+type SlotData = {
+  subject_id: string | null;
+  division_id: string | null;
 };
 
 type DaySchedule = {
   id: string;
   day: string;
-  slots: (string | null)[];
+  slots: SlotData[];
   isHoliday?: boolean;
   holidayInfo?: {
     title: string;
@@ -101,7 +109,7 @@ const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClic
       )}
       {!isHoliday && (
         <div className="absolute top-1 right-1 flex gap-1">
-                    {window.localStorage.getItem('role') === 'admin' && (
+                    {/* {window.localStorage.getItem('role') === 'admin' && (
 
           <Button 
             variant="ghost" 
@@ -114,8 +122,8 @@ const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClic
           >
             <Eye className="h-4 w-4" />
           </Button>
-           )}
-          {window.localStorage.getItem('role') === 'admin' && (
+           )} */}
+          {window.localStorage.getItem('role') === 'admin' && ( 
             <Button 
               variant="ghost" 
               size="sm" 
@@ -174,6 +182,7 @@ const TeacherTimetable: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [staffMembers, setStaffMembers] = useState<{id: string; name: string}[]>([]);
   const [subjects, setSubjects] = useState<{id: string; name: string}[]>([]);
+  const [divisions, setDivisions] = useState<{id: string; name: string}[]>([]);
   const [timetableId, setTimetableId] = useState<number | null>(null);
   const [holidays, setHolidays] = useState<Array<{id: number; institute_id: number; from_date: string; to_date: string; title: string; description: string}>>([]);
   
@@ -191,9 +200,7 @@ const TeacherTimetable: React.FC = () => {
   // Function to fetch weekly holidays
   const fetchWeeklyHolidays = async () => {
     try {
-      console.log('Fetching weekly holidays...');
       const token = localStorage.getItem('token');
-      console.log('Auth token available:', !!token);
       
       const response = await axios.get(`${API_BASE}/weekly-holidays`, {
         headers: {
@@ -202,12 +209,9 @@ const TeacherTimetable: React.FC = () => {
         }
       });
 
-      console.log('Weekly holidays API response:', response.data);
       
       if (response.data.status) {
         const holidayData = response.data.data.WeeklyHoliday;
-        console.log('Weekly holidays data:', holidayData);
-        console.log('Holiday days from API:', holidayData.holiday_days);
         
         if (holidayData && Array.isArray(holidayData.holiday_days)) {
           // Get holiday days from API
@@ -220,11 +224,9 @@ const TeacherTimetable: React.FC = () => {
           daysCopy.forEach((day: Day) => {
             if (holidayDays.includes(day.dayIndex)) {
               day.isHoliday = true;
-              console.log(`Marking ${day.day} as holiday (dayIndex: ${day.dayIndex})`);
             }
           });
           
-          console.log('Updated days with holidays:', daysCopy);
           
           // Apply the updated days to the schedule
           setSchedule(prevSchedule => {
@@ -235,7 +237,6 @@ const TeacherTimetable: React.FC = () => {
                 isHoliday: updatedDay.isHoliday
               };
             });
-            console.log('Updated schedule:', newSchedule);
             return newSchedule;
           });
           
@@ -252,7 +253,7 @@ const TeacherTimetable: React.FC = () => {
   const [schedule, setSchedule] = useState<DaySchedule[]>(() => 
     days.map((day: Day) => ({
       ...day,
-      slots: Array(timeSlots.length).fill(null),
+      slots: Array(timeSlots.length).fill({subject_id: null, division_id: null}),
     }))
   );
 
@@ -281,7 +282,7 @@ const TeacherTimetable: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [currentSlot, setCurrentSlot] = useState<{dayId: string; slotId: string; index: number} | null>(null);
-  const [slotDetails, setSlotDetails] = useState<{subject: string; description: string}>({ subject: '', description: '' });
+  const [slotDetails, setSlotDetails] = useState<{subject: string; division_id: string}>({ subject: '', division_id: '' });
   
   // Function to get ISO week string for input
   const getWeekValue = (date: Date) => {
@@ -351,33 +352,35 @@ const TeacherTimetable: React.FC = () => {
     fetchStaff();
   }, [API_BASE]);
   
-  // Fetch subjects data from API
+
+  
+  // Fetch divisions data from API
   useEffect(() => {
-    const fetchSubjects = async () => {
+    const fetchDivisions = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_BASE}/all_subjects`, {
+        const response = await axios.get(`${API_BASE}/all_divisions`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           }
         });
         
-        if (response.data && response.data.status && response.data.data && response.data.data.Subject) {
-          setSubjects(response.data.data.Subject.map((subject: any) => ({
-            id: subject.id.toString(),
-            name: subject.subject_name,
+        if (response.data && response.data.status && response.data.data && response.data.data.Division) {
+          setDivisions(response.data.data.Division.map((division: any) => ({
+            id: division.id.toString(),
+            name: division.division || `${division.course_name} - ${division.semester_name} - ${division.room_name}`,
           })));
         }
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching subjects:', err);
-        setError('Failed to load subject data');
+        console.error('Error fetching divisions:', err);
+        setError('Failed to load division data');
         setLoading(false);
       }
     };
     
-    fetchSubjects();
+    fetchDivisions();
   }, [API_BASE]);
   
   // Save selectedStaff to localStorage when it changes
@@ -394,49 +397,6 @@ const TeacherTimetable: React.FC = () => {
     }
   }, [selectedWeek]);
 
-// Fetch subjects data from API
-useEffect(() => {
-  const fetchSubjects = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${API_BASE}/all_subjects`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (response.data && response.data.status && response.data.data && response.data.data.Subject) {
-        setSubjects(response.data.data.Subject.map((subject: any) => ({
-          id: subject.id.toString(),
-          name: subject.subject_name,
-        })));
-      }
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching subjects:', err);
-      setError('Failed to load subject data');
-      setLoading(false);
-    }
-  };
-  
-  fetchSubjects();
-}, [API_BASE]);
-
-// Save selectedStaff to localStorage when it changes
-useEffect(() => {
-  if (selectedStaff) {
-    localStorage.setItem('teacherTimetable_selectedStaff', selectedStaff);
-  }
-}, [selectedStaff]);
-
-// Save selectedWeek to localStorage when it changes
-useEffect(() => {
-  if (selectedWeek) {
-    localStorage.setItem('teacherTimetable_selectedWeek', selectedWeek.toISOString());
-  }
-}, [selectedWeek]);
-
   // Fetch holidays from API
   const fetchHolidays = async () => {
     try {
@@ -450,7 +410,6 @@ useEffect(() => {
       
       if (response.data && response.data.status && response.data.data && response.data.data.Holiday) {
         const holidayData = response.data.data.Holiday;
-        console.log('Fetched holidays:', holidayData);
         
         // Store holidays in state - this will trigger the holiday update effect
         setHolidays(holidayData);
@@ -549,7 +508,7 @@ useEffect(() => {
     
     // Fetch weekly holidays
     fetchWeeklyHolidays();
-  }, []);
+  }, [API_BASE]);
   
   // Fetch timetable data when staff and week are selected
   useEffect(() => {
@@ -594,8 +553,9 @@ useEffect(() => {
       const holidayInfo = holiday ? { title: holiday.title, description: holiday.description } : undefined;
       
       return {
-        ...day,
-        slots: Array(timeSlots.length).fill(null),
+        id: day.id,
+        day: day.day,
+        slots: Array(timeSlots.length).fill({subject_id: null, division_id: null}),
         isHoliday: isHolidayDay || day.isHoliday,
         holidayInfo: holidayInfo
       };
@@ -616,11 +576,9 @@ useEffect(() => {
           }
         });
         
-        console.log('Timetable API response:', response.data); // Log the response for debugging
       } catch (apiError: any) {
         // Handle the specific case of 404 "Timetable not found"
         if (apiError.response && apiError.response.status === 404) {
-          console.log('No timetable found for this week - creating empty schedule');
           setTimetableId(null);
           setSchedule(emptySchedule);
           setLoading(false);
@@ -640,22 +598,21 @@ useEffect(() => {
         
         // Fill in the slots from the API data
         if (timetableData.slots && Array.isArray(timetableData.slots)) {
-          console.log('Slots from API:', timetableData.slots); // Log the slots for debugging
           
           timetableData.slots.forEach(slot => {
             const dayIndex = days.findIndex(d => d.id === slot.day.toLowerCase());
             const slotIndex = timeSlots.findIndex(t => t.id === slot.slot_id);
             
-            console.log(`Processing slot - Day: ${slot.day}, Slot ID: ${slot.slot_id}, Subject ID: ${slot.subject_id}`);
-            console.log(`Day Index: ${dayIndex}, Slot Index: ${slotIndex}`);
             
             if (dayIndex !== -1 && slotIndex !== -1) {
-              emptySchedule[dayIndex].slots[slotIndex] = slot.subject_id;
+              emptySchedule[dayIndex].slots[slotIndex] = {
+                subject_id: slot.subject_id,
+                division_id: slot.division_id
+              };
             }
           });
         }
         
-        console.log('Final schedule after processing:', emptySchedule); // Log the final schedule
       } else {
         // No timetable found for this staff and week
         console.log('No timetable found - creating empty schedule');
@@ -688,7 +645,7 @@ useEffect(() => {
           const currentDay = prevSchedule[index];
           return {
             ...day,
-            slots: Array(timeSlots.length).fill(null),
+            slots: Array(timeSlots.length).fill({subject_id: null, division_id: null}),
             // Preserve holiday information from current schedule
             isHoliday: currentDay?.isHoliday || day.isHoliday,
             holidayInfo: currentDay?.holidayInfo || undefined
@@ -710,10 +667,10 @@ useEffect(() => {
       const weekStartDate = getWeekDates(selectedWeek)[0].toISOString().split('T')[0]; // Get Monday's date in YYYY-MM-DD format
       
       // Prepare slots data
-      const slots: { day: string; time_slot: string; slot_id: string; is_break: boolean; subject_id: string | null; description: string | null }[] = [];
+      const slots: { day: string; time_slot: string; slot_id: string; is_break: boolean; subject_id: string | null; division_id: string | null }[] = [];
       
       schedule.forEach(day => {
-        day.slots.forEach((subjectId, index) => {
+        day.slots.forEach((slotData, index) => {
           const timeSlot = timeSlots[index];
           if (timeSlot) {
             slots.push({
@@ -721,8 +678,8 @@ useEffect(() => {
               time_slot: timeSlot.time,
               slot_id: timeSlot.id,
               is_break: timeSlot.isBreak || false,
-              subject_id: subjectId,
-              description: null // We could extend this to store the description from slotDetails if needed
+              subject_id: slotData.subject_id,
+              division_id: slotData.division_id
             });
           }
         });
@@ -780,11 +737,18 @@ useEffect(() => {
     
     const day = schedule.find(d => d.id === dayId);
     if (day) {
-      const subjectId = day.slots[index] || '';
-      setSlotDetails({ 
-        subject: subjectId, 
-        description: '' // We could fetch this from API if needed
+      const slotData = day.slots[index] || {subject_id: null, division_id: null};
+      
+      // Ensure we get proper display data for the edit dialog
+      // Get the correct values from the schedule
+      const subjectId = slotData.subject_id ? String(slotData.subject_id) : '';
+      const divisionId = slotData.division_id ? String(slotData.division_id) : '';
+      
+      setSlotDetails({
+        subject: subjectId,
+        division_id: divisionId
       });
+      
       setCurrentSlot({ dayId, slotId, index });
       setIsEditDialogOpen(true);
     }
@@ -795,11 +759,18 @@ useEffect(() => {
     
     const day = schedule.find(d => d.id === dayId);
     if (day) {
-      const subjectId = day.slots[index] || '';
-      setSlotDetails({ 
-        subject: subjectId, 
-        description: '' // We could fetch this from API if needed
+      const slotData = day.slots[index] || {subject_id: null, division_id: null};
+      
+      // Ensure we get proper display data for the view dialog
+      // Get the correct values from the schedule
+      const subjectId = slotData.subject_id ? String(slotData.subject_id) : '';
+      const divisionId = slotData.division_id ? String(slotData.division_id) : '';
+      
+      setSlotDetails({
+        subject: subjectId,
+        division_id: divisionId
       });
+      
       setCurrentSlot({ dayId, slotId, index });
       setIsViewDialogOpen(true);
     }
@@ -813,7 +784,10 @@ useEffect(() => {
         const day = newSchedule.find(d => d.id === currentSlot.dayId);
         if (day) {
           const newSlots = [...day.slots];
-          newSlots[currentSlot.index] = slotDetails.subject;
+          newSlots[currentSlot.index] = {
+            subject_id: slotDetails.subject,
+            division_id: slotDetails.division_id
+          };
           day.slots = newSlots;
         }
         return newSchedule;
@@ -843,7 +817,7 @@ useEffect(() => {
               // Update the slot
               await axios.patch(`${API_BASE}/teacher-timetables/${timetableId}/slots/${slotToUpdate.id}`, {
                 subject_id: slotDetails.subject,
-                description: slotDetails.description
+                division_id: slotDetails.division_id
               }, {
                 headers: {
                   'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -906,7 +880,6 @@ useEffect(() => {
             title: holiday.title,
             description: holiday.description
           };
-          console.log(`Marking ${day.day} (${dateStr}) as holiday: ${holiday.title}`);
         }
       });
       
@@ -1017,9 +990,11 @@ useEffect(() => {
               <React.Fragment key={slot.id}>
                 {days.map(day => {
                   const dayObj = schedule.find(d => d.id === day.id);
-                  const subjectId = dayObj ? dayObj.slots[slotIndex] : null;
+                  const slotData = dayObj ? dayObj.slots[slotIndex] : {subject_id: null, division_id: null};
+                  
                   // Ensure consistent type comparison (convert to string if needed)
-                  const subject = subjectId ? subjects.find(s => s.id === subjectId.toString()) : null;
+                  const subject = slotData.subject_id ? subjects.find(s => s.id === String(slotData.subject_id)) : null;
+                  const division = slotData.division_id ? divisions.find(d => d.id === String(slotData.division_id)) : null;
                   
                   // Get the current date for this day of the week
                   const currentDate = weekDates[days.findIndex(d => d.id === day.id)];
@@ -1104,7 +1079,7 @@ useEffect(() => {
                           <div>
                             <div className="font-medium">{subject.name}</div>
                             <div className="text-xs text-gray-500">
-                              {/* You could display more details here if needed */}
+                              {division ? division.name : 'No Division'}
                             </div>
                           </div>
                         ) : (
@@ -1159,19 +1134,31 @@ useEffect(() => {
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="description" className="text-right">
-                Description
+              <label htmlFor="division" className="text-right">
+                Division
               </label>
               <div className="col-span-3">
-                <Textarea
-                  id="description"
-                  placeholder="Add notes or description"
-                  value={slotDetails.description}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSlotDetails({...slotDetails, description: e.target.value})}
-                  className="min-h-[100px]"
-                />
+                <Select
+                  value={slotDetails.division_id}
+                  onValueChange={(value) => setSlotDetails({...slotDetails, division_id: value})}
+                  disabled={isViewDialogOpen}
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder="Select a division">
+                      {slotDetails.division_id && divisions.find(d => d.id === slotDetails.division_id)?.name}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {divisions.map(division => (
+                      <SelectItem key={division.id} value={division.id}>
+                        {division.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
+
           </div>
 
           <DialogFooter>
@@ -1201,15 +1188,17 @@ useEffect(() => {
               <span className="text-right font-medium">Subject:</span>
               <div className="col-span-3">
                 {slotDetails.subject ? 
-                  subjects.find(s => s.id === slotDetails.subject)?.name || 'Not selected' : 
+                  subjects.find(s => s.id === slotDetails.subject)?.name || 'Select a subject' : 
                   'Not selected'}
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-start gap-4">
-              <span className="text-right font-medium">Description:</span>
-              <div className="col-span-3 whitespace-pre-wrap break-words">
-                {slotDetails.description || 'No description provided'}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Division:</span>
+              <div className="col-span-3">
+                {slotDetails.division_id ? 
+                  divisions.find(d => d.id === slotDetails.division_id)?.name || 'Not selected' : 
+                  'Not selected'}
               </div>
             </div>
           </div>
