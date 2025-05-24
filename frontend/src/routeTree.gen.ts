@@ -15,6 +15,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as WeeklyholidayIndexImport } from './routes/weeklyholiday/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
+import { Route as TaskmanagerIndexImport } from './routes/taskmanager/index'
 import { Route as SubjectsIndexImport } from './routes/subjects/index'
 import { Route as SubjecthoursIndexImport } from './routes/subjecthours/index'
 import { Route as StudentsIndexImport } from './routes/students/index'
@@ -95,6 +96,12 @@ const TrustiesIndexRoute = TrustiesIndexImport.update({
 const TeachertimetableIndexRoute = TeachertimetableIndexImport.update({
   id: '/teachertimetable/',
   path: '/teachertimetable/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TaskmanagerIndexRoute = TaskmanagerIndexImport.update({
+  id: '/taskmanager/',
+  path: '/taskmanager/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -655,6 +662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubjectsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/taskmanager/': {
+      id: '/taskmanager/'
+      path: '/taskmanager'
+      fullPath: '/taskmanager'
+      preLoaderRoute: typeof TaskmanagerIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/teachertimetable/': {
       id: '/teachertimetable/'
       path: '/teachertimetable'
@@ -895,6 +909,7 @@ export interface FileRoutesByFullPath {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
@@ -958,6 +973,7 @@ export interface FileRoutesByTo {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
@@ -1022,6 +1038,7 @@ export interface FileRoutesById {
   '/students/': typeof StudentsIndexRoute
   '/subjecthours/': typeof SubjecthoursIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
+  '/taskmanager/': typeof TaskmanagerIndexRoute
   '/teachertimetable/': typeof TeachertimetableIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/weeklyholiday/': typeof WeeklyholidayIndexRoute
@@ -1087,6 +1104,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
     | '/weeklyholiday'
@@ -1149,6 +1167,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
     | '/weeklyholiday'
@@ -1211,6 +1230,7 @@ export interface FileRouteTypes {
     | '/students/'
     | '/subjecthours/'
     | '/subjects/'
+    | '/taskmanager/'
     | '/teachertimetable/'
     | '/trusties/'
     | '/weeklyholiday/'
@@ -1275,6 +1295,7 @@ export interface RootRouteChildren {
   StudentsIndexRoute: typeof StudentsIndexRoute
   SubjecthoursIndexRoute: typeof SubjecthoursIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
+  TaskmanagerIndexRoute: typeof TaskmanagerIndexRoute
   TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   WeeklyholidayIndexRoute: typeof WeeklyholidayIndexRoute
@@ -1338,6 +1359,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentsIndexRoute: StudentsIndexRoute,
   SubjecthoursIndexRoute: SubjecthoursIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
+  TaskmanagerIndexRoute: TaskmanagerIndexRoute,
   TeachertimetableIndexRoute: TeachertimetableIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   WeeklyholidayIndexRoute: WeeklyholidayIndexRoute,
@@ -1410,6 +1432,7 @@ export const routeTree = rootRoute
         "/students/",
         "/subjecthours/",
         "/subjects/",
+        "/taskmanager/",
         "/teachertimetable/",
         "/trusties/",
         "/weeklyholiday/",
@@ -1533,6 +1556,9 @@ export const routeTree = rootRoute
     },
     "/subjects/": {
       "filePath": "subjects/index.tsx"
+    },
+    "/taskmanager/": {
+      "filePath": "taskmanager/index.tsx"
     },
     "/teachertimetable/": {
       "filePath": "teachertimetable/index.tsx"

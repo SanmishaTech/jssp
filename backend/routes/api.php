@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\SubjectHoursController;
+use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
@@ -136,6 +137,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
+
+   // Task Manager Routes
+   Route::resource('tasks', TaskController::class);
+   Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('tasks.update_status');
 
 
 
