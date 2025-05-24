@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as WeeklyholidayIndexImport } from './routes/weeklyholiday/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
 import { Route as SubjectsIndexImport } from './routes/subjects/index'
@@ -76,6 +77,12 @@ import { Route as CashbookEditIdImport } from './routes/cashbook/edit/$id'
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const WeeklyholidayIndexRoute = WeeklyholidayIndexImport.update({
+  id: '/weeklyholiday/',
+  path: '/weeklyholiday/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -662,6 +669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrustiesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/weeklyholiday/': {
+      id: '/weeklyholiday/'
+      path: '/weeklyholiday'
+      fullPath: '/weeklyholiday'
+      preLoaderRoute: typeof WeeklyholidayIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/cashbook/edit/$id': {
       id: '/cashbook/edit/$id'
       path: '/cashbook/edit/$id'
@@ -883,6 +897,7 @@ export interface FileRoutesByFullPath {
   '/subjects': typeof SubjectsIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/weeklyholiday': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -945,6 +960,7 @@ export interface FileRoutesByTo {
   '/subjects': typeof SubjectsIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/weeklyholiday': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -1008,6 +1024,7 @@ export interface FileRoutesById {
   '/subjects/': typeof SubjectsIndexRoute
   '/teachertimetable/': typeof TeachertimetableIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
+  '/weeklyholiday/': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
   '/complaints/edit/$id': typeof ComplaintsEditIdRoute
@@ -1072,6 +1089,7 @@ export interface FileRouteTypes {
     | '/subjects'
     | '/teachertimetable'
     | '/trusties'
+    | '/weeklyholiday'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -1133,6 +1151,7 @@ export interface FileRouteTypes {
     | '/subjects'
     | '/teachertimetable'
     | '/trusties'
+    | '/weeklyholiday'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -1194,6 +1213,7 @@ export interface FileRouteTypes {
     | '/subjects/'
     | '/teachertimetable/'
     | '/trusties/'
+    | '/weeklyholiday/'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
     | '/complaints/edit/$id'
@@ -1257,6 +1277,7 @@ export interface RootRouteChildren {
   SubjectsIndexRoute: typeof SubjectsIndexRoute
   TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
+  WeeklyholidayIndexRoute: typeof WeeklyholidayIndexRoute
   CashbookEditIdRoute: typeof CashbookEditIdRoute
   CommitteeEditIdRoute: typeof CommitteeEditIdRoute
   ComplaintsEditIdRoute: typeof ComplaintsEditIdRoute
@@ -1319,6 +1340,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubjectsIndexRoute: SubjectsIndexRoute,
   TeachertimetableIndexRoute: TeachertimetableIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
+  WeeklyholidayIndexRoute: WeeklyholidayIndexRoute,
   CashbookEditIdRoute: CashbookEditIdRoute,
   CommitteeEditIdRoute: CommitteeEditIdRoute,
   ComplaintsEditIdRoute: ComplaintsEditIdRoute,
@@ -1390,6 +1412,7 @@ export const routeTree = rootRoute
         "/subjects/",
         "/teachertimetable/",
         "/trusties/",
+        "/weeklyholiday/",
         "/cashbook/edit/$id",
         "/committee/edit/$id",
         "/complaints/edit/$id",
@@ -1516,6 +1539,9 @@ export const routeTree = rootRoute
     },
     "/trusties/": {
       "filePath": "trusties/index.tsx"
+    },
+    "/weeklyholiday/": {
+      "filePath": "weeklyholiday/index.tsx"
     },
     "/cashbook/edit/$id": {
       "filePath": "cashbook/edit/$id.tsx"

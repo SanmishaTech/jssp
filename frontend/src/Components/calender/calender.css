@@ -22,7 +22,7 @@
 /* Override react-calendar default styles */
 .react-calendar {
   width: 100% !important;
-  height: 100% !important;
+  height: 800px !important;
   border: none !important;
   background: white !important;
   font-family: 'Roboto', sans-serif !important;
@@ -50,7 +50,7 @@
 }
 
 .react-calendar__month-view__days {
-  flex: 1 !important;
+  min-height: 700px !important;
 }
 
 .react-calendar__navigation {
@@ -131,11 +131,20 @@
   justify-content: center;
 }
 
+.react-calendar__tile abbr {
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  z-index: 1 !important;
+}
+
 .event-indicator {
-  position: absolute;
-  top: 36px;
-  left: 8px;
-  right: 8px;
+  position: absolute !important;
+  top: 32px !important;
+  left: 8px !important;
+  right: 8px !important;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -167,6 +176,58 @@
   cursor: pointer;
 }
 
+.weekly-holiday-title {
+  font-size: 11px;
+  padding: 2px 6px;
+  margin: 1px 0;
+  border-radius: 3px;
+  background-color: #e53935;
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.holiday-title {
+  font-size: 11px;
+  padding: 2px 6px;
+  margin: 1px 0;
+  border-radius: 3px;
+  background-color: #e53935;
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.has-holiday {
+  background-color: #ffebee !important;
+}
+
+.holiday-indicator {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  background: linear-gradient(145deg, #e53935, #c62828);
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3), 
+              -1px -1px 2px rgba(255,255,255,0.2);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  z-index: 2;
+}
+
 .more-events {
   background-color: #dadce0;
   color: #3c4043;
@@ -187,8 +248,24 @@
   background-color: #e8eaf6 !important;
 }
 
+.has-weekly-holiday {
+  background-color: #ef9a9a !important;
+}
+
 .has-event-and-meeting {
   background: linear-gradient(135deg, #ffebee 50%, #e8eaf6 50%) !important;
+}
+
+.holiday-tile {
+  border: 2px solid #ff9e9e !important;
+  background: white !important;
+}
+
+.holiday-indicator {
+  display: inline-block !important;
+  margin-left: 4px !important;
+  color: #fff !important;
+  font-size: 12px !important;
 }
 
 .selected-date-events {
@@ -272,9 +349,32 @@
   border-left: 4px solid #7986cb;
 }
 
+.event-details.weekly-holiday-details {
+  border-left: 4px solid #e53935;
+}
+
 .react-calendar__month-view__days__day--neighboringMonth {
   color: #bababa !important;
   background-color: #fafafa !important;
+}
+
+.holiday-section {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #ffebee;
+  border-radius: 8px;
+}
+
+.holiday-section h4 {
+  color: #c62828;
+  margin-bottom: 0.5rem;
+}
+
+.holiday-section .event-description {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -306,4 +406,4 @@
   .react-calendar__month-view__days__day {
     min-height: 70px !important;
   }
-} 
+}

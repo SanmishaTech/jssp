@@ -177,7 +177,7 @@ export default function Dashboardholiday() {
           { label: "Title", key: "one" },
           { label: "Description", key: "two" },
           { label: "From Date", key: "three" },
-          { label: "To Date", key: "three" },
+          { label: "To Date", key: "four" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -269,6 +269,7 @@ export default function Dashboardholiday() {
     one: item.title || "Unknown",
     two: item.description || "NA",
     three: item.from_date || "NA",
+    four: item.to_date || "NA",
     delete: "/holiday/" + item.id,
   }));
 

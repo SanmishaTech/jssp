@@ -116,9 +116,20 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: BookText,
     },
     {
-      title: "Holiday",
-      url: "/holiday",
-      icon: BookText,
+      title: "Holidays",
+      icon: Calendar,
+      children: [
+        {
+          title: "Regular Holidays",
+          url: "/holiday",
+          icon: BookText,
+        },
+        {
+          title: "Weekly Holidays",
+          url: "/weeklyholiday",
+          icon: BookText,
+        }
+      ]
     },
     {
       title: "Staff",

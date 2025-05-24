@@ -65,6 +65,14 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
   
    Route::resource('holiday', HolidayController::class);
    Route::get('/all_holiday', [HolidayController::class, 'allHoliday'])->name("holidays.all");
+   
+   // Weekly holiday routes
+   Route::get('/weekly-holidays', [HolidayController::class, 'weeklyHolidays'])->name('weekly.holidays');
+   Route::post('/weekly-holidays', [HolidayController::class, 'updateWeeklyHolidays'])->name('weekly.holidays.update');
+   Route::put('/weekly-holidays/toggle', [HolidayController::class, 'toggleWeeklyHoliday'])->name('weekly.holidays.toggle');
+   
+   // Get combined calendar holidays (regular + weekly)
+   Route::get('/calendar-holidays', [HolidayController::class, 'calendarHolidays'])->name('calendar.holidays');
 
    Route::resource('semesters', SemesterController::class);
    Route::get('/all_semesters', [SemesterController::class, 'allSemesters'])->name("semesters.all");

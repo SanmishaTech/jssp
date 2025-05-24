@@ -153,7 +153,11 @@ export default function AddCourseDialog({
                           <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Description..." {...field} />
+                          <Input 
+                            placeholder="Description..." 
+                            maxLength={30}
+                            {...field} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

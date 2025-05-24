@@ -168,22 +168,26 @@ export default function EditCourseDialog({
                                        </FormItem>
                                      )}
                                    />
-                                   <FormField
-                                     control={form.control}
-                                     name="description"
-                                     render={({ field }: FormFieldProps) => (
-                                       <FormItem>
-                                         <FormLabel>
-                                           Description
-                                           <span className="text-red-500">*</span>
-                                         </FormLabel>
-                                         <FormControl>
-                                           <Input placeholder="Description..." {...field} />
-                                         </FormControl>
-                                         <FormMessage />
-                                       </FormItem>
-                                     )}
-                                   />
+                                    <FormField
+                                                      control={form.control}
+                                                      name="description"
+                                                      render={({ field }: FormFieldProps) => (
+                                                        <FormItem>
+                                                          <FormLabel>
+                                                            Description
+                                                            <span className="text-red-500">*</span>
+                                                          </FormLabel>
+                                                          <FormControl>
+                                                            <Input 
+                                                              placeholder="Description..." 
+                                                              maxLength={30}
+                                                              {...field} 
+                                                            />
+                                                          </FormControl>
+                                                          <FormMessage />
+                                                        </FormItem>
+                                                      )}
+                                                    />
                                      <FormField
                                        control={form.control}
                                        name="from_date"
