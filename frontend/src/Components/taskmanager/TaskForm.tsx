@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Save, X } from 'lucide-react';
 
+// Shadcn UI components
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Separator } from '../ui/separator';
+
 interface Task {
   title: string;
   description: string;
@@ -98,127 +106,154 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-          Title <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Enter task title"
-          className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent ${errors.title ? 'border-red-500' : 'border-gray-300'}`}
-        />
-        {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
-      </div>
-      
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Enter task description"
-          rows={4}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-        />
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <div>
-          <label htmlFor="due_date" className="block text-sm font-medium text-gray-700 mb-1">
-            Due Date
-          </label>
-          <input
-            type="date"
-            id="due_date"
-            name="due_date"
-            value={formData.due_date}
+          <Label htmlFor="title" className="text-sm font-medium">
+            Title <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="title"
+            name="title"
+            value={formData.title}
             onChange={handleChange}
-            className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent ${errors.due_date ? 'border-red-500' : 'border-gray-300'}`}
+            placeholder="Enter task title"
+            className={errors.title ? "border-destructive" : ""}
           />
-          {errors.due_date && <p className="text-red-500 text-xs mt-1">{errors.due_date}</p>}
+          {errors.title && <p className="text-destructive text-xs mt-1">{errors.title}</p>}
         </div>
         
         <div>
-          <label htmlFor="assigned_to" className="block text-sm font-medium text-gray-700 mb-1">
-            Assign To
-          </label>
-          <select
-            id="assigned_to"
-            name="assigned_to"
-            value={formData.assigned_to || ''}
+          <Label htmlFor="description" className="text-sm font-medium">
+            Description
+          </Label>
+          <Textarea
+            id="description"
+            name="description"
+            value={formData.description}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          >
-            <option value="">Select a staff member</option>
-            {staffMembers.map((staff) => (
-              <option key={staff.id} value={staff.id}>
-                {staff.name}
-              </option>
-            ))}
-          </select>
+            placeholder="Enter task description"
+            rows={4}
+          />
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
-          </label>
-          <select
-            id="priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="due_date">Due Date</Label>
+            <Input
+              id="due_date"
+              type="date"
+              value={formData.due_date}
+              onChange={handleChange}
+              className={errors.due_date ? "border-destructive" : ""}
+            />
+            {errors.due_date && <p className="text-destructive text-xs mt-1">{errors.due_date}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="assigned_to">Assign To</Label>
+            <Select 
+              name="assigned_to" 
+              value={formData.assigned_to?.toString() || 'none'} 
+              onValueChange={(value: string) => {
+                const e = { 
+                  target: { 
+                    name: 'assigned_to', 
+                    value: value === 'none' ? '' : value 
+                  } 
+                } as React.ChangeEvent<HTMLSelectElement>;
+                handleChange(e);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a staff member" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Select a staff member</SelectItem>
+                {staffMembers.map((staff) => (
+                  <SelectItem key={staff.id} value={staff.id.toString()}>
+                    {staff.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="priority">Priority</Label>
+            <Select 
+              name="priority" 
+              value={formData.priority} 
+              onValueChange={(value: string) => {
+                const e = { 
+                  target: { 
+                    name: 'priority', 
+                    value: value 
+                  } 
+                } as React.ChangeEvent<HTMLSelectElement>;
+                handleChange(e);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
         {isEditing && (
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="status" className="text-sm font-medium">
               Status
-            </label>
-            <select
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            </Label>
+            <Select 
+              name="status" 
+              value={formData.status} 
+              onValueChange={(value: string) => {
+                const e = { 
+                  target: { 
+                    name: 'status', 
+                    value: value 
+                  } 
+                } as React.ChangeEvent<HTMLSelectElement>;
+                handleChange(e);
+              }}
             >
-              <option value="pending">Pending</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         )}
       </div>
       
-      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-        <button
+      <Separator className="my-4" />
+      
+      <div className="flex justify-end space-x-3">
+        <Button
           type="button"
+          variant="outline"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none flex items-center"
+          className="gap-2"
         >
-          <X className="mr-2" /> Cancel
-        </button>
-        <button
+          <X className="h-4 w-4" /> Cancel
+        </Button>
+        <Button
           type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none flex items-center"
+          className="gap-2"
         >
-          <Save className="mr-2" /> {isEditing ? 'Update' : 'Create'} Task
-        </button>
+          <Save className="h-4 w-4" /> {isEditing ? 'Update' : 'Create'} Task
+        </Button>
       </div>
     </form>
   );

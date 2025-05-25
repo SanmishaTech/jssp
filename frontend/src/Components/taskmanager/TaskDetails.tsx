@@ -1,6 +1,12 @@
 import React from 'react';
 import { PencilLine, Trash2, X, CalendarDays, User, CheckCircle, HourglassIcon, Square } from 'lucide-react';
 
+// Shadcn UI components
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
+
 interface Task {
   id: number;
   title: string;
@@ -79,130 +85,129 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">{task.title}</h2>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
-          aria-label="Close"
-        >
-          <X size={20} />
-        </button>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold">{task.title}</h2>
+       
       </div>
 
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2 mb-4">
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
           <StatusBadge status={task.status} />
           <PriorityBadge priority={task.priority} />
           {isOverdue(task.due_date, task.status) && (
-            <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-              Overdue
-            </span>
+            <Badge variant="destructive">Overdue</Badge>
           )}
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Description</h3>
-          <p className="text-gray-800 whitespace-pre-line">
-            {formatDescription(task.description)}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <div className="flex items-center mb-2">
-              <CalendarDays className="text-gray-500 mr-2" size={16} />
-              <span className="text-sm font-medium text-gray-500">Due Date</span>
+        <Card className="bg-muted/50">
+          <CardContent className="pt-6">
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">Description</h3>
+            <div className="text-sm whitespace-pre-line">
+              {formatDescription(task.description)}
             </div>
-            <p className={`text-sm ${isOverdue(task.due_date, task.status) ? 'text-red-600 font-medium' : 'text-gray-800'}`}>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <div className="flex items-center mb-1 text-muted-foreground">
+              <CalendarDays className="mr-2" size={16} />
+              <span className="text-sm font-medium">Due Date</span>
+            </div>
+            <p className={`text-sm ${isOverdue(task.due_date, task.status) ? 'text-destructive font-medium' : ''}`}>
               {formatDate(task.due_date)}
             </p>
           </div>
-
           <div>
-            <div className="flex items-center mb-2">
-              <User className="text-gray-500 mr-2" size={16} />
-              <span className="text-sm font-medium text-gray-500">Assigned To</span>
+            <div className="flex items-center mb-1 text-muted-foreground">
+              <User className="mr-2" size={16} />
+              <span className="text-sm font-medium">Created By</span>
             </div>
-            <p className="text-sm text-gray-800">
-              {task.assignee ? task.assignee.name : 'Unassigned'}
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <div className="flex items-center mb-2">
-              <User className="text-gray-500 mr-2" size={16} />
-              <span className="text-sm font-medium text-gray-500">Created By</span>
-            </div>
-            <p className="text-sm text-gray-800">
+            <p className="text-sm">
               {task.creator ? task.creator.name : 'Unknown'}
             </p>
           </div>
-
           <div>
-            <div className="flex items-center mb-2">
-              <CalendarDays className="text-gray-500 mr-2" size={16} />
-              <span className="text-sm font-medium text-gray-500">Created At</span>
+            <div className="flex items-center mb-1 text-muted-foreground">
+              <CalendarDays className="mr-2" size={16} />
+              <span className="text-sm font-medium">Created At</span>
             </div>
-            <p className="text-sm text-gray-800">
+            <p className="text-sm">
               {formatDate(task.created_at)}
             </p>
           </div>
+
+
         </div>
+
+         
+
+        
+         
       </div>
 
-      <div className="flex flex-wrap justify-between items-center pt-4 border-t border-gray-200">
-        <div className="space-x-2 mb-2 md:mb-0">
-          <button
+      <Separator className="my-4" />
+
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex flex-wrap gap-2">
+          <Button
             onClick={() => onStatusChange(task.id, 'pending')}
-            className={`px-3 py-1 text-xs font-medium rounded ${task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 cursor-default' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+            variant="outline"
+            size="sm"
             disabled={task.status === 'pending'}
+            className={task.status === 'pending' ? 'bg-yellow-300 border-yellow-200 text-black' : ''}
           >
             Pending
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => onStatusChange(task.id, 'in_progress')}
-            className={`px-3 py-1 text-xs font-medium rounded ${task.status === 'in_progress' ? 'bg-blue-100 text-blue-800 cursor-default' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+            variant="outline"
+            size="sm"
             disabled={task.status === 'in_progress'}
+            className={task.status === 'in_progress' ? 'bg-blue-400 border-blue-200 text-black' : ''}
           >
-            <HourglassIcon className="inline-block mr-1" size={12} />
+            <HourglassIcon className="mr-1 h-3 w-3" />
             In Progress
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => onStatusChange(task.id, 'completed')}
-            className={`px-3 py-1 text-xs font-medium rounded ${task.status === 'completed' ? 'bg-green-100 text-green-800 cursor-default' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+            variant="outline"
+            size="sm"
             disabled={task.status === 'completed'}
+            className={task.status === 'completed' ? 'bg-green-50 border-green-200 text-green-700' : ''}
           >
-            <CheckCircle className="inline-block mr-1" size={12} />
+            <CheckCircle className="mr-1 h-3 w-3" />
             Completed
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => onStatusChange(task.id, 'cancelled')}
-            className={`px-3 py-1 text-xs font-medium rounded ${task.status === 'cancelled' ? 'bg-red-100 text-red-800 cursor-default' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+            variant="outline"
+            size="sm"
             disabled={task.status === 'cancelled'}
+            className={task.status === 'cancelled' ? 'bg-red-50 border-red-200 text-red-700' : ''}
           >
-            <Square className="inline-block mr-1" size={12} />
+            <Square className="mr-1 h-3 w-3" />
             Cancelled
-          </button>
+          </Button>
         </div>
 
-        <div className="space-x-2">
-          <button
+        {/* <div className="flex items-center space-x-2">
+          <Button
             onClick={onEdit}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center"
+            variant="outline"
+            className="gap-1"
           >
-            <PencilLine className="mr-2" /> Edit
-          </button>
-          <button
+            <PencilLine className="h-4 w-4" /> Edit
+          </Button>
+          <Button
             onClick={onDelete}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+            variant="destructive"
+            className="gap-1"
           >
-            <Trash2 className="mr-2" /> Delete
-          </button>
-        </div>
+            <Trash2 className="h-4 w-4" /> Delete
+          </Button>
+        </div> */}
       </div>
     </div>
   );

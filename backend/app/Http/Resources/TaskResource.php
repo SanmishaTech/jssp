@@ -25,17 +25,19 @@ class TaskResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'assigned_to' => $this->assigned_to,
+            'assigned_to_name' => $this->assignedTo && $this->assignedTo->user ? $this->assignedTo->user->name : null,
             'created_by' => $this->created_by,
+            'creator_name' => $this->creator && $this->creator->user ? $this->creator->user->name : null,
             'assignee' => $this->whenLoaded('assignedTo', function() {
                 return [
                     'id' => $this->assignedTo->id,
-                    'name' => $this->assignedTo->name,
+                    'name' => $this->assignedTo->user ? $this->assignedTo->user->name : null,
                 ];
             }),
             'creator' => $this->whenLoaded('creator', function() {
                 return [
                     'id' => $this->creator->id,
-                    'name' => $this->creator->name,
+                    'name' => $this->creator->user ? $this->creator->user->name : null,
                 ];
             }),
         ];

@@ -20,8 +20,17 @@ class TaskController extends BaseController
         // Get the institute ID from the logged-in user's staff details
         $instituteId = Auth::user()->staff->institute_id;
         
+        // Get the current user's staff ID
+        $staffId = Auth::user()->staff->id;
+        
         // Start the query by filtering tasks based on the institute_id
         $query = Task::where('institute_id', $instituteId);
+        
+        // By default, only show tasks assigned to the logged-in staff member
+        // Unless explicitly requesting all tasks with show_all=true parameter
+        if (!$request->has('show_all') || $request->show_all !== 'true') {
+            $query->where('assigned_to', $staffId);
+        }
         
         // Filter by status if provided
         if ($request->has('status')) {
@@ -52,9 +61,9 @@ class TaskController extends BaseController
             });
         }
         
-        // Get my tasks if requested
-        if ($request->has('my_tasks') && $request->my_tasks) {
-            $query->where('assigned_to', Auth::user()->staff->id);
+        // For backward compatibility - if my_tasks=false is explicitly set, show all tasks
+        if ($request->has('my_tasks') && $request->my_tasks === 'false') {
+            $query = Task::where('institute_id', $instituteId);
         }
         
         // Order by due date or created date
@@ -71,7 +80,7 @@ class TaskController extends BaseController
         }
         
         // Paginate the results
-        $tasks = $query->with(['assignedTo', 'creator'])->paginate(10);
+        $tasks = $query->with(['assignedTo', 'creator.user'])->paginate(10);
         
         return $this->sendResponse(
             [
@@ -132,7 +141,7 @@ class TaskController extends BaseController
      */
     public function show(string $id): JsonResponse
     {
-        $task = Task::with(['assignedTo', 'creator'])->find($id);
+        $task = Task::with(['assignedTo', 'creator.user'])->find($id);
         
         if (!$task) {
             return $this->sendError('Task not found', ['error' => 'Task not found'], 404);
@@ -207,7 +216,7 @@ class TaskController extends BaseController
         $task->save();
         
         // Load relationships
-        $task->load(['assignedTo', 'creator']);
+        $task->load(['assignedTo', 'creator.user']);
         
         return $this->sendResponse(
             ['task' => new TaskResource($task)],
@@ -245,7 +254,7 @@ class TaskController extends BaseController
         $task->save();
         
         // Load relationships
-        $task->load(['assignedTo', 'creator']);
+        $task->load(['assignedTo', 'creator.user']);
         
         return $this->sendResponse(
             ['task' => new TaskResource($task)],

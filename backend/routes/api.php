@@ -98,6 +98,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('committee', CommitteeController::class);
    Route::get('/all_committee', [CommitteeController::class, 'allCommitees'])->name("committees.all");
 
+   Route::resource('tasks', TaskController::class);
+   Route::patch('/tasks/{task}/status', [TaskController::class, 'updateStatus'])->name('tasks.update_status');
+   
    Route::resource('admissions', AdmissionController::class);
    Route::get('/all_admissions', [AdmissionController::class, 'allAdmissions'])->name("admissions.all");
    
@@ -139,8 +142,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
 
    // Task Manager Routes
-   Route::resource('tasks', TaskController::class);
-   Route::put('/tasks/{id}/status', [TaskController::class, 'updateStatus'])->name('tasks.update_status');
+   // Routes already defined above, removing duplicate
 
 
 

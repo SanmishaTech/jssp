@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
-import { Plus, PencilLine, Trash2, Filter, Search, ClipboardList, CheckCircle, Hourglass } from 'lucide-react';
+import { Plus, Search, ClipboardList } from 'lucide-react';
 import TaskForm from './TaskForm';
 import TaskList from './TaskList';
 import TaskDetails from './TaskDetails';
+
+// Shadcn UI components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface Task {
   id: number;
@@ -35,38 +43,55 @@ interface StaffMember {
 const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
+  // We'll display any errors in the UI if they occur
   const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState<boolean>(false);
-  const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterPriority, setFilterPriority] = useState<string>('all');
+  const [isEditing, setIsEditing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterPriority, setFilterPriority] = useState('all');
   const [filterAssignee, setFilterAssignee] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [myTasksOnly, setMyTasksOnly] = useState<boolean>(false);
-  
-  const navigate = useNavigate();
+
+  // Check if user is admin
+  useEffect(() => {
+    const userRole = localStorage.getItem('user_role');
+    setIsAdmin(userRole !== 'admin' );
+  }, []);
 
   // Fetch tasks from API
   const fetchTasks = async () => {
     setLoading(true);
     try {
-      let url = `${process.env.REACT_APP_API_URL}/tasks?page=${currentPage}`;
+      // Using relative API path
+      console.log('Using relative API path');
+      
+      let url = `/api/tasks?page=${currentPage}`;
       
       // Add filters to URL if they exist
       if (searchTerm) url += `&search=${searchTerm}`;
       if (filterStatus !== 'all') url += `&status=${filterStatus}`;
       if (filterPriority !== 'all') url += `&priority=${filterPriority}`;
       if (filterAssignee) url += `&assigned_to=${filterAssignee}`;
-      if (myTasksOnly) url += `&my_tasks=true`;
       
       const response = await axios.get(url);
-      setTasks(response.data.data.tasks);
-      setTotalPages(response.data.data.pagination.last_page);
+      console.log('API Response:', response.data);
+      
+      // Handle the response based on the API structure
+      if (response.data && response.data.data) {
+        setTasks(response.data.data.tasks || []);
+        setTotalPages(response.data.data.pagination?.last_page || 1);
+      } else {
+        console.error('Unexpected API response structure:', response.data);
+        setError('Unexpected API response structure. Please contact support.');
+        setTasks([]);
+        setTotalPages(1);
+      }
       setError(null);
     } catch (err) {
       console.error('Error fetching tasks:', err);
@@ -79,7 +104,7 @@ const TaskManager: React.FC = () => {
   // Fetch staff members for assignment
   const fetchStaffMembers = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/all_staff`);
+      const response = await axios.get('/api/all_staff');
       setStaffMembers(response.data.data.Staff);
     } catch (err) {
       console.error('Error fetching staff members:', err);
@@ -89,12 +114,12 @@ const TaskManager: React.FC = () => {
   useEffect(() => {
     fetchTasks();
     fetchStaffMembers();
-  }, [currentPage, searchTerm, filterStatus, filterPriority, filterAssignee, myTasksOnly]);
+  }, [currentPage, searchTerm, filterStatus, filterPriority, filterAssignee]);
 
   // Create new task
   const handleCreateTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'created_by'>) => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/tasks`, taskData);
+      await axios.post('/api/tasks', taskData);
       setShowForm(false);
       fetchTasks();
     } catch (err) {
@@ -106,7 +131,7 @@ const TaskManager: React.FC = () => {
   // Update existing task
   const handleUpdateTask = async (taskId: number, taskData: Partial<Task>) => {
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`, taskData);
+      await axios.put(`/api/tasks/${taskId}`, taskData);
       setShowForm(false);
       setIsEditing(false);
       fetchTasks();
@@ -119,11 +144,11 @@ const TaskManager: React.FC = () => {
   // Update task status
   const handleStatusUpdate = async (taskId: number, status: string) => {
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/tasks/${taskId}/status`, { status });
+      await axios.patch(`/api/tasks/${taskId}/status`, { status });
       fetchTasks();
       if (currentTask && currentTask.id === taskId) {
         // If details are open, refresh the current task
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`);
+        const response = await axios.get(`/api/tasks/${taskId}`);
         setCurrentTask(response.data.data.task);
       }
     } catch (err) {
@@ -136,7 +161,7 @@ const TaskManager: React.FC = () => {
   const handleDeleteTask = async (taskId: number) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`);
+        await axios.delete(`/api/tasks/${taskId}`);
         fetchTasks();
         if (showDetails && currentTask && currentTask.id === taskId) {
           setShowDetails(false);
@@ -152,7 +177,7 @@ const TaskManager: React.FC = () => {
   // View task details
   const handleViewTask = async (taskId: number) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`);
+      const response = await axios.get(`/api/tasks/${taskId}`);
       setCurrentTask(response.data.data.task);
       setShowDetails(true);
     } catch (err) {
@@ -188,197 +213,190 @@ const TaskManager: React.FC = () => {
     setFilterStatus('all');
     setFilterPriority('all');
     setFilterAssignee(null);
-    setMyTasksOnly(false);
     setCurrentPage(1);
   };
 
   // Status badge component
-  const StatusBadge = ({ status }: { status: string }) => {
-    let bgColor = '';
-    let textColor = 'text-white';
+  const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+    let variant = '';
+    let label = '';
     
     switch (status) {
       case 'pending':
-        bgColor = 'bg-yellow-500';
+        variant = 'warning';
+        label = 'Pending';
         break;
       case 'in_progress':
-        bgColor = 'bg-blue-500';
+        variant = 'secondary';
+        label = 'In Progress';
         break;
       case 'completed':
-        bgColor = 'bg-green-500';
+        variant = 'success';
+        label = 'Completed';
         break;
       case 'cancelled':
-        bgColor = 'bg-red-500';
+        variant = 'outline';
+        label = 'Cancelled';
         break;
       default:
-        bgColor = 'bg-gray-500';
+        variant = 'default';
+        label = status;
     }
     
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
-        {status.replace('_', ' ')}
-      </span>
+      <Badge variant={variant as "default" | "secondary" | "destructive" | "outline" | "warning" | "success"}>
+        {label}
+      </Badge>
     );
   };
 
   // Priority badge component
-  const PriorityBadge = ({ priority }: { priority: string }) => {
-    let bgColor = '';
-    let textColor = 'text-white';
+  const PriorityBadge: React.FC<{ priority: string }> = ({ priority }) => {
+    let variant = '';
+    let label = '';
     
     switch (priority) {
       case 'low':
-        bgColor = 'bg-green-500';
+        variant = 'success';
+        label = 'Low';
         break;
       case 'medium':
-        bgColor = 'bg-yellow-500';
-        textColor = 'text-gray-800';
+        variant = 'default';
+        label = 'Medium';
         break;
       case 'high':
-        bgColor = 'bg-red-500';
+        variant = 'destructive';
+        label = 'High';
         break;
       default:
-        bgColor = 'bg-gray-500';
+        variant = 'outline';
+        label = priority;
     }
     
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${bgColor} ${textColor}`}>
-        {priority}
-      </span>
+      <Badge variant={variant as "default" | "secondary" | "destructive" | "outline" | "warning" | "success"}>
+        {label}
+      </Badge>
     );
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-          <ClipboardList className="mr-2" /> Task Manager
-        </h1>
-        <button
-          onClick={() => {
-            setShowForm(true);
-            setIsEditing(false);
-            setCurrentTask(null);
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center"
-        >
-          <Plus className="mr-2" /> Add New Task
-        </button>
+    <div className="p-6">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Task Manager</h1>
+          <p className="text-gray-600">Create, assign, and track tasks</p>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            onClick={() => {
+              setShowForm(true);
+              setIsEditing(false);
+              setCurrentTask(null);
+            }}
+            className="gap-1"
+          >
+            <Plus className="h-4 w-4" /> Create Task
+          </Button>
+        </div>
       </div>
 
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      {/* Filters and Search */}
-      <div className="bg-white shadow rounded-lg p-4 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-700 flex items-center">
-            <Filter className="mr-2" /> Filters
-          </h2>
-          <button
-            onClick={resetFilters}
-            className="text-blue-600 hover:text-blue-800"
-          >
-            Reset Filters
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Search Box */}
-          <div>
-            <form onSubmit={handleSearch} className="flex">
-              <input
+      <Card className="mb-6">
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search tasks..."
-                className="w-full border rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="pl-10 w-full"
               />
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-3 py-2 rounded-r hover:bg-blue-700"
+            </div>
+            
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <Label className="whitespace-nowrap">Status:</Label>
+                <Select 
+                  value={filterStatus} 
+                  onValueChange={(value) => setFilterStatus(value)}
+                >
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label className="whitespace-nowrap">Priority:</Label>
+                <Select 
+                  value={filterPriority} 
+                  onValueChange={(value) => setFilterPriority(value)}
+                >
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Priority</SelectItem>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Label className="whitespace-nowrap">Assignee:</Label>
+                <Select 
+                  value={filterAssignee?.toString() || 'all'} 
+                  onValueChange={(value) => setFilterAssignee(value === 'all' ? null : Number(value))}
+                >
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Assignee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Assignees</SelectItem>
+                    {staffMembers.map((staff) => (
+                      <SelectItem key={staff.id} value={staff.id.toString()}>
+                        {staff.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                size="sm"
+                className="h-10"
               >
-                <Search />
-              </button>
-            </form>
+                Reset Filters
+              </Button>
+            </div>
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Status Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-
-          {/* Priority Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Priority
-            </label>
-            <select
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            >
-              <option value="all">All Priorities</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-
-          {/* Assignee Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Assigned To
-            </label>
-            <select
-              value={filterAssignee || ''}
-              onChange={(e) => setFilterAssignee(e.target.value ? Number(e.target.value) : null)}
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-            >
-              <option value="">All Staff</option>
-              {staffMembers.map((staff) => (
-                <option key={staff.id} value={staff.id}>
-                  {staff.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Error Display */}
+      {error && (
+        <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded mb-4">
+          {error}
         </div>
-
-        {/* My Tasks Toggle */}
-        <div className="mt-4">
-          <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              checked={myTasksOnly}
-              onChange={() => setMyTasksOnly(!myTasksOnly)}
-              className="form-checkbox h-5 w-5 text-blue-600"
-            />
-            <span className="ml-2 text-gray-700">Show only my tasks</span>
-          </label>
-        </div>
-      </div>
-
+      )}
+      
       {/* Task List */}
       {loading ? (
-        <div className="flex justify-center my-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
       ) : tasks.length > 0 ? (
         <div>
@@ -390,6 +408,7 @@ const TaskManager: React.FC = () => {
             onStatusChange={handleStatusUpdate}
             StatusBadge={StatusBadge}
             PriorityBadge={PriorityBadge}
+            isAdmin={isAdmin}
           />
           
           {/* Pagination */}
@@ -424,11 +443,11 @@ const TaskManager: React.FC = () => {
             <p className="text-xl">No tasks found</p>
           </div>
           <p className="text-gray-600 mb-4">
-            {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || filterAssignee || myTasksOnly
+            {searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || filterAssignee
               ? 'Try adjusting your filters or search term to find what you\'re looking for.'
               : 'Get started by creating your first task.'}
           </p>
-          {!(searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || filterAssignee || myTasksOnly) && (
+          {!(searchTerm || filterStatus !== 'all' || filterPriority !== 'all' || filterAssignee) && (
             <button
               onClick={() => {
                 setShowForm(true);
@@ -444,27 +463,37 @@ const TaskManager: React.FC = () => {
       )}
 
       {/* Task Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
-            <h2 className="text-xl font-bold mb-4">
-              {isEditing ? 'Edit Task' : 'Create New Task'}
-            </h2>
-            <TaskForm
-              onSubmit={isEditing && currentTask ? (data) => handleUpdateTask(currentTask.id, data) : handleCreateTask}
-              onCancel={handleCancelForm}
-              initialData={currentTask || undefined}
-              staffMembers={staffMembers}
-              isEditing={isEditing}
-            />
-          </div>
-        </div>
-      )}
+      <Dialog 
+        open={showForm} 
+        onOpenChange={(open: boolean) => {
+          if (!open) handleCancelForm();
+          setShowForm(open);
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px] bg-white">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Task'}</DialogTitle>
+          </DialogHeader>
+          <TaskForm
+            onSubmit={isEditing && currentTask ? (data) => handleUpdateTask(currentTask.id, data) : handleCreateTask}
+            onCancel={handleCancelForm}
+            initialData={currentTask || undefined}
+            staffMembers={staffMembers}
+            isEditing={isEditing}
+          />
+        </DialogContent>
+      </Dialog>
 
       {/* Task Details Modal */}
-      {showDetails && currentTask && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+      <Dialog 
+        open={showDetails && !!currentTask} 
+        onOpenChange={(open: boolean) => {
+          if (!open) setShowDetails(false);
+          else setShowDetails(true);
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px] bg-white">
+          {currentTask && (
             <TaskDetails
               task={currentTask}
               onClose={() => setShowDetails(false)}
@@ -480,9 +509,9 @@ const TaskManager: React.FC = () => {
               StatusBadge={StatusBadge}
               PriorityBadge={PriorityBadge}
             />
-          </div>
-        </div>
-      )}
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
