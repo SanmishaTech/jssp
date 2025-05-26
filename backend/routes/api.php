@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
+use App\Http\Controllers\Api\AttendanceController;
 
 
 
@@ -172,4 +173,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teacher-timetables-by-staff-week', [TeacherTimetableController::class, 'getByStaffAndWeek']);
     Route::patch('/teacher-timetables/{timetableId}/slots/{slotId}', [TeacherTimetableController::class, 'updateSlot']);
     Route::get('/teaching-staff', [TeacherTimetableController::class, 'getTeachingStaff']);
+});
+
+// Attendance Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('attendance', AttendanceController::class);
+    Route::post('/attendance/by-date-division', [AttendanceController::class, 'getAttendanceByDateAndDivision']);
+    Route::post('/attendance/students-by-division', [AttendanceController::class, 'getStudentsByDivision']);
+    Route::post('/attendance/save', [AttendanceController::class, 'saveAttendance']);
+    Route::post('/attendance/statistics', [AttendanceController::class, 'getStatistics']);
+    Route::get('/attendance/analysis', [AttendanceController::class, 'getAttendanceAnalysis']);
 });
