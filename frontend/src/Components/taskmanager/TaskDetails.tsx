@@ -101,11 +101,13 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
         </div>
 
         <Card className="bg-muted/50">
-          <CardContent className="pt-6">
+          <CardContent className="pt-6 ">
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Description</h3>
-            <div className="text-sm whitespace-pre-line">
+            <div className="text-sm whitespace-pre-line break-all">
               {formatDescription(task.description)}
             </div>
+
+
           </CardContent>
         </Card>
 

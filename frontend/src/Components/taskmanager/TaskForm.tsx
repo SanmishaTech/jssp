@@ -48,6 +48,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Initialize form with initial data if editing
   useEffect(() => {
@@ -83,24 +84,88 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Reset time part for date comparison
     
+    // Title validation
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
+    } else if (formData.title.trim().length > 100) {
+      newErrors.title = 'Title cannot exceed 100 characters';
     }
     
-    if (formData.due_date && new Date(formData.due_date) < new Date()) {
-      newErrors.due_date = 'Due date cannot be in the past';
+    // Description validation
+    if (formData.description && formData.description.length > 1000) {
+      newErrors.description = 'Description cannot exceed 1000 characters';
+    }
+    
+    // Due date validation
+    if (!formData.due_date) {
+      newErrors.due_date = 'Due date is required';
+    } else {
+      const selectedDate = new Date(formData.due_date);
+      if (isNaN(selectedDate.getTime())) {
+        newErrors.due_date = 'Invalid date format';
+      } else if (selectedDate < currentDate) {
+        newErrors.due_date = 'Due date cannot be in the past';
+      }
+    }
+    
+    // Priority validation
+    if (!['low', 'medium', 'high'].includes(formData.priority)) {
+      newErrors.priority = 'Please select a valid priority';
+    }
+    
+    // Assigned to validation (optional)
+    if (formData.assigned_to !== null && 
+        !staffMembers.some(staff => staff.id === formData.assigned_to)) {
+      newErrors.assigned_to = 'Please select a valid staff member';
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Use a ref to track if submission is already in progress
+  const submitInProgressRef = React.useRef(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Stop any event bubbling
+    
+    // Double-check that submission is not already in progress
+    if (isSubmitting || submitInProgressRef.current) {
+      return;
+    }
+    
+    // Set the ref to true immediately to prevent any race conditions
+    submitInProgressRef.current = true;
     
     if (validateForm()) {
-      onSubmit(formData);
+      setIsSubmitting(true);
+      
+      // Wrap in a promise and add a small delay to prevent race conditions
+      new Promise<void>(resolve => {
+        // Small delay to ensure UI state is updated and prevent race conditions
+        setTimeout(() => {
+          try {
+            onSubmit(formData);
+            resolve();
+          } catch (error) {
+            console.error('Error submitting form:', error);
+            resolve();
+          }
+        }, 50);
+      }).finally(() => {
+        // Reset both states after completion
+        setTimeout(() => {
+          setIsSubmitting(false);
+          submitInProgressRef.current = false;
+        }, 500);
+      });
+    } else {
+      // If validation fails, reset the ref
+      submitInProgressRef.current = false;
     }
   };
 
@@ -133,7 +198,17 @@ const TaskForm: React.FC<TaskFormProps> = ({
             onChange={handleChange}
             placeholder="Enter task description"
             rows={4}
+            maxLength={1000}
+            className={errors.description ? "border-destructive" : ""}
           />
+          <div className="flex justify-between items-center mt-1">
+            {errors.description && (
+              <p className="text-destructive text-xs">{errors.description}</p>
+            )}
+            <span className="text-xs text-muted-foreground ml-auto">
+              {formData.description.length}/1000 characters
+            </span>
+          </div>
         </div>
         
         <div className="grid grid-cols-3 gap-4">
@@ -141,68 +216,104 @@ const TaskForm: React.FC<TaskFormProps> = ({
             <Label htmlFor="due_date">Due Date</Label>
             <Input
               id="due_date"
+              name="due_date"
               type="date"
               value={formData.due_date}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                // Clear error when a date is selected
+                if (errors.due_date) {
+                  setErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.due_date;
+                    return newErrors;
+                  });
+                }
+              }}
+              min={new Date().toISOString().split('T')[0]}
               className={errors.due_date ? "border-destructive" : ""}
             />
-            {errors.due_date && <p className="text-destructive text-xs mt-1">{errors.due_date}</p>}
+            {errors.due_date && (
+              <p className="text-destructive text-xs mt-1">{errors.due_date}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="assigned_to">Assign To</Label>
-            <Select 
-              name="assigned_to" 
-              value={formData.assigned_to?.toString() || 'none'} 
-              onValueChange={(value: string) => {
-                const e = { 
-                  target: { 
-                    name: 'assigned_to', 
-                    value: value === 'none' ? '' : value 
-                  } 
-                } as React.ChangeEvent<HTMLSelectElement>;
-                handleChange(e);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a staff member" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Select a staff member</SelectItem>
-                {staffMembers.map((staff) => (
-                  <SelectItem key={staff.id} value={staff.id.toString()}>
-                    {staff.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <Select 
+                name="assigned_to" 
+                value={formData.assigned_to?.toString() || 'none'}
+                onValueChange={(value: string) => {
+                  const e = { 
+                    target: { 
+                      name: 'assigned_to', 
+                      value: value === 'none' ? '' : value 
+                    } 
+                  } as React.ChangeEvent<HTMLSelectElement>;
+                  handleChange(e);
+                  // Clear error when a selection is made
+                  if (errors.assigned_to) {
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.assigned_to;
+                      return newErrors;
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a staff member" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Select a staff member</SelectItem>
+                  {staffMembers.map((staff) => (
+                    <SelectItem key={staff.id} value={staff.id.toString()}>
+                      {staff.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.assigned_to && (
+                <p className="text-destructive text-xs mt-1">{errors.assigned_to}</p>
+              )}
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="priority">Priority</Label>
-            <Select 
-              name="priority" 
-              value={formData.priority} 
-              onValueChange={(value: string) => {
-                const e = { 
-                  target: { 
-                    name: 'priority', 
-                    value: value 
-                  } 
-                } as React.ChangeEvent<HTMLSelectElement>;
-                handleChange(e);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="priority">Priority</Label>
+              <Select 
+                name="priority" 
+                value={formData.priority} 
+                onValueChange={(value: string) => {
+                  const e = { 
+                    target: { 
+                      name: 'priority', 
+                      value: value 
+                    } 
+                  } as React.ChangeEvent<HTMLSelectElement>;
+                  handleChange(e);
+                  // Clear error when a selection is made
+                  if (errors.priority) {
+                    setErrors(prev => {
+                      const newErrors = { ...prev };
+                      delete newErrors.priority;
+                      return newErrors;
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.priority && (
+                <p className="text-destructive text-xs mt-1">{errors.priority}</p>
+              )}
+            </div>
         </div>
         
         {isEditing && (
@@ -246,13 +357,22 @@ const TaskForm: React.FC<TaskFormProps> = ({
           onClick={onCancel}
           className="gap-2"
         >
-          <X className="h-4 w-4" /> Cancel
+          Cancel
         </Button>
         <Button
           type="submit"
           className="gap-2"
+          disabled={isSubmitting}
+          onClick={(e) => {
+            // Handle button click directly
+            if (isSubmitting) {
+              e.preventDefault();
+              e.stopPropagation();
+              return;
+            }
+          }}
         >
-          <Save className="h-4 w-4" /> {isEditing ? 'Update' : 'Create'} Task
+          <Save className="h-4 w-4" /> {isSubmitting ? 'Saving...' : isEditing ? 'Update' : 'Create'} Task
         </Button>
       </div>
     </form>

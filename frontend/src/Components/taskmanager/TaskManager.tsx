@@ -44,6 +44,7 @@ const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // We'll display any errors in the UI if they occur
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -118,6 +119,10 @@ const TaskManager: React.FC = () => {
 
   // Create new task
   const handleCreateTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'created_by'>) => {
+    // Prevent duplicate submissions
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     try {
       await axios.post('/api/tasks', taskData);
       setShowForm(false);
@@ -125,11 +130,17 @@ const TaskManager: React.FC = () => {
     } catch (err) {
       console.error('Error creating task:', err);
       setError('Failed to create task. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // Update existing task
   const handleUpdateTask = async (taskId: number, taskData: Partial<Task>) => {
+    // Prevent duplicate submissions
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     try {
       await axios.put(`/api/tasks/${taskId}`, taskData);
       setShowForm(false);
@@ -138,6 +149,8 @@ const TaskManager: React.FC = () => {
     } catch (err) {
       console.error('Error updating task:', err);
       setError('Failed to update task. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -198,6 +211,8 @@ const TaskManager: React.FC = () => {
     setShowForm(false);
     setIsEditing(false);
     setCurrentTask(null);
+    // Reset submission state when canceling
+    setIsSubmitting(false);
   };
 
   // Handle search
