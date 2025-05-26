@@ -17,13 +17,14 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('division_id')->constrained('divisions')->onDelete('cascade');
             $table->date('attendance_date');
+            $table->string('time_slot')->nullable();
+            $table->foreignId('subject_id')->nullable()->constrained('subjects')->onDelete('cascade');
+            $table->string('slot_id')->nullable(); // To match with timetable slots
             $table->boolean('is_present')->default(false);
             $table->string('remarks')->nullable();
             $table->timestamps();
             
-            // Unique constraint to prevent duplicate attendance entries for a student on the same day
-            $table->unique(['student_id', 'attendance_date']);
-        });
+         });
     }
 
     /**

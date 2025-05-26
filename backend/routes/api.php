@@ -183,4 +183,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/attendance/save', [AttendanceController::class, 'saveAttendance']);
     Route::post('/attendance/statistics', [AttendanceController::class, 'getStatistics']);
     Route::get('/attendance/analysis', [AttendanceController::class, 'getAttendanceAnalysis']);
+    
+    // Attendance Report Download Routes
+    Route::post('/attendance/reports/day', [AttendanceController::class, 'downloadDayReport']);
+    Route::post('/attendance/reports/week', [AttendanceController::class, 'downloadWeekReport']);
+    Route::post('/attendance/reports/month', [AttendanceController::class, 'downloadMonthReport']);
 });

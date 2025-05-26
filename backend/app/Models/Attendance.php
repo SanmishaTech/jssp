@@ -12,7 +12,10 @@ class Attendance extends Model
         'division_id',
         'attendance_date',
         'is_present',
-        'remarks'
+        'remarks',
+        'time_slot',
+        'subject_id',
+        'slot_id'
     ];
 
     protected $casts = [

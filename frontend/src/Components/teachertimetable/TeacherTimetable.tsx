@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Eye, Edit, Loader2 } from 'lucide-react';
+import { Edit, Loader2, Users, Info, FileDown, Download } from 'lucide-react';
 
 // Import Shadcn UI components
 import {
@@ -86,17 +86,73 @@ type SlotProps = {
       description?: string;
     };
   };
-  slot: { id: string };
+  date?: string;
+  slot: { id: string; time?: string };
   index: number;
-  onViewClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
+  division_id?: string | null;
+  subject_id?: string | null;
+  time_slot?: string | null;
   onEditClick: (dayId: string, slotId: string, index: number, e: React.MouseEvent) => void;
+  subjectName?: string;
+  divisionName?: string;
 };
 
 // UI Components
-const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClick }: SlotProps) => {
+const TimeSlotComponent: React.FC<SlotProps> = ({ children, day, slot, index, division_id, subject_id, time_slot, date, onEditClick, subjectName, divisionName }) => {
   // Check if the day is a holiday or has holiday info
   const isHoliday = day.isHoliday;
   const holidayInfo = day.holidayInfo;
+  const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+  const [attendanceData, setAttendanceData] = useState<{total: number, present: number, absent: number} | null>(null);
+  const [isLoadingAttendance, setIsLoadingAttendance] = useState(false);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  
+  // Function to fetch attendance data for this slot
+  const fetchAttendanceData = async () => {
+    if (!division_id || !date || !time_slot || !subject_id) {
+      setAttendanceData(null);
+      return;
+    }
+    
+    setIsLoadingAttendance(true);
+    try {
+      // Using the statistics endpoint for attendance data
+      const response = await axios.post(
+        '/api/attendance/by-date-division', 
+        {
+          division_id,
+          date,
+          subject_id,
+          time_slot
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          }
+        }
+      );
+      
+      if (response.data && response.data.status) {
+        // Parse the attendance data from response
+        const attendanceRecords = response.data.data || [];
+        const totalStudents = attendanceRecords.length;
+        const presentStudents = attendanceRecords.filter((record: any) => record.status === 'present').length;
+        
+        setAttendanceData({
+          total: totalStudents,
+          present: presentStudents,
+          absent: totalStudents - presentStudents
+        });
+      } else {
+        setAttendanceData({ total: 0, present: 0, absent: 0 });
+      }
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+      setAttendanceData({ total: 0, present: 0, absent: 0 });
+    } finally {
+      setIsLoadingAttendance(false);
+    }
+  };
   
   return (
     <Card 
@@ -109,36 +165,164 @@ const TimeSlotComponent = ({ children, day, slot, index, onViewClick, onEditClic
       )}
       {!isHoliday && (
         <div className="absolute top-1 right-1 flex gap-1">
-                    {/* {window.localStorage.getItem('role') === 'admin' && (
-
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-6 w-6 p-0"
-            onClick={(e) => {
-              e.stopPropagation();
-              onViewClick(day.id, slot.id, index, e);
-            }}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-           )} */}
-          {window.localStorage.getItem('role') === 'admin' && ( 
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-6 w-6 p-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEditClick(day.id, slot.id, index, e);
-              }}
+          {division_id && date && subject_id && (
+            <a 
+              href={`/attendence?division_id=${division_id}&date=${date}&time_slot=${encodeURIComponent(time_slot || '')}&subject_id=${subject_id || ''}&slot_id=${slot.id}`}
+              className="h-6 w-6 p-0 flex items-center justify-center"
+              title="Take Attendance for this Lecture"
+              onClick={(e) => e.stopPropagation()}
             >
-              <Edit className="h-4 w-4" />
-            </Button>
+              <Users className="h-4 w-4 text-blue-500 hover:text-blue-700" />
+            </a>
+          )}
+          {window.localStorage.getItem('role') === 'admin' && ( 
+            <>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 w-6 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditClick(day.id, slot.id, index, e);
+                }}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 w-6 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsInfoDialogOpen(true);
+                  fetchAttendanceData();
+                }}
+              >
+                <Info className="h-4 w-4 text-blue-500" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 w-6 p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsReportDialogOpen(true);
+                }}
+              >
+                <FileDown className="h-4 w-4 text-green-500" />
+              </Button>
+            </>
           )}
         </div>
       )}
       {children}
+      
+      {/* Info Dialog */}
+      <Dialog open={isInfoDialogOpen} onOpenChange={setIsInfoDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogHeader>
+            <DialogTitle>Slot Information</DialogTitle>
+            <DialogDescription>
+              Detailed information about this time slot.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Day:</span>
+              <div className="col-span-3">
+                {day.id ? day.id.split('-')[0] : 'N/A'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Date:</span>
+              <div className="col-span-3">
+                {date ? new Date(date).toLocaleDateString() : 'N/A'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Time:</span>
+              <div className="col-span-3">
+                {slot.time || 'N/A'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Subject:</span>
+              <div className="col-span-3">
+                {subject_id ? (subjectName || 'Subject ID: ' + subject_id) : 'Not assigned'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <span className="text-right font-medium">Division:</span>
+              <div className="col-span-3">
+                {division_id ? (divisionName || 'Division ID: ' + division_id) : 'Not assigned'}
+              </div>
+            </div>
+            
+            
+            
+            {isHoliday && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="text-right font-medium">Holiday:</span>
+                <div className="col-span-3 text-red-500">
+                  {holidayInfo ? holidayInfo.title : 'Weekly Holiday'}
+                  {holidayInfo?.description && (
+                    <p className="text-sm text-gray-500">{holidayInfo.description}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {subject_id && division_id && date && (
+              <div className="grid grid-cols-1 gap-2 mt-2">
+                <a 
+                  href={`/attendence?division_id=${division_id}&date=${date}&time_slot=${encodeURIComponent(time_slot || '')}&subject_id=${subject_id || ''}&slot_id=${slot.id}`}
+                  className="w-full p-2 bg-blue-100 text-blue-800 rounded-md text-center text-sm font-medium hover:bg-blue-200 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Attendance
+                </a>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button 
+              type="button" 
+              onClick={() => setIsInfoDialogOpen(false)}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-blue-500 text-white shadow hover:bg-blue-500/90 h-9 px-4 py-2"
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Attendance Report Download Dialog */}
+      <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-white">
+          <DialogHeader>
+            <DialogTitle>Download Attendance Report</DialogTitle>
+            <DialogDescription>
+              {date && <span>Date: {new Date(date).toLocaleDateString()}</span>}
+              {subjectName && <span> • Subject: {subjectName}</span>}
+              {divisionName && <span> • Division: {divisionName}</span>}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <AttendanceReportDownloadOptions 
+            division_id={division_id || ''} 
+            initialDate={date || ''} 
+            onClose={() => setIsReportDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+      
     </Card>
   );
 };
@@ -148,6 +332,224 @@ const BreakSlot = ({ children }: { children: React.ReactNode }) => (
     <div className="truncate">{children}</div>
   </Card>
 );
+
+// Attendance Report Download Options Component
+const AttendanceReportDownloadOptions: React.FC<{
+  division_id: string;
+  initialDate: string;
+  onClose: () => void;
+}> = ({ division_id, initialDate, onClose }) => {
+  const token = localStorage.getItem('token');
+  const [reportType, setReportType] = useState<'day' | 'week' | 'month'>('day');
+  const [format, setFormat] = useState<'pdf' | 'csv'>('pdf');
+  const [loading, setLoading] = useState(false);
+  const [reportOptions, setReportOptions] = useState({
+    date: initialDate || new Date().toISOString().split('T')[0],
+    start_date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 6 days ago
+    end_date: new Date().toISOString().split('T')[0],
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear()
+  });
+  
+  const handleDownloadReport = async () => {
+    if (!division_id) {
+      alert("Division ID is required");
+      return;
+    }
+    
+    let endpoint = '';
+    let requestData: any = {
+      division_id,
+      format
+    };
+    
+    // Set up endpoint and request data based on report type
+    if (reportType === 'day') {
+      endpoint = '/api/attendance/reports/day';
+      requestData.date = reportOptions.date;
+    } else if (reportType === 'week') {
+      endpoint = '/api/attendance/reports/week';
+      requestData.start_date = reportOptions.start_date;
+      requestData.end_date = reportOptions.end_date;
+    } else if (reportType === 'month') {
+      endpoint = '/api/attendance/reports/month';
+      requestData.month = reportOptions.month;
+      requestData.year = reportOptions.year;
+    }
+    
+    try {
+      setLoading(true);
+      const response = await axios({
+        method: 'post',
+        url: endpoint,
+        responseType: 'blob',
+        data: requestData,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Generate appropriate filename
+      let filename = `attendance_report_${division_id}`;
+      if (reportType === 'day') {
+        filename += `_${reportOptions.date}`;
+      } else if (reportType === 'week') {
+        filename += `_week_${reportOptions.start_date}_to_${reportOptions.end_date}`;
+      } else if (reportType === 'month') {
+        const monthName = new Date(reportOptions.year, reportOptions.month - 1).toLocaleString('default', { month: 'long' });
+        filename += `_${monthName}_${reportOptions.year}`;
+      }
+      filename += `.${format}`;
+      
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Close dialog after successful download
+      onClose();
+    } catch (error) {
+      console.error("Failed to download report:", error);
+      alert("Failed to download report");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return (
+    <div className="grid gap-4 py-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Report Type</label>
+          <Select value={reportType} onValueChange={(value: any) => setReportType(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="day">Day Report</SelectItem>
+              <SelectItem value="week">Week Report</SelectItem>
+              <SelectItem value="month">Month Report</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Format</label>
+          <Select value={format} onValueChange={(value: any) => setFormat(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pdf">PDF</SelectItem>
+              <SelectItem value="csv">CSV</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
+      {/* Date options based on report type */}
+      {reportType === 'day' && (
+        <div>
+          <label className="block text-sm font-medium mb-1">Date</label>
+          <Input 
+            type="date" 
+            value={reportOptions.date} 
+            onChange={(e) => setReportOptions({...reportOptions, date: e.target.value})}
+          />
+        </div>
+      )}
+      
+      {reportType === 'week' && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Start Date</label>
+            <Input 
+              type="date" 
+              value={reportOptions.start_date} 
+              onChange={(e) => setReportOptions({...reportOptions, start_date: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">End Date</label>
+            <Input 
+              type="date" 
+              value={reportOptions.end_date} 
+              onChange={(e) => setReportOptions({...reportOptions, end_date: e.target.value})}
+            />
+          </div>
+        </div>
+      )}
+      
+      {reportType === 'month' && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Month</label>
+            <Select 
+              value={reportOptions.month.toString()} 
+              onValueChange={(value) => setReportOptions({...reportOptions, month: parseInt(value)})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select month" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <SelectItem key={i+1} value={(i+1).toString()}>
+                    {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Year</label>
+            <Select 
+              value={reportOptions.year.toString()} 
+              onValueChange={(value) => setReportOptions({...reportOptions, year: parseInt(value)})}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 5 }, (_, i) => {
+                  const year = new Date().getFullYear() - 2 + i;
+                  return (
+                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
+      
+      <DialogFooter>
+        <Button 
+          onClick={handleDownloadReport} 
+          disabled={loading}
+          className="bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Downloading...
+            </>
+          ) : (
+            <>
+              <Download className="mr-2 h-4 w-4" />
+              Download Report
+            </>
+          )}
+        </Button>
+      </DialogFooter>
+    </div>
+  );
+};
 
 // Main component
 const TeacherTimetable: React.FC = () => {
@@ -754,28 +1156,6 @@ const TeacherTimetable: React.FC = () => {
     }
   };
   
-  const handleViewClick = (dayId: string, slotId: string, index: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    const day = schedule.find(d => d.id === dayId);
-    if (day) {
-      const slotData = day.slots[index] || {subject_id: null, division_id: null};
-      
-      // Ensure we get proper display data for the view dialog
-      // Get the correct values from the schedule
-      const subjectId = slotData.subject_id ? String(slotData.subject_id) : '';
-      const divisionId = slotData.division_id ? String(slotData.division_id) : '';
-      
-      setSlotDetails({
-        subject: subjectId,
-        division_id: divisionId
-      });
-      
-      setCurrentSlot({ dayId, slotId, index });
-      setIsViewDialogOpen(true);
-    }
-  };
-  
   const handleSaveDetails = async () => {
     if (currentSlot) {
       // Update the local state first
@@ -1051,17 +1431,19 @@ const TeacherTimetable: React.FC = () => {
                         }} 
                         slot={slot} 
                         index={slotIndex}
-                        onViewClick={handleViewClick}
                         onEditClick={handleEditClick}
                       >
                         <div className="flex flex-col items-center w-full overflow-hidden">
                           <span className="text-red-600 font-medium truncate w-full text-center">{holidayInfo ? 'Holiday' : 'Weekly Holiday'}</span>
-                          <span className="text-xs tex  t-gray-600 font-semibold truncate w-full text-center">{holidayInfo ? holidayInfo.title : `${day.day} Off`}</span>
+                          <span className="text-xs text-gray-600 font-semibold truncate w-full text-center">{holidayInfo ? holidayInfo.title : `${day.day} Off`}</span>
                          
                         </div>
                       </TimeSlotComponent>
                     );
                   } else {
+                    // Format date for the current day in YYYY-MM-DD format
+                    const formattedDate = currentDate.toISOString().split('T')[0];
+                    
                     // Render regular slot
                     return (
                       <TimeSlotComponent 
@@ -1072,7 +1454,12 @@ const TeacherTimetable: React.FC = () => {
                         }} 
                         slot={slot} 
                         index={slotIndex}
-                        onViewClick={handleViewClick}
+                        date={formattedDate}
+                        division_id={slotData.division_id}
+                        subject_id={slotData.subject_id}
+                        time_slot={timeSlots[slotIndex].time}
+                        subjectName={subject?.name}
+                        divisionName={division?.name}
                         onEditClick={handleEditClick}
                       >
                         {subject ? (
