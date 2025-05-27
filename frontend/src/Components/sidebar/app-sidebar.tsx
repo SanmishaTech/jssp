@@ -119,7 +119,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
     {
       title: "Task Manager",
       url: "/taskmanager",
-      icon: BookText,
+      icon: FileText,
     },
     {
       title: "Holidays",
@@ -128,12 +128,12 @@ const roleBasedItems: Record<string, MenuItem[]> = {
         {
           title: "Regular Holidays",
           url: "/holiday",
-          icon: BookText,
+          icon: Calendar,
         },
         {
           title: "Weekly Holidays",
           url: "/weeklyholiday",
-          icon: BookText,
+          icon: Calendar,
         }
       ]
     },
@@ -217,31 +217,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/dashboards",
       icon: Home,
     },
-    {
-      title: "Time Table",
-      url: "/teachertimetable",
-      icon: BookText,
-    },
-    {
-      title: "Vendors",
-      url: "/vendors",
-      icon: Truck,
-    },
-    {
-      title: "Asset Masters",
-      url: "/assetmasters",
-      icon: Truck,
-    },
-    {
-      title: "Requisitions",
-      url: "/requisitions",
-      icon: Truck,
-    },
-    {
-      title: "Task Manager",
-      url: "/taskmanager",
-      icon: BookText,
-    },
+  
     {
       title: "Holidays",
       icon: Calendar,
@@ -249,25 +225,17 @@ const roleBasedItems: Record<string, MenuItem[]> = {
         {
           title: "Regular Holidays",
           url: "/holiday",
-          icon: BookText,
+          icon: Calendar,
         },
         {
           title: "Weekly Holidays",
           url: "/weeklyholiday",
-          icon: BookText,
+          icon: Calendar,
         }
       ]
     },
-    {
-      title: "Staff",
-      url: "/staff",
-      icon: Users,
-    },
-    {
-      title: "Calender",
-      url: "/calender",
-      icon: Calendar,
-    },
+   
+   
     {
       title: "Academic Information",
       icon: BookOpen,
@@ -305,39 +273,83 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       ],
     },
     {
-      title: "Complaints",
-      url: "/complaints",
-      icon: MessageCircle,
-    },
-    {
-      title: "Committees",
-      url: "/committee",
-      icon: UserCheck,
-    },
-    {
-      title: "Leave Approval",
-      url: "/leaveapproval",
-      icon: FileText,
-    },
-    {
-      title: "Leave Application",
-      url: "/leave",
-      icon: FileText,
-    },
-    {
-      title: "Inventory",
-      url: "/inventory",
-      icon: Package,
-    },
-    {
-      title: "Meetings",
-      url: "/meetings",
-      icon: Users,
-    },
-    {
-      title: "Events",
-      url: "/events",
+      title: "Schedule & Calendar",
       icon: Calendar,
+      children: [
+        {
+          title: "Calender",
+          url: "/calender",
+          icon: Calendar,
+        },
+        {
+          title: "Time Table",
+          url: "/teachertimetable",
+          icon: FileText,
+        },
+        {
+          title: "Meetings",
+          url: "/meetings",
+          icon: Users,
+        },
+        {
+          title: "Events",
+          url: "/events",
+          icon: Calendar,
+        },
+      ]
+    },
+    {
+      title: "Inventory Management",
+      icon: Package,
+      children: [
+        {
+          title: "Vendors",
+          url: "/vendors",
+          icon: Truck,
+        },
+        {
+          title: "Asset Masters",
+          url: "/assetmasters",
+          icon: Truck,
+        },
+        {
+          title: "Requisitions",
+          url: "/requisitions",
+          icon: Truck,
+        },
+        {
+          title: "Inventory",
+          url: "/inventory",
+          icon: Package,
+        },
+       
+      ]
+    },
+    {
+      title: "Staff Management",
+      icon: Users,
+      children: [
+        {
+          title: "Staff",
+          url: "/staff",
+          icon: Users,
+        },
+        {
+          title: "Committees",
+          url: "/committee",
+          icon: UserCheck,
+        },
+        {
+          title: "Leave Approval",
+          url: "/leaveapproval",
+          icon: FileText,
+        },
+        {
+          title: "Leave Application",
+          url: "/leave",
+          icon: FileText,
+        },
+      ]
     },
     {
       title: "Admissions",
@@ -372,24 +384,30 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       ],
     },
     {
-      title: "Bank",
-      icon: BookOpen,
+      title: "Bank & Finance",
+      icon: Landmark,
       children: [
         {
           title: "Bank Accounts",
           url: "/bankaccounts",
-          icon: BookText,
+          icon: Banknote,
         },
         {
           title: "Bank",
           url: "/bank",
-          icon: BookText,
-        },
-        
-       
-         
-      
+          icon: Landmark,
+        },  
       ],
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
     },
   ],
   
@@ -630,7 +648,7 @@ const roleBasedItems: Record<string, MenuItem[]> = {
         {
           title: "Time Table",
           url: "/teachertimetable",
-          icon: BookText,
+          icon: FileText,
         },
      
        

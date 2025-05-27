@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -126,91 +125,69 @@ const WeeklyHoliday = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>Weekly Holidays</CardTitle>
-        <CardDescription>
-          Select the days of the week that should be considered holidays
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <div className="flex justify-center items-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <Label htmlFor="active-status" className="text-base font-medium">
-                Enable Weekly Holidays
-              </Label>
-              <div className="flex items-center">
-                <Switch
-                  id="active-status"
-                  checked={isActive}
-                  disabled={toggling}
-                  onCheckedChange={toggleWeeklyHoliday}
-                />
-                {toggling && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              </div>
+    <div className="flex justify-center items-start pt-16 min-h-screen">
+      <div className="w-full max-w-4xl mx-4 bg-white rounded-lg shadow-md p-6">
+        <div className="space-y-2 pb-4">
+          <h2 className="text-2xl font-bold">Weekly Holidays</h2>
+          <p className="text-sm text-gray-500">
+            Select the days of the week that should be considered holidays
+          </p>
+        </div>
+        <div className="space-y-6">
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : (
+            <>
+              
 
-            <div className="mb-6">
-              <Label htmlFor="description" className="mb-2 block">
-                Holiday Description
-              </Label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-                placeholder="Weekly Holiday"
-                className="w-full"
-              />
-            </div>
+              
 
-            <div className="mb-4">
-              <Label className="mb-2 block font-medium">Currently Selected Holiday Days</Label>
-              <div className="p-3 bg-slate-50 rounded-md text-sm">
-                {getSelectedDaysText()}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              {dayOptions.map((day) => (
-                <div key={day.value} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`day-${day.value}`}
-                    checked={holidayDays.includes(day.value)}
-                    onCheckedChange={() => handleDayToggle(day.value)}
-                  />
-                  <Label
-                    htmlFor={`day-${day.value}`}
-                    className="text-base font-medium"
-                  >
-                    {day.label}
-                  </Label>
+              <div className="mb-4">
+                <Label className="mb-2 block font-medium">Currently Selected Holiday Days</Label>
+                <div className="p-3 bg-slate-50 rounded-md text-sm">
+                  {getSelectedDaysText()}
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <Button
-              onClick={saveWeeklyHolidays}
-              disabled={saving}
-              className="w-full md:w-auto"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Weekly Holidays"
-              )}
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                {dayOptions.map((day) => (
+                  <div key={day.value} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`day-${day.value}`}
+                      checked={holidayDays.includes(day.value)}
+                      onCheckedChange={() => handleDayToggle(day.value)}
+                    />
+                    <Label
+                      htmlFor={`day-${day.value}`}
+                      className="text-base font-medium"
+                    >
+                      {day.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                onClick={saveWeeklyHolidays}
+                disabled={saving}
+                className="w-full md:w-auto"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Weekly Holidays"
+                )}
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

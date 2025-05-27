@@ -165,6 +165,8 @@ export default function Dashboardholiday() {
       breadcrumbs: [
         { label: "Home", href: "/staffdashboard" },
         { label: "/", href: "" },
+        { label: "Holidays", href: "/" },
+        { label: "/", href: "" },
         { label: "Holiday" },
       ],
 

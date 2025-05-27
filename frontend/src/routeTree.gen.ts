@@ -27,6 +27,7 @@ import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as RequisitionsIndexImport } from './routes/requisitions/index'
 import { Route as ProfilesIndexImport } from './routes/profiles/index'
 import { Route as PeticashIndexImport } from './routes/peticash/index'
+import { Route as MemoIndexImport } from './routes/memo/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
 import { Route as LeaveapprovalIndexImport } from './routes/leaveapproval/index'
@@ -174,6 +175,12 @@ const ProfilesIndexRoute = ProfilesIndexImport.update({
 const PeticashIndexRoute = PeticashIndexImport.update({
   id: '/peticash/',
   path: '/peticash/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MemoIndexRoute = MemoIndexImport.update({
+  id: '/memo/',
+  path: '/memo/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -655,6 +662,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeetingsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/memo/': {
+      id: '/memo/'
+      path: '/memo'
+      fullPath: '/memo'
+      preLoaderRoute: typeof MemoIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/peticash/': {
       id: '/peticash/'
       path: '/peticash'
@@ -986,6 +1000,7 @@ export interface FileRoutesByFullPath {
   '/leaveapproval': typeof LeaveapprovalIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
+  '/memo': typeof MemoIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/requisitions': typeof RequisitionsIndexRoute
@@ -1056,6 +1071,7 @@ export interface FileRoutesByTo {
   '/leaveapproval': typeof LeaveapprovalIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
+  '/memo': typeof MemoIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/requisitions': typeof RequisitionsIndexRoute
@@ -1127,6 +1143,7 @@ export interface FileRoutesById {
   '/leaveapproval/': typeof LeaveapprovalIndexRoute
   '/login/': typeof LoginIndexRoute
   '/meetings/': typeof MeetingsIndexRoute
+  '/memo/': typeof MemoIndexRoute
   '/peticash/': typeof PeticashIndexRoute
   '/profiles/': typeof ProfilesIndexRoute
   '/requisitions/': typeof RequisitionsIndexRoute
@@ -1199,6 +1216,7 @@ export interface FileRouteTypes {
     | '/leaveapproval'
     | '/login'
     | '/meetings'
+    | '/memo'
     | '/peticash'
     | '/profiles'
     | '/requisitions'
@@ -1268,6 +1286,7 @@ export interface FileRouteTypes {
     | '/leaveapproval'
     | '/login'
     | '/meetings'
+    | '/memo'
     | '/peticash'
     | '/profiles'
     | '/requisitions'
@@ -1337,6 +1356,7 @@ export interface FileRouteTypes {
     | '/leaveapproval/'
     | '/login/'
     | '/meetings/'
+    | '/memo/'
     | '/peticash/'
     | '/profiles/'
     | '/requisitions/'
@@ -1408,6 +1428,7 @@ export interface RootRouteChildren {
   LeaveapprovalIndexRoute: typeof LeaveapprovalIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MeetingsIndexRoute: typeof MeetingsIndexRoute
+  MemoIndexRoute: typeof MemoIndexRoute
   PeticashIndexRoute: typeof PeticashIndexRoute
   ProfilesIndexRoute: typeof ProfilesIndexRoute
   RequisitionsIndexRoute: typeof RequisitionsIndexRoute
@@ -1478,6 +1499,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaveapprovalIndexRoute: LeaveapprovalIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MeetingsIndexRoute: MeetingsIndexRoute,
+  MemoIndexRoute: MemoIndexRoute,
   PeticashIndexRoute: PeticashIndexRoute,
   ProfilesIndexRoute: ProfilesIndexRoute,
   RequisitionsIndexRoute: RequisitionsIndexRoute,
@@ -1557,6 +1579,7 @@ export const routeTree = rootRoute
         "/leaveapproval/",
         "/login/",
         "/meetings/",
+        "/memo/",
         "/peticash/",
         "/profiles/",
         "/requisitions/",
@@ -1673,6 +1696,9 @@ export const routeTree = rootRoute
     },
     "/meetings/": {
       "filePath": "meetings/index.tsx"
+    },
+    "/memo/": {
+      "filePath": "memo/index.tsx"
     },
     "/peticash/": {
       "filePath": "peticash/index.tsx"
