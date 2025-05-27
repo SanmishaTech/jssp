@@ -41,7 +41,12 @@ const profileFormSchema = z.object({
   contact_pincode: z.string().trim().optional(),
   contact_country: z.string().trim().optional(),
   website: z.string().trim().optional(),
-  gst_number: z.string().trim().nonempty("GST Number is Required"),
+   gst_number: z.string()
+  .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+    message: "Invalid GST Number. Please enter a valid GSTIN. ",
+  })
+  .max(15, "GST Number must be exactly 15 characters")
+  .min(15, "GST Number must be exactly 15 characters"),
   organization_pan_number: z.string().trim().optional(),
   bank_name: z.string().trim().optional(),
   bank_account_holder_name: z.string().trim().optional(),
@@ -322,28 +327,27 @@ function ProfileForm() {
               <CardTitle className="pt-4 mb-4">Tax Information</CardTitle>
               <div className="grid grid-cols-2 gap-3 mb-3">
               <FormField
-  control={form.control}
-  name="gst_number"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>
-        GST Number <span className="text-red-500">*</span>
-      </FormLabel>
-      <FormControl>
-        <Input
-          placeholder="GST Number..."
-          {...field}
-          maxLength={15}
-          onChange={(e) => {
-            const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            field.onChange(value);
-          }}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                control={form.control}
+                name="gst_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">GST IN   
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="Enter GST Number"
+                        className="bg-background text-foreground border-input"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
 
                <FormField
   control={form.control}

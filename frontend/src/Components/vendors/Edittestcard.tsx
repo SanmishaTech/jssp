@@ -36,14 +36,18 @@ const profileFormSchema = z.object({
   contact_name: z.string().trim().nonempty("Contact Name is Required"),
   contact_number: z.string().trim().nonempty("Contact Number is Required"),
   contact_email: z.string().trim().nonempty("Contact Email is Required"),
-  contact_address: z.string().trim().nonempty("Contact Address is Required"),
-  contact_city: z.string().trim().nonempty("Contact City is Required"),
-  contact_state: z.string().trim().nonempty("Contact State is Required"),
-  contact_pincode: z.string().trim().nonempty("Contact Pincode is Required"),
-  contact_country: z.string().trim().nonempty("Contact Country is Required"),
+  contact_address: z.string().trim().nonempty(" Address is Required"),
+  contact_city: z.string().trim().nonempty(" City is Required"),
+  contact_state: z.string().trim().nonempty(" State is Required"),
+  contact_pincode: z.string().trim().nonempty(" Pincode is Required"),
+  contact_country: z.string().trim().nonempty(" Country is Required"),
   website: z.string().trim().nonempty("Website is Required"),
-  gst_number: z.string().trim().nonempty("GST Number is Required"),
-  organization_pan_number: z.string().trim().nonempty("Organization PAN Number is Required"),
+  gst_number: z.string()
+  .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+    message: "Invalid GST Number. Please enter a valid GSTIN. ",
+  })
+  .max(15, "GST Number must be exactly 15 characters")
+  .min(15, "GST Number must be exactly 15 characters"),  organization_pan_number: z.string().trim().nonempty("Organization PAN Number is Required"),
   bank_name: z.string().trim().nonempty("Bank Name is Required"),
   bank_account_holder_name: z.string().trim().nonempty("Bank Account Holder Name is Required"),
   bank_account_number: z.string().trim().nonempty("Bank Account Number is Required"),
@@ -228,14 +232,13 @@ function ProfileForm({ formData }) {
                 />
               </div>
               <Separator className="my-4" />
-              <div className="grid grid-cols-3 gap-3 mb-3">
-                <FormField
+              <FormField
                   control={form.control}
                   name="contact_address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Contact Address
+                         Address
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -245,13 +248,15 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
+              <div className="grid grid-cols-4 gap-3 mb-3">
+               
                 <FormField
                   control={form.control}
                   name="contact_city"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Contact City
+                         City
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Contact City..." {...field} />
@@ -266,7 +271,7 @@ function ProfileForm({ formData }) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Contact State
+                         State
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
@@ -276,15 +281,14 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-              </div>
-              <div className="grid grid-cols-3 gap-3 mb-3">
+               
                 <FormField
                   control={form.control}
                   name="contact_pincode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Contact Pincode
+                         Pincode
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Contact Pincode..." {...field} />
@@ -299,7 +303,7 @@ function ProfileForm({ formData }) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Contact Country
+                         Country
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Contact Country..." {...field} />
@@ -313,22 +317,28 @@ function ProfileForm({ formData }) {
               {/* Tax Information */}
               <CardTitle className="pt-4 mb-4">Tax Information</CardTitle>
               <div className="grid grid-cols-3 gap-3 mb-3">
-                <FormField
-                  control={form.control}
-                  name="gst_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        GST Number
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="GST Number..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="gst_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">GST IN 
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="Enter GST Number"
+                        className="bg-background text-foreground border-input"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
                 <FormField
                   control={form.control}
                   name="organization_pan_number"
