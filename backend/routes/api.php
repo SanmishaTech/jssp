@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\SuperAdminController;
+use App\Http\Controllers\Api\AssetMasterController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
@@ -145,6 +146,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('vendors', VendorController::class);
    Route::get('/all_vendors', [VendorController::class, 'allVendors'])->name("vendors.all");
+
+   Route::resource('assetmasters', AssetMasterController::class);
+   Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMasters'])->name("assetmasters.all");
    
    // Task Manager Routes
    // Routes already defined above, removing duplicate
