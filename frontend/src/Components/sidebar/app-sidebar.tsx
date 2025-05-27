@@ -217,6 +217,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/dashboards",
       icon: Home,
     },
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
   
     {
       title: "Holidays",
