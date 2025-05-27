@@ -2,6 +2,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Send, Plus, Pencil, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -31,6 +38,8 @@ export default function MemoList() {
   const [staffList, setStaffList] = useState<{id: string, name: string}[]>([]);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<string>("");
+  const [viewMode, setViewMode] = useState<boolean>(false);
+  const [selectedMemo, setSelectedMemo] = useState<Memo | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -169,68 +178,124 @@ export default function MemoList() {
       <div className="flex h-full">
         <div className="p-6 w-3/4 h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg">
           <div className="flex justify-center items-center p-3 mb-4">
-            <h3 className="text-lg font-semibold">{editingId ? 'Edit Memo' : 'Create New Memo'}</h3>
+            <h3 className="text-lg font-semibold">
+              {viewMode ? 'View Memo' : (editingId ? 'Edit Memo' : 'Create New Memo')}
+              {viewMode && (
+                <>
+                  <button 
+                    onClick={() => {
+                      setViewMode(false);
+                      setEditingId(selectedMemo.id);
+                      setToStaff(selectedMemo.staff_id);
+                      setSubject(selectedMemo.memo_subject);
+                      setDescription(selectedMemo.memo_description);
+                    }}
+                    className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setViewMode(false);
+                      setSelectedMemo(null);
+                      setEditingId(null);
+                      setToStaff("");
+                      setSubject("");
+                      setDescription("");
+                    }}
+                    className="ml-4 px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+                  >
+                    Close
+                  </button>
+                </>
+              )}
+            </h3>
+            
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="to-staff">To Staff</Label>
-              <select
-                id="to-staff"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={toStaff}
-                onChange={(e) => setToStaff(e.target.value)}
-              >
-                <option value="">Select staff member...</option>
-                {staffList.map(staff => (
-                  <option key={staff.id} value={staff.id}>{staff.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                placeholder="Enter memo subject..."
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              />
-            </div>
-            
-            <div className="grid gap-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="description">Description</Label>
-                <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
-                  {description.length} out of 1500 characters
-                </span>
+          {viewMode && selectedMemo ? (
+            <div className="space-y-4">
+               <div className="text-xs text-gray-500 text-right pt-2">
+                Created: {new Date(selectedMemo.created_at).toLocaleString()}
               </div>
-              <Textarea
-                id="description"
-                placeholder="Enter memo description"
-                value={description}
-                onChange={(e) => {
-                  if (e.target.value.length <= 1500) {
-                    setDescription(e.target.value);
-                  }
-                }}
-                className="min-h-[350px]"
-              />
+               
+              <div className="space-y-2">
+                <Label htmlFor="view-staff">Staff: <span className="font-semibold text-[16px]">  {selectedMemo.staff_name}</span></Label>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="view-subject">Subject:</Label>
+                <div className="break-words whitespace-pre-wrap text-sm">
+                  {selectedMemo.memo_subject}
+                </div>
+              </div>
+              
+              <div className="grid gap-2">
+                   <Label htmlFor="view-description">Description</Label>
+                <div className="w-full bg-gray-50 min-h-[350px] overflow-auto whitespace-pre-wrap break-words text-sm">
+                  {selectedMemo.memo_description}
+                </div>
+              </div>
             </div>
-            
-            <div className="flex justify-end pt-4">
-              <Button onClick={handleSend} disabled={loading}>
-                {loading ? 'Sending...' : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                    {editingId ? 'Update Memo' : 'Send Memo'}
-                  </>
-                )}
-              </Button>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="to-staff">To Staff</Label>
+                <Select value={toStaff} onValueChange={setToStaff}>
+                  <SelectTrigger className="w-full" id="to-staff">
+                    <SelectValue placeholder="Select staff member..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {staffList.map(staff => (
+                      <SelectItem key={staff.id} value={staff.id}>{staff.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="subject">Subject</Label>
+                <Input
+                  id="subject"
+                  placeholder="Enter memo subject..."
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="description">Description</Label>
+                  <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
+                    {description.length} out of 1500 characters
+                  </span>
+                </div>
+                <Textarea
+                  id="description"
+                  placeholder="Enter memo description"
+                  value={description}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 1500) {
+                      setDescription(e.target.value);
+                    }
+                  }}
+                  className="min-h-[350px]"
+                />
+              </div>
+              
+              <div className="flex justify-end pt-4">
+                <Button onClick={handleSend} disabled={loading}>
+                  {loading ? 'Sending...' : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      {editingId ? 'Update Memo' : 'Send Memo'}
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-        
         {/* Right Sidebar */}
         <div className="w-1/4 p-4 bg-white">
           <div className="space-y-4">
@@ -273,24 +338,31 @@ export default function MemoList() {
                   <p className="text-center text-sm text-gray-500">No memos found</p>
                 ) : (
                   memos.map(memo => (
-                    <div key={memo.id} className="p-2 hover:bg-gray-100 rounded cursor-pointer group">
+                    <div 
+                      key={memo.id} 
+                      className="p-2 hover:bg-gray-100 rounded cursor-pointer group"
+                      onClick={() => {
+                        setViewMode(true);
+                        setSelectedMemo(memo);
+                      }}
+                    >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <p className="font-medium text-[15px]">{memo.staff_name}</p>
-                          <p className="font-medium text-sm">{memo.memo_subject}</p>
+                          <p className="text-xs text-gray-500">{memo.memo_subject.length > 11 ? `${memo.memo_subject.slice(0, 11)}...` : memo.memo_subject}</p>
                           <p className="text-xs text-gray-500">{memo.memo_description.length > 11 ? `${memo.memo_description.slice(0, 11)}...` : memo.memo_description}</p>
                           {/* <p className="text-xs text-gray-400 mt-1">
                             {moment(memo.created_at).format('MMM DD, YYYY')}
                           </p> */}
                         </div>
                         <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button 
+                          {/* <button 
                             className="text-gray-500 hover:text-blue-500" 
                             onClick={() => handleEdit(memo)}
                             title="Edit memo"
                           >
                             <Pencil className="h-5 w-5" />
-                          </button>
+                          </button> */}
                           <button 
                             className="text-red-500 hover:text-red-700" 
                             onClick={() => handleDelete(memo.id)}
