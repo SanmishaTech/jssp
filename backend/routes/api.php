@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\MemoController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
@@ -154,8 +155,10 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::resource('requisitions', RequisitionController::class);
    Route::get('/all_requisitions', [RequisitionController::class, 'allRequisitions'])->name("requisitions.all");
    
-   // Task Manager Routes
-   // Routes already defined above, removing duplicate
+
+   Route::resource('memos', MemoController::class);
+   Route::get('/all_memos', [MemoController::class, 'allMemos'])->name("memos.all");
+   
 
 
 
