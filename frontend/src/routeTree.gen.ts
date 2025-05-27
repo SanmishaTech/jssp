@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as WeeklyholidayIndexImport } from './routes/weeklyholiday/index'
+import { Route as VendorsIndexImport } from './routes/vendors/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
 import { Route as TaskmanagerIndexImport } from './routes/taskmanager/index'
@@ -47,6 +48,7 @@ import { Route as AttendenceIndexImport } from './routes/attendence/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
 import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
 import { Route as CashbookIdImport } from './routes/cashbook/$id'
+import { Route as VendorsAddIndexImport } from './routes/vendors/add/index'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
 import { Route as StaffAddIndexImport } from './routes/staff/add/index'
@@ -61,6 +63,7 @@ import { Route as ComplaintsAddIndexImport } from './routes/complaints/add/index
 import { Route as CommitteeAddIndexImport } from './routes/committee/add/index'
 import { Route as CashbookAddIndexImport } from './routes/cashbook/add/index'
 import { Route as BankAddIndexImport } from './routes/bank/add/index'
+import { Route as VendorsEditIdImport } from './routes/vendors/edit/$id'
 import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
 import { Route as StudentsEditIdImport } from './routes/students/edit/$id'
 import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
@@ -85,6 +88,12 @@ const IndexRoute = IndexImport.update({
 const WeeklyholidayIndexRoute = WeeklyholidayIndexImport.update({
   id: '/weeklyholiday/',
   path: '/weeklyholiday/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const VendorsIndexRoute = VendorsIndexImport.update({
+  id: '/vendors/',
+  path: '/vendors/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -292,6 +301,12 @@ const CashbookIdRoute = CashbookIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const VendorsAddIndexRoute = VendorsAddIndexImport.update({
+  id: '/vendors/add/',
+  path: '/vendors/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const TrustiesAddIndexRoute = TrustiesAddIndexImport.update({
   id: '/trusties/add/',
   path: '/trusties/add/',
@@ -373,6 +388,12 @@ const CashbookAddIndexRoute = CashbookAddIndexImport.update({
 const BankAddIndexRoute = BankAddIndexImport.update({
   id: '/bank/add/',
   path: '/bank/add/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const VendorsEditIdRoute = VendorsEditIdImport.update({
+  id: '/vendors/edit/$id',
+  path: '/vendors/edit/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -697,6 +718,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrustiesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/vendors/': {
+      id: '/vendors/'
+      path: '/vendors'
+      fullPath: '/vendors'
+      preLoaderRoute: typeof VendorsIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/weeklyholiday/': {
       id: '/weeklyholiday/'
       path: '/weeklyholiday'
@@ -786,6 +814,13 @@ declare module '@tanstack/react-router' {
       path: '/trusties/edit/$id'
       fullPath: '/trusties/edit/$id'
       preLoaderRoute: typeof TrustiesEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/vendors/edit/$id': {
+      id: '/vendors/edit/$id'
+      path: '/vendors/edit/$id'
+      fullPath: '/vendors/edit/$id'
+      preLoaderRoute: typeof VendorsEditIdImport
       parentRoute: typeof rootRoute
     }
     '/bank/add/': {
@@ -886,6 +921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrustiesAddIndexImport
       parentRoute: typeof rootRoute
     }
+    '/vendors/add/': {
+      id: '/vendors/add/'
+      path: '/vendors/add'
+      fullPath: '/vendors/add'
+      preLoaderRoute: typeof VendorsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -927,6 +969,7 @@ export interface FileRoutesByFullPath {
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/vendors': typeof VendorsIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -940,6 +983,7 @@ export interface FileRoutesByFullPath {
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/vendors/edit/$id': typeof VendorsEditIdRoute
   '/bank/add': typeof BankAddIndexRoute
   '/cashbook/add': typeof CashbookAddIndexRoute
   '/committee/add': typeof CommitteeAddIndexRoute
@@ -954,6 +998,7 @@ export interface FileRoutesByFullPath {
   '/staff/add': typeof StaffAddIndexRoute
   '/students/add': typeof StudentsAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
+  '/vendors/add': typeof VendorsAddIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -992,6 +1037,7 @@ export interface FileRoutesByTo {
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
+  '/vendors': typeof VendorsIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -1005,6 +1051,7 @@ export interface FileRoutesByTo {
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/vendors/edit/$id': typeof VendorsEditIdRoute
   '/bank/add': typeof BankAddIndexRoute
   '/cashbook/add': typeof CashbookAddIndexRoute
   '/committee/add': typeof CommitteeAddIndexRoute
@@ -1019,6 +1066,7 @@ export interface FileRoutesByTo {
   '/staff/add': typeof StaffAddIndexRoute
   '/students/add': typeof StudentsAddIndexRoute
   '/trusties/add': typeof TrustiesAddIndexRoute
+  '/vendors/add': typeof VendorsAddIndexRoute
 }
 
 export interface FileRoutesById {
@@ -1058,6 +1106,7 @@ export interface FileRoutesById {
   '/taskmanager/': typeof TaskmanagerIndexRoute
   '/teachertimetable/': typeof TeachertimetableIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
+  '/vendors/': typeof VendorsIndexRoute
   '/weeklyholiday/': typeof WeeklyholidayIndexRoute
   '/cashbook/edit/$id': typeof CashbookEditIdRoute
   '/committee/edit/$id': typeof CommitteeEditIdRoute
@@ -1071,6 +1120,7 @@ export interface FileRoutesById {
   '/staff/edit/$id': typeof StaffEditIdRoute
   '/students/edit/$id': typeof StudentsEditIdRoute
   '/trusties/edit/$id': typeof TrustiesEditIdRoute
+  '/vendors/edit/$id': typeof VendorsEditIdRoute
   '/bank/add/': typeof BankAddIndexRoute
   '/cashbook/add/': typeof CashbookAddIndexRoute
   '/committee/add/': typeof CommitteeAddIndexRoute
@@ -1085,6 +1135,7 @@ export interface FileRoutesById {
   '/staff/add/': typeof StaffAddIndexRoute
   '/students/add/': typeof StudentsAddIndexRoute
   '/trusties/add/': typeof TrustiesAddIndexRoute
+  '/vendors/add/': typeof VendorsAddIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -1125,6 +1176,7 @@ export interface FileRouteTypes {
     | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
+    | '/vendors'
     | '/weeklyholiday'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1138,6 +1190,7 @@ export interface FileRouteTypes {
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/vendors/edit/$id'
     | '/bank/add'
     | '/cashbook/add'
     | '/committee/add'
@@ -1152,6 +1205,7 @@ export interface FileRouteTypes {
     | '/staff/add'
     | '/students/add'
     | '/trusties/add'
+    | '/vendors/add'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1189,6 +1243,7 @@ export interface FileRouteTypes {
     | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
+    | '/vendors'
     | '/weeklyholiday'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1202,6 +1257,7 @@ export interface FileRouteTypes {
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/vendors/edit/$id'
     | '/bank/add'
     | '/cashbook/add'
     | '/committee/add'
@@ -1216,6 +1272,7 @@ export interface FileRouteTypes {
     | '/staff/add'
     | '/students/add'
     | '/trusties/add'
+    | '/vendors/add'
   id:
     | '__root__'
     | '/'
@@ -1253,6 +1310,7 @@ export interface FileRouteTypes {
     | '/taskmanager/'
     | '/teachertimetable/'
     | '/trusties/'
+    | '/vendors/'
     | '/weeklyholiday/'
     | '/cashbook/edit/$id'
     | '/committee/edit/$id'
@@ -1266,6 +1324,7 @@ export interface FileRouteTypes {
     | '/staff/edit/$id'
     | '/students/edit/$id'
     | '/trusties/edit/$id'
+    | '/vendors/edit/$id'
     | '/bank/add/'
     | '/cashbook/add/'
     | '/committee/add/'
@@ -1280,6 +1339,7 @@ export interface FileRouteTypes {
     | '/staff/add/'
     | '/students/add/'
     | '/trusties/add/'
+    | '/vendors/add/'
   fileRoutesById: FileRoutesById
 }
 
@@ -1319,6 +1379,7 @@ export interface RootRouteChildren {
   TaskmanagerIndexRoute: typeof TaskmanagerIndexRoute
   TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
+  VendorsIndexRoute: typeof VendorsIndexRoute
   WeeklyholidayIndexRoute: typeof WeeklyholidayIndexRoute
   CashbookEditIdRoute: typeof CashbookEditIdRoute
   CommitteeEditIdRoute: typeof CommitteeEditIdRoute
@@ -1332,6 +1393,7 @@ export interface RootRouteChildren {
   StaffEditIdRoute: typeof StaffEditIdRoute
   StudentsEditIdRoute: typeof StudentsEditIdRoute
   TrustiesEditIdRoute: typeof TrustiesEditIdRoute
+  VendorsEditIdRoute: typeof VendorsEditIdRoute
   BankAddIndexRoute: typeof BankAddIndexRoute
   CashbookAddIndexRoute: typeof CashbookAddIndexRoute
   CommitteeAddIndexRoute: typeof CommitteeAddIndexRoute
@@ -1346,6 +1408,7 @@ export interface RootRouteChildren {
   StaffAddIndexRoute: typeof StaffAddIndexRoute
   StudentsAddIndexRoute: typeof StudentsAddIndexRoute
   TrustiesAddIndexRoute: typeof TrustiesAddIndexRoute
+  VendorsAddIndexRoute: typeof VendorsAddIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1384,6 +1447,7 @@ const rootRouteChildren: RootRouteChildren = {
   TaskmanagerIndexRoute: TaskmanagerIndexRoute,
   TeachertimetableIndexRoute: TeachertimetableIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
+  VendorsIndexRoute: VendorsIndexRoute,
   WeeklyholidayIndexRoute: WeeklyholidayIndexRoute,
   CashbookEditIdRoute: CashbookEditIdRoute,
   CommitteeEditIdRoute: CommitteeEditIdRoute,
@@ -1397,6 +1461,7 @@ const rootRouteChildren: RootRouteChildren = {
   StaffEditIdRoute: StaffEditIdRoute,
   StudentsEditIdRoute: StudentsEditIdRoute,
   TrustiesEditIdRoute: TrustiesEditIdRoute,
+  VendorsEditIdRoute: VendorsEditIdRoute,
   BankAddIndexRoute: BankAddIndexRoute,
   CashbookAddIndexRoute: CashbookAddIndexRoute,
   CommitteeAddIndexRoute: CommitteeAddIndexRoute,
@@ -1411,6 +1476,7 @@ const rootRouteChildren: RootRouteChildren = {
   StaffAddIndexRoute: StaffAddIndexRoute,
   StudentsAddIndexRoute: StudentsAddIndexRoute,
   TrustiesAddIndexRoute: TrustiesAddIndexRoute,
+  VendorsAddIndexRoute: VendorsAddIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -1458,6 +1524,7 @@ export const routeTree = rootRoute
         "/taskmanager/",
         "/teachertimetable/",
         "/trusties/",
+        "/vendors/",
         "/weeklyholiday/",
         "/cashbook/edit/$id",
         "/committee/edit/$id",
@@ -1471,6 +1538,7 @@ export const routeTree = rootRoute
         "/staff/edit/$id",
         "/students/edit/$id",
         "/trusties/edit/$id",
+        "/vendors/edit/$id",
         "/bank/add/",
         "/cashbook/add/",
         "/committee/add/",
@@ -1484,7 +1552,8 @@ export const routeTree = rootRoute
         "/semester/add/",
         "/staff/add/",
         "/students/add/",
-        "/trusties/add/"
+        "/trusties/add/",
+        "/vendors/add/"
       ]
     },
     "/": {
@@ -1592,6 +1661,9 @@ export const routeTree = rootRoute
     "/trusties/": {
       "filePath": "trusties/index.tsx"
     },
+    "/vendors/": {
+      "filePath": "vendors/index.tsx"
+    },
     "/weeklyholiday/": {
       "filePath": "weeklyholiday/index.tsx"
     },
@@ -1630,6 +1702,9 @@ export const routeTree = rootRoute
     },
     "/trusties/edit/$id": {
       "filePath": "trusties/edit/$id.tsx"
+    },
+    "/vendors/edit/$id": {
+      "filePath": "vendors/edit/$id.tsx"
     },
     "/bank/add/": {
       "filePath": "bank/add/index.tsx"
@@ -1672,6 +1747,9 @@ export const routeTree = rootRoute
     },
     "/trusties/add/": {
       "filePath": "trusties/add/index.tsx"
+    },
+    "/vendors/add/": {
+      "filePath": "vendors/add/index.tsx"
     }
   }
 }

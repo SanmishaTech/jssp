@@ -30,6 +30,7 @@ import {
   GraduationCap,
   Grid,
   LogOut,
+  Truck
 } from "lucide-react";
 import {
   AlertDialog,
@@ -220,6 +221,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       title: "Time Table",
       url: "/teachertimetable",
       icon: BookText,
+    },
+    {
+      title: "Vendors",
+      url: "/vendors",
+      icon: Truck,
     },
     {
       title: "Task Manager",

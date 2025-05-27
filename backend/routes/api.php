@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\RoomController;
+use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\LeadsController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\HolidayController;
@@ -34,16 +36,15 @@ use App\Http\Controllers\Api\InstituteController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
+use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\SubjectHoursController;
-use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
-use App\Http\Controllers\Api\AttendanceController;
 
 
 
@@ -142,6 +143,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('scholarships', ScholarshipController::class);
    Route::get('/all_scholarships', [ScholarshipController::class, 'allScholarship'])->name("scholarships.all");
 
+   Route::resource('vendors', VendorController::class);
+   Route::get('/all_vendors', [VendorController::class, 'allVendors'])->name("vendors.all");
+   
    // Task Manager Routes
    // Routes already defined above, removing duplicate
 
