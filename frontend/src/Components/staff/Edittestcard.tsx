@@ -658,8 +658,9 @@ function ProfileForm({ formData }) {
                           <SelectItem value="admission">Admission</SelectItem>
                           <SelectItem value="accountant">Accountant</SelectItem>
                           <SelectItem value="backoffice">Back Office</SelectItem>
-                           <SelectItem value="teachingstaff">Teaching Staff</SelectItem>
-                                                    <SelectItem value="nonteachingstaff">Non-Teaching Staff</SelectItem>
+                          <SelectItem value="teachingstaff">Teaching Staff</SelectItem>
+                          <SelectItem value="nonteachingstaff">Non-Teaching Staff</SelectItem>
+                          <SelectItem value="viceprincipal">Vice Principal</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

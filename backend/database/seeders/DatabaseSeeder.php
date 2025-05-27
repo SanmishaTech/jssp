@@ -10,6 +10,7 @@ use Database\Seeders\AdmissionSeeder;
 use Database\Seeders\AccountantSeeder;
 use Database\Seeders\BackOfficeSeeder;
 use Database\Seeders\TeachingStaffSeeder;
+use Database\Seeders\VicePrincipalSeeder;
 use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\CreateMemberUserSeeder;
 use Database\Seeders\NonTeachingStaffSeeder;
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BackOfficeSeeder::class);
         $this->call(TeachingStaffSeeder::class);
         $this->call(NonTeachingStaffSeeder::class);
+        $this->call(VicePrincipalSeeder::class);
 
     }
 }

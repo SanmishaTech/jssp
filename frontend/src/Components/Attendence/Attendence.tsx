@@ -5,20 +5,9 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
-// Note: Select components removed as they're not used after analysis tab removal
 import { toast } from 'sonner';
-import { Loader2, Calendar, FileDown } from "lucide-react";
-import { format, subDays } from "date-fns";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-
+import { Loader2, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 interface Division {
   id: number;
@@ -43,8 +32,6 @@ interface StudentWithAttendance {
   attendance: Attendance;
 }
 
-
-
 interface Holiday {
   from_date: string;
   to_date: string;
@@ -58,19 +45,6 @@ interface WeeklyHoliday {
   title: string;
   description: string;
   type: 'weekly';
-}
-
-interface ReportOptions {
-  format: 'csv' | 'pdf';
-  division_id: number | null;
-  // Day report
-  date?: string;
-  // Week report
-  start_date?: string;
-  end_date?: string;
-  // Month report
-  month?: number;
-  year?: number;
 }
 
 const Attendence: React.FC = () => {
@@ -92,171 +66,6 @@ const Attendence: React.FC = () => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [selectedSubjectName, setSelectedSubjectName] = useState<string>("");
-  
-  // For report generation
-  const [reportLoading, setReportLoading] = useState<boolean>(false);
-  const [reportOptions, setReportOptions] = useState<ReportOptions>({
-    format: 'pdf',
-    division_id: null,
-    date: new Date().toISOString().split('T')[0],
-    start_date: subDays(new Date(), 6).toISOString().split('T')[0],
-    end_date: new Date().toISOString().split('T')[0],
-    month: new Date().getMonth() + 1,
-    year: new Date().getFullYear()
-  });
-
-  // Handle changes to report options
-  const handleReportOptionChange = (key: keyof ReportOptions, value: any) => {
-    setReportOptions(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-  
-  // Download report handlers
-  const handleDownloadDayReport = async () => {
-    if (!reportOptions.division_id) {
-      toast.error("Please select a division");
-      return;
-    }
-    
-    try {
-      setReportLoading(true);
-      const response = await axios({
-        method: 'post',
-        url: '/api/attendance/reports/day',
-        responseType: 'blob', // Important for file download
-        data: {
-          division_id: reportOptions.division_id,
-          date: reportOptions.date,
-          format: reportOptions.format
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      
-      // Get division name
-      const divisionName = divisions.find(d => d.id === reportOptions.division_id)?.division || 'division';
-      
-      // Generate filename
-      const filename = `attendance_${divisionName}_${reportOptions.date}.${reportOptions.format}`;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast.success("Report downloaded successfully");
-    } catch (error) {
-      console.error("Failed to download report:", error);
-      toast.error("Failed to download report");
-    } finally {
-      setReportLoading(false);
-    }
-  };
-  
-  const handleDownloadWeekReport = async () => {
-    if (!reportOptions.division_id) {
-      toast.error("Please select a division");
-      return;
-    }
-    
-    try {
-      setReportLoading(true);
-      const response = await axios({
-        method: 'post',
-        url: '/api/attendance/reports/week',
-        responseType: 'blob',
-        data: {
-          division_id: reportOptions.division_id,
-          start_date: reportOptions.start_date,
-          end_date: reportOptions.end_date,
-          format: reportOptions.format
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      
-      // Get division name
-      const divisionName = divisions.find(d => d.id === reportOptions.division_id)?.division || 'division';
-      
-      // Generate filename
-      const filename = `attendance_${divisionName}_week_${reportOptions.start_date}_to_${reportOptions.end_date}.${reportOptions.format}`;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast.success("Report downloaded successfully");
-    } catch (error) {
-      console.error("Failed to download report:", error);
-      toast.error("Failed to download report");
-    } finally {
-      setReportLoading(false);
-    }
-  };
-  
-  const handleDownloadMonthReport = async () => {
-    if (!reportOptions.division_id) {
-      toast.error("Please select a division");
-      return;
-    }
-    
-    try {
-      setReportLoading(true);
-      const response = await axios({
-        method: 'post',
-        url: '/api/attendance/reports/month',
-        responseType: 'blob',
-        data: {
-          division_id: reportOptions.division_id,
-          month: reportOptions.month,
-          year: reportOptions.year,
-          format: reportOptions.format
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      
-      // Get division name and month name
-      const divisionName = divisions.find(d => d.id === reportOptions.division_id)?.division || 'division';
-      const monthName = new Date(reportOptions.year!, reportOptions.month! - 1).toLocaleString('default', { month: 'long' });
-      
-      // Generate filename
-      const filename = `attendance_${divisionName}_${monthName}_${reportOptions.year}.${reportOptions.format}`;
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      toast.success("Report downloaded successfully");
-    } catch (error) {
-      console.error("Failed to download report:", error);
-      toast.error("Failed to download report");
-    } finally {
-      setReportLoading(false);
-    }
-  };
 
   // Parse query parameters from URL on component mount
   useEffect(() => {
@@ -368,7 +177,7 @@ const Attendence: React.FC = () => {
       if (selectedSlotId) {
         requestData.slot_id = selectedSlotId;
       }
-      
+
       const response = await axios.post(
         `/api/attendance/by-date-division`,
         requestData,
@@ -692,192 +501,6 @@ const Attendence: React.FC = () => {
                   'Save Attendance'
                 )}
               </Button>
-            </div>
-            
-            {/* Report Download Section */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <h3 className="text-lg font-medium mb-4">Download Attendance Reports</h3>
-              
-              <div className="mb-4">
-                <Label htmlFor="report-division" className="mb-2 block">Select Division</Label>
-                <Select 
-                  value={reportOptions.division_id?.toString() || ''} 
-                  onValueChange={(value) => handleReportOptionChange('division_id', parseInt(value))}
-                >
-                  <SelectTrigger id="report-division" className="w-full">
-                    <SelectValue placeholder="Select Division" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {divisions.map(division => (
-                      <SelectItem key={division.id} value={division.id.toString()}>
-                        {division.division}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="mb-4">
-                <Label className="mb-2 block">Report Format</Label>
-                <RadioGroup 
-                  value={reportOptions.format} 
-                  onValueChange={(value) => handleReportOptionChange('format', value)}
-                  className="flex space-x-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="pdf" id="format-pdf" />
-                    <Label htmlFor="format-pdf">PDF</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="csv" id="format-csv" />
-                    <Label htmlFor="format-csv">CSV</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              
-              <Tabs defaultValue="day" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="day">Day-wise</TabsTrigger>
-                  <TabsTrigger value="week">Week-wise</TabsTrigger>
-                  <TabsTrigger value="month">Month-wise</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="day" className="space-y-4 pt-4">
-                  <div className="mb-4">
-                    <Label htmlFor="day-date" className="mb-2 block">Select Date</Label>
-                    <Input 
-                      id="day-date" 
-                      type="date" 
-                      value={reportOptions.date} 
-                      onChange={(e) => handleReportOptionChange('date', e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <Button 
-                    onClick={handleDownloadDayReport} 
-                    disabled={reportLoading || !reportOptions.division_id}
-                    className="w-full"
-                  >
-                    {reportLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Download Day Report
-                      </>
-                    )}
-                  </Button>
-                </TabsContent>
-                
-                <TabsContent value="week" className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="week-start-date" className="mb-2 block">Start Date</Label>
-                      <Input 
-                        id="week-start-date" 
-                        type="date" 
-                        value={reportOptions.start_date} 
-                        onChange={(e) => handleReportOptionChange('start_date', e.target.value)}
-                        className="w-full"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="week-end-date" className="mb-2 block">End Date</Label>
-                      <Input 
-                        id="week-end-date" 
-                        type="date" 
-                        value={reportOptions.end_date} 
-                        onChange={(e) => handleReportOptionChange('end_date', e.target.value)}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleDownloadWeekReport} 
-                    disabled={reportLoading || !reportOptions.division_id}
-                    className="w-full"
-                  >
-                    {reportLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Download Week Report
-                      </>
-                    )}
-                  </Button>
-                </TabsContent>
-                
-                <TabsContent value="month" className="space-y-4 pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="month-select" className="mb-2 block">Month</Label>
-                      <Select 
-                        value={reportOptions.month?.toString()} 
-                        onValueChange={(value) => handleReportOptionChange('month', parseInt(value))}
-                      >
-                        <SelectTrigger id="month-select" className="w-full">
-                          <SelectValue placeholder="Select Month" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 12 }, (_, i) => (
-                            <SelectItem key={i+1} value={(i+1).toString()}>
-                              {new Date(0, i).toLocaleString('default', { month: 'long' })}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="year-select" className="mb-2 block">Year</Label>
-                      <Select 
-                        value={reportOptions.year?.toString()} 
-                        onValueChange={(value) => handleReportOptionChange('year', parseInt(value))}
-                      >
-                        <SelectTrigger id="year-select" className="w-full">
-                          <SelectValue placeholder="Select Year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 5 }, (_, i) => {
-                            const year = new Date().getFullYear() - 2 + i;
-                            return (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleDownloadMonthReport} 
-                    disabled={reportLoading || !reportOptions.division_id}
-                    className="w-full"
-                  >
-                    {reportLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Download Month Report
-                      </>
-                    )}
-                  </Button>
-                </TabsContent>
-              </Tabs>
             </div>
           </>
         )}

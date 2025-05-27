@@ -104,6 +104,112 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: MessageCircle,
     },
   ],
+  viceprincipal: [
+    {
+      title: "Dashboard",
+      url: "/dashboards",
+      icon: Home,
+    },
+    {
+      title: "Time Table",
+      url: "/teachertimetable",
+      icon: BookText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: BookText,
+    },
+    {
+      title: "Holidays",
+      icon: Calendar,
+      children: [
+        {
+          title: "Regular Holidays",
+          url: "/holiday",
+          icon: BookText,
+        },
+        {
+          title: "Weekly Holidays",
+          url: "/weeklyholiday",
+          icon: BookText,
+        }
+      ]
+    },
+    {
+      title: "Staff Management",
+      icon: Users,
+      children: [
+        {
+          title: "Staff Directory",
+          url: "/staff",
+          icon: Users,
+        },
+        {
+          title: "Leave Approval",
+          url: "/leaveapproval",
+          icon: FileText,
+        }
+      ]
+    },
+    {
+      title: "Calendar",
+      url: "/calender",
+      icon: Calendar,
+    },
+    {
+      title: "Academic Oversight",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Courses",
+          url: "/courses",
+          icon: BookText,
+        },
+        {
+          title: "Subjects",
+          url: "/subjects",
+          icon: BookMarked,
+        },
+        {
+          title: "Divisions",
+          url: "/divisions",
+          icon: Grid,
+        }
+      ]
+    },
+    {
+      title: "Student Affairs",
+      icon: UsersRound,
+      children: [
+        {
+          title: "Students",
+          url: "/students",
+          icon: UsersRound,
+        },
+        {
+          title: "Complaints",
+          url: "/complaints",
+          icon: MessageCircle,
+        }
+      ]
+    },
+    {
+      title: "Committees",
+      url: "/committee",
+      icon: UserCheck,
+    },
+    {
+      title: "Meetings",
+      url: "/meetings",
+      icon: Users,
+    },
+    {
+      title: "Events",
+      url: "/events",
+      icon: Calendar,
+    },
+  ],
   admin: [
     {
       title: "Dashboard",
@@ -120,7 +226,6 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       url: "/taskmanager",
       icon: BookText,
     },
-    
     {
       title: "Holidays",
       icon: Calendar,
@@ -156,7 +261,6 @@ const roleBasedItems: Record<string, MenuItem[]> = {
           url: "/academicyears",
           icon: BookMarked,
         },
-       
         {
           title: "Courses",
           url: "/courses",
