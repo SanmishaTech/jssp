@@ -18,6 +18,7 @@ class MemoResource extends JsonResource
             'id' => $this->id,
             'institute_id' => $this->institute_id,
             'staff_id' => $this->staff_id,
+            'staff_name' => $this->staff->staff_name ?? null,
             'memo_subject' => $this->memo_subject,
             'memo_description' => $this->memo_description,
             'created_at' => $this->created_at,

@@ -198,14 +198,23 @@ export default function MemoList() {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+            <div className="grid gap-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="description">Description</Label>
+                <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
+                  {description.length} out of 1500 characters
+                </span>
+              </div>
               <Textarea
                 id="description"
-                placeholder="Enter memo content..."
+                placeholder="Enter memo description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="min-h-[200px] resize-none"
+                onChange={(e) => {
+                  if (e.target.value.length <= 1500) {
+                    setDescription(e.target.value);
+                  }
+                }}
+                className="min-h-[350px]"
               />
             </div>
             
@@ -267,8 +276,9 @@ export default function MemoList() {
                     <div key={memo.id} className="p-2 hover:bg-gray-100 rounded cursor-pointer group">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
+                          <p className="font-medium text-[15px]">{memo.staff_name}</p>
                           <p className="font-medium text-sm">{memo.memo_subject}</p>
-                          <p className="text-xs text-gray-500 truncate">{memo.memo_description}</p>
+                          <p className="text-xs text-gray-500">{memo.memo_description.length > 11 ? `${memo.memo_description.slice(0, 11)}...` : memo.memo_description}</p>
                           {/* <p className="text-xs text-gray-400 mt-1">
                             {moment(memo.created_at).format('MMM DD, YYYY')}
                           </p> */}

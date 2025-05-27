@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('staff_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             $table->string('memo_subject');
-            $table->string('memo_description');
+            $table->text('memo_description');
             $table->timestamps();
         });
     }

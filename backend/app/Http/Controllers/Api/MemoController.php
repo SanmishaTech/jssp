@@ -27,8 +27,16 @@ class MemoController extends BaseController
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('memo_subject', 'like', '%' . $searchTerm . '%')
-                      ->orWhere('memo_description', 'like', '%' . $searchTerm . '%');
+                      ->orWhere('memo_description', 'like', '%' . $searchTerm . '%')
+                      ->orWhereHas('staff', function ($q) use ($searchTerm) {
+                          $q->where('staff_name', 'like', '%' . $searchTerm . '%');
+                      });
             });
+        }
+
+        // If staff_id is provided, filter memos by that staff
+        if ($request->query('staff_id')) {
+            $query->where('staff_id', $request->query('staff_id'));
         }
     
         // Get per_page parameter or use default of 9
