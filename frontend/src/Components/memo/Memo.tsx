@@ -31,6 +31,9 @@ export default function MemoList() {
   const [staffList, setStaffList] = useState<{id: string, name: string}[]>([]);
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
   const [deleteId, setDeleteId] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   
   const token = localStorage.getItem("token");
 
@@ -40,16 +43,41 @@ export default function MemoList() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Effect to run search when searchTerm changes
+  useEffect(() => {
+    // Reset to first page when search term changes
+    setCurrentPage(1);
+    // Don't call fetchMemos here - it will be called by the effect below
+  }, [searchTerm]);
+  
+  // Effect to fetch memos when page or search changes
+  useEffect(() => {
+    fetchMemos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchTerm]);
+
   const fetchMemos = async () => {
     setLoadingMemos(true);
     try {
+      // Add search and pagination parameters
       const response = await axios.get(`/api/memos`, {
         headers: {
           Authorization: `Bearer ${token}`
+        },
+        params: {
+          search: searchTerm,
+          page: currentPage
         }
       });
       if (response.data.status) {
         setMemos(response.data.data.Memo);
+        
+        // Set pagination data
+        if (response.data.data.Pagination) {
+          // Don't update currentPage here, as it will cause an infinite loop
+          // with the useEffect that watches currentPage
+          setTotalPages(response.data.data.Pagination.last_page);
+        }
       }
     } catch (error) {
       console.error("Error fetching memos:", error);
@@ -218,6 +246,17 @@ export default function MemoList() {
                   </span>
                 </Button>
               </div>
+              
+              {/* Search Box */}
+              <div className="mt-3 mb-3">
+                <Input
+                  type="text"
+                  placeholder="Search memos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full"
+                />
+              </div>
               <div className="mt-3 space-y-2">
                 {loadingMemos ? (
                   <p className="text-center text-sm text-gray-500">Loading memos...</p>
@@ -253,6 +292,37 @@ export default function MemoList() {
                       </div>
                     </div>
                   ))
+                )}
+                
+                {/* Pagination controls */}
+                {!loadingMemos && memos.length > 0 && totalPages > 1 && (
+                  <div className="flex justify-between items-center mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage === 1}
+                      onClick={() => {
+                        setCurrentPage(prev => Math.max(prev - 1, 1));
+                        // fetchMemos() will be called by the useEffect
+                      }}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-xs text-gray-500">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={currentPage === totalPages}
+                      onClick={() => {
+                        setCurrentPage(prev => prev + 1);
+                        // fetchMemos() will be called by the useEffect
+                      }}
+                    >
+                      Next
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>

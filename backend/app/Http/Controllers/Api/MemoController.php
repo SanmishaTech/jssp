@@ -26,12 +26,16 @@ class MemoController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('memo_subject', 'like', '%' . $searchTerm . '%');
+                $query->where('memo_subject', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('memo_description', 'like', '%' . $searchTerm . '%');
             });
         }
     
-        // Paginate the results.
-        $memo = $query->paginate(7);
+        // Get per_page parameter or use default of 9
+        $perPage = $request->query('per_page', 9);
+        
+        // Paginate the results with explicit parameter for page from request
+        $memo = $query->paginate($perPage, ['*'], 'page', $request->query('page', 1));
     
         // Return the paginated response with staff resources.
         return $this->sendResponse(
@@ -78,7 +82,7 @@ class MemoController extends BaseController
     }
 
 
-    public function update(MemoRequest $request, string $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse
     {
  
         $memo = Memo::find($id);
