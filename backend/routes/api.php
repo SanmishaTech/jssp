@@ -153,8 +153,19 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('assetmasters', AssetMasterController::class);
 Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster'])->name("assetmasters.all");
    
-   Route::resource('requisitions', RequisitionController::class);
+   // Custom requisition routes must come before the resource route to avoid conflicts
+   Route::get('/requisitions/history', [RequisitionController::class, 'history'])->name("requisitions.history");
+   Route::get('/requisitions/pending-approvals', [RequisitionController::class, 'pendingApprovals'])->name("requisitions.pending-approvals");
+   Route::get('/requisitions/admin-own', [RequisitionController::class, 'adminOwnRequisitions'])->name("requisitions.admin-own");
+   Route::post('/requisitions/{id}/approve', [RequisitionController::class, 'approve'])->name("requisitions.approve");
+   Route::post('/requisitions/{id}/reject', [RequisitionController::class, 'reject'])->name("requisitions.reject");
    Route::get('/all_requisitions', [RequisitionController::class, 'allRequisitions'])->name("requisitions.all");
+   
+   // Superadmin routes to access admin requisitions
+   Route::get('/requisitions/admin', [RequisitionController::class, 'getAdminRequisitions'])->name("requisitions.admin");
+   Route::get('/requisitions/admin/pending', [RequisitionController::class, 'getAdminPendingRequisitions'])->name("requisitions.admin.pending");
+   
+   Route::resource('requisitions', RequisitionController::class);
    
 
    Route::resource('memos', MemoController::class);

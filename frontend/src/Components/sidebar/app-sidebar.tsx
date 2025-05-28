@@ -75,6 +75,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       icon: Home,
     },
     {
+      title: "Requisitions",
+      url: "/requisitions",
+      icon: Truck,
+    },
+    {
       title: "Leave Approval",
       url: "/leaveapproval",
       icon: FileText,
@@ -221,6 +226,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       title: "Dashboard",
       url: "/dashboards",
       icon: Home,
+    },
+    {
+      title: "Requisitions",
+      url: "/requisitions",
+      icon: Truck,
     },
     {
       title: "Memo",
@@ -436,6 +446,11 @@ const roleBasedItems: Record<string, MenuItem[]> = {
       title: "Memo",
       url: "/memo",
       icon: FileText,
+    },
+    {
+      title: "Requisitions",
+      url: "/requisitions",
+      icon: Truck,
     },
     {
       title: "Calender",
