@@ -8,11 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class AssetMaster extends Model
 {
     protected $table = 'asset_masters';
-    protected $fillable = ['institute_id', 'asset_category_id', 'asset_type', 'service_required'];
+    protected $fillable = ['institute_id', 'asset_category_ids', 'asset_type', 'service_required'];
 
-    public function assetCategory()
+    protected $casts = [
+        'asset_category_ids' => 'json',
+        'service_required' => 'boolean',
+    ];
+
+    public function assetCategories()
 {
-    return $this->belongsTo(AssetCategory::class);
+    // This is a custom relationship for JSON field
+    // We'll need to manually handle this in queries
+    // For example: AssetCategory::whereIn('id', json_decode($assetMaster->asset_category_ids, true))->get()
 }
 
 }

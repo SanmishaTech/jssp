@@ -7,9 +7,12 @@ import EditAcademicYearDialog from "./EditAcademicYearDialog";
 
 interface Subject {
   id: string;
-  medium_title: string;
-  medium_code: string;
-  organization: string;
+  asset_type?: string;
+  service_required?: number | boolean;
+  asset_category_ids?: Array<{label: string; value: string}> | string;
+  medium_title?: string;
+  medium_code?: string;
+  organization?: string;
 }
 
 interface PaginationData {
@@ -182,6 +185,7 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Asset Type", key: "one" },
           { label: "Service Required", key: "two" },
+          { label: "Asset Category", key: "three" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -273,12 +277,24 @@ export default function Dashboardholiday() {
   const mappedTableData = data.map((item) => ({
     id: item.id,
     one: item.asset_type || "Unknown",
-    two:
-      item.service_required === 1
-        ? "Yes"
-        : item.service_required === 0
-        ? "No"
-        : "Unknown",
+    two: (() => {
+      // Convert to string for safer comparison
+      const serviceReq = String(item.service_required);
+      if (serviceReq === '1' || serviceReq === 'true') {
+        return "Yes";
+      } else if (serviceReq === '0' || serviceReq === 'false') {
+        return "No";
+      } else {
+        return "Unknown";
+      }
+    })(),
+    three: Array.isArray(item.asset_category_ids) 
+        ? item.asset_category_ids.map((category) => category.label || category.value).join(", ")
+        : typeof item.asset_category_ids === 'string' 
+            ? JSON.parse(item.asset_category_ids || '[]')
+                .map((category) => category.label || category.value || category)
+                .join(", ")
+            : "Unknown",
     delete: "/assetmasters/" + item.id,
   }));
 

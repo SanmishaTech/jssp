@@ -12,6 +12,7 @@ import { z } from "zod";
 import axios from "axios";
 import { toast } from "sonner";
 import {Checkbox} from "@heroui/checkbox";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -21,9 +22,14 @@ import {
   FormMessage,
 } from "../../components/ui/form";
 import { Input } from "../../components/ui/input";
+import MultipleSelector, { Option } from "../../Components/ui/multiselect";
 
 const profileFormSchema = z.object({
   asset_type: z.string().trim().nonempty("Asset Type is Required"),
+  asset_category_ids: z.array(z.object({
+    value: z.string(),
+    label: z.string()
+  })).min(1, "At least one Asset Category is Required"),
   service_required: z.boolean().default(false),
   userId: z.string().optional(),
 });
@@ -37,11 +43,21 @@ interface AddAcademicYearDialogProps {
   fetchData: () => void;
 }
 
-interface FormFieldProps {
+interface AssetTypeFieldProps {
   field: {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur: () => void;
     value: string;
+    name: string;
+    ref: React.Ref<HTMLInputElement>;
+  };
+}
+
+interface ServiceRequiredFieldProps {
+  field: {
+    onChange: (event: React.ChangeEvent<HTMLInputElement> | boolean) => void;
+    onBlur: () => void;
+    value: boolean;
     name: string;
     ref: React.Ref<HTMLInputElement>;
   };
@@ -72,12 +88,46 @@ export default function AddAcademicYearDialog({
   const defaultValues: Partial<ProfileFormValues> = {
     asset_type: '',
     service_required: false,
+    asset_category_ids: [],
+    userId: '',
   };
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
+  
+  const [assetCategories, setAssetCategories] = useState<Option[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Fetch asset categories when dialog opens
+      const token = localStorage.getItem("token");
+      axios.get("/api/assetcategories", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log('API Response:', response.data);
+        if (response.data.data && response.data.data.AssetCategories) {
+          // Transform the data to match the Option interface
+          const categoryOptions = response.data.data.AssetCategories.map((category: { id: number; category_name: string }) => ({
+            value: category.id.toString(),
+            label: category.category_name
+          }));
+          console.log('Mapped Category Options:', categoryOptions);
+          setAssetCategories(categoryOptions);
+        } else {
+          console.error('AssetCategories not found in response:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching asset categories:", error);
+        toast.error("Failed to load asset categories");
+      });
+    }
+  }, [isOpen]);
 
   const onClose = () => {
     onOpen(false);
@@ -96,8 +146,15 @@ export default function AddAcademicYearDialog({
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
+    
+    // Ensure asset_category_ids is properly formatted before submission
+    const formattedData = {
+      ...data,
+      asset_category_ids: Array.isArray(data.asset_category_ids) ? data.asset_category_ids : []
+    };
+    
     try {
-      await axios.post(`/api/assetmasters`, data, {
+      await axios.post(`/api/assetmasters`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -153,8 +210,36 @@ export default function AddAcademicYearDialog({
                   <div className="flex grid  gap-4">
                     <FormField
                       control={form.control}
+                      name="asset_category_ids"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Asset Categories
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <MultipleSelector
+                              commandProps={{
+                                label: "Select asset categories",
+                              }}
+                              value={Array.isArray(field.value) ? field.value : []}
+                              onChange={field.onChange}
+                              options={assetCategories}
+                              defaultOptions={assetCategories}
+                              placeholder="Select asset categories"
+                              hideClearAllButton={false}
+                              hidePlaceholderWhenSelected
+                              emptyIndicator={<p className="text-center text-sm">No categories found</p>}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
                       name="asset_type"
-                      render={({ field }: FormFieldProps) => (
+                      render={({ field }: AssetTypeFieldProps) => (
                         <FormItem>
                           <FormLabel>
                             Asset Type
@@ -172,7 +257,7 @@ export default function AddAcademicYearDialog({
                     <FormField
   control={form.control}
   name="service_required"
-  render={({ field }: FormFieldProps) => (
+  render={({ field }: ServiceRequiredFieldProps) => (
     <FormItem>
       <FormControl>
         <div className="flex items-center space-x-2">
@@ -180,7 +265,7 @@ export default function AddAcademicYearDialog({
             type="checkbox"
             id="service_required"
             checked={!!field.value}
-            onChange={field.onChange}
+            onChange={(e) => field.onChange(e.target.checked)}
             onBlur={field.onBlur}
             name={field.name}
             ref={field.ref}
