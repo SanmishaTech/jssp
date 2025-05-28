@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('institute_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
+            $table->unsignedBigInteger('asset_category_id');
             $table->string('asset_type')->nullable();
             $table->boolean('service_required')->default(false);
             $table->timestamps();
