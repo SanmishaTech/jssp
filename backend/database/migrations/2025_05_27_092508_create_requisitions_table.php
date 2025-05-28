@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             
             $table->unsignedBigInteger('asset_master_id');
+            $table->json('asset_category_ids')->nullable(); // Store selected category IDs as JSON
             $table->string('description')->nullable();
             $table->unsignedBigInteger('requested_by');
             $table->foreign('requested_by')->references('id')->on('users')->onDelete('cascade');

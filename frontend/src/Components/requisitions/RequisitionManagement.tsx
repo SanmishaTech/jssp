@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -32,7 +32,6 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -50,10 +49,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Form schema
 const formSchema = z.object({
   asset_master_id: z.string().min(1, { message: "Asset is required" }),
+  asset_category_ids: z.array(z.string()).optional(),
   description: z.string().min(5, { message: "Description must be at least 5 characters" }).max(500),
 });
 
@@ -81,6 +86,22 @@ interface Asset {
   service_required: boolean;
   created_at: string;
   updated_at: string;
+}
+
+interface AssetCategory {
+  id: number;
+  name: string;
+  institute_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+
+
+// Direct representation of categories from asset_category_ids
+interface AssetDirectCategory {
+  value: string; // category ID
+  label: string; // category name
 }
 
 export default function RequisitionManagement() {
@@ -114,6 +135,9 @@ export default function RequisitionManagement() {
   const [adminSubTab, setAdminSubTab] = useState("all");
   const [requisitions, setRequisitions] = useState<Requisition[]>([]);
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [assetCategories, setAssetCategories] = useState<AssetCategory[]>([]);
+  // Direct categories from the selected asset
+  const [assetDirectCategories, setAssetDirectCategories] = useState<AssetDirectCategory[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRequisition, setSelectedRequisition] = useState<Requisition | null>(null);
   
@@ -127,6 +151,7 @@ export default function RequisitionManagement() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       asset_master_id: "",
+      asset_category_ids: [],
       description: "",
     },
   });
@@ -212,17 +237,101 @@ export default function RequisitionManagement() {
     }
   };
   
+  // Fetch asset categories
+  const fetchAssetCategories = async () => {
+    try {
+      console.log('Fetching asset categories...');
+      const response = await axios.get("/api/assetcategories");
+      console.log('Asset categories API response:', response.data);
+      
+      if (response.data.status) {
+        // Ensure we're extracting the right property from the response
+        const categories = response.data.data.AssetCategory || [];
+        console.log('Setting asset categories:', categories);
+        setAssetCategories(categories);
+      } else {
+        console.warn('Asset categories API returned status false');
+      }
+    } catch (error) {
+      console.error("Error fetching asset categories:", error);
+      toast.error("Failed to load asset categories");
+    }
+  };
+  
   // Initial load
   useEffect(() => {
     fetchRequisitions();
     fetchAssets();
+    fetchAssetCategories();
   }, [activeTab, adminSubTab]);
+  
+  // Watch for asset_master_id changes to filter categories
+  const selectedAssetId = form.watch("asset_master_id");
+  
+  // Update categories when asset selection changes
+  useEffect(() => {
+    console.log('Asset selection changed', {
+      selectedAssetId,
+      assetsLength: assets.length
+    });
+    
+    if (selectedAssetId && assets.length > 0) {
+      const selectedAsset = assets.find(asset => asset.id.toString() === selectedAssetId);
+      console.log('Selected asset:', selectedAsset);
+      
+      if (selectedAsset && selectedAsset.asset_category_ids) {
+        try {
+          console.log('Raw asset_category_ids:', selectedAsset.asset_category_ids);
+          
+          // Parse the JSON string from asset_category_ids
+          const categoryObjects = JSON.parse(selectedAsset.asset_category_ids);
+          console.log('Parsed category objects:', categoryObjects);
+          
+          // Since we have the category information directly in the asset,
+          // we'll use it directly instead of trying to match with assetCategories
+          setAssetDirectCategories(categoryObjects as AssetDirectCategory[]);
+          
+          // Reset category selection when asset changes
+          form.setValue("asset_category_ids", []);
+          
+          if (categoryObjects.length === 0) {
+            console.warn('No categories found in the selected asset');
+          }
+        } catch (error) {
+          console.error('Error parsing asset_category_ids:', error, selectedAsset.asset_category_ids);
+          setAssetDirectCategories([]);
+        }
+      } else {
+        console.log('No asset_category_ids in selected asset');
+        setAssetDirectCategories([]);
+      }
+    } else {
+      console.log('Asset not selected or data not loaded yet');
+      setAssetDirectCategories([]);
+    }
+  }, [selectedAssetId, assets]);
+  
+  // Log available categories for debugging
+  useEffect(() => {
+    if (assetCategories.length > 0) {
+      console.log('Asset categories updated:', assetCategories);
+    } else {
+      console.log('No asset categories available');
+    }
+  }, [assetCategories]);
   
   // Submit form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/requisitions", values);
+      // Create payload, including categories if selected
+      const payload = {
+        asset_master_id: values.asset_master_id,
+        description: values.description,
+        asset_category_ids: values.asset_category_ids && values.asset_category_ids.length > 0 ? values.asset_category_ids : undefined
+      };
+      
+      const response = await axios.post("/api/requisitions", payload);
       if (response.data.status) {
         toast.success("Requisition submitted successfully");
         form.reset();
@@ -333,7 +442,7 @@ export default function RequisitionManagement() {
                     <FormField
                       control={form.control}
                       name="asset_master_id"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>Asset</FormLabel>
                           <Select
@@ -361,8 +470,125 @@ export default function RequisitionManagement() {
                     
                     <FormField
                       control={form.control}
+                      name="asset_category_ids"
+                      render={({ field }: { field: any }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Asset Categories</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  disabled={loading || !selectedAssetId || assetDirectCategories.length === 0}
+                                  className={cn(
+                                    "justify-between h-auto min-h-10",
+                                    !field.value?.length && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value?.length > 0 ? (
+                                    <div className="flex flex-wrap gap-1">
+                                      {field.value.map((value: string) => {
+                                        const categoryItem = assetDirectCategories.find(
+                                          (category) => category.value === value
+                                        );
+                                        return (
+                                          <Badge
+                                            key={value}
+                                            variant="secondary"
+                                            className="mr-1 mb-1"
+                                          >
+                                            {categoryItem?.label || value}
+                                            <button
+                                              className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                              onKeyDown={(e) => {
+                                                if (e.key === "Enter") {
+                                                  e.preventDefault();
+                                                  e.stopPropagation();
+                                                  const newValue = field.value.filter(
+                                                    (item: string) => item !== value
+                                                  );
+                                                  field.onChange(newValue);
+                                                }
+                                              }}
+                                              onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                              }}
+                                              onClick={() => {
+                                                const newValue = field.value.filter(
+                                                  (item: string) => item !== value
+                                                );
+                                                field.onChange(newValue);
+                                              }}
+                                            >
+                                              <X className="h-3 w-3" />
+                                            </button>
+                                          </Badge>
+                                        );
+                                      })}
+                                    </div>
+                                  ) : (
+                                    <span>
+                                      {!selectedAssetId 
+                                        ? "Select an asset first" 
+                                        : assetDirectCategories.length === 0 
+                                          ? "No categories available for this asset" 
+                                          : "Select categories"}
+                                    </span>
+                                  )}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-0" align="start">
+                              <Command>
+                                <CommandInput placeholder="Search categories..." />
+                                <CommandEmpty>No category found.</CommandEmpty>
+                                <CommandGroup>
+                                  <ScrollArea className="h-60">
+                                    {assetDirectCategories.map((category) => {
+                                      const isSelected = field.value?.includes(category.value);
+                                      return (
+                                        <CommandItem
+                                          key={category.value}
+                                          value={category.value}
+                                          onSelect={() => {
+                                            if (isSelected) {
+                                              const newValue = field.value.filter(
+                                                (item: string) => item !== category.value
+                                              );
+                                              field.onChange(newValue);
+                                            } else {
+                                              const newValue = [...(field.value || []), category.value];
+                                              field.onChange(newValue);
+                                            }
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              isSelected ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                          {category.label}
+                                        </CommandItem>
+                                      );
+                                    })}
+                                  </ScrollArea>
+                                </CommandGroup>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
                       name="description"
-                      render={({ field }) => (
+                      render={({ field }: { field: any }) => (
                         <FormItem>
                           <FormLabel>Description</FormLabel>
                           <FormControl>

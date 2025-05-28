@@ -144,6 +144,8 @@ class RequisitionController extends BaseController
         // Validate input
         $validator = Validator::make($request->all(), [
             'asset_master_id' => 'required|exists:asset_masters,id',
+            'asset_category_ids' => 'nullable|array',
+            'asset_category_ids.*' => 'string',
             'description' => 'required|string|max:500',
         ]);
 
@@ -155,6 +157,12 @@ class RequisitionController extends BaseController
         $requisition = new Requisition();
         $requisition->institute_id = Auth::user()->staff->institute_id;  
         $requisition->asset_master_id = $request->input('asset_master_id');
+        
+        // Handle asset_category_ids if provided
+        if ($request->has('asset_category_ids')) {
+            $requisition->asset_category_ids = json_encode($request->input('asset_category_ids'));
+        }
+        
         $requisition->description = $request->input('description');
         $requisition->requested_by = Auth::id(); // Set the current user as requester
         $requisition->status = 'pending'; // Default status
@@ -195,6 +203,8 @@ class RequisitionController extends BaseController
             // Validate input for regular update
             $validator = Validator::make($request->all(), [
                 'asset_master_id' => 'required|exists:asset_masters,id',
+                'asset_category_ids' => 'nullable|array',
+                'asset_category_ids.*' => 'string',
                 'description' => 'required|string|max:500',
             ]);
 
@@ -203,6 +213,12 @@ class RequisitionController extends BaseController
             }
             
             $requisition->asset_master_id = $request->input('asset_master_id');
+            
+            // Handle asset_category_ids if provided
+            if ($request->has('asset_category_ids')) {
+                $requisition->asset_category_ids = json_encode($request->input('asset_category_ids'));
+            }
+            
             $requisition->description = $request->input('description');
         }
         // If user is admin, they can approve/reject
