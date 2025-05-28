@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import {
   Modal,
@@ -21,18 +21,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../components/ui/form";
-import { Input } from "../../components/ui/input";
+} from "../../Components/ui/form";
+import { Input } from "../../Components/ui/input";
 import MultipleSelector, { Option } from "../../Components/ui/multiselect";
 
 const profileFormSchema = z.object({
-  asset_type: z.string().trim().nonempty("Asset Type is Required"),
+  vendor_id: z.any().optional(),
+  asset_master_id: z.string().trim().nonempty("Asset Type is Required"),
   asset_category_ids: z.array(z.object({
     value: z.string(),
     label: z.string()
   })).min(1, "At least one Asset Category is Required"),
-  service_required: z.any().optional(),
-});
+  quantity: z.any().optional(),
+  price: z.any().optional(),
+ });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
@@ -44,15 +46,7 @@ interface EditAcademicYearDialogProps {
   academicYearId: string;
 }
 
-interface AssetTypeFieldProps {
-  field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onBlur: () => void;
-    value: string;
-    name: string;
-    ref: React.Ref<HTMLInputElement>;
-  };
-}
+// No longer needed as we're using a select dropdown for asset type
 
 interface ServiceRequiredFieldProps {
   field: {
@@ -64,21 +58,7 @@ interface ServiceRequiredFieldProps {
   };
 }
 
-const formatAcademicYear = (value: string) => {
-  // Remove all non-digit characters
-  const digits = value.replace(/\D/g, '');
-  
-  // If we have 4 or more digits, automatically add the dash and next year's last two digits
-  if (digits.length >= 4) {
-    const firstYear = parseInt(digits.substring(0, 4));
-    const nextYear = (firstYear + 1) % 100;
-    const formattedNextYear = nextYear < 10 ? `0${nextYear}` : `${nextYear}`;
-    return `${digits.substring(0, 4)}-${formattedNextYear}`;
-  }
-  
-  // Otherwise just return the digits (up to 4)
-  return digits.substring(0, 4);
-};
+// Format function removed as it's no longer needed
 
 export default function EditAcademicYearDialog({
   isOpen,
@@ -89,27 +69,29 @@ export default function EditAcademicYearDialog({
 }: EditAcademicYearDialogProps) {
   const defaultValues: Partial<ProfileFormValues> = {
     asset_category_ids: [],
+    vendor_id: '',
+    asset_master_id: '',
+    quantity: '',
+    price: '',
   };
   
   const [assetCategories, setAssetCategories] = useState<Option[]>([]);
+  const [vendors, setVendors] = useState<{ id: string | number; name: string }[]>([]);
+  const [assets, setAssets] = useState<{ id: string | number; name: string }[]>([]);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     onOpen(false);
     form.reset();
-  };
+  }, [onOpen, form]);
 
   const token = localStorage.getItem("token");
 
-  // Handle input change with formatting
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    const formatted = formatAcademicYear(e.target.value);
-    field.onChange(formatted);
-  };
+  // No longer needed for this component
 
   // Fetch asset categories when dialog opens
   useEffect(() => {
@@ -138,31 +120,70 @@ export default function EditAcademicYearDialog({
         console.error("Error fetching asset categories:", error);
         toast.error("Failed to load asset categories");
       });
+      
+      // Fetch vendors
+      axios.get("/api/vendors", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data.data && response.data.data.Vendor) {
+          setVendors(response.data.data.Vendor);
+        } else {
+          console.error('Vendors not found in response:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching vendors:", error);
+        toast.error("Failed to load vendors");
+      });
+      
+      // Fetch assets
+      axios.get("/api/assetmasters", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data.data && response.data.data.AssetMaster) {
+          setAssets(response.data.data.AssetMaster);
+        } else {
+          console.error('Assets not found in response:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching assets:", error);
+        toast.error("Failed to load assets");
+      });
     }
   }, [isOpen, token]);
   
-  // Fetch academic year data when dialog opens
+  // Fetch purchase order data when dialog opens
   useEffect(() => {
     if (isOpen && academicYearId) {
       const fetchAcademicYearData = async () => {
         try {
-           const response = await axios.get(`/api/assetmasters/${academicYearId}`, {
+          // Change endpoint to fetch purchase order data
+          const response = await axios.get(`/api/purchaseorders/${academicYearId}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           });
           
-           
-          if (response.data && response.data.data && response.data.data.AssetMaster) {
-            const academicYearData = response.data.data.AssetMaster;
+          console.log('API Response for Purchase Order:', response.data);
+          
+          if (response.data && response.data.data && response.data.data.PurchaseOrder) {
+            const purchaseOrderData = response.data.data.PurchaseOrder;
             
             // Format asset_category_ids to ensure it's an array of Option objects
-            let categoryIds = academicYearData.asset_category_ids;
+            let categoryIds = purchaseOrderData.asset_category_ids;
             if (typeof categoryIds === 'string') {
               try {
                 categoryIds = JSON.parse(categoryIds);
-              } catch (e) {
+              } catch {
+                // If parsing fails, use empty array
                 categoryIds = [];
               }
             }
@@ -170,7 +191,7 @@ export default function EditAcademicYearDialog({
             // Ensure category IDs are in the correct format for the MultipleSelector
             if (Array.isArray(categoryIds)) {
               // Map to ensure each item has value and label properties
-              academicYearData.asset_category_ids = categoryIds.map(item => {
+              purchaseOrderData.asset_category_ids = categoryIds.map(item => {
                 if (typeof item === 'object' && item !== null) {
                   return {
                     value: item.value || item.id?.toString() || '',
@@ -187,22 +208,31 @@ export default function EditAcademicYearDialog({
                 return { value: '', label: '' };
               }).filter(item => item.value !== '');
             } else {
-              academicYearData.asset_category_ids = [];
+              purchaseOrderData.asset_category_ids = [];
             }
             
-            console.log('Formatted data for form:', academicYearData);
-            form.reset(academicYearData);
+            // Format the data for form
+            const formattedData = {
+              vendor_id: purchaseOrderData.vendor_id?.toString() || '',
+              asset_master_id: purchaseOrderData.asset_master_id?.toString() || '',
+              asset_category_ids: purchaseOrderData.asset_category_ids || [],
+              quantity: purchaseOrderData.quantity?.toString() || '',
+              price: purchaseOrderData.price?.toString() || '',
+             };
+            
+            console.log('Formatted data for form:', formattedData);
+            form.reset(formattedData);
           } else {
             console.error('Unexpected API response structure:', response.data);
             toast.error("Invalid data format received from server");
           }
         } catch (error) {
-          console.error("Error fetching asset master:", error);
+          console.error("Error fetching purchase order:", error);
           
           if (axios.isAxiosError(error)) {
             console.error('Response status:', error.response?.status);
             console.error('Response data:', error.response?.data);
-            toast.error(error.response?.data?.message || "Failed to load asset master data");
+            toast.error(error.response?.data?.message || "Failed to load purchase order data");
           } else {
             toast.error("An unexpected error occurred");
           }
@@ -212,27 +242,29 @@ export default function EditAcademicYearDialog({
       };
       fetchAcademicYearData();
     }
-  }, [isOpen, academicYearId, form, token]);
+  }, [isOpen, academicYearId, form, token, onClose, assetCategories]);
 
   async function onSubmit(data: ProfileFormValues) {
     try {
-      // Ensure asset_category_ids is properly formatted before submission
+      // Ensure data is properly formatted before submission
       const formattedData = {
-        asset_type: data.asset_type,
+        asset_master_id: data.asset_master_id,
         asset_category_ids: Array.isArray(data.asset_category_ids) ? data.asset_category_ids : [],
-        service_required: data.service_required,
-      };
+        vendor_id: data.vendor_id,
+        quantity: data.quantity,
+        price: data.price,
+       };
       
       console.log('Submitting data:', formattedData);
 
-      await axios.patch(`/api/assetmasters/${academicYearId}`, formattedData, {
+      await axios.patch(`/api/purchaseorders/${academicYearId}`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      toast.success("Asset Master Updated Successfully");
+      toast.success("Purchase Order Updated Successfully");
       onClose();
       fetchData();
     } catch (error) {
@@ -270,7 +302,7 @@ export default function EditAcademicYearDialog({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Edit Asset Master
+              Edit Purchase Order
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -278,81 +310,130 @@ export default function EditAcademicYearDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className="flex grid  gap-4">
+                  <div className="space-y-4">
+                    {/* Vendor Field - Full Width */}
                     <FormField
                       control={form.control}
-                      name="asset_category_ids"
+                      name="vendor_id"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>
-                            Asset Categories
-                            <span className="text-red-500">*</span>
+                            Vendor
                           </FormLabel>
                           <FormControl>
-                            <MultipleSelector
-                              commandProps={{
-                                label: "Select asset categories",
-                              }}
-                              value={Array.isArray(field.value) ? field.value : []}
+                            <select
+                              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                              value={field.value as string}
                               onChange={field.onChange}
-                              options={assetCategories}
-                              defaultOptions={assetCategories}
-                              placeholder="Select asset categories"
-                              hideClearAllButton={false}
-                              hidePlaceholderWhenSelected
-                              emptyIndicator={<p className="text-center text-sm">No categories found</p>}
-                            />
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
+                            >
+                              <option value="">Select Vendor</option>
+                              {vendors.map((vendor) => (
+                                <option key={vendor.id} value={vendor.id}>
+                                  {vendor.vendor_name}
+                                </option>
+                              ))}
+                            </select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="asset_type"
-                      render={({ field }: AssetTypeFieldProps) => (
-                                        <FormItem>
-                                          <FormLabel>
-                                            Asset Type
-                                            <span className="text-red-500">*</span>
-                                          </FormLabel>
-                                          <FormControl>
-                                         <Input {...field} placeholder="Asset Type" />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                    
-                
-                                    <FormField
-                  control={form.control}
-                  name="service_required"
-                  render={({ field }: ServiceRequiredFieldProps) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="service_required"
-                            checked={!!field.value}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            onBlur={field.onBlur}
-                            name={field.name}
-                            ref={field.ref}
-                            className="w-4 h-4"
-                          />
-                          <FormLabel htmlFor="service_required" className="m-0">
-                            Service Required 
-                          </FormLabel>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                                  </div>
+                    
+                    {/* Asset Type and Asset Categories Side by Side */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="asset_master_id"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Asset Type
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <select
+                                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                value={field.value as string}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                name={field.name}
+                                ref={field.ref}
+                              >
+                                <option value="">Select Asset Type</option>
+                                {assets.map((asset) => (
+                                  <option key={asset.id} value={asset.id}>
+                                    {asset.asset_type}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="asset_category_ids"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              Asset Categories
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <MultipleSelector
+                                commandProps={{
+                                  label: "Select asset categories",
+                                }}
+                                value={Array.isArray(field.value) ? field.value : []}
+                                onChange={field.onChange}
+                                options={assetCategories}
+                                defaultOptions={assetCategories}
+                                placeholder="Select asset categories"
+                                hideClearAllButton={false}
+                                hidePlaceholderWhenSelected
+                                emptyIndicator={<p className="text-center text-sm">No categories found</p>}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    {/* Quantity and Price Side by Side */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="quantity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Quantity</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter Quantity..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter Price..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
                 </form>
               </Form>
             </ModalBody>
@@ -361,7 +442,7 @@ export default function EditAcademicYearDialog({
                 Cancel
               </Button>
               <Button color="primary" onPress={handleSubmit}>
-                Update Asset Master
+                Update Purchase Order
               </Button>
             </ModalFooter>
           </>

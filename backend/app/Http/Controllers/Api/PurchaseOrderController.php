@@ -12,6 +12,52 @@ use App\Http\Resources\PurchaseOrderResource;
 
 class PurchaseOrderController extends BaseController
 {
+    /**
+     * Get asset categories by asset ID
+     *
+     * @param string $assetId
+     * @return JsonResponse
+     */
+    public function getAssetCategoriesByAsset(string $assetId): JsonResponse
+    {
+        try {
+            // Get the asset master record
+            $assetMaster = \App\Models\AssetMaster::find($assetId);
+            
+            if (!$assetMaster) {
+                return $this->sendError("Asset not found", ['error' => 'Asset not found'], 404);
+            }
+            
+            // Get the asset categories linked to this asset
+            $categoriesJson = $assetMaster->asset_category_ids;
+            
+            // If no categories found, return empty array
+            if (empty($categoriesJson)) {
+                return $this->sendResponse(["AssetCategories" => []], "No categories found for this asset");
+            }
+            
+            // Parse the JSON string to get category IDs
+            $categoryIds = json_decode($categoriesJson, true);
+            
+            // Extract just the values if it's an array of objects with 'value' property
+            $categoryIdValues = [];
+            foreach ($categoryIds as $category) {
+                if (is_array($category) && isset($category['value'])) {
+                    $categoryIdValues[] = $category['value'];
+                } else {
+                    $categoryIdValues[] = $category;
+                }
+            }
+            
+            // Query to get the actual category records
+            $assetCategories = \App\Models\AssetCategory::whereIn('id', $categoryIdValues)->get();
+            
+            return $this->sendResponse(["AssetCategories" => $assetCategories], "Asset categories retrieved successfully");
+        } catch (\Exception $e) {
+            return $this->sendError("Error retrieving asset categories", ['error' => $e->getMessage()]);
+        }
+    }
+    
     public function index(Request $request): JsonResponse
     {
         $user = Auth::user();

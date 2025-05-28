@@ -180,9 +180,9 @@ export default function Dashboardholiday() {
         title: "Purchase Order",
         description: "Manage Purchase Order and view their details.",
         headers: [
-          { label: "Purchase Order Number", key: "one" },
-          { label: "Purchase Order Date", key: "two" },
-          { label: "Purchase Order Status", key: "three" },
+          { label: "Vendor Name", key: "one" },
+          { label: "Asset Type", key: "two" },
+          { label: "Quantity", key: "three" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -273,9 +273,9 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
-    one: item.purchase_order_number || "Unknown",
-    two: item.purchase_order_date || "Unknown",
-    three: item.purchase_order_status || "Unknown",
+    one: item.vendor_name || "Unknown",
+    two: item.asset_master_name || "Unknown",
+    three: item.quantity || "Unknown",
     delete: "/purchaseorders/" + item.id,
   }));
 

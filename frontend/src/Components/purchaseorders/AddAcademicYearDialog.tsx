@@ -37,6 +37,7 @@ const profileFormSchema = z.object({
   price: z.any().optional(),
   status: z.any().optional(),
   userId: z.string().optional(),
+  description: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -48,42 +49,20 @@ interface AddAcademicYearDialogProps {
   fetchData: () => void;
 }
 
-// Interface for form field render props
+// Interface for custom form field render props
 interface FormFieldRenderProps {
   field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (value: unknown) => void;
     onBlur: () => void;
-    value: string;
+    value: unknown;
     name: string;
     ref: React.Ref<HTMLInputElement>;
   };
+  fieldState?: unknown;
+  formState?: unknown;
 }
 
-interface ServiceRequiredFieldProps {
-  field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement> | boolean) => void;
-    onBlur: () => void;
-    value: boolean;
-    name: string;
-    ref: React.Ref<HTMLInputElement>;
-  };
-}
-
-const formatAcademicYear = (value: string = '') => {
-  // Remove all non-digit characters
-  const digits = value.replace(/\D/g, '');
-  
-  // If we have 4 or more digits, automatically add the dash and next year's last two digits
-  if (digits.length >= 4) {
-    const firstYear = parseInt(digits.substring(0, 4));
-    const nextYear = (firstYear + 1) % 100;
-    const formattedNextYear = nextYear < 10 ? `0${nextYear}` : `${nextYear}`;
-    return `${digits.substring(0, 4)}-${formattedNextYear}`;
-  }
-  
-  // Otherwise just return the digits (up to 4)
-  return digits.substring(0, 4);
-};
+// Academic year formatting is no longer used in this component
 
 export default function AddAcademicYearDialog({
   isOpen,
@@ -107,6 +86,7 @@ export default function AddAcademicYearDialog({
   });
   
   const [assetCategories, setAssetCategories] = useState<Option[]>([]);
+  const [filteredAssetCategories, setFilteredAssetCategories] = useState<Option[]>([]);
   const [vendors, setVendors] = useState<{ id: string | number; name: string }[]>([]);
   const [assets, setAssets] = useState<{ id: string | number; name: string }[]>([]);
 
@@ -130,6 +110,7 @@ export default function AddAcademicYearDialog({
           }));
           console.log('Mapped Category Options:', categoryOptions);
           setAssetCategories(categoryOptions);
+          setFilteredAssetCategories(categoryOptions); // Initialize with all categories
         } else {
           console.error('AssetCategories not found in response:', response.data);
         }
@@ -176,6 +157,50 @@ export default function AddAcademicYearDialog({
       });
     }
   }, [isOpen]);
+  
+  // Watch for changes to asset_master_id and fetch related categories
+  const watchedAssetMasterId = form.watch('asset_master_id');
+  
+  useEffect(() => {
+    if (watchedAssetMasterId) {
+      const token = localStorage.getItem("token");
+      
+      // Fetch categories for the selected asset
+      axios.get(`/api/asset_categories_by_asset/${watchedAssetMasterId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data.data && response.data.data.AssetCategories) {
+          // Transform the data to match the Option interface
+          const assetCategoryOptions = response.data.data.AssetCategories.map((category: { id: number; category_name: string }) => ({
+            value: category.id.toString(),
+            label: category.category_name
+          }));
+          
+          // Update the filtered categories
+          setFilteredAssetCategories(assetCategoryOptions);
+          
+          // Clear current selection since it might not be valid for the new asset
+          form.setValue('asset_category_ids', []);
+        } else {
+          // If no categories found for this asset, show empty list
+          setFilteredAssetCategories([]);
+          form.setValue('asset_category_ids', []);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching asset categories for the selected asset:", error);
+        toast.error("Failed to load categories for the selected asset");
+        // On error, reset to all categories
+        setFilteredAssetCategories(assetCategories);
+      });
+    } else {
+      // If no asset is selected, show all categories
+      setFilteredAssetCategories(assetCategories);
+    }
+  }, [watchedAssetMasterId, assetCategories, form]);
 
   const onClose = () => {
     onOpen(false);
@@ -186,11 +211,7 @@ export default function AddAcademicYearDialog({
   const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
 
-  // Handle input change with formatting
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    const formatted = formatAcademicYear(e.target.value || '');
-    field.onChange(formatted);
-  };
+  // No longer used, removing to fix lint warning
 
   async function onSubmit(data: ProfileFormValues) {
     data.userId = User?._id;
@@ -295,6 +316,11 @@ export default function AddAcademicYearDialog({
                           <select
                             {...form.register("asset_master_id")}
                             className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            onChange={(e) => {
+                              // Manually trigger form validation after selection
+                              form.setValue('asset_master_id', e.target.value);
+                              form.trigger('asset_master_id');
+                            }}
                           >
                             <option value="">Select Asset...</option>
                             {assets.map((asset) => (
@@ -330,8 +356,8 @@ export default function AddAcademicYearDialog({
                                 }}
                                 value={Array.isArray(field.value) ? field.value : []}
                                 onChange={field.onChange}
-                                options={assetCategories}
-                                defaultOptions={assetCategories}
+                                options={filteredAssetCategories}
+                                defaultOptions={filteredAssetCategories}
                                 placeholder="Select asset categories"
                                 hideClearAllButton={false}
                                 hidePlaceholderWhenSelected
@@ -371,7 +397,7 @@ export default function AddAcademicYearDialog({
                     </div>
                     <FormField
                       control={form.control}
-                      name="description"
+                      name="description" 
                       render={({ field }) => {
                         const maxLength = 255;
                         return (
