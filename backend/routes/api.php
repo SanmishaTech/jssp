@@ -46,6 +46,7 @@ use App\Http\Controllers\Api\RequisitionController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\SubjectHoursController;
+use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
@@ -158,6 +159,9 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
 
    Route::resource('memos', MemoController::class);
    Route::get('/all_memos', [MemoController::class, 'allMemos'])->name("memos.all");
+
+   Route::resource('assetcategories', AssetCategoryController::class);
+   Route::get('/all_assetcategories', [AssetCategoryController::class, 'allAssetCategories'])->name("assetcategories.all");
    
 
 
