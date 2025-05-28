@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('institute_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             $table->unsignedBigInteger('vendor_id');
-            $table->unsignedBigInteger('asset_category_id');
+            $table->unsignedBigInteger('asset_master_id');
+            $table->json('asset_category_ids')->nullable();
             $table->string('quantity')->nullable();
             $table->string('price')->nullable();
             $table->string('status')->nullable();

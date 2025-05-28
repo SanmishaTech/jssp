@@ -25,6 +25,7 @@ import { Route as SemesterIndexImport } from './routes/semester/index'
 import { Route as ScholarshipsIndexImport } from './routes/scholarships/index'
 import { Route as RoomsIndexImport } from './routes/rooms/index'
 import { Route as RequisitionsIndexImport } from './routes/requisitions/index'
+import { Route as PurchaseordersIndexImport } from './routes/purchaseorders/index'
 import { Route as ProfilesIndexImport } from './routes/profiles/index'
 import { Route as PeticashIndexImport } from './routes/peticash/index'
 import { Route as MemoIndexImport } from './routes/memo/index'
@@ -164,6 +165,12 @@ const RoomsIndexRoute = RoomsIndexImport.update({
 const RequisitionsIndexRoute = RequisitionsIndexImport.update({
   id: '/requisitions/',
   path: '/requisitions/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PurchaseordersIndexRoute = PurchaseordersIndexImport.update({
+  id: '/purchaseorders/',
+  path: '/purchaseorders/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -697,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfilesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/purchaseorders/': {
+      id: '/purchaseorders/'
+      path: '/purchaseorders'
+      fullPath: '/purchaseorders'
+      preLoaderRoute: typeof PurchaseordersIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/requisitions/': {
       id: '/requisitions/'
       path: '/requisitions'
@@ -1018,6 +1032,7 @@ export interface FileRoutesByFullPath {
   '/memo': typeof MemoIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
+  '/purchaseorders': typeof PurchaseordersIndexRoute
   '/requisitions': typeof RequisitionsIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/scholarships': typeof ScholarshipsIndexRoute
@@ -1090,6 +1105,7 @@ export interface FileRoutesByTo {
   '/memo': typeof MemoIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
+  '/purchaseorders': typeof PurchaseordersIndexRoute
   '/requisitions': typeof RequisitionsIndexRoute
   '/rooms': typeof RoomsIndexRoute
   '/scholarships': typeof ScholarshipsIndexRoute
@@ -1163,6 +1179,7 @@ export interface FileRoutesById {
   '/memo/': typeof MemoIndexRoute
   '/peticash/': typeof PeticashIndexRoute
   '/profiles/': typeof ProfilesIndexRoute
+  '/purchaseorders/': typeof PurchaseordersIndexRoute
   '/requisitions/': typeof RequisitionsIndexRoute
   '/rooms/': typeof RoomsIndexRoute
   '/scholarships/': typeof ScholarshipsIndexRoute
@@ -1237,6 +1254,7 @@ export interface FileRouteTypes {
     | '/memo'
     | '/peticash'
     | '/profiles'
+    | '/purchaseorders'
     | '/requisitions'
     | '/rooms'
     | '/scholarships'
@@ -1308,6 +1326,7 @@ export interface FileRouteTypes {
     | '/memo'
     | '/peticash'
     | '/profiles'
+    | '/purchaseorders'
     | '/requisitions'
     | '/rooms'
     | '/scholarships'
@@ -1379,6 +1398,7 @@ export interface FileRouteTypes {
     | '/memo/'
     | '/peticash/'
     | '/profiles/'
+    | '/purchaseorders/'
     | '/requisitions/'
     | '/rooms/'
     | '/scholarships/'
@@ -1452,6 +1472,7 @@ export interface RootRouteChildren {
   MemoIndexRoute: typeof MemoIndexRoute
   PeticashIndexRoute: typeof PeticashIndexRoute
   ProfilesIndexRoute: typeof ProfilesIndexRoute
+  PurchaseordersIndexRoute: typeof PurchaseordersIndexRoute
   RequisitionsIndexRoute: typeof RequisitionsIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
   ScholarshipsIndexRoute: typeof ScholarshipsIndexRoute
@@ -1524,6 +1545,7 @@ const rootRouteChildren: RootRouteChildren = {
   MemoIndexRoute: MemoIndexRoute,
   PeticashIndexRoute: PeticashIndexRoute,
   ProfilesIndexRoute: ProfilesIndexRoute,
+  PurchaseordersIndexRoute: PurchaseordersIndexRoute,
   RequisitionsIndexRoute: RequisitionsIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
   ScholarshipsIndexRoute: ScholarshipsIndexRoute,
@@ -1605,6 +1627,7 @@ export const routeTree = rootRoute
         "/memo/",
         "/peticash/",
         "/profiles/",
+        "/purchaseorders/",
         "/requisitions/",
         "/rooms/",
         "/scholarships/",
@@ -1731,6 +1754,9 @@ export const routeTree = rootRoute
     },
     "/profiles/": {
       "filePath": "profiles/index.tsx"
+    },
+    "/purchaseorders/": {
+      "filePath": "purchaseorders/index.tsx"
     },
     "/requisitions/": {
       "filePath": "requisitions/index.tsx"
