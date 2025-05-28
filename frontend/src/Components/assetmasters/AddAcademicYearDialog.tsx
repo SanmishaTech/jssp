@@ -208,6 +208,22 @@ export default function AddAcademicYearDialog({
                   className="space-y-4"
                 >
                   <div className="flex grid  gap-4">
+                  <FormField
+                      control={form.control}
+                      name="asset_type"
+                      render={({ field }: AssetTypeFieldProps) => (
+                        <FormItem>
+                          <FormLabel>
+                            Asset Type
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                         <Input {...field} placeholder="Asset Type" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="asset_category_ids"
@@ -236,22 +252,7 @@ export default function AddAcademicYearDialog({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="asset_type"
-                      render={({ field }: AssetTypeFieldProps) => (
-                        <FormItem>
-                          <FormLabel>
-                            Asset Type
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                         <Input {...field} placeholder="Asset Type" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                   
                     
 
                     <FormField

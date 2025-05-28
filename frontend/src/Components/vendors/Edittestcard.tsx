@@ -41,7 +41,7 @@ const profileFormSchema = z.object({
   contact_state: z.string().trim().nonempty(" State is Required"),
   contact_pincode: z.string().trim().nonempty(" Pincode is Required"),
   contact_country: z.string().trim().nonempty(" Country is Required"),
-  website: z.string().trim().nonempty("Website is Required"),
+  website: z.string().trim().nonempty("Website is Required").nullable().transform(val => val === null ? "" : val),
   gst_number: z.string()
   .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
     message: "Invalid GST Number. Please enter a valid GSTIN. ",
@@ -405,20 +405,34 @@ function ProfileForm({ formData }) {
                   )}
                 />
                 <FormField
-                  control={form.control}
-                  name="bank_ifsc_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Bank IFSC Code
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Bank IFSC Code..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+  control={form.control}
+  name="bank_ifsc_code"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Bank IFSC Code</FormLabel>
+      <FormControl>
+        <Input
+          placeholder="Bank IFSC Code..."
+          {...field}
+          onChange={(e) => {
+            const value = e.target.value.toUpperCase();
+            const regex = /^[A-Z]{4}[0-9][A-Z0-9]{6}$/;
+            field.onChange(value);
+            if (!regex.test(value) && value.length === 11) {
+              form.setError("bank_ifsc_code", {
+                type: "manual",
+                message: "Invalid IFSC code format",
+              });
+            } else {
+              form.clearErrors("bank_ifsc_code");
+            }
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
                 <FormField
                   control={form.control}
                   name="bank_branch"

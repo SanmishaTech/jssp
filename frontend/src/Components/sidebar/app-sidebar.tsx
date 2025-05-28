@@ -328,14 +328,14 @@ const roleBasedItems: Record<string, MenuItem[]> = {
           icon: Truck,
         },
         {
-          title: "Asset Masters",
-          url: "/assetmasters",
-          icon: Truck,
-        },
-        {
           title: "Asset Categories",
           url: "/assetcategories",
           icon: Package,
+        },
+        {
+          title: "Asset Masters",
+          url: "/assetmasters",
+          icon: Truck,
         },
         {
           title: "Requisitions",

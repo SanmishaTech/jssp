@@ -421,21 +421,36 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="bank_ifsc_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Bank IFSC Code
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Bank IFSC Code..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+  control={form.control}
+  name="bank_ifsc_code"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Bank IFSC Code</FormLabel>
+      <FormControl>
+        <Input
+          placeholder="Bank IFSC Code..."
+          {...field}
+          onChange={(e) => {
+            const value = e.target.value.toUpperCase();
+            const regex = /^[A-Z]{4}[0-9][A-Z0-9]{6}$/;
+            field.onChange(value);
+            if (!regex.test(value) && value.length === 11) {
+              form.setError("bank_ifsc_code", {
+                type: "manual",
+                message: "Invalid IFSC code format",
+              });
+            } else {
+              form.clearErrors("bank_ifsc_code");
+            }
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
                 <FormField
                   control={form.control}
                   name="bank_branch"
