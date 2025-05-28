@@ -43,12 +43,14 @@ export default function MemoList() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [userRole, setUserRole] = useState<string>("");
   
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetchMemos();
     fetchStaffList();
+    getUserRole();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -108,6 +110,18 @@ export default function MemoList() {
       }
     } catch (error) {
       console.error("Error fetching staff list:", error);
+    }
+  };
+  
+  const getUserRole = () => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setUserRole(parsedUser.role || "");
+      }
+    } catch (error) {
+      console.error("Error getting user role:", error);
     }
   };
 
@@ -175,25 +189,27 @@ export default function MemoList() {
 
   return (
     <>
-      <div className="flex h-full">
+      <div className="flex h-screen overflow-auto mt-5 ">
         <div className="p-6 w-3/4 h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg">
           <div className="flex justify-center items-center p-3 mb-4">
             <h3 className="text-lg font-semibold">
-              {viewMode ? 'View Memo' : (editingId ? 'Edit Memo' : 'Create New Memo')}
+              {viewMode ? 'View Memo' : ((editingId ? 'Edit Memo' : 'Create New Memo') && (userRole === "admin" || userRole === "viceprincipal") ? (editingId ? 'Edit Memo' : 'Create New Memo') : 'Memo')}
               {viewMode && (
                 <>
-                  <button 
-                    onClick={() => {
-                      setViewMode(false);
-                      setEditingId(selectedMemo.id);
-                      setToStaff(selectedMemo.staff_id);
-                      setSubject(selectedMemo.memo_subject);
-                      setDescription(selectedMemo.memo_description);
-                    }}
-                    className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
-                  >
-                    Edit
-                  </button>
+                  {(userRole === "admin" || userRole === "viceprincipal") && (
+                    <button 
+                      onClick={() => {
+                        setViewMode(false);
+                        setEditingId(selectedMemo.id);
+                        setToStaff(selectedMemo.staff_id);
+                        setSubject(selectedMemo.memo_subject);
+                        setDescription(selectedMemo.memo_description);
+                      }}
+                      className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
+                    >
+                      Edit
+                    </button>
+                  )}
                   <button 
                     onClick={() => {
                       setViewMode(false);
@@ -238,87 +254,100 @@ export default function MemoList() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="to-staff">To Staff</Label>
-                <Select value={toStaff} onValueChange={setToStaff}>
-                  <SelectTrigger className="w-full" id="to-staff">
-                    <SelectValue placeholder="Select staff member..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {staffList.map(staff => (
-                      <SelectItem key={staff.id} value={staff.id}>{staff.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="subject">Subject</Label>
-                <Input
-                  id="subject"
-                  placeholder="Enter memo subject..."
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                />
-              </div>
-              
-              <div className="grid gap-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="description">Description</Label>
-                  <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
-                    {description.length} out of 1500 characters
-                  </span>
+            <>
+              {(userRole === "admin" || userRole === "viceprincipal") ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="to-staff">To Staff</Label>
+                    <Select value={toStaff} onValueChange={setToStaff}>
+                      <SelectTrigger className="w-full" id="to-staff">
+                        <SelectValue placeholder="Select staff member..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {staffList.map(staff => (
+                          <SelectItem key={staff.id} value={staff.id}>{staff.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input
+                      id="subject"
+                      placeholder="Enter memo subject..."
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="description">Description</Label>
+                      <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
+                        {description.length} out of 1500 characters
+                      </span>
+                    </div>
+                    <Textarea
+                      id="description"
+                      placeholder="Enter memo description"
+                      value={description}
+                      onChange={(e) => {
+                        if (e.target.value.length <= 1500) {
+                          setDescription(e.target.value);
+                        }
+                      }}
+                      className="min-h-[350px]"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-end pt-4">
+                    <Button onClick={handleSend} disabled={loading}>
+                      {loading ? 'Sending...' : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          {editingId ? 'Update Memo' : 'Send Memo'}
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-                <Textarea
-                  id="description"
-                  placeholder="Enter memo description"
-                  value={description}
-                  onChange={(e) => {
-                    if (e.target.value.length <= 1500) {
-                      setDescription(e.target.value);
-                    }
-                  }}
-                  className="min-h-[350px]"
-                />
-              </div>
-              
-              <div className="flex justify-end pt-4">
-                <Button onClick={handleSend} disabled={loading}>
-                  {loading ? 'Sending...' : (
-                    <>
-                      <Send className="mr-2 h-4 w-4" />
-                      {editingId ? 'Update Memo' : 'Send Memo'}
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
+              ) : (
+                <div className="flex items-center justify-center h-[400px]">
+                  <div className="text-center p-6 bg-gray-50 rounded-lg">
+                    <h3 className="text-lg font-medium text-gray-700 mb-2">View Memo</h3>
+                    <p className="text-gray-500">No Memo is Viewed</p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
         {/* Right Sidebar */}
-        <div className="w-1/4 p-4 bg-white">
+        <div className="p-3 w-1/4 bg-white">
           <div className="space-y-4">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">Recent Memos</h3>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-6 w-6 relative group"
-                  onClick={() => {
-                    setEditingId(null);
-                    setToStaff("");
-                    setSubject("");
-                    setDescription("");
-                  }}
-                  title="Create new memo"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="absolute bg-black text-white text-xs rounded px-2 py-1 left-0 transform -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    Create new memo
-                  </span>
-                </Button>
+                {(userRole === "admin" || userRole === "viceprincipal") && (
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 relative group"
+                    onClick={() => {
+                      setEditingId(null);
+                      setToStaff("");
+                      setSubject("");
+                      setDescription("");
+                    }}
+                    title="Create new memo"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="absolute bg-black text-white text-xs rounded px-2 py-1 left-0 transform -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      Create new memo
+                    </span>
+                  </Button>
+                )}
               </div>
               
               {/* Search Box */}
@@ -356,20 +385,15 @@ export default function MemoList() {
                           </p> */}
                         </div>
                         <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {/* <button 
-                            className="text-gray-500 hover:text-blue-500" 
-                            onClick={() => handleEdit(memo)}
-                            title="Edit memo"
-                          >
-                            <Pencil className="h-5 w-5" />
-                          </button> */}
-                          <button 
-                            className="text-red-500 hover:text-red-700" 
-                            onClick={() => handleDelete(memo.id)}
-                            title="Delete memo"
-                          >
-                            <Trash2 className="h-5 w-5" />
-                          </button>
+                          {(userRole === "admin" || userRole === "viceprincipal") && (
+                            <button 
+                              className="text-red-500 hover:text-red-700" 
+                              onClick={() => handleDelete(memo.id)}
+                              title="Delete memo"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

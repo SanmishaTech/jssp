@@ -16,13 +16,18 @@ class MemoController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $instituteId = Auth::user()->staff->institute_id;
+        $user = Auth::user();
+        $instituteId = $user->staff->institute_id;
     
-        // Start the query by filtering staff based on the institute_id.
-        $query = Memo::where('institute_id', $instituteId);
+        // Base query: Memos related to the institute
+        $query = Memo::with('staff')->where('institute_id', $instituteId);
     
-        // If there's a search term, apply additional filtering.
+        // If the user is not admin or viceprincipal, limit to their own memos
+        if (!$user->hasRole(['admin', 'viceprincipal'])) {
+            $query->where('staff_id', $user->staff->id);
+        }
+    
+        // Apply search filtering if present
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
@@ -33,32 +38,30 @@ class MemoController extends BaseController
                       });
             });
         }
-
-        // If staff_id is provided, filter memos by that staff
+    
+        // Filter by specific staff if provided
         if ($request->query('staff_id')) {
             $query->where('staff_id', $request->query('staff_id'));
         }
     
-        // Get per_page parameter or use default of 9
+        // Pagination parameters
         $perPage = $request->query('per_page', 9);
-        
-        // Paginate the results with explicit parameter for page from request
-        $memo = $query->paginate($perPage, ['*'], 'page', $request->query('page', 1));
+        $memos = $query->paginate($perPage, ['*'], 'page', $request->query('page', 1));
     
-        // Return the paginated response with staff resources.
         return $this->sendResponse(
             [
-                "Memo" => MemoResource::collection($memo),
+                "Memo" => MemoResource::collection($memos),
                 'Pagination' => [
-                    'current_page' => $memo->currentPage(),
-                    'last_page'    => $memo->lastPage(),
-                    'per_page'     => $memo->perPage(),
-                    'total'        => $memo->total(),
+                    'current_page' => $memos->currentPage(),
+                    'last_page'    => $memos->lastPage(),
+                    'per_page'     => $memos->perPage(),
+                    'total'        => $memos->total(),
                 ]
             ],
             "Memo retrieved successfully"
         );
     }
+    
 
 
     public function store(Request $request): JsonResponse
@@ -79,7 +82,7 @@ class MemoController extends BaseController
 
     public function show(string $id): JsonResponse
     {
-        $memo = Memo::find($id);
+        $memo = Memo::with('staff')->find($id);
 
         if(!$memo){
             return $this->sendError("Memo not found", ['error'=>'Memo not found']);
@@ -93,7 +96,7 @@ class MemoController extends BaseController
     public function update(Request $request, string $id): JsonResponse
     {
  
-        $memo = Memo::find($id);
+        $memo = Memo::with('staff')->find($id);
 
         if(!$memo){
             return $this->sendError("Memo not found", ['error'=>'Memo not found']);
@@ -114,7 +117,7 @@ class MemoController extends BaseController
 
     public function destroy(string $id): JsonResponse
     {
-        $memo = Memo::find($id);
+        $memo = Memo::with('staff')->find($id);
         if(!$memo){
             return $this->sendError("Memo not found", ['error'=> 'Memo not found']);
         }
@@ -128,7 +131,7 @@ class MemoController extends BaseController
         $instituteId = Auth::user()->staff->institute_id;
     
         // Filter staff based on the institute_id.
-        $memo = Memo::where('institute_id', $instituteId)->get();
+        $memo = Memo::with('staff')->where('institute_id', $instituteId)->get();
     
         return $this->sendResponse(
             ["Memo" => MemoResource::collection($memo)],
