@@ -68,7 +68,7 @@ const HistoryDialog: React.FC<HistoryDialogProps> = ({
           <DialogTitle></DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 w-full max-w-full">
           <ul className="flex flex-col items-center justify-center space-y-2 list-none">
             <li className="text-sm font-medium text-gray-500">Asset: <span className="font-semibold text-gray-700">{requisition.asset_name}</span></li>
             <li className="text-sm font-medium text-gray-500">Status: <span className="font-semibold text-gray-700">{getStatusBadge(requisition.status)}</span></li>
@@ -90,12 +90,16 @@ const HistoryDialog: React.FC<HistoryDialogProps> = ({
           
           <div className="col-span-2 bg-gray-50 p-4 rounded-lg shadow">
             <h3 className="text-sm font-medium text-gray-500">Description</h3>
-            <p className="text-sm">{requisition.description}</p>
+            <p className="text-sm" style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: '100%' }}>
+              {requisition.description}
+            </p>
           </div>
           
           <div className="col-span-2 bg-gray-50 p-4 rounded-lg shadow">
             <h3 className="text-sm font-medium text-gray-500">Comments</h3>
-            <p className="text-sm">{requisition.comments || "No comments"}</p>
+            <p className="text-sm" style={{ wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: '100%' }}>
+              {requisition.comments || "No comments"}
+            </p>
           </div>
         </div>
         

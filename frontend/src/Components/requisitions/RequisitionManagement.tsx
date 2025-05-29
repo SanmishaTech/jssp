@@ -62,7 +62,7 @@ const formSchema = z.object({
   quantity: z.string().nonempty({ message: "Quantity is required" }),
   asset_master_id: z.string().min(1, { message: "Asset is required" }),
   asset_category_ids: z.array(z.string()).optional(),
-  description: z.string().min(5, { message: "Description must be at least 5 characters" }).max(500),
+  description: z.string().min(5, { message: "Description must be at least 5 characters" }).max(255, { message: "Description cannot exceed 255 characters" }),
 });
 
 // Types
@@ -427,9 +427,6 @@ export default function RequisitionManagement() {
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Button variant="outline" onClick={() => navigate({ to: "/dashboards" })} className="mb-2">
-            <MoveLeft className="mr-2 h-4 w-4" /> Back to Dashboard
-          </Button>
           <h1 className="text-3xl font-bold">Requisition Management</h1>
         </div>
       </div>
@@ -470,7 +467,7 @@ export default function RequisitionManagement() {
                       name="asset_master_id"
                       render={({ field }: { field: any }) => (
                         <FormItem>
-                          <FormLabel>Asset</FormLabel>
+                          <FormLabel>Asset <span className="text-red-500">*</span></FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
@@ -616,7 +613,7 @@ export default function RequisitionManagement() {
                       name="quantity"
                       render={({ field }: { field: any }) => (
                         <FormItem>
-                          <FormLabel>Quantity</FormLabel>
+                          <FormLabel>Quantity <span className="text-red-500">*</span></FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -634,15 +631,19 @@ export default function RequisitionManagement() {
                       name="description"
                       render={({ field }: { field: any }) => (
                         <FormItem>
-                          <FormLabel>Description</FormLabel>
+                          <FormLabel>Description <span className="text-red-500">*</span></FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Explain why you need this asset and any specific requirements"
                               className="min-h-[120px]"
                               disabled={loading}
+                              maxLength={255}
                               {...field}
                             />
                           </FormControl>
+                          <div className="text-xs text-muted-foreground text-right mt-1">
+                            {field.value?.length || 0}/255 characters
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -978,15 +979,30 @@ export default function RequisitionManagement() {
                 <div className="font-semibold">Quantity:</div>
                 <div>{selectedRequisition.quantity}</div>
                 
-                <div className="font-semibold">Description:</div>
-                <div className="truncate">{selectedRequisition.description}</div>
+             
                 
                 <div className="font-semibold">Requested By:</div>
                 <div>{selectedRequisition.requester_name}</div>
                 
                 <div className="font-semibold">Date:</div>
                 <div>{format(new Date(selectedRequisition.created_at), "MMM dd, yyyy")}</div>
+           
+               
               </div>
+                <div className="w-full">
+                  <Card className="mt-1 border rounded-md bg-muted/50 w-full">
+                    <CardHeader className="p-2 pb-0">
+                      <CardTitle className="text-sm font-semibold">Description:</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-2 pt-0 text-sm">
+                      <div className="max-h-[100px] overflow-y-auto pr-1">
+                        <p className="break-all text-sm">
+                          {selectedRequisition.description}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               
               {approvalAction === "approve" && (
                 <div className="space-y-2">
@@ -1012,6 +1028,7 @@ export default function RequisitionManagement() {
                   {approvalAction === "approve" ? "Comments (Optional)" : "Reason for Rejection"}
                 </label>
                 <Textarea
+                  maxLength={255}
                   value={approvalComment}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setApprovalComment(e.target.value)}
                   placeholder={
@@ -1021,6 +1038,9 @@ export default function RequisitionManagement() {
                   }
                   className="resize-none min-h-[100px]"
                 />
+                <div className="text-xs text-muted-foreground text-right mt-1">
+                  {approvalComment.length}/255 characters
+                </div>
                 {approvalAction === "reject" && !approvalComment && (
                   <p className="text-sm text-red-500">
                     A reason is required for rejection
