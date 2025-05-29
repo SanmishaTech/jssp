@@ -474,10 +474,21 @@ class RequisitionController extends BaseController
             return $this->sendError("Cannot approve", ['error'=> 'This requisition has already been processed']);
         }
         
+        // Validate the approved quantity if provided
+        $validator = Validator::make($request->all(), [
+            'approved_quantity' => 'required|string|max:50',
+            'comments' => 'nullable|string|max:500',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+        
         // Update the requisition status
         $requisition->status = 'approved';
         $requisition->approved_by = Auth::id();
         $requisition->approval_date = Carbon::now();
+        $requisition->approved_quantity = $request->input('approved_quantity');
         $requisition->comments = $request->input('comments');
         $requisition->save();
         

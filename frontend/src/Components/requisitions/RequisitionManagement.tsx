@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, Send, Clock, CheckCircle, XCircle, CalendarClock, ShieldCheck } from "lucide-react";
+import HistoryDialog from "./HistoryDialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -70,6 +71,7 @@ interface Requisition {
   asset_master_id: string;
   asset_name: string;
   quantity: string;
+  approved_quantity: string | null;
   description: string;
   status: "pending" | "approved" | "rejected";
   requested_by: string;
@@ -144,10 +146,15 @@ export default function RequisitionManagement() {
   const [loading, setLoading] = useState(false);
   const [selectedRequisition, setSelectedRequisition] = useState<Requisition | null>(null);
   
+  // State for history dialog
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState<Requisition | null>(null);
+  
   // Dialog states
   const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
   const [approvalAction, setApprovalAction] = useState<"approve" | "reject">("approve");
   const [approvalComment, setApprovalComment] = useState("");
+  const [approvedQuantity, setApprovedQuantity] = useState("");
   
   // Initialize form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -360,14 +367,23 @@ export default function RequisitionManagement() {
         ? `/api/requisitions/${selectedRequisition.id}/approve` 
         : `/api/requisitions/${selectedRequisition.id}/reject`;
       
-      const response = await axios.post(endpoint, {
-        comments: approvalComment,
-      });
+      // Prepare payload based on action type
+      const payload = approvalAction === "approve" 
+        ? {
+            approved_quantity: approvedQuantity,
+            comments: approvalComment,
+          }
+        : {
+            comments: approvalComment,
+          };
+      
+      const response = await axios.post(endpoint, payload);
       
       if (response.data.status) {
         toast.success(`Requisition ${approvalAction === "approve" ? "approved" : "rejected"} successfully`);
         setApprovalDialogOpen(false);
         setApprovalComment("");
+        setApprovedQuantity("");
         fetchRequisitions();
       }
     } catch (error) {
@@ -383,9 +399,16 @@ export default function RequisitionManagement() {
     setSelectedRequisition(requisition);
     setApprovalAction(action);
     setApprovalComment("");
+    setApprovedQuantity(requisition.quantity); // Set default approved quantity to requested quantity
     setApprovalDialogOpen(true);
   };
   
+  // Handle clicking on a requisition history row
+  const handleHistoryRowClick = (requisition: Requisition) => {
+    setSelectedHistoryItem(requisition);
+    setHistoryDialogOpen(true);
+  };
+
   // Status badge
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -706,7 +729,11 @@ export default function RequisitionManagement() {
                   </TableHeader>
                   <TableBody>
                     {requisitions.map((req) => (
-                      <TableRow key={req.id}>
+                      <TableRow 
+                        key={req.id} 
+                        onClick={() => handleHistoryRowClick(req)}
+                        className="cursor-pointer hover:bg-gray-100"
+                      >
                         <TableCell className="font-medium">{req.asset_name}</TableCell>
                         <TableCell className="font-medium">{req.quantity}</TableCell>
                         <TableCell className="max-w-[200px] truncate">{req.description}</TableCell>
@@ -921,6 +948,13 @@ export default function RequisitionManagement() {
         </div>
       )}
       
+      {/* History Dialog */}
+      <HistoryDialog
+        open={historyDialogOpen}
+        onClose={() => setHistoryDialogOpen(false)}
+        requisition={selectedHistoryItem}
+      />
+      
       {/* Approval Dialog */}
       <Dialog open={approvalDialogOpen} onOpenChange={setApprovalDialogOpen}>
         <DialogContent className="bg-white">
@@ -940,6 +974,9 @@ export default function RequisitionManagement() {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="font-semibold">Asset:</div>
                 <div>{selectedRequisition.asset_name}</div>
+
+                <div className="font-semibold">Quantity:</div>
+                <div>{selectedRequisition.quantity}</div>
                 
                 <div className="font-semibold">Description:</div>
                 <div className="truncate">{selectedRequisition.description}</div>
@@ -951,13 +988,32 @@ export default function RequisitionManagement() {
                 <div>{format(new Date(selectedRequisition.created_at), "MMM dd, yyyy")}</div>
               </div>
               
+              {approvalAction === "approve" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Approved Quantity
+                  </label>
+                  <Input
+                    value={approvedQuantity}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setApprovedQuantity(e.target.value)}
+                    placeholder="Enter approved quantity"
+                    type="text"
+                    required
+                  />
+                  {!approvedQuantity && (
+                    <p className="text-sm text-red-500">
+                      Approved quantity is required
+                    </p>
+                  )}
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   {approvalAction === "approve" ? "Comments (Optional)" : "Reason for Rejection"}
                 </label>
                 <Textarea
                   value={approvalComment}
-                  onChange={(e) => setApprovalComment(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setApprovalComment(e.target.value)}
                   placeholder={
                     approvalAction === "approve"
                       ? "Add any comments about this approval (optional)"

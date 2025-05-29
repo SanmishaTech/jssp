@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreign('approved_by')->references('id')->on('users')->onDelete('set null');
             $table->timestamp('approval_date')->nullable();
             $table->text('comments')->nullable(); // For rejection reason or approval notes
+            $table->string('approved_quantity')->nullable();
+
             $table->timestamps();
         });
     }
