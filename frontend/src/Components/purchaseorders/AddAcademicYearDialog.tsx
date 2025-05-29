@@ -27,13 +27,13 @@ import {
 import MultipleSelector, { Option } from "../../Components/ui/multiselect";
 
 const profileFormSchema = z.object({
-  vendor_id: z.any().optional(),
+  vendor_id: z.string().trim().nonempty("Vendor is Required"),
   asset_master_id: z.string().trim().nonempty("Asset Type is Required"),
   asset_category_ids: z.array(z.object({
     value: z.string(),
     label: z.string()
   })).min(1, "At least one Asset Category is Required"),
-  quantity: z.any().optional(),
+  quantity: z.string().trim().optional(),
   price: z.any().optional(),
   status: z.any().optional(),
   userId: z.string().optional(),
@@ -373,7 +373,7 @@ export default function AddAcademicYearDialog({
                             name="quantity"
                             render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Quantity</FormLabel>
+                            <FormLabel>Quantity<span className="text-red-500">*</span></FormLabel>
                             <FormControl>
                               <Input placeholder="Enter Quantity..." {...field} />
                             </FormControl>
@@ -381,19 +381,35 @@ export default function AddAcademicYearDialog({
                           </FormItem>
                            )}
                         />
-                       <FormField
-                            control={form.control}
-                            name="price"
-                            render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter Price..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                           )}
-                        />
+                <FormField
+  control={form.control}
+  name="price"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Price</FormLabel>
+      <FormControl>
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+          <Input
+            type="number"
+            placeholder="Enter Price..."
+            {...field}
+            onKeyDown={(e) => {
+              // Disallow "e", "+", "-" characters
+              if (["e", "E", "+", "-"].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            className="pl-7"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
                     </div>
                     <FormField
                       control={form.control}

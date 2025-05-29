@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "../../Components/ui/form";
 import { Input } from "../../Components/ui/input";
+import { Textarea } from "../../Components/ui/textarea";
 import MultipleSelector, { Option } from "../../Components/ui/multiselect";
 
 const profileFormSchema = z.object({
@@ -34,6 +35,7 @@ const profileFormSchema = z.object({
   })).min(1, "At least one Asset Category is Required"),
   quantity: z.any().optional(),
   price: z.any().optional(),
+  description: z.string().optional(),
  });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -73,6 +75,7 @@ export default function EditAcademicYearDialog({
     asset_master_id: '',
     quantity: '',
     price: '',
+    description: '',
   };
   
   const [assetCategories, setAssetCategories] = useState<Option[]>([]);
@@ -218,6 +221,7 @@ export default function EditAcademicYearDialog({
               asset_category_ids: purchaseOrderData.asset_category_ids || [],
               quantity: purchaseOrderData.quantity?.toString() || '',
               price: purchaseOrderData.price?.toString() || '',
+              description: purchaseOrderData.description?.toString() || '',
              };
             
             console.log('Formatted data for form:', formattedData);
@@ -253,6 +257,7 @@ export default function EditAcademicYearDialog({
         vendor_id: data.vendor_id,
         quantity: data.quantity,
         price: data.price,
+        description: data.description,
        };
       
       console.log('Submitting data:', formattedData);
@@ -411,7 +416,7 @@ export default function EditAcademicYearDialog({
                         name="quantity"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Quantity</FormLabel>
+                            <FormLabel>Quantity <span className="text-red-500">*</span></FormLabel>
                             <FormControl>
                               <Input placeholder="Enter Quantity..." {...field} />
                             </FormControl>
@@ -419,20 +424,60 @@ export default function EditAcademicYearDialog({
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter Price..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    <FormField
+                     control={form.control}
+                     name="price"
+                     render={({ field }) => (
+                       <FormItem>
+                         <FormLabel>Price</FormLabel>
+                         <FormControl>
+                           <div className="relative">
+                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                             <Input
+                               type="number"
+                               placeholder="Enter Price..."
+                               {...field}
+                               onKeyDown={(e) => {
+                                 // Disallow "e", "+", "-" characters
+                                 if (["e", "E", "+", "-"].includes(e.key)) {
+                                   e.preventDefault();
+                                 }
+                               }}
+                               className="pl-7"
+                             />
+                           </div>
+                         </FormControl>
+                         <FormMessage />
+                       </FormItem>
+                     )}
+                   />
                     </div>
+                      <FormField
+                                          control={form.control}
+                                          name="description" 
+                                          render={({ field }) => {
+                                            const maxLength = 255;
+                                            return (
+                                              <FormItem>
+                                                <FormLabel>Description</FormLabel>
+                                                <FormControl>
+                                                  <div className="relative">
+                                                    <Textarea
+                                                      className="min-h-[100px] resize-none overflow-auto pr-10"
+                                                      placeholder="Enter Description..."
+                                                      maxLength={maxLength}
+                                                      {...field}
+                                                    />
+                                                    <div className="absolute bottom-2 right-3 text-sm text-muted-foreground">
+                                                      {field.value?.length || 0}/{maxLength} characters
+                                                    </div>
+                                                  </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                              </FormItem>
+                                            );
+                                          }}
+                                        />
                   </div>
                 </form>
               </Form>

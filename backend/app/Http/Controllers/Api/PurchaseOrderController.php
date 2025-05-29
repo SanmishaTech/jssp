@@ -120,7 +120,7 @@ class PurchaseOrderController extends BaseController
         $purchaseOrder->asset_category_ids = $request->input('asset_category_ids');
         $purchaseOrder->quantity = $request->input('quantity');
         $purchaseOrder->price = $request->input('price');
-        $purchaseOrder->status = $request->input('status');
+        $purchaseOrder->description = $request->input('description');
          $purchaseOrder->save();
         
         return $this->sendResponse([ "PurchaseOrder" => new PurchaseOrderResource($purchaseOrder)], "PurchaseOrder stored successfully");
@@ -156,7 +156,7 @@ class PurchaseOrderController extends BaseController
         $purchaseOrder->asset_category_ids = $request->input('asset_category_ids');
         $purchaseOrder->quantity = $request->input('quantity');
         $purchaseOrder->price = $request->input('price');
-        $purchaseOrder->status = $request->input('status');
+        $purchaseOrder->description = $request->input('description');
      
            $purchaseOrder->save();
        

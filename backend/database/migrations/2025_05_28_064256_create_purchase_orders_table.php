@@ -20,7 +20,7 @@ return new class extends Migration
             $table->json('asset_category_ids')->nullable();
             $table->string('quantity')->nullable();
             $table->string('price')->nullable();
-            $table->string('status')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

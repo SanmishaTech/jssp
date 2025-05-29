@@ -24,7 +24,7 @@ class PurchaseOrderResource extends JsonResource
             'asset_category_ids' => $this->asset_category_ids,
             'quantity' => $this->quantity,
             'price' => $this->price,
-            'status' => $this->status,
+            'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
