@@ -221,7 +221,7 @@ export default function Dashboardholiday() {
       one: item?.institute_name || "Unknown",
       two: item?.room_name || "Unknown",
       three: item?.status || "Unknown",
-      four: item?.asset || "NA",
+      four: item?.asset_master_name || "NA",
       five: item?.quantity || "NA",
       six: item?.purchase_date || "NA",
       seven: item?.remarks || "NA",

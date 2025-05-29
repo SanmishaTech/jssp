@@ -107,7 +107,7 @@ class InventoryController extends BaseController
      
         
         $inventory = new Inventory();
-        $inventory->asset = $request->input('asset');
+        $inventory->asset_master_id = $request->input('asset_master_id');
         $inventory->quantity = $request->input('quantity');
         $inventory->room_id = $request->input('room_id');
         
@@ -172,7 +172,7 @@ class InventoryController extends BaseController
         if ($newStatus === 'Scraped' && !empty($scrapedQuantity) && $scrapedQuantity > 0 && $scrapedQuantity < $originalQuantity) {
             // Create a new record for the scraped inventory
             $scrapedInventory = new Inventory();
-            $scrapedInventory->asset = $inventory->asset;
+            $scrapedInventory->asset_master_id = $inventory->asset_master_id;
             $scrapedInventory->quantity = $scrapedQuantity;
             $scrapedInventory->room_id = $inventory->room_id;
             $scrapedInventory->institute_id = $inventory->institute_id;
@@ -202,7 +202,7 @@ class InventoryController extends BaseController
             );
         } else {
             // Regular update without creating a new scraped record
-            $inventory->asset = $request->input('asset', $inventory->asset);
+            $inventory->asset_master_id = $request->input('asset', $inventory->asset_master_id);
             $inventory->quantity = $request->input('quantity', $inventory->quantity);
             $inventory->room_id = $request->input('room_id', $inventory->room_id);        
             

@@ -1,8 +1,8 @@
-import React, { useStates } from "react";
+import React, { useState } from "react";
 
 import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, ControllerRenderProps } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,7 +56,7 @@ import { Separator } from "@/components/ui/separator";
 const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
   room_id: z.string().trim().optional(),
-  asset: z.string().trim().nonempty("Asset is Required"),
+  asset_master_id: z.number().optional(),
   quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
   purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
@@ -91,6 +91,8 @@ function ProfileForm() {
   const [courses, setCourses] = React.useState<any[]>([]);
   const [loadingRooms, setLoadingRooms] = React.useState(false);
   const [rooms, setRooms] = React.useState<any[]>([]);
+  const [loadingAssetMasters, setLoadingAssetMasters] = React.useState(false);
+  const [assetMasters, setAssetMasters] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     setLoadingCourses(true);
@@ -105,7 +107,7 @@ function ProfileForm() {
         const coursesData = response.data.data.Institutes || [];
         setCourses(coursesData);
       })
-      .catch((error) => {
+      .catch((_error) => {
          toast.error("Failed to fetch courses");
       })
       .finally(() => setLoadingCourses(false));
@@ -127,10 +129,28 @@ function ProfileForm() {
          
         setRooms(roomsData);
       })
-      .catch((error) => {
+      .catch((_error) => {
          toast.error("Failed to fetch rooms");
       })
       .finally(() => setLoadingRooms(false));
+
+    // Fetch asset masters
+    setLoadingAssetMasters(true);
+    axios
+      .get("/api/all_assetmasters", { // Assuming this is the endpoint for asset masters
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const assetMastersData = response.data.data.AssetMaster || []; // Adjust path if necessary
+        setAssetMasters(assetMastersData);
+      })
+      .catch((_error) => {
+        toast.error("Failed to fetch asset masters");
+      })
+      .finally(() => setLoadingAssetMasters(false));
   }, [token]);
 
   async function onSubmit(data: ProfileFormValues) {
@@ -191,7 +211,7 @@ function ProfileForm() {
                 <FormField
                   control={form.control}
                   name="purchase_date"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "purchase_date"> }) => (
                     <div className="flex items-center gap-2">
                       <div className="min-w-[100px]">
                         <FormLabel className="mb-0 mt-0">
@@ -221,7 +241,7 @@ function ProfileForm() {
                   <FormField
                     control={form.control}
                     name="institute_id"
-                    render={({ field }) => {
+                    render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "institute_id"> }) => {
                       const [open, setOpen] = React.useState(false);
                       return (
                         <FormItem className="flex-1">
@@ -268,7 +288,7 @@ function ProfileForm() {
                                           <CommandItem
                                             key={courseId}
                                             value={courseId}
-                                            onSelect={(currentValue) => {
+                                            onSelect={(currentValue: string) => {
                                               field.onChange(
                                                 currentValue === field.value
                                                   ? ""
@@ -305,7 +325,7 @@ function ProfileForm() {
                 <FormField
                   control={form.control}
                   name="room_id"
-                  render={({ field }: { field: any }) => {
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "room_id"> }) => {
                     const [open, setOpen] = React.useState(false);
                     return (
                       <FormItem className="flex-1">
@@ -396,24 +416,94 @@ function ProfileForm() {
 
                 <FormField
                   control={form.control}
-                  name="asset"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Asset
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Asset..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  name="asset_master_id"
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "asset_master_id"> }) => {
+                    const selectedAssetMaster = assetMasters.find(
+                      (am) => am.id === field.value
+                    );
+                    return (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>
+                          Asset Master
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? selectedAssetMaster?.asset_type || "Select Asset Master"
+                                  : "Select Asset Master"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[200px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search asset master..." />
+                                <CommandList>
+                                  <CommandEmpty>
+                                    {loadingAssetMasters
+                                      ? "Loading asset masters..."
+                                      : "No asset master found."}
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {(() => {
+                                      if (loadingAssetMasters) {
+                                        return (
+                                          <CommandItem disabled>
+                                            Loading...
+                                          </CommandItem>
+                                        );
+                                      }
+                                      if (assetMasters.length === 0) {
+                                        return (
+                                          <CommandItem disabled>
+                                            No asset masters available
+                                          </CommandItem>
+                                        );
+                                      }
+                                      return assetMasters.map((am) => (
+                                        <CommandItem
+                                          value={am.asset_type} 
+                                          key={am.id}
+                                          onSelect={() => {
+                                            form.setValue("asset_master_id", am.id);
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              am.id === field.value
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                          {am.asset_type} 
+                                        </CommandItem>
+                                      ));
+                                    })()}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
                   name="quantity"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "quantity"> }) => (
                     <FormItem>
                       <FormLabel>
                         Quantity
@@ -429,7 +519,7 @@ function ProfileForm() {
                 <FormField
                   control={form.control}
                   name="purchase_price"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "purchase_price"> }) => (
                     <FormItem>
                       <FormLabel>
                         Purchase Price
@@ -449,7 +539,7 @@ function ProfileForm() {
               <FormField
                 control={form.control}
                 name="remarks"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "remarks"> }) => (
                   <FormItem>
                     <FormLabel>
                       Remarks

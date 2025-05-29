@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("room_id")->nullable();
-            $table->string("asset")->nullable();
+            $table->unsignedBigInteger("asset_master_id")->nullable();
             $table->string("quantity")->nullable();
             $table->string('institute_id')->nullable();
             $table->string('purchase_date')->nullable();

@@ -406,27 +406,25 @@ export default function RequisitionManagement() {
         </div>
       </div>
 
-      <Tabs defaultValue={isSuperAdmin ? "approval" : "create"} value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 md:w-auto md:grid-cols-none md:flex">
-          {!isSuperAdmin && (
-            <>
-              <TabsTrigger value="create" className="flex items-center gap-2">
-                <Send className="h-4 w-4" /> Create/Send
-              </TabsTrigger>
-              <TabsTrigger value="history" className="flex items-center gap-2">
-                <CalendarClock className="h-4 w-4" /> History
-              </TabsTrigger>
-            </>
-          )}
-          {hasApprovalAccess && (
-            <TabsTrigger value="approval" className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4" /> Approval & Reject
+      {/* Display tabs for non-superadmin users */}
+      {!isSuperAdmin ? (
+        <Tabs defaultValue="create" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 md:w-auto md:grid-cols-none md:flex">
+            <TabsTrigger value="create" className="flex items-center gap-2">
+              <Send className="h-4 w-4" /> Create/Send
             </TabsTrigger>
-          )}
-        </TabsList>
+            <TabsTrigger value="history" className="flex items-center gap-2">
+              <CalendarClock className="h-4 w-4" /> History
+            </TabsTrigger>
+            {hasApprovalAccess && (
+              <TabsTrigger value="approval" className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4" /> Approval & Reject
+              </TabsTrigger>
+            )}
+          </TabsList>
 
-        {/* Create/Send Tab - Not visible to superadmin */}
-        {!isSuperAdmin && <TabsContent value="create">
+          {/* Create/Send Tab */}
+          <TabsContent value="create">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Form Card */}
             <Card>
@@ -650,10 +648,10 @@ export default function RequisitionManagement() {
               </CardContent>
             </Card>
           </div>
-        </TabsContent>}
+        </TabsContent>
 
-        {/* History Tab - Not visible to superadmin */}
-        {!isSuperAdmin && <TabsContent value="history">
+        {/* History Tab */}
+        <TabsContent value="history">
           <Card>
             <CardHeader>
               <CardTitle>Requisition History</CardTitle>
@@ -696,7 +694,7 @@ export default function RequisitionManagement() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>}
+        </TabsContent>
 
         {/* Admin/SuperAdmin Approval Tab */}
         {hasApprovalAccess && (
@@ -792,7 +790,109 @@ export default function RequisitionManagement() {
             </Card>
           </TabsContent>
         )}
-      </Tabs>
+        </Tabs>
+      ) : (
+        /* For superadmin, display approval content directly without tabs */
+        <div className="mt-4">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <ShieldCheck className="h-5 w-5 mr-2" /> Requisition Approvals
+          </h2>
+          
+          {/* Admin filter tabs (shown only in approval view) */}
+          <div className="mb-6">
+            <div className="inline-flex rounded-md shadow-sm">
+              <Button
+                variant={adminSubTab === "all" ? "default" : "outline"}
+                className={`rounded-l-md ${adminSubTab === "all" ? "" : "bg-white"}`}
+                onClick={() => setAdminSubTab("all")}
+              >
+                <Clock className="h-4 w-4 mr-2" /> Pending
+              </Button>
+              <Button
+                variant={adminSubTab === "approved" ? "default" : "outline"}
+                className={adminSubTab === "approved" ? "" : "bg-white"}
+                onClick={() => setAdminSubTab("approved")}
+              >
+                <CheckCircle className="h-4 w-4 mr-2" /> Approved
+              </Button>
+              <Button
+                variant={adminSubTab === "rejected" ? "default" : "outline"}
+                className={`rounded-r-md ${adminSubTab === "rejected" ? "" : "bg-white"}`}
+                onClick={() => setAdminSubTab("rejected")}
+              >
+                <XCircle className="h-4 w-4 mr-2" /> Rejected
+              </Button>
+            </div>
+          </div>
+          
+          {/* Requisition Approval List Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Requisition {adminSubTab === "all" ? "Requests" : adminSubTab === "approved" ? "Approvals" : "Rejections"}</CardTitle>
+              <CardDescription>
+                {adminSubTab === "all" ? "Review pending requisition requests from staff" : adminSubTab === "approved" ? "Previously approved requisitions" : "Previously rejected requisitions"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="flex justify-center items-center p-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+              ) : requisitions.length === 0 ? (
+                <div className="text-center p-8 text-gray-500">
+                  No requisitions found in this category.
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Asset</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Requester</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      {adminSubTab === "all" && <TableHead>Actions</TableHead>}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {requisitions.map((req) => (
+                      <TableRow key={req.id}>
+                        <TableCell className="font-medium">{req.asset_name}</TableCell>
+                        <TableCell className="max-w-[200px] truncate">{req.description}</TableCell>
+                        <TableCell>{req.requester_name}</TableCell>
+                        <TableCell>{format(new Date(req.created_at), "MMM dd, yyyy")}</TableCell>
+                        <TableCell>{getStatusBadge(req.status)}</TableCell>
+                        {adminSubTab === "all" && (
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="bg-green-100 hover:bg-green-200 text-green-800"
+                                onClick={() => openApprovalDialog(req, "approve")}
+                              >
+                                Approve
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="bg-red-100 hover:bg-red-200 text-red-800"
+                                onClick={() => openApprovalDialog(req, "reject")}
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       {/* Approval Dialog */}
       <Dialog open={approvalDialogOpen} onOpenChange={setApprovalDialogOpen}>

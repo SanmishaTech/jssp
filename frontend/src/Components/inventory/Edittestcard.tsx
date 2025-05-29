@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 // import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm, ControllerRenderProps } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
+  // CardFooter, // Unused
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -30,7 +30,7 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription, // Unused
   FormField,
   FormItem,
   FormLabel,
@@ -51,9 +51,10 @@ import { useNavigate } from "@tanstack/react-router";
 import { useParams } from "@tanstack/react-router";
  
 const profileFormSchema = z.object({
+  asset_master_id: z.number().optional(), // Added and typed as number
   institute_id: z.string().trim().optional(),
   room_id: z.any().optional(),
-  asset: z.string().trim().nonempty("Asset is Required"),
+  // asset: z.string().trim().nonempty("Asset is Required"), // Replaced by asset_master_id
   quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
@@ -67,7 +68,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
 
-function ProfileForm({ formData }) {
+function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   const defaultValues: Partial<ProfileFormValues> = formData;
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -83,7 +84,11 @@ function ProfileForm({ formData }) {
   const [rooms, setRooms] = React.useState<any[]>([]);
   const [loadingRooms, setLoadingRooms] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loadingAssetMasters, setLoadingAssetMasters] = React.useState(false);
+  const [assetMasters, setAssetMasters] = React.useState<any[]>([]);
+  const apiToken = localStorage.getItem("token"); // Renamed to apiToken for clarity and to avoid conflict
   const role = localStorage.getItem("role");
+  const navigate = useNavigate(); // Added for navigation within ProfileForm
   const isSuperAdmin = role === "superadmin";
 
   const { reset } = form;
@@ -94,7 +99,7 @@ function ProfileForm({ formData }) {
       .get("/api/all_institute", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${apiToken}`,
         },
       })
       .then((response) => {
@@ -114,7 +119,7 @@ function ProfileForm({ formData }) {
       .get("/api/rooms", {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${apiToken}`,
         },
       })
       .then((response) => {
@@ -126,32 +131,53 @@ function ProfileForm({ formData }) {
         toast.error("Failed to fetch rooms");
       })
       .finally(() => setLoadingRooms(false));
-  }, []);
+
+    // Fetch asset masters
+    setLoadingAssetMasters(true);
+    axios
+      .get("/api/all_assetmasters", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiToken}`,
+        },
+      })
+      .then((response) => {
+        const assetMastersData = response.data.data.AssetMaster || [];
+        setAssetMasters(assetMastersData);
+      })
+      .catch((_error) => {
+        toast.error("Failed to fetch asset masters");
+      })
+      .finally(() => setLoadingAssetMasters(false));
+  }, [apiToken, reset, formData]); // Updated token dependency, kept reset and formData
 
   // Reset form values when formData changes
   useEffect(() => {
-    formData.name = formData?.user?.name;
-    formData.email = formData?.user?.email;
-    
     // Ensure room_id is a string
     if (formData?.room_id !== undefined && formData?.room_id !== null) {
       formData.room_id = formData.room_id.toString();
     }
-    
 
+    // Ensure asset_master_id is a number
+    if (formData?.asset_master_id !== undefined && formData?.asset_master_id !== null) {
+      formData.asset_master_id = Number(formData.asset_master_id);
+    }
     
     reset(formData);
   }, [formData, reset]);
 
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-
   async function onSubmit(data: ProfileFormValues) {
+    // Create a modified data object with the correct field name expected by backend
+    const submitData = {
+      ...data,
+      asset: data.asset_master_id // Map asset_master_id to asset for backend compatibility
+    };
+    
     try {
-      await axios.put(`/api/inventory/${id}`, data, {
+      await axios.put(`/api/inventory/${id}`, submitData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${apiToken}`,
         },
       });
 
@@ -201,7 +227,7 @@ function ProfileForm({ formData }) {
                             <FormField
                               control={form.control}
                               name="purchase_date"
-                              render={({ field }) => (
+                              render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "purchase_date"> }) => (
                                 <div className="flex items-center gap-2">
                                   <div className="min-w-[100px]">
                                     <FormLabel className="mb-0 mt-0">
@@ -231,7 +257,7 @@ function ProfileForm({ formData }) {
                   <FormField
                     control={form.control}
                     name="institute_id"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "institute_id"> }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel className="mt-2">
                           Institute <span className="text-red-500">*</span>
@@ -249,9 +275,7 @@ function ProfileForm({ formData }) {
                                   ? courses.find(
                                       (course) =>
                                         course.id.toString() === field.value
-                                    )?.institute_name ||
-                                    formData.course_name ||
-                                    "Select Institute..."
+                                    )?.institute_name || "Select Institute..."
                                   : "Select Institute..."}
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
@@ -270,7 +294,7 @@ function ProfileForm({ formData }) {
                                       <CommandItem
                                         key={course.id}
                                         value={course.id.toString()}
-                                        onSelect={(currentValue) => {
+                                        onSelect={(currentValue: string) => {
                                           field.onChange(
                                             currentValue === field.value
                                               ? ""
@@ -305,7 +329,7 @@ function ProfileForm({ formData }) {
                 <FormField
                                  control={form.control}
                                  name="room_id"
-                                 render={({ field }) => (
+                                 render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "room_id"> }) => (
                                    <FormItem className="flex-1">
                                      <FormLabel className="mt-[10px]">
                                        Room Title <span className="text-red-500">*</span>
@@ -340,7 +364,7 @@ function ProfileForm({ formData }) {
                                                    <CommandItem
                                                      key={room.id}
                                                      value={room.id.toString()}
-                                                     onSelect={(value) => {
+                                                     onSelect={(value: string) => {
                                                        // Ensure value is always a string and never empty
                                                        const stringValue = value.toString();
                                                        field.onChange(stringValue);
@@ -370,24 +394,97 @@ function ProfileForm({ formData }) {
 
                 <FormField
                   control={form.control}
-                  name="asset"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Asset
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Asset..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  name="asset_master_id" // Changed name from 'asset'
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "asset_master_id"> }) => {
+                    const selectedAssetMaster = assetMasters.find(
+                      (am) => am.id === field.value
+                    );
+                    return (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>
+                          Asset Master
+                          {/* Optional: Add span for asterisk if required */}
+                          {/* <span className="text-red-500">*</span> */}
+                        </FormLabel>
+                        <FormControl>
+                          <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className={cn(
+                                  "w-full justify-between",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value
+                                  ? selectedAssetMaster?.asset_type || "Select Asset Master"
+                                  : "Select Asset Master"}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[200px] p-0">
+                              <Command>
+                                <CommandInput placeholder="Search asset master..." />
+                                <CommandList>
+                                  <CommandEmpty>
+                                    {loadingAssetMasters
+                                      ? "Loading asset masters..."
+                                      : "No asset master found."}
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {(() => {
+                                      if (loadingAssetMasters) {
+                                        return (
+                                          <CommandItem disabled>
+                                            Loading...
+                                          </CommandItem>
+                                        );
+                                      }
+                                      if (assetMasters.length === 0) {
+                                        return (
+                                          <CommandItem disabled>
+                                            No asset masters available
+                                          </CommandItem>
+                                        );
+                                      }
+                                      return assetMasters.map((am) => (
+                                        <CommandItem
+                                          value={am.asset_type}
+                                          key={am.id}
+                                          onSelect={() => {
+                                            form.setValue("asset_master_id", am.id, { shouldValidate: true });
+                                            setOpen(false);
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              am.id === field.value
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                          {am.asset_type}
+                                        </CommandItem>
+                                      ));
+                                    })()}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
                   name="quantity"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "quantity"> }) => (
                     <FormItem>
                       <FormLabel>
                         Quantity
@@ -404,7 +501,7 @@ function ProfileForm({ formData }) {
                 <FormField
                   control={form.control}
                   name="purchase_price"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "purchase_price"> }) => (
                     <FormItem>
                       <FormLabel>
                         Purchase Price
@@ -420,7 +517,7 @@ function ProfileForm({ formData }) {
                 <FormField
                   control={form.control}
                   name="status"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "status"> }) => (
                     <FormItem>
                       <FormLabel>Status</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value || ""}>
@@ -446,7 +543,7 @@ function ProfileForm({ formData }) {
                            <FormField
                              control={form.control}
                              name="scraped_amount"
-                             render={({ field }) => (
+                             render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "scraped_amount"> }) => (
                                <FormItem>
                                  <FormLabel>
                                    Scraped Amount
@@ -462,7 +559,7 @@ function ProfileForm({ formData }) {
                            <FormField
                              control={form.control}
                              name="scraped_quantity"
-                             render={({ field }) => (
+                             render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "scraped_quantity"> }) => (
                                <FormItem>
                                  <FormLabel>
                                    Scraped Quantity
@@ -481,7 +578,7 @@ function ProfileForm({ formData }) {
               <FormField
                 control={form.control}
                 name="remarks"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "remarks"> }) => (
                   <FormItem>
                     <FormLabel>
                       Remarks
@@ -515,7 +612,7 @@ function ProfileForm({ formData }) {
 }
 
 export default function SettingsProfilePage() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed as unused in this component
   const { id } = useParams({ from: "/inventory/edit/$id" });
   const [formData, setFormData] = useState<any>({});
   const token = localStorage.getItem("token");
