@@ -146,6 +146,7 @@ class RequisitionController extends BaseController
             'asset_master_id' => 'required|exists:asset_masters,id',
             'asset_category_ids' => 'nullable|array',
             'asset_category_ids.*' => 'string',
+            'quantity' => 'required|string',
             'description' => 'required|string|max:500',
         ]);
 
@@ -154,7 +155,7 @@ class RequisitionController extends BaseController
         }
         
         // Create a new requisition and assign the institute_id from the logged-in user
-        $requisition = new Requisition();
+        $requisition = new Requisition();   
         $requisition->institute_id = Auth::user()->staff->institute_id;  
         $requisition->asset_master_id = $request->input('asset_master_id');
         
@@ -163,6 +164,7 @@ class RequisitionController extends BaseController
             $requisition->asset_category_ids = json_encode($request->input('asset_category_ids'));
         }
         
+        $requisition->quantity = $request->input('quantity');
         $requisition->description = $request->input('description');
         $requisition->requested_by = Auth::id(); // Set the current user as requester
         $requisition->status = 'pending'; // Default status
@@ -205,6 +207,7 @@ class RequisitionController extends BaseController
                 'asset_master_id' => 'required|exists:asset_masters,id',
                 'asset_category_ids' => 'nullable|array',
                 'asset_category_ids.*' => 'string',
+                'quantity' => 'required|string',
                 'description' => 'required|string|max:500',
             ]);
 
@@ -219,6 +222,7 @@ class RequisitionController extends BaseController
                 $requisition->asset_category_ids = json_encode($request->input('asset_category_ids'));
             }
             
+            $requisition->quantity = $request->input('quantity');
             $requisition->description = $request->input('description');
         }
         // If user is admin, they can approve/reject

@@ -21,6 +21,7 @@ class RequisitionResource extends JsonResource
             'asset_name' => $this->assetMaster->asset_type ?? null,
             'asset_category_ids' => $this->asset_category_ids,
             'asset_categories' => $this->assetMaster->asset_category_ids ?? null,
+            'quantity' => $this->quantity,
             'description' => $this->description,
             'status' => $this->status ?? 'pending',
             'requested_by' => (string)($this->requested_by ?? ''),

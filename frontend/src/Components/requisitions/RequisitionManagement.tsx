@@ -54,9 +54,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 // Form schema
 const formSchema = z.object({
+  quantity: z.string().nonempty({ message: "Quantity is required" }),
   asset_master_id: z.string().min(1, { message: "Asset is required" }),
   asset_category_ids: z.array(z.string()).optional(),
   description: z.string().min(5, { message: "Description must be at least 5 characters" }).max(500),
@@ -67,6 +69,7 @@ interface Requisition {
   id: string;
   asset_master_id: string;
   asset_name: string;
+  quantity: string;
   description: string;
   status: "pending" | "approved" | "rejected";
   requested_by: string;
@@ -153,6 +156,7 @@ export default function RequisitionManagement() {
       asset_master_id: "",
       asset_category_ids: [],
       description: "",
+      quantity: "",
     },
   });
   
@@ -328,6 +332,7 @@ export default function RequisitionManagement() {
       const payload = {
         asset_master_id: values.asset_master_id,
         description: values.description,
+        quantity: values.quantity,
         asset_category_ids: values.asset_category_ids && values.asset_category_ids.length > 0 ? values.asset_category_ids : undefined
       };
       
@@ -583,6 +588,24 @@ export default function RequisitionManagement() {
                       )}
                     />
                     
+                    <FormField
+                      control={form.control}
+                      name="quantity"
+                      render={({ field }: { field: any }) => (
+                        <FormItem>
+                          <FormLabel>Quantity</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Enter quantity"
+                              disabled={loading}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="description"
