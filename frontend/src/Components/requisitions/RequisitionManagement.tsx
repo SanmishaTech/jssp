@@ -653,6 +653,7 @@ export default function RequisitionManagement() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Asset</TableHead>
+                        <TableHead>Quantity</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Date</TableHead>
                       </TableRow>
@@ -661,6 +662,7 @@ export default function RequisitionManagement() {
                       {requisitions.map((req) => (
                         <TableRow key={req.id}>
                           <TableCell className="font-medium">{req.asset_name}</TableCell>
+                          <TableCell className="font-medium">{req.quantity}</TableCell>
                           <TableCell>{getStatusBadge(req.status)}</TableCell>
                           <TableCell>{format(new Date(req.created_at), "MMM dd, yyyy")}</TableCell>
                         </TableRow>
@@ -694,10 +696,11 @@ export default function RequisitionManagement() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Asset</TableHead>
+                      <TableHead>Quantity</TableHead>
                       <TableHead>Description</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Requested</TableHead>
-                      <TableHead>Processed By</TableHead>
+                      <TableHead>Requested At</TableHead>
+                      <TableHead>Approved By</TableHead>
                       <TableHead>Comments</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -705,6 +708,7 @@ export default function RequisitionManagement() {
                     {requisitions.map((req) => (
                       <TableRow key={req.id}>
                         <TableCell className="font-medium">{req.asset_name}</TableCell>
+                        <TableCell className="font-medium">{req.quantity}</TableCell>
                         <TableCell className="max-w-[200px] truncate">{req.description}</TableCell>
                         <TableCell>{getStatusBadge(req.status)}</TableCell>
                         <TableCell>{format(new Date(req.created_at), "MMM dd, yyyy")}</TableCell>
