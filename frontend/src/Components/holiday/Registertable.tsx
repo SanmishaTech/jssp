@@ -229,7 +229,7 @@ export default function Dashboardholiday() {
           await fetchData(searchQuery, paginationState.currentPage);
         }
       } catch (err) {
-        console.error("Error deleting course:", err);
+        console.error("Error deleting holiday:", err);
       }
     }
   };

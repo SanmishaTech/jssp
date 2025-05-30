@@ -25,8 +25,9 @@ import { Input } from "@/components/ui/input";
 const profileFormSchema = z.object({
   title: z.string().trim().nonempty("Title is Required"),
   description: z.string().trim().nonempty("Description is Required"),
-  from_date: z.any().optional(),
-  to_date: z.any().optional(),
+  from_date: z.string().nonempty('From Date is Required'),
+  to_date: z.string().nonempty('To Date is Required'),
+  userId: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;

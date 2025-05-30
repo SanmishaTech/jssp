@@ -289,7 +289,7 @@ export default function Dashboard({
                   onPress={onAddProduct}
                   className="h-9"
                 >
-                  Add New Courses
+                  Add New Holiday
                 </Button>
               </div>
             </div>
@@ -322,7 +322,7 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No courses Available"
+                  title="No Holiday Available"
                   description="You can add a new courses to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}

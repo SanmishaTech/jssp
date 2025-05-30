@@ -54,9 +54,17 @@ const WeeklyHoliday = () => {
       
       if (response.data.status && response.data.data && response.data.data.WeeklyHoliday) {
         const weeklyHoliday: WeeklyHolidayData = response.data.data.WeeklyHoliday;
-        setHolidayDays(weeklyHoliday.holiday_days || []);
+        // Ensure Sunday (0) is always included in holiday days
+        let days = weeklyHoliday.holiday_days || [];
+        if (!days.includes(0)) {
+          days.push(0);
+        }
+        setHolidayDays(days);
         setDescription(weeklyHoliday.description || "Weekly Holiday");
         setIsActive(weeklyHoliday.is_active);
+      } else {
+        // Default to at least Sunday as a holiday
+        setHolidayDays([0]);
       }
     } catch (error) {
       console.error("Error fetching weekly holidays:", error);
@@ -69,8 +77,13 @@ const WeeklyHoliday = () => {
   const saveWeeklyHolidays = async () => {
     try {
       setSaving(true);
+      // Ensure Sunday is included before saving
+      let daysToSave = [...holidayDays];
+      if (!daysToSave.includes(0)) {
+        daysToSave.push(0);
+      }
       const response = await axios.post("/api/weekly-holidays", {
-        holiday_days: holidayDays,
+        holiday_days: daysToSave,
         description,
         is_active: isActive
       });
@@ -105,6 +118,9 @@ const WeeklyHoliday = () => {
   };
 
   const handleDayToggle = (dayValue: number) => {
+    // Prevent Sunday (0) from being toggled off
+    if (dayValue === 0) return;
+    
     setHolidayDays((prevDays) => {
       if (prevDays.includes(dayValue)) {
         return prevDays.filter((day) => day !== dayValue);
@@ -156,12 +172,13 @@ const WeeklyHoliday = () => {
                   <div key={day.value} className="flex items-center space-x-2">
                     <Checkbox
                       id={`day-${day.value}`}
-                      checked={holidayDays.includes(day.value)}
+                      checked={holidayDays.includes(day.value) || day.value === 0}
                       onCheckedChange={() => handleDayToggle(day.value)}
+                      disabled={day.value === 0}
                     />
                     <Label
                       htmlFor={`day-${day.value}`}
-                      className="text-base font-medium"
+                      className={`text-base font-medium ${day.value === 0 ? 'text-primary' : ''}`}
                     >
                       {day.label}
                     </Label>

@@ -78,14 +78,12 @@ class HolidayController extends BaseController
         $request->validate([
             'holiday_days' => 'required|array',
             'holiday_days.*' => 'required|integer|between:0,6',
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
+            'description' => 'nullable|string'
         ]);
         
         $instituteId = Auth::user()->staff->institute_id;
         $holidayDays = $request->input('holiday_days');
         $description = $request->input('description', 'Weekly Holiday');
-        $isActive = $request->input('is_active', true);
         
         // Get or create weekly holiday settings for the institute
         $weeklyHoliday = WeeklyHoliday::firstOrCreate(
@@ -96,7 +94,6 @@ class HolidayController extends BaseController
         // Update the settings
         $weeklyHoliday->holiday_days = $holidayDays;
         $weeklyHoliday->description = $description;
-        $weeklyHoliday->is_active = $isActive;
         $weeklyHoliday->save();
         
         return $this->sendResponse(
@@ -105,30 +102,7 @@ class HolidayController extends BaseController
         );
     }
     
-    /**
-     * Toggle weekly holiday status (active/inactive).
-     */
-    public function toggleWeeklyHoliday(Request $request): JsonResponse
-    {
-        $instituteId = Auth::user()->staff->institute_id;
-        
-        // Get or create weekly holiday settings for the institute
-        $weeklyHoliday = WeeklyHoliday::firstOrCreate(
-            ['institute_id' => $instituteId],
-            ['holiday_days' => [], 'description' => 'Weekly Holiday']
-        );
-        
-        // Toggle the active status
-        $weeklyHoliday->is_active = !$weeklyHoliday->is_active;
-        $weeklyHoliday->save();
-        
-        $status = $weeklyHoliday->is_active ? 'enabled' : 'disabled';
-        
-        return $this->sendResponse(
-            ["WeeklyHoliday" => new WeeklyHolidayResource($weeklyHoliday)],
-            "Weekly holidays {$status} successfully"
-        );
-    }
+
 
 
     public function store(Request $request): JsonResponse
@@ -225,8 +199,7 @@ class HolidayController extends BaseController
         $weeklyHolidayDates = [];
         $currentDate = $startDate->copy();
         
-        // Only process if weekly holidays are active
-        if ($weeklyHoliday->is_active) {
+        // Process weekly holidays
             $dayNames = [
                 0 => 'Sunday',
                 1 => 'Monday',
@@ -252,7 +225,6 @@ class HolidayController extends BaseController
                 
                 $currentDate->addDay();
             }
-        }
         
         // Format regular holidays
         $formattedRegularHolidays = $regularHolidays->map(function ($holiday) {

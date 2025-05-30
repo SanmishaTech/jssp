@@ -15,14 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('institute_id')->unique();
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
-            
-            // JSON array of days marked as holidays [0,1,5] etc. where 0=Sunday, 1=Monday, etc.
-            $table->json('holiday_days')->default('[]');
-            
-            // Optional description for the weekly holidays
-            $table->string('description')->nullable()->default('Weekly Holiday');
-            
-            $table->boolean('is_active')->default(true);
+             $table->json('holiday_days');  // Can't set default for JSON columns in MySQL
+             $table->string('description')->nullable()->default('Weekly Holiday');
+
             $table->timestamps();
         });
     }
