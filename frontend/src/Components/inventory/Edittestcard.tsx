@@ -55,6 +55,7 @@ const profileFormSchema = z.object({
   asset_master_id: z.number().optional(), // Added and typed as number
   institute_id: z.string().trim().optional(),
   room_id: z.any().optional(),
+  unit: z.string().optional(), // Added field for unit
   // asset: z.string().trim().nonempty("Asset is Required"), // Replaced by asset_master_id
   asset_category_ids: z.array(z.object({
     value: z.string(),
@@ -97,6 +98,21 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   const role = localStorage.getItem("role");
   const navigate = useNavigate(); // Added for navigation within ProfileForm
   const isSuperAdmin = role === "superadmin";
+  
+  // Watch for changes to asset_master_id and update the unit accordingly
+  React.useEffect(() => {
+    const assetMasterId = form.watch("asset_master_id");
+    if (assetMasterId) {
+      const selectedAsset = assetMasters.find(am => am.id === assetMasterId);
+      if (selectedAsset && selectedAsset.unit) {
+        form.setValue("unit", selectedAsset.unit);
+      } else {
+        form.setValue("unit", "");
+      }
+    } else {
+      form.setValue("unit", "");
+    }
+  }, [form.watch("asset_master_id"), assetMasters]);
 
   const { reset } = form;
 
@@ -492,6 +508,10 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
                                           key={am.id}
                                           onSelect={() => {
                                             form.setValue("asset_master_id", am.id, { shouldValidate: true });
+                                            // Set the unit from the selected asset master
+                                            if (am.unit) {
+                                              form.setValue("unit", am.unit);
+                                            }
                                             setOpen(false);
                                           }}
                                         >
@@ -518,6 +538,31 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
                     );
                   }}
                 />
+                
+                {/* Unit Field - Read Only */}
+                {form.watch("asset_master_id") && (
+                  <FormField
+                    control={form.control}
+                    name="unit"
+                    render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "unit"> }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Unit
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Unit" 
+                            {...field} 
+                            readOnly 
+                            disabled 
+                            className="bg-gray-100"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 
                 <FormField
                   control={form.control}

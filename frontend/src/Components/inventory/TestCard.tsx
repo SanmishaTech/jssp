@@ -58,6 +58,7 @@ const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
   room_id: z.string().trim().optional(),
   asset_master_id: z.number().optional(),
+  unit: z.string().optional(),
   asset_category_ids: z.array(z.object({
     value: z.string(),
     label: z.string()
@@ -103,6 +104,21 @@ function ProfileForm() {
   const [assetMasters, setAssetMasters] = React.useState<any[]>([]);
   const [loadingAssetCategories, setLoadingAssetCategories] = React.useState(false);
   const [assetCategories, setAssetCategories] = React.useState<Option[]>([]);
+  
+  // Watch for changes to asset_master_id and update the unit accordingly
+  React.useEffect(() => {
+    const assetMasterId = form.watch("asset_master_id");
+    if (assetMasterId) {
+      const selectedAsset = assetMasters.find(am => am.id === assetMasterId);
+      if (selectedAsset && selectedAsset.unit) {
+        form.setValue("unit", selectedAsset.unit);
+      } else {
+        form.setValue("unit", "");
+      }
+    } else {
+      form.setValue("unit", "");
+    }
+  }, [form.watch("asset_master_id"), assetMasters]);
 
   React.useEffect(() => {
     setLoadingCourses(true);
@@ -521,6 +537,10 @@ function ProfileForm() {
                                           key={am.id}
                                           onSelect={() => {
                                             form.setValue("asset_master_id", am.id);
+                                            // Set the unit from the selected asset master
+                                            if (am.unit) {
+                                              form.setValue("unit", am.unit);
+                                            }
                                           }}
                                         >
                                           <Check
@@ -546,6 +566,31 @@ function ProfileForm() {
                     );
                   }}
                 />
+                {/* Unit Field - Read Only */}
+                {form.watch("asset_master_id") && (
+                  <FormField
+                    control={form.control}
+                    name="unit"
+                    render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "unit"> }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Unit
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Unit" 
+                            {...field} 
+                            readOnly 
+                            disabled 
+                            className="bg-gray-100"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="asset_category_ids"
