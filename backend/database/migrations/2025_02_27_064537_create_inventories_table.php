@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("room_id")->nullable();
             $table->unsignedBigInteger("asset_master_id")->nullable();
+            $table->json('asset_category_ids')->nullable();
             $table->string("quantity")->nullable();
             $table->string('institute_id')->nullable();
             $table->string('purchase_date')->nullable();

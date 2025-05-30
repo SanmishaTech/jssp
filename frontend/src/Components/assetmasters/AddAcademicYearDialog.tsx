@@ -259,7 +259,7 @@ export default function AddAcademicYearDialog({
                     />
                      <FormField
                       control={form.control}
-                      name="Unit"
+                      name="unit"
                       render={({ field }: AssetTypeFieldProps) => (
                         <FormItem>
                           <FormLabel>

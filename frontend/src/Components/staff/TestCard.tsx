@@ -561,7 +561,7 @@ function ProfileForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="member">Staff</SelectItem>
+                          {/* <SelectItem value="member">Staff</SelectItem> */}
                           <SelectItem value="cashier">Cashier</SelectItem>
                           <SelectItem value="admission">Admission</SelectItem>
                           <SelectItem value="accountant">Accountant</SelectItem>
