@@ -536,6 +536,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/calender",
       icon: Calendar,
     }, 
+    {
+      title: "Purchase Order",
+      url: "/purchaseorders",
+      icon: Truck,
+    },
   ],
   admission: [
     {

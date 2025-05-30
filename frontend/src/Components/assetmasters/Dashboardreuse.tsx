@@ -355,7 +355,10 @@ export default function Dashboard({
                       <TableBody>
                         {tableData?.map((row) => (
                           <React.Fragment key={row.id}>
-                            <TableRow>
+                            <TableRow 
+                              className="cursor-pointer hover:bg-muted/60"
+                              onClick={() => onProductAction("view", row)}
+                            >
                               {tableColumns?.headers?.map((header, index) => (
                                 <TableCell
                                   key={index}

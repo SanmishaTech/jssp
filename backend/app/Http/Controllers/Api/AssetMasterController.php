@@ -59,6 +59,7 @@ class AssetMasterController extends BaseController
         $assetmaster->institute_id = Auth::user()->staff->institute_id;  
         $assetmaster->asset_category_ids = json_encode($request->input('asset_category_ids', []));
         $assetmaster->asset_type = $request->input('asset_type');
+        $assetmaster->unit = $request->input('unit');
         $assetmaster->service_required = $request->input('service_required');
         $assetmaster->save();
         
@@ -92,6 +93,7 @@ class AssetMasterController extends BaseController
         $assetmaster->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
         $assetmaster->asset_category_ids = json_encode($request->input('asset_category_ids', []));
         $assetmaster->asset_type = $request->input('asset_type');
+        $assetmaster->unit = $request->input('unit');
         $assetmaster->service_required = $request->input('service_required');
         $assetmaster->save();
        

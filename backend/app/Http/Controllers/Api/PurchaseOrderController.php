@@ -66,12 +66,12 @@ class PurchaseOrderController extends BaseController
         // Base query: PurchaseOrders related to the institute
         $query = PurchaseOrder::with('staff')->where('institute_id', $instituteId);
     
-        // If the user is not admin or viceprincipal, limit to their own purchase orders
-        if (!$user->hasRole(['admin', 'viceprincipal'])) {
-            $query->where('staff_id', $user->staff->id);
-        }
+        // // If the user is not admin or viceprincipal, limit to their own purchase orders
+        // if (!$user->hasRole(['admin', 'viceprincipal'])) {
+        //     $query->where('staff_id', $user->staff->id);
+        // }
     
-        // Apply search filtering if present
+        // Apply search filtering if present    
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {

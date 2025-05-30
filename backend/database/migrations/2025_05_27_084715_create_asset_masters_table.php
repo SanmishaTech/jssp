@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             $table->json('asset_category_ids')->nullable();
             $table->string('asset_type')->nullable();
+            $table->string('unit')->nullable();
             $table->boolean('service_required')->default(false);
             $table->timestamps();
         });

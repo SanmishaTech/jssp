@@ -4,6 +4,7 @@ import Dashboard from "./Dashboardreuse";
 import userAvatar from "@/images/Profile.jpg";
 import AddAcademicYearDialog from "./AddAcademicYearDialog";
 import EditAcademicYearDialog from "./EditAcademicYearDialog";
+import ViewAssetMasterDialog from "./ViewAssetMasterDialog";
 
 interface Subject {
   id: string;
@@ -82,6 +83,7 @@ interface DashboardProps {
     one: string;
     two: string;
     three: string;
+    four: string;
     delete: string;
   }>;
   onAddProduct: () => void;
@@ -115,6 +117,7 @@ export default function Dashboardholiday() {
   const token = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
   const typeofschema = {
     medium_code: "String",
@@ -186,10 +189,12 @@ export default function Dashboardholiday() {
           { label: "Asset Type", key: "one" },
           { label: "Service Required", key: "two" },
           { label: "Asset Category", key: "three" },
+          { label: "Unit", key: "four" },
           { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
+          { label: "View", value: "view" },
           { label: "Delete", value: "delete" },
         ],
         pagination: {
@@ -224,6 +229,9 @@ export default function Dashboardholiday() {
     if (action === "edit") {
       setSelectedSubjectId(product.id);
       setIsEditDialogOpen(true);
+    } else if (action === "view") {
+      setSelectedSubjectId(product.id);
+      setIsViewDialogOpen(true);
     } else if (action === "delete") {
       try {
         const response = await axios.delete(`/api/subjects/${product.id}`, {
@@ -288,13 +296,31 @@ export default function Dashboardholiday() {
         return "Unknown";
       }
     })(),
-    three: Array.isArray(item.asset_category_ids) 
-        ? item.asset_category_ids.map((category) => category.label || category.value).join(", ")
-        : typeof item.asset_category_ids === 'string' 
-            ? JSON.parse(item.asset_category_ids || '[]')
-                .map((category) => category.label || category.value || category)
-                .join(", ")
-            : "Unknown",
+    three: (() => {
+      let categories = [];
+      
+      if (Array.isArray(item.asset_category_ids)) {
+        categories = item.asset_category_ids.map(category => category.label || category.value);
+      } else if (typeof item.asset_category_ids === 'string') {
+        try {
+          categories = JSON.parse(item.asset_category_ids || '[]')
+            .map(category => category.label || category.value || category);
+        } catch (e) {
+          return "Unknown";
+        }
+      } else {
+        return "Unknown";
+      }
+      
+      // Show only first 3 categories with ellipsis if more exist
+      if (categories.length > 3) {
+        return categories.slice(0, 3).join(", ") + "...";
+      } else {
+        return categories.join(", ") || "Unknown";
+      }
+    })(),
+    four: item.unit || "-",
+
     delete: "/assetmasters/" + item.id,
   }));
 
@@ -341,6 +367,12 @@ export default function Dashboardholiday() {
         backdrop="blur"
         fetchData={() => fetchData(searchQuery, paginationState.currentPage)}
         academicYearId={selectedSubjectId}
+      />
+      <ViewAssetMasterDialog
+        isOpen={isViewDialogOpen}
+        onOpen={setIsViewDialogOpen}
+        backdrop="blur"
+        assetMasterId={selectedSubjectId}
       />
     </div>
   );

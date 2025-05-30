@@ -31,6 +31,7 @@ const profileFormSchema = z.object({
     value: z.string(),
     label: z.string()
   })).min(1, "At least one Asset Category is Required"),
+  unit: z.any().optional(),
   service_required: z.any().optional(),
 });
 
@@ -54,15 +55,7 @@ interface AssetTypeFieldProps {
   };
 }
 
-interface ServiceRequiredFieldProps {
-  field: {
-    onChange: (event: React.ChangeEvent<HTMLInputElement> | boolean) => void;
-    onBlur: () => void;
-    value: boolean;
-    name: string;
-    ref: React.Ref<HTMLInputElement>;
-  };
-}
+// ServiceRequiredFieldProps interface removed as it's no longer needed
 
 const formatAcademicYear = (value: string) => {
   // Remove all non-digit characters
@@ -220,6 +213,7 @@ export default function EditAcademicYearDialog({
       const formattedData = {
         asset_type: data.asset_type,
         asset_category_ids: Array.isArray(data.asset_category_ids) ? data.asset_category_ids : [],
+        unit: data.unit,
         service_required: data.service_required,
       };
       
@@ -269,8 +263,20 @@ export default function EditAcademicYearDialog({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              Edit Asset Master
+            <ModalHeader className="flex justify-between items-center">
+              <div>Edit Asset Master</div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="service_required"
+                  checked={!!form.watch("service_required")}
+                  onChange={(e) => form.setValue("service_required", e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <label htmlFor="service_required" className="m-0 text-sm">
+                  Service Required 
+                </label>
+              </div>
             </ModalHeader>
             <ModalBody>
               <Form {...form}>
@@ -278,7 +284,7 @@ export default function EditAcademicYearDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className="flex grid  gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name="asset_category_ids"
@@ -323,34 +329,25 @@ export default function EditAcademicYearDialog({
                                         </FormItem>
                                       )}
                                     />
+                                     <FormField
+                                                          control={form.control}
+                                                          name="unit"
+                                                          render={({ field }: AssetTypeFieldProps) => (
+                                                            <FormItem>
+                                                              <FormLabel>
+                                                                Unit
+                                                                <span className="text-red-500">*</span>
+                                                              </FormLabel>
+                                                              <FormControl>
+                                                             <Input {...field} placeholder="Unit" />
+                                                              </FormControl>
+                                                              <FormMessage />
+                                                            </FormItem>
+                                                          )}
+                                                        />
                                     
                 
-                                    <FormField
-                  control={form.control}
-                  name="service_required"
-                  render={({ field }: ServiceRequiredFieldProps) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="service_required"
-                            checked={!!field.value}
-                            onChange={(e) => field.onChange(e.target.checked)}
-                            onBlur={field.onBlur}
-                            name={field.name}
-                            ref={field.ref}
-                            className="w-4 h-4"
-                          />
-                          <FormLabel htmlFor="service_required" className="m-0">
-                            Service Required 
-                          </FormLabel>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                
                 
                                   </div>
                 </form>
