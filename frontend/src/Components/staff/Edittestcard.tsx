@@ -667,32 +667,21 @@ function ProfileForm({ formData }) {
                     </FormItem>
                   )}
                 />
-
-             
-
                 <FormField
                   control={form.control}
                   name="date_of_birth"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date of Birth</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          max={
-                            new Date(
-                              new Date().setFullYear(
-                                new Date().getFullYear() - 18
-                              )
-                            )
-                              .toISOString()
-                              .split("T")[0]
-                          } // Users must be 18 or older
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                      <FormItem>
+                        <FormLabel>Date of Birth<span className="text-red-500">*</span></FormLabel>
+                        <FormControl>
+                          <Input
+                            id="date_of_birth"
+                            type="date"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                   )}
                 />
                  <FormField

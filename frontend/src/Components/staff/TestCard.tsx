@@ -581,31 +581,17 @@ function ProfileForm() {
                   control={form.control}
                   name="date_of_birth"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date of Birth<span className="text-red-500">*</span></FormLabel>
-                      <FormControl>
-                        {field.value ? (
-                          <div className="py-2">
-                            {dayjs(field.value).format("DD/MM/YYYY")}
-                          </div>
-                        ) : (
+                      <FormItem>
+                        <FormLabel>Date of Birth<span className="text-red-500">*</span></FormLabel>
+                        <FormControl>
                           <Input
+                            id="date_of_birth"
                             type="date"
-                            max={
-                              new Date(
-                                new Date().setFullYear(
-                                  new Date().getFullYear() - 18
-                                )
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            } // Users must be 18 or older
                             {...field}
                           />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                   )}
                 />
                
