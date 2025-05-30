@@ -111,6 +111,14 @@ class InventoryController extends BaseController
         $inventory->quantity = $request->input('quantity');
         $inventory->room_id = $request->input('room_id');
         
+        // Handle asset categories
+        if ($request->has('asset_category_ids')) {
+            // Convert to JSON if array, or store directly if already JSON string
+            $inventory->asset_category_ids = is_array($request->input('asset_category_ids')) 
+                ? json_encode($request->input('asset_category_ids')) 
+                : $request->input('asset_category_ids');
+        }
+        
         // Get authenticated user
         $user = Auth::user();
         
@@ -178,6 +186,7 @@ class InventoryController extends BaseController
             $scrapedInventory->institute_id = $inventory->institute_id;
             $scrapedInventory->purchase_date = $inventory->purchase_date;
             $scrapedInventory->purchase_price = $inventory->purchase_price;
+            $scrapedInventory->asset_category_ids = $inventory->asset_category_ids; // Copy asset categories
             $scrapedInventory->status = 'Scraped';
             $scrapedInventory->scraped_amount = $request->input('scraped_amount');
             $scrapedInventory->scraped_quantity = $scrapedQuantity;
@@ -205,6 +214,14 @@ class InventoryController extends BaseController
             $inventory->asset_master_id = $request->input('asset', $inventory->asset_master_id);
             $inventory->quantity = $request->input('quantity', $inventory->quantity);
             $inventory->room_id = $request->input('room_id', $inventory->room_id);        
+            
+            // Handle asset categories update
+            if ($request->has('asset_category_ids')) {
+                // Convert to JSON if array, or store directly if already JSON string
+                $inventory->asset_category_ids = is_array($request->input('asset_category_ids')) 
+                    ? json_encode($request->input('asset_category_ids')) 
+                    : $request->input('asset_category_ids');
+            }
             
             // Get authenticated user
             $user = Auth::user();

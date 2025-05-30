@@ -20,6 +20,7 @@ class InventoryResource extends JsonResource
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             "asset_master_id" => $this->asset_master_id,
             "asset_master_name" => $this->assetMaster ? $this->assetMaster->asset_type : null,
+            "asset_category_ids" => $this->asset_category_ids ? json_decode($this->asset_category_ids) : null,
             "quantity" => $this->quantity,
             "room_id" => $this->room_id,
             'room_name' => $this->room ? $this->room->room_name : null,

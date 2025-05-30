@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import MultipleSelector, { Option } from "../../Components/ui/multiselect";
 // import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, ControllerRenderProps } from "react-hook-form";
@@ -55,6 +56,10 @@ const profileFormSchema = z.object({
   institute_id: z.string().trim().optional(),
   room_id: z.any().optional(),
   // asset: z.string().trim().nonempty("Asset is Required"), // Replaced by asset_master_id
+  asset_category_ids: z.array(z.object({
+    value: z.string(),
+    label: z.string()
+  })).min(1, "At least one Asset Category is Required"),
   quantity: z.string().trim().nonempty("Quantity is Required"),
   purchase_price: z.string().trim().nonempty("Purchase Price is Required"),
   purchase_date: z.string().trim().nonempty("Purchase Date is Required"),
@@ -86,6 +91,8 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   const [open, setOpen] = useState(false);
   const [loadingAssetMasters, setLoadingAssetMasters] = React.useState(false);
   const [assetMasters, setAssetMasters] = React.useState<any[]>([]);
+  const [loadingAssetCategories, setLoadingAssetCategories] = React.useState(false);
+  const [assetCategories, setAssetCategories] = React.useState<Option[]>([]);
   const apiToken = localStorage.getItem("token"); // Renamed to apiToken for clarity and to avoid conflict
   const role = localStorage.getItem("role");
   const navigate = useNavigate(); // Added for navigation within ProfileForm
@@ -149,6 +156,35 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
         toast.error("Failed to fetch asset masters");
       })
       .finally(() => setLoadingAssetMasters(false));
+      
+    // Fetch asset categories
+    setLoadingAssetCategories(true);
+    axios
+      .get("/api/assetcategories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiToken}`,
+        },
+      })
+      .then((response) => {
+        console.log('Asset Categories API Response:', response.data);
+        if (response.data.data && response.data.data.AssetCategories) {
+          // Transform the data to match the Option interface
+          const categoryOptions = response.data.data.AssetCategories.map((category: { id: number; category_name: string }) => ({
+            value: category.id.toString(),
+            label: category.category_name
+          }));
+          console.log('Mapped Category Options:', categoryOptions);
+          setAssetCategories(categoryOptions);
+        } else {
+          console.error('AssetCategories not found in response:', response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching asset categories:", error);
+        toast.error("Failed to load asset categories");
+      })
+      .finally(() => setLoadingAssetCategories(false));
   }, [apiToken, reset, formData]); // Updated token dependency, kept reset and formData
 
   // Reset form values when formData changes
@@ -167,14 +203,15 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   }, [formData, reset]);
 
   async function onSubmit(data: ProfileFormValues) {
-    // Create a modified data object with the correct field name expected by backend
-    const submitData = {
+    // Ensure asset_category_ids is properly formatted before submission
+    const formattedData = {
       ...data,
-      asset: data.asset_master_id // Map asset_master_id to asset for backend compatibility
+      asset: data.asset_master_id, // Map asset_master_id to asset for backend compatibility
+      asset_category_ids: Array.isArray(data.asset_category_ids) ? data.asset_category_ids : []
     };
     
     try {
-      await axios.put(`/api/inventory/${id}`, submitData, {
+      await axios.put(`/api/inventory/${id}`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiToken}`,
@@ -480,6 +517,35 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
                       </FormItem>
                     );
                   }}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="asset_category_ids"
+                  render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "asset_category_ids"> }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Asset Categories
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <MultipleSelector
+                          commandProps={{
+                            label: "Select asset categories",
+                          }}
+                          value={Array.isArray(field.value) ? field.value : []}
+                          onChange={field.onChange}
+                          options={assetCategories}
+                          defaultOptions={assetCategories}
+                          placeholder="Select asset categories"
+                          hideClearAllButton={false}
+                          hidePlaceholderWhenSelected
+                          emptyIndicator={<p className="text-center text-sm">No categories found</p>}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
                 <FormField
                   control={form.control}
