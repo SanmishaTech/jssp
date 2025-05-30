@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CourseSelect } from "@/components/ui/course-select";
 import { SemesterSelect } from "@/components/ui/semester-select";
 import { SubjectSelect } from "@/components/ui/subject-select";
-
+import dayjs from "dayjs";
 import {
   Card,
   CardContent,
@@ -77,7 +77,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema> & {
 
 // This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {
-  role: "member", // Default role to 'member'
+  role: "nonteachingstaff", // Default role to 'member'
   course_id: [], // Default empty course_id array
   semester_id: [], // Default empty semester_id array
   subject_id: [], // Default empty subject_id array
@@ -460,7 +460,7 @@ function ProfileForm() {
                   name="staff_name"
                   render={({ field }) => (
                     <FormItem className="flex flex-col justify-center min-h-[100px]">
-                      <FormLabel className="">Name</FormLabel>
+                      <FormLabel className="">Name<span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Name..." {...field} />
                       </FormControl>
@@ -473,7 +473,7 @@ function ProfileForm() {
                   name="employee_code"
                   render={({ field }) => (
                     <FormItem >
-                      <FormLabel >Employee Code</FormLabel>
+                      <FormLabel >Employee Code<span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Employee Code..." {...field} />
                       </FormControl>
@@ -494,7 +494,7 @@ function ProfileForm() {
                   }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile</FormLabel>
+                      <FormLabel>Mobile<span className="text-red-500">*</span></FormLabel>
                       <FormControl>
                         <Input
                           type="text"
@@ -515,8 +515,8 @@ function ProfileForm() {
                   control={form.control}
                   name="role"
                   render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "role"> }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>Role</FormLabel>
+                    <FormItem className="">
+                      <FormLabel>Role<span className="text-red-500">*</span></FormLabel>
                       <Select 
                         onValueChange={(value: string) => {
                           field.onChange(value);
@@ -561,8 +561,7 @@ function ProfileForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {/* <SelectItem value="member">Staff</SelectItem> */}
-                          <SelectItem value="cashier">Cashier</SelectItem>
+                           <SelectItem value="cashier">Cashier</SelectItem>
                           <SelectItem value="admission">Admission</SelectItem>
                           <SelectItem value="accountant">Accountant</SelectItem>
                           <SelectItem value="backoffice">Back Office</SelectItem>
@@ -583,27 +582,37 @@ function ProfileForm() {
                   name="date_of_birth"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date of Birth</FormLabel>
+                      <FormLabel>Date of Birth<span className="text-red-500">*</span></FormLabel>
                       <FormControl>
-                        <Input
-                          type="date"
-                          max={
-                            new Date(
-                              new Date().setFullYear(
-                                new Date().getFullYear() - 18
+                        {field.value ? (
+                          <div className="py-2">
+                            {dayjs(field.value).format("DD/MM/YYYY")}
+                          </div>
+                        ) : (
+                          <Input
+                            type="date"
+                            max={
+                              new Date(
+                                new Date().setFullYear(
+                                  new Date().getFullYear() - 18
+                                )
                               )
-                            )
-                              .toISOString()
-                              .split("T")[0]
-                          } // Users must be 18 or older
-                          {...field}
-                        />
+                                .toISOString()
+                                .split("T")[0]
+                            } // Users must be 18 or older
+                            {...field}
+                          />
+                        )}
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                 <FormField
+               
+                 
+                {isTeachingStaff && (
+                  <div className="flex gap-5">
+                      <FormField
                     control={form.control}
                     name="academic_years_id"
                     render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "academic_years_id"> }) => (
@@ -633,10 +642,6 @@ function ProfileForm() {
                       </FormItem>
                     )}
                   />
-                 
-                {isTeachingStaff && (
-                  <div className="flex gap-5">
-                    
                    
                  
                 
@@ -753,7 +758,7 @@ function ProfileForm() {
                 name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>Address<span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <Textarea placeholder="Address..." {...field} />
                     </FormControl>
@@ -821,7 +826,7 @@ function ProfileForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email<span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Email..." {...field} />
                     </FormControl>
@@ -835,7 +840,7 @@ function ProfileForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Password<span className="text-red-500">*</span></FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Password..."
