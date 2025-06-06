@@ -332,42 +332,65 @@ export default function SubjectHoursDisplay() {
                   {staffInfo.subject_id.map(subjectId => {
                     const subject = subjects.find(s => s.id === subjectId);
                     if (!subject) return null;
+
+                    // Calculate total subject hours
+                    let totalSubjectHours = 0;
+                    if (subject.sub_subjects && subject.sub_subjects.length > 0) {
+                      totalSubjectHours = subject.sub_subjects.reduce((acc, currentSubSubject) => {
+                        const hoursValue = editingHours[`${subject.id}-${currentSubSubject.id}`];
+                        const currentHours = hoursValue !== undefined ? hoursValue : (currentSubSubject.hours || 0);
+                        return acc + (Number(currentHours) || 0);
+                      }, 0);
+                    }
                     
                     return (
                       <React.Fragment key={subjectId}>
                         {subject.sub_subjects?.length ? (
-                          subject.sub_subjects.map((subSubject, idx) => (
-                            <tr key={`${subjectId}-${subSubject.id}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                              {idx === 0 && (
-                                <td rowSpan={subject.sub_subjects?.length} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 align-top">
-                                  {subject.subject_name}
+                          <>
+                            {subject.sub_subjects.map((subSubject, idx) => (
+                              <tr key={`${subjectId}-${subSubject.id}`} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                {idx === 0 && (
+                                  <td rowSpan={subject.sub_subjects!.length} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 align-top border-r">
+                                    {subject.subject_name}
+                                  </td>
+                                )}
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {subSubject.sub_subject_name}
                                 </td>
-                              )}
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {subSubject.sub_subject_name}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <input
-                                  type="number"
-                                  min="0"
-                                  className="w-20 px-2 py-1 border rounded focus:ring-blue-500 focus:border-blue-500"
-                                  value={editingHours[`${subjectId}-${subSubject.id}`] !== undefined ? editingHours[`${subjectId}-${subSubject.id}`] : (subSubject.hours || '')}
-                                  onChange={(e) => handleHoursChange(subjectId, subSubject.id, e.target.value)}
-                                  placeholder="0"
-                                />
-                              </td>
-
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    className="w-20 px-2 py-1 border rounded focus:ring-blue-500 focus:border-blue-500"
+                                    value={editingHours[`${subjectId}-${subSubject.id}`] !== undefined ? editingHours[`${subjectId}-${subSubject.id}`] : (subSubject.hours || '')}
+                                    onChange={(e) => handleHoursChange(subjectId, subSubject.id, e.target.value)}
+                                    placeholder="0"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                            <tr className="bg-gray-100 font-semibold">
+                              <td className="px-6 py-3 text-right text-sm text-gray-700 border-r">Total Hours for {subject.subject_name}:</td>
+                              <td colSpan={1} className="px-6 py-3 text-left text-sm text-gray-700">{/* Empty cell for alignment */}</td>
+                              <td className="px-6 py-3 text-left text-sm text-gray-700">{totalSubjectHours}</td>
                             </tr>
-                          ))
+                          </>
                         ) : (
-                          <tr className="bg-white">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {subject.subject_name}
-                            </td>
-                            <td colSpan={2} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              No sub-subjects available
-                            </td>
-                          </tr>
+                          <>
+                            <tr className="bg-white">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border-r">
+                                {subject.subject_name}
+                              </td>
+                              <td colSpan={2} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center italic">
+                                No sub-subjects available
+                              </td>
+                            </tr>
+                            <tr className="bg-gray-100 font-semibold">
+                                <td className="px-6 py-3 text-right text-sm text-gray-700 border-r">Total Hours for {subject.subject_name}:</td>
+                                <td colSpan={1} className="px-6 py-3 text-left text-sm text-gray-700">{/* Empty cell for alignment */}</td>
+                                <td className="px-6 py-3 text-left text-sm text-gray-700">0</td>
+                            </tr>
+                          </>
                         )}
                       </React.Fragment>
                     );
