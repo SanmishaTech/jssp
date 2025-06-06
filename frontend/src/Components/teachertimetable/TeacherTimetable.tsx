@@ -21,6 +21,7 @@ import {
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { DialogCloseButton } from './AllocationSummaryDialog';
 
 // Type definitions
 type TimeSlot = {
@@ -1336,12 +1337,7 @@ const TeacherTimetable: React.FC = () => {
       </div>
       
       <div className="mb-4 flex justify-end gap-3">
-        <Button 
-          disabled={!selectedStaff}
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
-        >
-          Allocation
-        </Button>
+    <DialogCloseButton />
         <Button 
           onClick={saveTimetable} 
           disabled={loading || !selectedStaff || !selectedWeek}
