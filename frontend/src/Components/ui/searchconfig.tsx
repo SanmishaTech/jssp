@@ -196,6 +196,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: Truck,
     },
     {
+      title: "Syllabus",
+      url: "/syllabus",
+      icon: Truck,
+    },
+    {
       title: "Memo",
       url: "/memo",
       icon: FileText,

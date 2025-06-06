@@ -17,6 +17,7 @@ import { Route as VendorsIndexImport } from './routes/vendors/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
 import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
 import { Route as TaskmanagerIndexImport } from './routes/taskmanager/index'
+import { Route as SyllabusIndexImport } from './routes/syllabus/index'
 import { Route as SubjectsIndexImport } from './routes/subjects/index'
 import { Route as SubjecthoursIndexImport } from './routes/subjecthours/index'
 import { Route as StudentsIndexImport } from './routes/students/index'
@@ -117,6 +118,12 @@ const TeachertimetableIndexRoute = TeachertimetableIndexImport.update({
 const TaskmanagerIndexRoute = TaskmanagerIndexImport.update({
   id: '/taskmanager/',
   path: '/taskmanager/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SyllabusIndexRoute = SyllabusIndexImport.update({
+  id: '/syllabus/',
+  path: '/syllabus/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -767,6 +774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubjectsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/syllabus/': {
+      id: '/syllabus/'
+      path: '/syllabus'
+      fullPath: '/syllabus'
+      preLoaderRoute: typeof SyllabusIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/taskmanager/': {
       id: '/taskmanager/'
       path: '/taskmanager'
@@ -1041,6 +1055,7 @@ export interface FileRoutesByFullPath {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/syllabus': typeof SyllabusIndexRoute
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
@@ -1114,6 +1129,7 @@ export interface FileRoutesByTo {
   '/students': typeof StudentsIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
+  '/syllabus': typeof SyllabusIndexRoute
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
   '/trusties': typeof TrustiesIndexRoute
@@ -1188,6 +1204,7 @@ export interface FileRoutesById {
   '/students/': typeof StudentsIndexRoute
   '/subjecthours/': typeof SubjecthoursIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
+  '/syllabus/': typeof SyllabusIndexRoute
   '/taskmanager/': typeof TaskmanagerIndexRoute
   '/teachertimetable/': typeof TeachertimetableIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
@@ -1263,6 +1280,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/syllabus'
     | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
@@ -1335,6 +1353,7 @@ export interface FileRouteTypes {
     | '/students'
     | '/subjecthours'
     | '/subjects'
+    | '/syllabus'
     | '/taskmanager'
     | '/teachertimetable'
     | '/trusties'
@@ -1407,6 +1426,7 @@ export interface FileRouteTypes {
     | '/students/'
     | '/subjecthours/'
     | '/subjects/'
+    | '/syllabus/'
     | '/taskmanager/'
     | '/teachertimetable/'
     | '/trusties/'
@@ -1481,6 +1501,7 @@ export interface RootRouteChildren {
   StudentsIndexRoute: typeof StudentsIndexRoute
   SubjecthoursIndexRoute: typeof SubjecthoursIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
+  SyllabusIndexRoute: typeof SyllabusIndexRoute
   TaskmanagerIndexRoute: typeof TaskmanagerIndexRoute
   TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
@@ -1554,6 +1575,7 @@ const rootRouteChildren: RootRouteChildren = {
   StudentsIndexRoute: StudentsIndexRoute,
   SubjecthoursIndexRoute: SubjecthoursIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
+  SyllabusIndexRoute: SyllabusIndexRoute,
   TaskmanagerIndexRoute: TaskmanagerIndexRoute,
   TeachertimetableIndexRoute: TeachertimetableIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
@@ -1636,6 +1658,7 @@ export const routeTree = rootRoute
         "/students/",
         "/subjecthours/",
         "/subjects/",
+        "/syllabus/",
         "/taskmanager/",
         "/teachertimetable/",
         "/trusties/",
@@ -1781,6 +1804,9 @@ export const routeTree = rootRoute
     },
     "/subjects/": {
       "filePath": "subjects/index.tsx"
+    },
+    "/syllabus/": {
+      "filePath": "syllabus/index.tsx"
     },
     "/taskmanager/": {
       "filePath": "taskmanager/index.tsx"

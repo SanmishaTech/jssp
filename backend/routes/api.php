@@ -50,7 +50,7 @@ use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\PurchaseOrderController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
-
+use App\Http\Controllers\Api\SyllabusController; // Added this line
 
 
 Route::post('/login', [UserController::class, 'login']);
@@ -199,6 +199,12 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/staff-sub-subject-hours', [SubjectHoursController::class, 'index']);
     Route::post('/staff-sub-subject-hours/batch', [SubjectHoursController::class, 'storeBatch']);
+});
+
+// Syllabus Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/syllabi/staff', [SyllabusController::class, 'index']);
+    Route::post('/syllabi/staff', [SyllabusController::class, 'store']);
 });
 
 // Teacher Timetable Routes
