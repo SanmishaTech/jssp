@@ -5,10 +5,11 @@ import { searchconfig, MenuItem } from './searchconfig';
 
 interface CommandMenuProps {
   role?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function CommandMenu({ role }: CommandMenuProps) {
-  const [open, setOpen] = useState(false);
+export function CommandMenu({ role, open, onOpenChange }: CommandMenuProps) {
   const [search, setSearch] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const menuItemsRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -100,17 +101,7 @@ export function CommandMenu({ role }: CommandMenuProps) {
   // Use the filtered grouped items for display
   const groupedItems = filteredGroupedItems;
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
 
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
-  }, []);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -151,14 +142,14 @@ export function CommandMenu({ role }: CommandMenuProps) {
   }, [search]);
 
   const runCommand = (path: string) => {
-    setOpen(false);
+    onOpenChange(false);
     window.location.href = path;
   };
   
   return (
     <>
       {/* Custom search dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="p-0 overflow-hidden max-w-2xl bg-white">
           <DialogTitle className="sr-only">Search navigation</DialogTitle>
           <DialogDescription className="sr-only">Search for navigation items and pages in the application</DialogDescription>

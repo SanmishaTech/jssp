@@ -10,7 +10,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../ui/sidebar";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Search } from "lucide-react";
+import { CommandMenu } from "../ui/CommandMenu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,6 +77,22 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const profileTriggerRef = useRef<HTMLDivElement>(null);
+
+  // State for Command Menu
+  const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        setIsCommandMenuOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
   
   const navigate = useNavigate();
   
@@ -133,6 +150,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
 
   return (
     <Sidebar variant="inset" collapsible="icon">
+      <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
       <SidebarContent className="flex flex-col h-full">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center justify-between p-4">
@@ -148,7 +166,20 @@ export function AppSidebar({ role }: AppSidebarProps) {
           </div>
           <div className="h-px bg-border mx-4" />
         </div>
-        <div className="flex-1 overflow-auto">
+        {/* Search Bar */}
+        <div className="p-2.5">
+          <button
+            onClick={() => setIsCommandMenuOpen(true)}
+            className="flex items-center justify-between w-full h-9 px-2 py-1.5 text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
+            aria-label="Open command menu"
+          >
+            <Search className="w-4 h-4 text-muted-foreground" />
+            <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
+              <span className="text-xs">CTRL</span>+ K
+            </kbd>
+          </button>
+        </div>
+        <div className="flex-1 overflow-y-auto">
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>

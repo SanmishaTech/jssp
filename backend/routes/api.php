@@ -51,6 +51,7 @@ use App\Http\Controllers\Api\PurchaseOrderController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 use App\Http\Controllers\Api\SyllabusController; // Added this line
+use App\Http\Controllers\Api\DashboardController; // Added for dashboard
 
 
 Route::post('/login', [UserController::class, 'login']);
@@ -183,6 +184,9 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::resource('purchaseorders', PurchaseOrderController::class);
    Route::get('/all_purchaseorders', [PurchaseOrderController::class, 'allPurchaseOrders'])->name("purchaseorders.all");
    Route::get('/asset_categories_by_asset/{assetId}', [PurchaseOrderController::class, 'getAssetCategoriesByAsset'])->name("asset.categories");
+
+   // Dashboard route
+   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.data');
 
 
 
