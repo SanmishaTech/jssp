@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
   Sidebar,
@@ -164,13 +165,11 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </DropdownMenu>
             
           </div>
-          <div className="h-px bg-border mx-4" />
-        </div>
-        {/* Search Bar */}
-        <div className="p-2.5">
+            {/* Search Bar */}
+        <div className="">
           <button
             onClick={() => setIsCommandMenuOpen(true)}
-            className="flex items-center justify-between w-full h-9 px-2 py-1.5 text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
+            className="flex items-center justify-between w-full h-9 px-4  text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
             aria-label="Open command menu"
           >
             <Search className="w-4 h-4 text-muted-foreground" />
@@ -179,6 +178,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </kbd>
           </button>
         </div>
+          <Separator  />
+          
+        </div>
+      
         <div className="flex-1 overflow-y-auto">
           <SidebarGroup>
             <SidebarGroupContent>
