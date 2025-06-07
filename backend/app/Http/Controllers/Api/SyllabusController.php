@@ -38,12 +38,30 @@ class SyllabusController extends Controller
     }
 
     /**
-     * Display a listing of the syllabi for the logged-in staff.
+     * Display a listing of the syllabi.
+     *
+     * Behaviour varies based on the authenticated user's role:
+     *  - teachingstaff: Returns syllabus for the logged-in staff.
+     *  - admin        : If a valid `staff_id` query param is provided, returns that
+     *                   staff member's syllabus. Otherwise returns an empty array.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $staff = Staff::where('user_id', $user->id)->first();
+
+        // Determine role (assuming Spatie or similar roles relationship)
+        $role = $user->roles->first()->name ?? null;
+
+        // Resolve the staff record we need the syllabus for.
+        if ($role === 'admin' && $request->query('staff_id')) {
+            $staff = Staff::find($request->query('staff_id'));
+            if (!$staff) {
+                return response()->json(['status' => 'error', 'message' => 'Invalid staff_id supplied'], 404);
+            }
+        } else {
+            // Default to the logged-in staff profile
+            $staff = Staff::where('user_id', $user->id)->first();
+        }
 
         if (!$staff) {
             return response()->json(['status' => 'error', 'message' => 'Staff profile not found'], 404);
@@ -59,34 +77,34 @@ class SyllabusController extends Controller
         $subjects = Subject::with(['course', 'semester'])->whereIn('id', $subjectIds)->get();
 
         $academicYearId = $staff->academic_years_id;
-        $academicYear = $academicYearId ? AcademicYears::find($academicYearId) : null;
+        $academicYear   = $academicYearId ? AcademicYears::find($academicYearId) : null;
 
         $result = [];
         foreach ($subjects as $sub) {
             // Existing syllabus record (if any)
             $syllabus = Syllabus::where([
-                'staff_id' => $staff->id,
-                'subject_id' => $sub->id,
-                'academic_year_id' => $academicYearId,
+                'staff_id'        => $staff->id,
+                'subject_id'      => $sub->id,
+                'academic_year_id'=> $academicYearId,
             ])->first();
 
             $result[] = [
-                'staff_id' => $staff->id, // Added staff_id
-                'staff_name' => $staff->staff_name, // Added staff_name (assuming 'name' property exists on Staff model)
-                'assignment_id' => $sub->id, // placeholder; can be refined if separate assignment table exists
-                'subject_id' => $sub->id,
-                'subject_name' => $sub->subject_name,
-                'subject_code' => $sub->subject_code ?? '',
-                'course_id' => $sub->course_id,
-                'course_name' => $sub->course->course_name ?? '',
-                'semester_id' => $sub->semester_id,
-                'semester_name' => $sub->semester->semester_name ?? '',
-                'academic_year_id' => $academicYearId,
-                'academic_year_name' => $academicYear->academic_year ?? '',
-                'completed_percentage' => $syllabus->completed_percentage ?? 0,
-                'remarks' => $syllabus->remarks ?? null,
-                'syllabus_id' => $syllabus->id ?? null,
-                'last_updated' => $syllabus ? $syllabus->updated_at : null,
+                'staff_id'            => $staff->id,
+                'staff_name'          => $staff->staff_name,
+                'assignment_id'       => $sub->id, // placeholder; can be refined if separate assignment table exists
+                'subject_id'          => $sub->id,
+                'subject_name'        => $sub->subject_name,
+                'subject_code'        => $sub->subject_code ?? '',
+                'course_id'           => $sub->course_id,
+                'course_name'         => $sub->course->course_name ?? '',
+                'semester_id'         => $sub->semester_id,
+                'semester_name'       => $sub->semester->semester_name ?? '',
+                'academic_year_id'    => $academicYearId,
+                'academic_year_name'  => $academicYear->academic_year ?? '',
+                'completed_percentage'=> $syllabus->completed_percentage ?? 0,
+                'remarks'             => $syllabus->remarks ?? null,
+                'syllabus_id'         => $syllabus->id ?? null,
+                'last_updated'        => $syllabus ? $syllabus->updated_at : null,
             ];
         }
 
