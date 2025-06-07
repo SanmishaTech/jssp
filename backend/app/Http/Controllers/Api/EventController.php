@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use File;
 use Response;
+use Mpdf\Mpdf;
 use App\Models\Event;
 use App\Models\EventImage;
 use Illuminate\Http\Request;
@@ -234,5 +235,86 @@ class EventController extends BaseController
         $response->header('Content-Disposition', 'inline; filename="' . $document . '"'); // Set attachment to force download
      //to download the invoice change 'Content-Deposition to attachment from inline
         return $response;
+    }
+
+      /**
+     * Generate PDF of event details.
+     */
+    public function pdf($id)
+    {
+        $eventModel = Event::with('images')->findOrFail($id); // Removed 'institute' from eager loading
+
+        $eventDataForView = new \stdClass();
+
+        // Map Event model properties to what the Blade view expects
+        // Assuming 'title' is not a direct property, derive from synopsis or use a default
+        $eventDataForView->title = $eventModel->title ?? ($eventModel->synopsis ? (strlen($eventModel->synopsis) > 70 ? substr($eventModel->synopsis, 0, 67) . '...' : $eventModel->synopsis) : 'Event Details');
+        $eventDataForView->description = $eventModel->synopsis ?? 'N/A';
+        
+        // Combine date and time for Carbon parsing in Blade, if they exist
+        if ($eventModel->date && $eventModel->time) {
+            $eventDataForView->start_date = $eventModel->date . ' ' . $eventModel->time;
+        } elseif ($eventModel->date) {
+            $eventDataForView->start_date = $eventModel->date; // Only date available
+        } else {
+            $eventDataForView->start_date = null; // No date information
+        }
+        
+        // Assuming 'end_date' might exist on the model, otherwise null
+        $eventDataForView->end_date = $eventModel->end_date ?? null;
+        $eventDataForView->location = $eventModel->venue ?? 'N/A';
+        
+        // Check for organizer_name or staff_name (from original Blade template context)
+        $eventDataForView->organizer_name = $eventModel->organizer_name ?? ($eventModel->staff_name ?? 'N/A');
+        
+        // Check for email and mobile (from original Blade template context)
+        $eventDataForView->email = $eventModel->email ?? 'N/A';
+        $eventDataForView->mobile = $eventModel->mobile ?? 'N/A';
+        // $eventDataForView->employee_code = $eventModel->employee_code ?? 'N/A'; // If needed from original Blade
+
+        // Image handling: provide absolute paths for mPDF for all images
+        $eventDataForView->image_paths = []; // Initialize an array for image paths
+        // $eventDataForView->image_url = null; // This was for a single URL, not used for multiple local paths
+
+        if ($eventModel->images->isNotEmpty()) {
+            foreach ($eventModel->images as $image) {
+                // $image->image_path is assumed to be the filename (e.g., 'event_pic.jpg')
+                // Images are stored in 'storage/app/public/events/'
+                $potentialImagePath = storage_path('app/public/events/' . $image->image_path);
+
+                if (File::exists($potentialImagePath)) {
+                    $eventDataForView->image_paths[] = $potentialImagePath; // Add valid path to the array
+                } else {
+                    // Log a warning if an image file is not found on the server
+                    \Illuminate\Support\Facades\Log::warning("Event PDF: Image file not found at '{$potentialImagePath}' for event ID {$eventModel->id}. DB image_path: '{$image->image_path}'");
+                }
+            }
+        }
+
+        // Prepare additional data for the view header and date
+        $institute = null;
+        if ($eventModel->institute_id) {
+            $institute = \App\Models\Institute::find($eventModel->institute_id);
+        }
+        $instituteName = $institute ? $institute->institute_name : 'N/A'; // Corrected attribute to 'institute_name'
+        $generationDate = \Carbon\Carbon::now()->format('Y-m-d H:i A');
+
+        // Render the Blade view, passing the prepared $eventDataForView object as 'event'
+        // and additional specific variables for the new header/date sections
+        $html = view('pdf.event', [
+            'event' => $eventDataForView,
+            'title' => $eventDataForView->title, // This is the event's specific title for the H2
+            'institute' => $instituteName,
+            'date' => $generationDate
+        ])->render();
+
+        // Configure mPDF. Adding tempDir is good practice.
+        $mpdf = new Mpdf(['format' => 'A4', 'tempDir' => storage_path('app/mpdf')]);
+        $mpdf->WriteHTML($html);
+        $pdfOutput = $mpdf->Output('event_' . $eventModel->id . '.pdf', 'S'); // 'S' returns as string
+
+        return response($pdfOutput, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="event_' . $eventModel->id . '.pdf"'); // Changed to 'inline' for easier preview
     }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import {
+  FileText,
   File,
   PlusCircle,
   Search,
@@ -123,8 +124,6 @@ export function Dashboard({
   onSearch = () => {},
 }: DashboardProps) {
   const navigate = useNavigate();
-  const [toggleedit, setToggleedit] = useState(false);
-  const [editid, setEditid] = useState({ id: null, url: "" });
   const [toggledelete, setToggledelete] = useState();
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
@@ -150,6 +149,24 @@ export function Dashboard({
   const handleClearSearch = () => {
     setSearchInput("");
     onSearch("");
+  };
+
+  const handleDownloadPdf = async (eventId: number | string) => {
+    try {
+      const response = await axios.get(`/api/event/${eventId}/pdf`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `event_${eventId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download PDF', error);
+    }
   };
 
   // Update institutes when tableData prop changes
@@ -183,15 +200,6 @@ export function Dashboard({
         return [...prev, rowId];
       }
     });
-  };
-
-  const handleEdit = async (id: any, url: string) => {
-    setToggleedit(true);
-    setEditid({
-      id: id,
-      url: url,
-    });
-    // Implement edit functionality here
   };
 
   const handleDelete = (id: any) => {
@@ -392,6 +400,9 @@ export function Dashboard({
                             {header.label}
                           </TableHead>
                         ))}
+                          <TableHead className="text-xs font-medium text-muted-foreground py-3">
+                                                    PDF
+                                                  </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -465,8 +476,18 @@ export function Dashboard({
                                 ) : (
                                   row[header.key]
                                 )}
+                                  
                               </TableCell>
+                              
                             ))}
+                             <TableCell>
+                                                                <button
+                                                                  onClick={(e) => { e.stopPropagation(); handleDownloadPdf(row.id); }}
+                                                                  style={{ border: 'none', background: 'transparent' }}
+                                                                >
+                                                                <FileText/>
+                                                                </button>
+                                                              </TableCell>
                           </TableRow>
                         </React.Fragment>
                       ))}
@@ -489,7 +510,7 @@ export function Dashboard({
 
       {/* Event details dialog */}
       <Dialog open={eventDialogOpen} onOpenChange={setEventDialogOpen}>
-        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle>Event Details</DialogTitle>
             <DialogDescription>

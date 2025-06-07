@@ -64,6 +64,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    // Staff PDF download route
    Route::get('/staff/{id}/pdf', [StaffController::class, 'pdf'])->name('staff.pdf');
+   Route::get('/event/{id}/pdf', [EventController::class, 'pdf'])->name('event.pdf');
 
    Route::resource('staff', StaffController::class);  
    Route::get('/all_staff', [StaffController::class, 'allStaffs'])->name("staffs.all");
