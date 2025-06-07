@@ -1,21 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  File,
   PlusCircle,
   Search,
   Pencil,
   Trash,
   MoreHorizontal,
-  ListFilter,
   ChevronDown,
   Ellipsis,
-  Download,
-  Filter,
   X,
 } from "lucide-react";
 import axios from "axios";
-import { Badge } from "@/components/ui/badge";
 import AlertDialogbox from "./AlertBox";
 import {
   Breadcrumb,
@@ -25,7 +20,6 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
-// import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -34,15 +28,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-// import {
-//   DropdownMenu,
-//   DropdownMenuCheckboxItem,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuLabel,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import MultiSelectorComponent from "./profile";
 
@@ -56,12 +41,7 @@ import {
   TableFooter,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import {
-//   Tooltip,
-//   TooltipContent,
-//   TooltipTrigger,
-// } from "@/components/ui/tooltip";
-import { useNavigate } from "@tanstack/react-router"; // import Edititem from "./Edititem";
+import { useNavigate } from "@tanstack/react-router"; 
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   FileText,
@@ -190,6 +170,24 @@ export default function Dashboard({
     if (e.key === "Enter") {
       e.preventDefault(); // Prevent form submission
       handleSearchClick();
+    }
+  };
+
+  const handleDownloadPdf = async (staffId: number | string) => {
+    try {
+      const response = await axios.get(`/api/staff/${staffId}/pdf`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `staff_${staffId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download PDF', error);
     }
   };
 
@@ -342,6 +340,9 @@ export default function Dashboard({
                               </div>
                             </TableHead>
                           ))}
+                          <TableHead className="text-xs font-medium text-muted-foreground py-3">
+                            PDF
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -429,6 +430,14 @@ export default function Dashboard({
                                   )}
                                 </TableCell>
                               ))}
+                              <TableCell>
+                                <button
+                                  onClick={() => handleDownloadPdf(row.id)}
+                                  style={{ border: 'none', background: 'transparent' }}
+                                >
+                                <FileText/>
+                                </button>
+                              </TableCell>
                             </TableRow>
                           </React.Fragment>
                         ))}

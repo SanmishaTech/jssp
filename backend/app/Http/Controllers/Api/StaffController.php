@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Log;
+use Mpdf\Mpdf;
 
  
 class StaffController extends BaseController
@@ -677,5 +678,28 @@ public function index(Request $request): JsonResponse
             'message' => "Staff retrieved successfully",
             'data' => ["Staff" => StaffResource::collection($staff)]
         ]);
+    }
+
+    /**
+     * Generate PDF of staff details.
+     */
+    public function pdf($id)
+    {
+        $staff = Staff::findOrFail($id);
+        $html = view('pdf.staff', compact('staff'))->render();
+
+        // Create a new mPDF instance with A4 page format
+        $mpdf = new Mpdf(['format' => 'A4']);
+
+        // Write the HTML content into the PDF
+        $mpdf->WriteHTML($html);
+
+        // Output the PDF as a string
+        $pdfOutput = $mpdf->Output('staff_' . $staff->id . '.pdf', 'S');
+
+        // Return the PDF file with appropriate headers
+        return response($pdfOutput, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="staff_' . $staff->id . '.pdf"');
     }
 }
