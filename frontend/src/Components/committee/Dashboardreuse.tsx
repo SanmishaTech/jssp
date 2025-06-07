@@ -174,6 +174,24 @@ export default function Dashboard({
     }
   };
 
+  const handleDownloadPdf = async (committeeId: number | string) => {
+    try {
+      const response = await axios.get(`/api/committee/${committeeId}/pdf`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `committee_${committeeId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to download PDF', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background/30">
       <div className="flex flex-col gap-6 py-6 px-8">
@@ -322,7 +340,11 @@ export default function Dashboard({
                                 )}
                               </div>
                             </TableHead>
+                            
                           ))}
+                             <TableHead className="text-xs font-medium text-muted-foreground py-3">
+                                                      PDF
+                                                    </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -407,7 +429,16 @@ export default function Dashboard({
                                     row[header.key]
                                   )}
                                 </TableCell>
+                                
                               ))}
+                               <TableCell>
+                                                              <button
+                                                                onClick={() => handleDownloadPdf(row.id)}
+                                                                style={{ border: 'none', background: 'transparent' }}
+                                                              >
+                                                              <FileText/>
+                                                              </button>
+                                                            </TableCell>
                             </TableRow>
                           </React.Fragment>
                         ))}

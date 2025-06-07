@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use Mpdf\Mpdf;
+use Carbon\Carbon;
 use App\Models\Commitees;
 use Illuminate\Http\Request;
 use App\Models\CommiteeStaff;
@@ -187,6 +189,45 @@ class CommitteeController extends BaseController
             ["Commitee" => CommitteeResource::collection($committee)],
             "Commitees retrieved successfully"
         );
+    }
+
+
+
+     /**
+     * Generate PDF of staff details.
+     */
+    public function pdf($id)
+    {
+        // Eager load relationships: institute and commiteeStaff with their related staff model
+        $committee = Commitees::with(['institute', 'commiteeStaff.staff'])->findOrFail($id);
+
+        $data = [
+            'committee' => $committee,
+            'title' => $committee->commitee_name . ' Details',
+            'instituteName' => $committee->institute ? $committee->institute->institute_name : 'N/A',
+            'date' => Carbon::now()->format('F j, Y'),
+        ];
+
+        $html = view('pdf.committee', $data)->render();
+
+        // Create a new mPDF instance with A4 page format
+        // Ensure the temp directory is writable by the web server
+        $tempDir = storage_path('app/mpdf');
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
+        $mpdf = new Mpdf(['format' => 'A4', 'tempDir' => $tempDir]);
+
+        // Write the HTML content into the PDF
+        $mpdf->WriteHTML($html);
+
+        // Output the PDF as a string
+        $pdfOutput = $mpdf->Output('committee_' . $committee->id . '.pdf', 'S');
+
+        // Return the PDF file with appropriate headers
+        return response($pdfOutput, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="committee_' . $committee->id . '.pdf"'); // Changed to inline for easier viewing
     }
 
  
