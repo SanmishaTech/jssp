@@ -685,7 +685,7 @@ public function index(Request $request): JsonResponse
      */
     public function pdf($id)
     {
-        $staff = Staff::findOrFail($id);
+        $staff = Staff::with('institute')->findOrFail($id);
         $html = view('pdf.staff', compact('staff'))->render();
 
         // Create a new mPDF instance with A4 page format
