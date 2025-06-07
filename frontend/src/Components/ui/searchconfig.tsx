@@ -628,6 +628,12 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: Calendar,
     }, 
     {
+      title: "Syllabus",
+      url: "/syllabus",
+      icon: FileText,
+    }, 
+
+    {
       title: "Inventory",
       url: "/inventory",
       icon: Home,

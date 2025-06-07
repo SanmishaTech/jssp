@@ -185,7 +185,7 @@ const Edittestcard = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-6">
       <div className="max-w-2xl w-full p-8 bg-white rounded-xl shadow-2xl border border-gray-200">
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">Update Syllabus Completion</h2>
+        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800"> Syllabus Completion</h2>
         <div className="space-y-6">
           {/* ---------------- Teaching Staff View ---------------- */}
           {role === 'teachingstaff' && (
