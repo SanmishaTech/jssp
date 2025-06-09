@@ -107,7 +107,7 @@ export default function Dashboardholiday() {
   useEffect(() => {
     const role = localStorage.getItem("role"); // Get the role from local storage
     const homeHref =
-      role === "superadmin" ? "/rootdashboard" : "/staffdashboard";
+      role === "superadmin" ? "/rootdashboard" : "/dashboards";
 
     setConfig({
       breadcrumbs: [

@@ -173,7 +173,7 @@ export default function Dashboardholiday() {
   useEffect(() => {
     setConfig({
       breadcrumbs: [
-        { label: "Home", href: "/staffdashboard" },
+        { label: "Home", href: "/dashboards" },
         { label: "/", href: "" },
         { label: "Asset Information", href: "" },
         { label: "/", href: "" },

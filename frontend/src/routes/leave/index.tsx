@@ -4,19 +4,19 @@ import Members from "../../Components/leave/Edittestcard";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/leave/")({
-  beforeLoad: async ({ fetch }) => {
-    const role = localStorage.getItem("role");
-    console.log("current Role", role);
-    if (role !== "member" && role !== "cashier" && role !== "admission" && role !== "backoffice" && role !== "accountant" && role !== "admin" ) {
-      toast.error("You are not authorized to access this page.");
-      throw redirect({
-        to: "/",
-        search: {
-          redirect: location.href,
-        },
-      });
-    }
-  },
+  // beforeLoad: async ({ fetch }) => {
+  //   const role = localStorage.getItem("role");
+  //   console.log("current Role", role);
+  //   if (role !== "nonteachingstaff" && role !== "cashier" && role !== "admission" && role !== "backoffice" && role !== "accountant" && role !== "admin" && role !== "teachingstaff" ) {
+  //     toast.error("You are not authorized to access this page.");
+  //     throw redirect({
+  //       to: "/",
+  //       search: {
+  //         redirect: location.href,
+  //       },
+  //     });
+  //   }
+  // },
   component: RouteComponent,
 });
 

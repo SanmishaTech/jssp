@@ -404,57 +404,6 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: MessageCircle,
     },
   ],
-  
-  member: [
-    {
-      title: "Dashboard",
-      url: "/dashboards",
-      icon: Home,
-    },
-    {
-      title: "Memo",
-      url: "/memo",
-      icon: FileText,
-    },
-    {
-      title: "Task Manager",
-      url: "/taskmanager",
-      icon: FileText,
-    },
-    {
-      title: "Requisitions",
-      url: "/requisitions",
-      icon: Truck,
-    },
-    {
-      title: "Calender",
-      url: "/calender",
-      icon: Calendar,
-    },
-    {
-      title: "Inventory",
-      url: "/inventory",
-      icon: Package,
-    },
-
-    {
-      title: "Complaints",
-      url: "/complaints",
-      icon: MessageCircle,
-    },
-    {
-      title: "Calendar",
-      url: "/calendar",
-      icon: Calendar,
-    },
-    {
-      title: "Leave Application",
-      url: "/leave",
-      icon: FileText,
-    },
-    
-    
-  ],
   cashier: [
     {
       title: "Dashboard",
@@ -570,6 +519,16 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: Home,
     },
     {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+    {
       title: "Academic Information",
       icon: BookOpen,
       children: [
@@ -639,54 +598,40 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: Home,
     },
     {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
       title: "Calender",
       url: "/calender",
       icon: Calendar,
     }, 
-    {
-      title: "Syllabus",
-      url: "/syllabus",
-      icon: FileText,
-    }, 
-    
-
-    {
-      title: "Inventory",
-      url: "/inventory",
-      icon: Home,
-    },
     {
       title: "Leave Application",
       url: "/leave",
       icon: FileText,
     },
     {
+      title: "Subject Hour Allocation",
+      url: "/subjecthours",
+      icon: BookMarked,
+    },
+    {
+      title: "Time Table",
+      url: "/teachertimetable",
+      icon: FileText,
+    },
+    {
+      title: "Syllabus",
+      url: "/syllabus",
+      icon: FileText,
+    }, 
+    {
       title: "Complaints",
       url: "/complaints",
       icon: MessageCircle,
     },
-    
-    {
-      title: "Set Teaching Plan",
-      icon: BookOpen,
-      children: [
-        {
-          title: "Subject Hour Allocation",
-          url: "/subjecthours",
-          icon: BookMarked,
-        },
-       
-        {
-          title: "Time Table",
-          url: "/teachertimetable",
-          icon: FileText,
-        },
-     
-       
-      ],
-    },
- 
-    
   ],
   nonteachingstaff: [
     

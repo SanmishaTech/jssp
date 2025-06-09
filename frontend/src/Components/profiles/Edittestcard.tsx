@@ -1166,7 +1166,7 @@ function ProfileForm({ formData }) {
         
         <div className="flex justify-end w-full gap-3">
           <Button
-            onClick={() => navigate({ to: "/staffdashboard" })}
+            onClick={() => navigate({ to: "/dashboards" })}
             className="self-center"
             type="button"
           >

@@ -630,9 +630,9 @@ export default function ResponsiveLabDashboard() {
         </div>
 
         {/* Today's Timetable and Syllabus Cards - New Row */}
-        <div className="grid gap-4 lg:grid-cols-2 mb-4">
+        <div className="grid gap-4 lg:grid-cols-1 mb-4">
           {/* Today's Timetable Card */}
-          <Card className="col-span-full lg:col-span-1 bg-accent/40">
+          {/* <Card className="col-span-full lg:col-span-1 bg-accent/40">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center">
@@ -662,7 +662,7 @@ export default function ResponsiveLabDashboard() {
                 <p className="text-sm text-muted-foreground text-center">No timetable slots scheduled for today.</p>
               )}
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Today's Syllabus Progress Card */}
           <Card className="col-span-full lg:col-span-1 bg-accent/40">

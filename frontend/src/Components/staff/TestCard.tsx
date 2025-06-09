@@ -561,13 +561,13 @@ function ProfileForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                           <SelectItem value="cashier">Cashier</SelectItem>
-                          <SelectItem value="admission">Admission</SelectItem>
-                          <SelectItem value="accountant">Accountant</SelectItem>
-                          <SelectItem value="backoffice">Back Office</SelectItem>
+                          <SelectItem value="viceprincipal">Vice Principal</SelectItem>
                           <SelectItem value="teachingstaff">Teaching Staff</SelectItem>
                           <SelectItem value="nonteachingstaff">Non-Teaching Staff</SelectItem>
-                          <SelectItem value="viceprincipal">Vice Principal</SelectItem>
+                          <SelectItem value="admission">Admission</SelectItem>
+                          <SelectItem value="accountant">Accountant</SelectItem>
+                           <SelectItem value="cashier">Cashier</SelectItem>
+                          <SelectItem value="backoffice">Back Office</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
