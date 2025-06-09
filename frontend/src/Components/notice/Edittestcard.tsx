@@ -107,6 +107,7 @@ const NoticeChat: React.FC = () => {
   const staffList = useMemo<any[]>(() => {
     if (!staffData) return [];
     if (Array.isArray(staffData)) return staffData as any[];
+    if (Array.isArray((staffData as any).data?.Staff)) return (staffData as any).data.Staff;
     if (Array.isArray((staffData as any).data?.staffs)) return (staffData as any).data.staffs;
     if (Array.isArray((staffData as any).data)) return (staffData as any).data;
     return [];
@@ -236,7 +237,12 @@ const NoticeChat: React.FC = () => {
                 }
               }}
             >
+              {/* Sender role */}
+              <p className="text-xs font-semibold text-blue-600 mb-1">
+                {notice.sender_role ? `From: ${notice.sender_role}` : 'From: Unknown'}
+              </p>
               <p className="font-medium break-words whitespace-pre-wrap">{notice.message}</p>
+              {/* Timestamp */}
               <p className="text-xs text-gray-500 text-right mt-1">{new Date(notice.created_at).toLocaleString()}</p>
             </div>
           ))}
@@ -271,6 +277,15 @@ const NoticeChat: React.FC = () => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="space-y-4 max-h-96 overflow-y-auto">
+              {/* Roles information */}
+              <div className="text-sm text-gray-600 space-x-2">
+                <span className="font-semibold">From:</span> {selectedNotice.sender_role || 'Unknown'}
+                {selectedNotice.recipient_role && (
+                  <>
+                    <span className="font-semibold ml-4">To:</span> {selectedNotice.recipient_role}
+                  </>
+                )}
+              </div>
               <p className="whitespace-pre-wrap break-words">{selectedNotice.message}</p>
               <div>
                 <p className="font-semibold mb-1">Seen by:</p>
