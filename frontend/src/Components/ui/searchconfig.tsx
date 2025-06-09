@@ -299,7 +299,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/dashboards",
       icon: Home,
     },
-   
+    {
+      title: "Notice",
+      url: "/notice",
+      icon: FileText,
+    },
     {
       title: "Syllabus",
       url: "/syllabus",
@@ -518,6 +522,12 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Dashboard",
       url: "/dashboards",
       icon: Home,
+    },
+
+    {
+      title: "Notice",
+      url: "/notice",
+      icon: FileText,
     },
     {
       title: "Memo",

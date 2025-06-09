@@ -11,6 +11,7 @@ interface ParamsType {
   refetchOnWindowFocus?: boolean;
   onSuccess?: (data: Response) => void;
   onError?: (error: AxiosError) => void;
+  enabled?: boolean;
 }
 
 const fetchData = async ({
@@ -61,6 +62,7 @@ const useGetData = ({
     retry: customParams.retry,
     refetchOnWindowFocus: customParams.refetchOnWindowFocus,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    enabled: customParams.enabled,
   });
 
   useEffect(() => {

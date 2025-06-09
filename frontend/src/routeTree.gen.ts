@@ -29,6 +29,7 @@ import { Route as RequisitionsIndexImport } from './routes/requisitions/index'
 import { Route as PurchaseordersIndexImport } from './routes/purchaseorders/index'
 import { Route as ProfilesIndexImport } from './routes/profiles/index'
 import { Route as PeticashIndexImport } from './routes/peticash/index'
+import { Route as NoticeIndexImport } from './routes/notice/index'
 import { Route as MemoIndexImport } from './routes/memo/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
@@ -190,6 +191,12 @@ const ProfilesIndexRoute = ProfilesIndexImport.update({
 const PeticashIndexRoute = PeticashIndexImport.update({
   id: '/peticash/',
   path: '/peticash/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const NoticeIndexRoute = NoticeIndexImport.update({
+  id: '/notice/',
+  path: '/notice/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -697,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemoIndexImport
       parentRoute: typeof rootRoute
     }
+    '/notice/': {
+      id: '/notice/'
+      path: '/notice'
+      fullPath: '/notice'
+      preLoaderRoute: typeof NoticeIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/peticash/': {
       id: '/peticash/'
       path: '/peticash'
@@ -1044,6 +1058,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
+  '/notice': typeof NoticeIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/purchaseorders': typeof PurchaseordersIndexRoute
@@ -1118,6 +1133,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
+  '/notice': typeof NoticeIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/purchaseorders': typeof PurchaseordersIndexRoute
@@ -1193,6 +1209,7 @@ export interface FileRoutesById {
   '/login/': typeof LoginIndexRoute
   '/meetings/': typeof MeetingsIndexRoute
   '/memo/': typeof MemoIndexRoute
+  '/notice/': typeof NoticeIndexRoute
   '/peticash/': typeof PeticashIndexRoute
   '/profiles/': typeof ProfilesIndexRoute
   '/purchaseorders/': typeof PurchaseordersIndexRoute
@@ -1269,6 +1286,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meetings'
     | '/memo'
+    | '/notice'
     | '/peticash'
     | '/profiles'
     | '/purchaseorders'
@@ -1342,6 +1360,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/meetings'
     | '/memo'
+    | '/notice'
     | '/peticash'
     | '/profiles'
     | '/purchaseorders'
@@ -1415,6 +1434,7 @@ export interface FileRouteTypes {
     | '/login/'
     | '/meetings/'
     | '/memo/'
+    | '/notice/'
     | '/peticash/'
     | '/profiles/'
     | '/purchaseorders/'
@@ -1490,6 +1510,7 @@ export interface RootRouteChildren {
   LoginIndexRoute: typeof LoginIndexRoute
   MeetingsIndexRoute: typeof MeetingsIndexRoute
   MemoIndexRoute: typeof MemoIndexRoute
+  NoticeIndexRoute: typeof NoticeIndexRoute
   PeticashIndexRoute: typeof PeticashIndexRoute
   ProfilesIndexRoute: typeof ProfilesIndexRoute
   PurchaseordersIndexRoute: typeof PurchaseordersIndexRoute
@@ -1564,6 +1585,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginIndexRoute: LoginIndexRoute,
   MeetingsIndexRoute: MeetingsIndexRoute,
   MemoIndexRoute: MemoIndexRoute,
+  NoticeIndexRoute: NoticeIndexRoute,
   PeticashIndexRoute: PeticashIndexRoute,
   ProfilesIndexRoute: ProfilesIndexRoute,
   PurchaseordersIndexRoute: PurchaseordersIndexRoute,
@@ -1647,6 +1669,7 @@ export const routeTree = rootRoute
         "/login/",
         "/meetings/",
         "/memo/",
+        "/notice/",
         "/peticash/",
         "/profiles/",
         "/purchaseorders/",
@@ -1771,6 +1794,9 @@ export const routeTree = rootRoute
     },
     "/memo/": {
       "filePath": "memo/index.tsx"
+    },
+    "/notice/": {
+      "filePath": "notice/index.tsx"
     },
     "/peticash/": {
       "filePath": "peticash/index.tsx"
