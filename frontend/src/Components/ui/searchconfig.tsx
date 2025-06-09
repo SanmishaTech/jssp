@@ -410,7 +410,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/dashboards",
       icon: Home,
     },
-   
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
     {
       title: "Cashier",
       url: "/cashiers",
@@ -426,6 +430,13 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/complaints",
       icon: MessageCircle,
     },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+   
+    
     
   ],
   accountant: [
@@ -434,6 +445,16 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Dashboard",
       url: "/dashboards",
       icon: Home,
+    },
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
     },
     {
       title: "Bank Accounts",
@@ -475,6 +496,16 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Dashboard",
       url: "/dashboards",
       icon: Home,
+    },
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
     },
     {
       title: "Inventory",

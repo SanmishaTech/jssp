@@ -92,11 +92,6 @@ interface StaffBirthday {
   date_of_birth: string; // Formatted as "Mon DD"
 }
 
-interface TodaysTimetableSlot {
-  time_slot: string;
-  subject_name: string;
-  division_name: string;
-}
 
 interface TodaysSyllabusProgress {
   subject_name: string;
@@ -141,7 +136,6 @@ export default function ResponsiveLabDashboard() {
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
   const [memosData, setMemosData] = useState<Memo[]>([]);
   const [upcomingBirthdaysData, setUpcomingBirthdaysData] = useState<StaffBirthday[]>([]);
-  const [todaysTimetableSlots, setTodaysTimetableSlots] = useState<TodaysTimetableSlot[]>([]);
   const [todaysSyllabusProgress, setTodaysSyllabusProgress] = useState<TodaysSyllabusProgress[]>([]);
   const [staffList, setStaffList] = useState<{ id: number; staff_name: string }[]>([]);
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
@@ -181,7 +175,6 @@ export default function ResponsiveLabDashboard() {
           setComplaintsData(data.complaints || []);
           setMemosData(data.memos || []);
           setUpcomingBirthdaysData(data.upcoming_birthdays || []);
-          setTodaysTimetableSlots(data.todays_timetable_slots || []);
 
           // Combine and sort meetings and events
           const typedMeetings = (response.data.data.meetings || []).map((m: Meeting) => ({
@@ -210,7 +203,6 @@ export default function ResponsiveLabDashboard() {
           setMyLeads(0);
           setOpenLeadsCount(0);
           setMeetings([]);
-          setTodaysTimetableSlots([]);
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -218,7 +210,6 @@ export default function ResponsiveLabDashboard() {
         setMyLeads(0);
         setOpenLeadsCount(0);
         setMeetings([]);
-        setTodaysTimetableSlots([]);
       }
     };
 
@@ -254,7 +245,7 @@ export default function ResponsiveLabDashboard() {
     const fetchSyllabusProgress = async () => {
       try {
         let url = '/api/syllabus';
-        if (userRole === 'admin' && selectedStaffId) {
+        if (['admin', 'viceprincipal'].includes(userRole) && selectedStaffId) {
           url += `?staff_id=${selectedStaffId}`;
         }
         const response = await axios.get(url, {
@@ -274,11 +265,7 @@ export default function ResponsiveLabDashboard() {
       }
     };
 
-    if (userRole === 'admin') {
-      if (selectedStaffId) {
-        fetchSyllabusProgress();
-      }
-    } else {
+    if (['admin', 'teachingstaff', 'viceprincipal'].includes(userRole)) {
       fetchSyllabusProgress();
     }
   }, [userRole, selectedStaffId]);
@@ -339,7 +326,7 @@ export default function ResponsiveLabDashboard() {
 
           <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Open Leads</CardTitle>
+              <CardTitle className="text-sm font-medium">Committies</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -631,40 +618,10 @@ export default function ResponsiveLabDashboard() {
 
         {/* Today's Timetable and Syllabus Cards - New Row */}
         <div className="grid gap-4 lg:grid-cols-1 mb-4">
-          {/* Today's Timetable Card */}
-          {/* <Card className="col-span-full lg:col-span-1 bg-accent/40">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="flex items-center">
-                  <CalendarClock className="h-5 w-5 mr-2" />
-                  Today's Timetable
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">Slots: {todaysTimetableSlots.length}</p>
-              </div>
-              <CardDescription>
-                Your scheduled classes and activities for today.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {todaysTimetableSlots.length > 0 ? (
-                <div className="space-y-3 max-h-72 overflow-y-auto">
-                  {todaysTimetableSlots.map((slot, index) => (
-                    <div key={index} className="flex items-center justify-between border-b border-border/50 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
-                      <div>
-                        <p className="text-sm font-medium">{slot.subject_name}</p>
-                        <p className="text-xs text-muted-foreground">{slot.division_name}</p>
-                      </div>
-                      <Badge variant="outline">{slot.time_slot}</Badge>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground text-center">No timetable slots scheduled for today.</p>
-              )}
-            </CardContent>
-          </Card> */}
+
 
           {/* Today's Syllabus Progress Card */}
+          {['admin', 'teachingstaff', 'viceprincipal'].includes(userRole) && (
           <Card className="col-span-full lg:col-span-1 bg-accent/40">
             <CardHeader>
               <div className="flex justify-between items-center">
@@ -674,8 +631,8 @@ export default function ResponsiveLabDashboard() {
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>
-                  {/* Admin-only staff selector */}
-                  {userRole === 'admin' && (
+                  {/* Staff selector for admin and viceprincipal */}
+                  {['admin', 'viceprincipal'].includes(userRole) && (
                     <select
                       value={selectedStaffId ?? ''}
                       onChange={(e) =>
@@ -720,6 +677,7 @@ export default function ResponsiveLabDashboard() {
               )}
             </CardContent>
           </Card>
+          )}
         </div>
       </main>
     </div>
