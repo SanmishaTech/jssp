@@ -5,7 +5,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/events/")({
   beforeLoad: async ({ fetch }) => {
     const role = localStorage.getItem("role");
-    if (role !== "admin" && role !== "backoffice") {
+    if (role !== "admin" && role !== "backoffice" && role !== "viceprincipal") {
       toast.error("You are not authorized to access this page.");
       throw redirect({
         to: "/",

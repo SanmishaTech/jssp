@@ -4,18 +4,18 @@ import Additem from "../../../Components/events/TestCard";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/events/add/")({
-  beforeLoad: async ({ fetch }) => {
-    const role = localStorage.getItem("role");
-    // if (role !== "superadmin") {
-    //   toast.error("You are not authorized to access this page.");
-    //   throw redirect({
-    //     to: "/",
-    //     search: {
-    //       redirect: location.href,
-    //     },
-    //   });
-    // }
-  },
+  // beforeLoad: async ({ fetch }) => {
+  //   const role = localStorage.getItem("role");
+  //   if (role !== "superadmin") {
+  //     toast.error("You are not authorized to access this page.");
+  //     throw redirect({
+  //       to: "/",
+  //       search: {
+  //         redirect: location.href,
+  //       },
+  //     });
+  //   }
+  // },
   component: RouteComponent,
 });
 

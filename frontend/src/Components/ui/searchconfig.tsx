@@ -79,21 +79,18 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/dashboards",
       icon: Home,
     },
+   
+    {
+      title: "Syllabus",
+      url: "/syllabus",
+      icon: Truck,
+    },
     {
       title: "Memo",
       url: "/memo",
       icon: FileText,
     },
-    {
-      title: "Time Table",
-      url: "/teachertimetable",
-      icon: BookText,
-    },
-    {
-      title: "Task Manager",
-      url: "/taskmanager",
-      icon: FileText,
-    },
+  
     {
       title: "Holidays",
       icon: Calendar,
@@ -110,35 +107,26 @@ export const searchconfig: Record<string, MenuItem[]> = {
         }
       ]
     },
+   
+   
     {
-      title: "Staff Management",
-      icon: Users,
-      children: [
-        {
-          title: "Staff Directory",
-          url: "/staff",
-          icon: Users,
-        },
-        {
-          title: "Leave Approval",
-          url: "/leaveapproval",
-          icon: FileText,
-        }
-      ]
-    },
-    {
-      title: "Calendar",
-      url: "/calender",
-      icon: Calendar,
-    },
-    {
-      title: "Academic Oversight",
+      title: "Academic Information",
       icon: BookOpen,
       children: [
+        {
+          title: "Acadamic Year",
+          url: "/academicyears",
+          icon: BookMarked,
+        },
         {
           title: "Courses",
           url: "/courses",
           icon: BookText,
+        },
+        {
+          title: "Semester",
+          url: "/semester",
+          icon: Calendar,
         },
         {
           title: "Subjects",
@@ -146,42 +134,163 @@ export const searchconfig: Record<string, MenuItem[]> = {
           icon: BookMarked,
         },
         {
-          title: "Divisions",
+          title: "Room Number",
+          url: "/rooms",
+          icon: MapPin,
+        },
+        {
+          title: "Division",
           url: "/divisions",
           icon: Grid,
-        }
+        },
+      ],
+    },
+    {
+      title: "Schedule & Calendar",
+      icon: Calendar,
+      children: [
+        {
+          title: "Calender",
+          url: "/calender",
+          icon: Calendar,
+        },
+        {
+          title: "Time Table",
+          url: "/teachertimetable",
+          icon: FileText,
+        },
+        {
+          title: "Meetings",
+          url: "/meetings",
+          icon: Users,
+        },
+        {
+          title: "Events",
+          url: "/events",
+          icon: Calendar,
+        },
       ]
     },
     {
-      title: "Student Affairs",
-      icon: UsersRound,
+      title: "Inventory Management",
+      icon: Package,
       children: [
+        {
+          title: "Vendors",
+          url: "/vendors",
+          icon: Truck,
+        },
+        {
+          title: "Asset Categories",
+          url: "/assetcategories",
+          icon: Package,
+        },
+        {
+          title: "Asset Masters",
+          url: "/assetmasters",
+          icon: Truck,
+        },
+        {
+          title: "Requisitions",
+          url: "/requisitions",
+          icon: Truck,
+        },
+        {
+          title: "Inventory",
+          url: "/inventory",
+          icon: Package,
+        },
+        {
+          title: "Purchase Order",
+          url: "/purchaseorders",
+          icon: Truck,
+        },
+       
+      ]
+    },
+    {
+      title: "Staff Management",
+      icon: Users,
+      children: [
+        {
+          title: "Staff",
+          url: "/staff",
+          icon: Users,
+        },
+        {
+          title: "Committees",
+          url: "/committee",
+          icon: UserCheck,
+        },
+        {
+          title: "Leave Approval",
+          url: "/leaveapproval",
+          icon: FileText,
+        },
+        {
+          title: "Leave Application",
+          url: "/leave",
+          icon: FileText,
+        },
+      ]
+    },
+    {
+      title: "Admissions",
+      icon: BookOpen,
+      children: [
+        {
+          title: "Admission Information",
+          url: "/admissions",
+          icon: BookText,
+        },
+        {
+          title: "Cashiers",
+          url: "/cashiers",
+          icon: Banknote,
+        },
+       
         {
           title: "Students",
           url: "/students",
           icon: UsersRound,
         },
         {
-          title: "Complaints",
-          url: "/complaints",
-          icon: MessageCircle,
-        }
-      ]
+          title: "CashBook",
+          url: "/cashbook",
+          icon: Landmark,
+        },
+        {
+          title: "Scholarships",
+          url: "/scholarships",
+          icon: GraduationCap,
+        },
+      ],
     },
     {
-      title: "Committees",
-      url: "/committee",
-      icon: UserCheck,
+      title: "Bank & Finance",
+      icon: Landmark,
+      children: [
+        {
+          title: "Bank Accounts",
+          url: "/bankaccounts",
+          icon: Banknote,
+        },
+        {
+          title: "Bank",
+          url: "/bank",
+          icon: Landmark,
+        },  
+      ],
     },
     {
-      title: "Meetings",
-      url: "/meetings",
-      icon: Users,
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
     },
     {
-      title: "Events",
-      url: "/events",
-      icon: Calendar,
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
     },
   ],
   admin: [
