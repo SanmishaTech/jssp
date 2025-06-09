@@ -417,6 +417,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: FileText,
     },
     {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+    {
       title: "Requisitions",
       url: "/requisitions",
       icon: Truck,
@@ -643,6 +648,7 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/syllabus",
       icon: FileText,
     }, 
+    
 
     {
       title: "Inventory",

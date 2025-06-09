@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 // import { useGetData } from "../HTTP/GET"; // Replaced with direct axios call
-import { CalendarDays, Users, TrendingUp, Activity, ClipboardList, MessageSquareWarning, FileText, Cake } from "lucide-react"; // Keep for now, might be used in card icons
+import { Users, TrendingUp, ClipboardList, MessageSquareWarning, FileText, Cake, CalendarClock, BookOpenCheck } from "lucide-react";
 // DropdownMenu components are not used in the current view of this file
 // import {
 //   DropdownMenu,
@@ -92,6 +92,20 @@ interface StaffBirthday {
   date_of_birth: string; // Formatted as "Mon DD"
 }
 
+interface TodaysTimetableSlot {
+  time_slot: string;
+  subject_name: string;
+  division_name: string;
+}
+
+interface TodaysSyllabusProgress {
+  subject_name: string;
+  course_name?: string;
+  semester_name?: string;
+  completed_percentage: number;
+  remarks?: string;
+}
+
 // StaffMember interface might not be needed if not used elsewhere after consolidation
 // interface StaffMember {
 //   id: number;
@@ -110,6 +124,10 @@ interface StaffBirthday {
 // ];
 
 export default function ResponsiveLabDashboard() {
+  const userString = localStorage.getItem("user");
+  const currentUser = userString ? JSON.parse(userString) : { name: 'User', role: '' }; // Provide defaults
+  const userRole = currentUser.role;
+
   const [myLeads, setMyLeads] = useState(0);
   // const user = localStorage.getItem("user"); // User variable declared but not used directly, only User
   // const User = user ? JSON.parse(user) : null; // User variable not used, direct parsing in JSX
@@ -121,9 +139,12 @@ export default function ResponsiveLabDashboard() {
   const [complaintsData, setComplaintsData] = useState<Complaint[]>([]);
   const [pendingLeaves, setPendingLeaves] = useState<LeaveApplication[]>([]);
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
-  const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
   const [memosData, setMemosData] = useState<Memo[]>([]);
   const [upcomingBirthdaysData, setUpcomingBirthdaysData] = useState<StaffBirthday[]>([]);
+  const [todaysTimetableSlots, setTodaysTimetableSlots] = useState<TodaysTimetableSlot[]>([]);
+  const [todaysSyllabusProgress, setTodaysSyllabusProgress] = useState<TodaysSyllabusProgress[]>([]);
+  const [staffList, setStaffList] = useState<{ id: number; staff_name: string }[]>([]);
+  const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
   // teachingCount and nonTeachingCount are not currently set by the new API
   // const [teachingCount, setTeachingCount] = useState(0);
   // const [nonTeachingCount, setNonTeachingCount] = useState(0);
@@ -150,7 +171,6 @@ export default function ResponsiveLabDashboard() {
           if (data.staff_summary) {
             setMyLeads(data.staff_summary.total_staff || 0);
             setOpenLeadsCount(data.staff_summary.open_leads || 0);
-            setFollowUpLeadsCount(data.staff_summary.follow_up_leads || 0);
           }
 
           if (Array.isArray(data.meetings)) {
@@ -161,6 +181,7 @@ export default function ResponsiveLabDashboard() {
           setComplaintsData(data.complaints || []);
           setMemosData(data.memos || []);
           setUpcomingBirthdaysData(data.upcoming_birthdays || []);
+          setTodaysTimetableSlots(data.todays_timetable_slots || []);
 
           // Combine and sort meetings and events
           const typedMeetings = (response.data.data.meetings || []).map((m: Meeting) => ({
@@ -188,21 +209,79 @@ export default function ResponsiveLabDashboard() {
           setPendingLeaves([]);
           setMyLeads(0);
           setOpenLeadsCount(0);
-          setFollowUpLeadsCount(0);
           setMeetings([]);
+          setTodaysTimetableSlots([]);
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setPendingLeaves([]);
         setMyLeads(0);
         setOpenLeadsCount(0);
-        setFollowUpLeadsCount(0);
         setMeetings([]);
+        setTodaysTimetableSlots([]);
       }
     };
 
     fetchDashboardData();
   }, []); // End of useEffect
+
+  useEffect(() => {
+    const fetchStaffList = async () => {
+      if (userRole !== 'admin') return;
+      try {
+        const response = await axios.get('/api/staff', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+        });
+        if (response.data.status && response.data.data && response.data.data.Staff) {
+          const staffArray = Array.isArray(response.data.data.Staff.data)
+            ? response.data.data.Staff.data
+            : response.data.data.Staff;
+          setStaffList(
+            staffArray.map((s: any) => ({ id: s.id, staff_name: s.staff_name || s.name }))
+          );
+        }
+      } catch (error) {
+        console.error('Error fetching staff list:', error);
+      }
+    };
+    fetchStaffList();
+  }, [userRole]);
+
+  useEffect(() => {
+    const fetchSyllabusProgress = async () => {
+      try {
+        let url = '/api/syllabus';
+        if (userRole === 'admin' && selectedStaffId) {
+          url += `?staff_id=${selectedStaffId}`;
+        }
+        const response = await axios.get(url, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + localStorage.getItem('token'),
+          },
+        });
+        if (response.data.status && Array.isArray(response.data.data)) {
+          setTodaysSyllabusProgress(response.data.data);
+        } else {
+          setTodaysSyllabusProgress([]);
+        }
+      } catch (error) {
+        console.error('Error fetching syllabus progress:', error);
+        setTodaysSyllabusProgress([]);
+      }
+    };
+
+    if (userRole === 'admin') {
+      if (selectedStaffId) {
+        fetchSyllabusProgress();
+      }
+    } else {
+      fetchSyllabusProgress();
+    }
+  }, [userRole, selectedStaffId]);
 
   return (
     <div className="flex h-screen ">
@@ -213,11 +292,11 @@ export default function ResponsiveLabDashboard() {
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">
-            Welcome, {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'} 
+            Welcome, {currentUser.name} 
           </h1>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2">
           {/* Cards for Teaching Staff and Non-Teaching Staff counts commented out.
               This data is not currently provided by the new /api/dashboard endpoint.
               To re-enable, update DashboardController.php to include these counts 
@@ -268,88 +347,69 @@ export default function ResponsiveLabDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Follow Up Leads</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{followUpLeadsCount}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Meetings Today
-              </CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{meetings.length}</div>
-            </CardContent>
-          </Card>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-7 mt-4 mb-3">
-          <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle>Leave Approvals</CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate({ to: '/leaveapproval' })}
-                className="text-primary hover:text-primary/80"
-              >
-                See All
-              </Button>
-            </CardHeader>
-            <CardContent className="overflow-x-auto p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[120px]">Staff Name</TableHead>
-                    <TableHead>Leave Dates</TableHead>
-                    <TableHead>Reason</TableHead>
-                    <TableHead className="text-right">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingLeaves.length > 0 ? (
-                    pendingLeaves.slice(0, 5).map((leave) => (
-                      <TableRow 
-                        key={leave.id}
-                        className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => navigate({ to: '/leaveapproval' })}
-                      >
-                        <TableCell className="font-medium">
-                          {leave.staff_name || 'N/A'}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(leave.from_date).toLocaleDateString()} - {new Date(leave.to_date).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
-                          {leave.reason}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge variant="secondary">
-                            {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                          </Badge>
+          { (userRole === 'admin' || userRole === 'viceprincipal') && (
+            <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle>Leave Approvals</CardTitle>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate({ to: '/leaveapproval' })}
+                  className="text-primary hover:text-primary/80"
+                >
+                  See All
+                </Button>
+              </CardHeader>
+              <CardContent className="overflow-x-auto p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[120px]">Staff Name</TableHead>
+                      <TableHead>Leave Dates</TableHead>
+                      <TableHead>Reason</TableHead>
+                      <TableHead className="text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pendingLeaves.length > 0 ? (
+                      pendingLeaves.slice(0, 5).map((leave) => (
+                        <TableRow 
+                          key={leave.id}
+                          className="cursor-pointer hover:bg-muted/50"
+                          onClick={() => navigate({ to: '/leaveapproval' })}
+                        >
+                          <TableCell className="font-medium">
+                            {leave.staff_name || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            {new Date(leave.from_date).toLocaleDateString()} - {new Date(leave.to_date).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell className="max-w-[200px] truncate">
+                            {leave.reason}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant="secondary">
+                              {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                          No pending leave requests
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                        No pending leave requests
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card className="col-span-full lg:col-span-3 bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )}
+          <Card className={`col-span-full ${(userRole === 'admin' || userRole === 'viceprincipal') ? 'lg:col-span-3' : 'lg:col-span-7'} bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg`}>
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Meetings & Events</CardTitle>
@@ -481,9 +541,9 @@ export default function ResponsiveLabDashboard() {
         </div>
 
         {/* Memos and Upcoming Birthdays Cards - New Row */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-4">
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 mb-4">
           {/* Recent Memos Card */}
-          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-2 bg-accent/40">
+          <Card className="col-span-full md:col-span-1 lg:col-span-2 xl:col-span-2 bg-accent/40">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center"><FileText className="h-5 w-5 mr-2" />Recent Memos</CardTitle>
@@ -532,15 +592,15 @@ export default function ResponsiveLabDashboard() {
           </Card>
 
           {/* Upcoming Birthdays Card */}
-          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-2 bg-accent/40">
+          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-1 bg-accent/40">
             <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="flex items-center"><Cake className="h-5 w-5 mr-2" />Upcoming Birthdays</CardTitle>
+              <CardTitle className="flex items-center mb-1"><Cake className="h-5 w-5 mr-2" />Upcoming Birthdays</CardTitle>
+              <div className="flex justify-between items-baseline">
+                <CardDescription>
+                  Staff birthdays in the next 30 days.
+                </CardDescription>
                 <p className="text-sm text-muted-foreground">Total: {upcomingBirthdaysData.length}</p>
               </div>
-              <CardDescription>
-                Staff birthdays in the next 30 days.
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -565,6 +625,99 @@ export default function ResponsiveLabDashboard() {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Today's Timetable and Syllabus Cards - New Row */}
+        <div className="grid gap-4 lg:grid-cols-2 mb-4">
+          {/* Today's Timetable Card */}
+          <Card className="col-span-full lg:col-span-1 bg-accent/40">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center">
+                  <CalendarClock className="h-5 w-5 mr-2" />
+                  Today's Timetable
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Slots: {todaysTimetableSlots.length}</p>
+              </div>
+              <CardDescription>
+                Your scheduled classes and activities for today.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {todaysTimetableSlots.length > 0 ? (
+                <div className="space-y-3 max-h-72 overflow-y-auto">
+                  {todaysTimetableSlots.map((slot, index) => (
+                    <div key={index} className="flex items-center justify-between border-b border-border/50 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
+                      <div>
+                        <p className="text-sm font-medium">{slot.subject_name}</p>
+                        <p className="text-xs text-muted-foreground">{slot.division_name}</p>
+                      </div>
+                      <Badge variant="outline">{slot.time_slot}</Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center">No timetable slots scheduled for today.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Today's Syllabus Progress Card */}
+          <Card className="col-span-full lg:col-span-1 bg-accent/40">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center">
+                  <BookOpenCheck className="h-5 w-5 mr-2" />
+                  Today's Syllabus Progress
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>
+                  {/* Admin-only staff selector */}
+                  {userRole === 'admin' && (
+                    <select
+                      value={selectedStaffId ?? ''}
+                      onChange={(e) =>
+                        setSelectedStaffId(e.target.value ? Number(e.target.value) : null)
+                      }
+                      className="text-sm border rounded px-2 py-1 bg-background"
+                    >
+                      <option value="">Select Staff</option>
+                      {staffList.map((staff) => (
+                        <option key={staff.id} value={staff.id}>
+                          {staff.staff_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+              <CardDescription>
+                Progress for subjects in today's timetable.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {todaysSyllabusProgress.length > 0 ? (
+                <div className="space-y-4 max-h-72 overflow-y-auto">
+                  {todaysSyllabusProgress.map((syllabus, index) => (
+                    <div key={index} className="border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-sm font-medium">{syllabus.subject_name}</p>
+                        <Badge variant="secondary">{syllabus.completed_percentage}%</Badge>
+                      </div>
+                      {(syllabus.course_name || syllabus.semester_name) && (
+                        <p className="text-xs text-muted-foreground">
+                          {syllabus.course_name}{syllabus.course_name && syllabus.semester_name ? " - " : ""}{syllabus.semester_name}
+                        </p>
+                      )}
+                      {syllabus.remarks && <p className="text-xs text-muted-foreground mt-1"><em>Remarks: {syllabus.remarks}</em></p>}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center">No syllabus progress to display for today's subjects.</p>
+              )}
             </CardContent>
           </Card>
         </div>

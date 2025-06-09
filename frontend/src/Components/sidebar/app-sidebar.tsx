@@ -154,7 +154,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
       <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
       <SidebarContent className="flex flex-col h-full">
         <div className="flex flex-col space-y-3">
-          <div className="flex items-center justify-between p-4">
+          <div className="flex flex-col items-start px-4 py-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center cursor-pointer">
@@ -163,22 +163,22 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 </div>
               </DropdownMenuTrigger>
             </DropdownMenu>
-            
+            <div className="mt-2 w-full">
+              <button
+                onClick={() => setIsCommandMenuOpen(true)}
+                className="flex items-center justify-between w-full h-9 px-4  text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
+                aria-label="Open command menu"
+              >
+                <Search className="w-4 h-4 text-muted-foreground" />
+                <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
+                  <span className="text-xs">CTRL</span>+ K
+                </kbd>
+              </button>
+            </div>
+            <Separator  />
           </div>
-            {/* Search Bar */}
-        <div className="">
-          <button
-            onClick={() => setIsCommandMenuOpen(true)}
-            className="flex items-center justify-between w-full h-9 px-4  text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
-            aria-label="Open command menu"
-          >
-            <Search className="w-4 h-4 text-muted-foreground" />
-            <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
-              <span className="text-xs">CTRL</span>+ K
-            </kbd>
-          </button>
-        </div>
-          <Separator  />
+
+         
           
         </div>
       

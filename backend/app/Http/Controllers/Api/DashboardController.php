@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\Complaint;
 use App\Models\Memo; // Assuming Memo model exists
 use Carbon\Carbon;    // For date calculations
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -24,36 +25,66 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         try {
+            $user = Auth::user();
+
+            if (!$user || !$user->staff) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'User or staff details not found. Unable to load dashboard data.'
+                ], 401); 
+            }
+            $instituteId = $user->staff->institute_id;
+            $staffId = $user->staff->id;
             // Assuming model names and relationships. Adjust if necessary.
             // Fetch pending leave applications, try to include staff name
-            $pendingLeaves = Leave::where('status', 'pending')
+            $pendingLeaves = Leave::where('institute_id', $instituteId)
+                                                    ->where('status', 'pending')
                                                     ->with('staff') // Assumes a 'staff' relationship on Leave model
                                                     ->orderBy('created_at', 'desc')
                                                     ->get();
 
             // Fetch all staff data (or replicate logic from StaffController@allStaffs if more specific)
-            $staff = Staff::orderBy('created_at', 'desc')->get();
+            $staff = Staff::where('institute_id', $instituteId)->orderBy('created_at', 'desc')->get();
 
             // Fetch all meetings data (or replicate logic from MeetingController@index if more specific)
-            $meetings = Meeting::orderBy('date', 'desc')->orderBy('time', 'desc')->get();
+            $meetings = Meeting::where('institute_id', $instituteId)->orderBy('date', 'desc')->orderBy('time', 'desc')->get();
 
             // Fetch all events data, ordered by date (assuming 'date' field exists)
-            $events = Event::orderBy('date', 'desc')->get();
+            $events = Event::where('institute_id', $instituteId)->orderBy('date', 'desc')->get();
 
             // Fetch all tasks, ordered by creation date (assuming 'created_at' field exists)
-            $tasks = Task::orderBy('created_at', 'desc')->get();
+            $taskQuery = Task::where('institute_id', $instituteId)
+                               ->orderBy('created_at', 'desc');
+
+            if ($request->has('assigned_to')) {
+                $taskQuery->where('assigned_to', $request->assigned_to);
+            } else {
+                // Default behavior if no specific 'assigned_to' is in the request
+                if (!$user->hasRole(['admin', 'viceprincipal', 'superadmin'])) {
+                    $taskQuery->where('assigned_to', $staffId);
+                }
+                // Admins see all tasks in the institute (no additional 'assigned_to' filter here unless from request)
+            }
+            $tasks = $taskQuery->get();
 
             // Fetch all complaints, ordered by creation date (assuming 'created_at' field exists)
-            $complaints = Complaint::orderBy('created_at', 'desc')->get();
+            $complaints = Complaint::where('institute_id', $instituteId)->orderBy('created_at', 'desc')->get();
 
             // Fetch 5 most recent memos
-            $memos = Memo::orderBy('created_at', 'desc')->take(5)->get();
+            $memoQuery = Memo::with('staff') // staff relation is likely the creator
+                               ->where('institute_id', $instituteId);
+
+            if (!$user->hasRole(['admin', 'viceprincipal', 'superadmin'])) {
+                $memoQuery->where('staff_id', $staffId); // Filter by the logged-in user's staff_id (creator)
+            }
+            $memos = $memoQuery->orderBy('created_at', 'desc')->take(5)->get();
 
             // Fetch staff with upcoming birthdays (next 30 days)
             $today = Carbon::today();
             $oneMonthLater = Carbon::today()->addMonth();
 
-            $upcomingBirthdays = Staff::select(['id', 'staff_name', 'date_of_birth'])
+            $upcomingBirthdays = Staff::where('institute_id', $instituteId)
+                ->select(['id', 'staff_name', 'date_of_birth'])
                 ->whereNotNull('date_of_birth')
                 ->get()
                 ->filter(function ($staffMember) use ($today, $oneMonthLater) {

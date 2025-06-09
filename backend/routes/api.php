@@ -126,6 +126,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    
    Route::resource('subjects', SubjectController::class);
    Route::get('/all_subjects', [SubjectController::class, 'allSubject'])->name("subjects.all");
+   // Syllabus routes (index for get and store for update/create)
+   Route::resource('syllabus', SyllabusController::class)->only(['index','store']);
 
    Route::resource('academic_years', AcademicYearController::class);
    Route::get('/all_academic_years', [AcademicYearController::class, 'allAcademicYears'])->name("academic_years.all");
