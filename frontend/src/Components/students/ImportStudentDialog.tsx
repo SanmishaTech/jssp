@@ -42,33 +42,7 @@ export default function ImportStudentDialog({
     setImportStatus("idle");
   };
 
-  const handleDownloadTemplate = () => {
-    const token = localStorage.getItem("token");
-    // Create a temporary anchor element to trigger the download
-    const link = document.createElement("a");
-    link.href = `${axios.defaults.baseURL}/api/students/download-template`;
-    link.setAttribute("download", "students.xlsx");
-    link.setAttribute("target", "_blank");
-    // Add the token to the request headers
-    fetch(link.href, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Error downloading template:", error);
-        toast.error("Failed to download template");
-      });
-  };
+ 
 
   const handleImport = async () => {
     if (!fileInputRef.current?.files?.length) {
@@ -152,6 +126,29 @@ export default function ImportStudentDialog({
     }
   };
 
+  const handleDownloadTemplate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("/api/students/download-template", {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "students_template.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading template:", error);
+      toast.error("Failed to download template");
+    }
+  };
+
   return (
     <Modal
       size="sm"
@@ -188,6 +185,14 @@ export default function ImportStudentDialog({
                       Please upload an Excel file with student data. Download
                       the template for the correct format.
                     </p>
+                    <div className="mt-2">
+                      <Button
+                        type="button"
+                        onClick={handleDownloadTemplate}
+                      >
+                        Download Excel
+                      </Button>
+                    </div>
                     <div className="mt-2">
                       {/* <button
                         type="button"

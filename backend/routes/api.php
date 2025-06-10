@@ -135,9 +135,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('academic_years', AcademicYearController::class);
    Route::get('/all_academic_years', [AcademicYearController::class, 'allAcademicYears'])->name("academic_years.all");
    
+   // Custom student routes must be defined before the resource route to avoid conflicts
+   Route::get('/students/download-template', [StudentController::class, 'downloadTemplate'])->name("students.download-template");
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudents'])->name("students.all");
-   Route::get('/students/download-template', [StudentController::class, 'downloadTemplate'])->name("students.download-template");
    Route::post('/students/import', [StudentController::class, 'import'])->name("students.import");
 
    // Peticash routes

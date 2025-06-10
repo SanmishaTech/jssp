@@ -157,68 +157,50 @@ class StudentController extends BaseController
             $columnMap = [
                 'student_name' => array_search('Student Name', $headers),
                 'prn' => array_search('PRN', $headers),
-                'subject' => array_search('Subject', $headers) !== false ? array_search('Subject', $headers) : array_search('Subject Name', $headers),
                 'division' => array_search('Division', $headers) !== false ? array_search('Division', $headers) : array_search('Division Name', $headers)
             ];
-            
+
             // Validate that all required columns are present
             foreach ($columnMap as $key => $index) {
                 if ($index === false) {
                     return $this->sendError('Import Error', ['error' => "Required column '{$key}' not found in the uploaded file."], 422);
                 }
             }
-            
+
             // Skip header row
             $dataRows = array_slice($rows, 1);
             $instituteId = Auth::user()->staff->institute_id;
             $importCount = 0;
             $errors = [];
             $errorRows = [];
-            
-            // Get all subjects and divisions for this institute for lookup
-            $subjects = Subject::where('institute_id', $instituteId)->get();
+
+            // Get all divisions for this institute for lookup
             $divisions = Division::where('institute_id', $instituteId)->get();
-            
-            // Log the number of subjects and divisions found
-            \Log::info('Import subjects count: ' . $subjects->count());
+
+            // Log the number of divisions found
             \Log::info('Import divisions count: ' . $divisions->count());
             \Log::info('Column mapping: ' . json_encode($columnMap));
-            
+
             foreach ($dataRows as $index => $row) {
                 $rowNum = $index + 2; // +2 because of 1-indexing and header row
-                
+
                 // Skip empty rows
                 if (empty($row[$columnMap['student_name']]) && empty($row[$columnMap['prn']])) {
                     \Log::info('Skipping empty row: ' . $rowNum);
                     continue;
                 }
-                
+
                 // Log the row data for debugging
                 \Log::info('Processing row: ' . $rowNum . ', Data: ' . json_encode($row));
-                
-                // Check if subject and division columns have values
-                if (!isset($row[$columnMap['subject']]) || !isset($row[$columnMap['division']])) {
-                    $errors[] = 'Row ' . $rowNum . ': Missing subject or division';
+
+                // Check if division column has a value
+                if (!isset($row[$columnMap['division']])) {
+                    $errors[] = 'Row ' . $rowNum . ': Missing division';
                     $errorRows[] = $rowNum;
-                    \Log::warning('Missing subject or division in row: ' . $rowNum);
+                    \Log::warning('Missing division in row: ' . $rowNum);
                     continue;
                 }
-                
-                // Find subject ID by name
-                $subject_name = trim($row[$columnMap['subject']]);
-                \Log::info('Looking for subject: ' . $subject_name);
-                
-                $subject = $subjects->first(function($item) use ($subject_name) {
-                    return strtolower(trim($item->subject_name)) === strtolower($subject_name);
-                });
-                
-                if (!$subject) {
-                    $errors[] = 'Row ' . $rowNum . ': Subject "' . $subject_name . '" not found';
-                    $errorRows[] = $rowNum;
-                    \Log::warning('Subject not found: ' . $subject_name);
-                    continue; // Skip if subject not found
-                }
-                
+
                 // Find division ID by name
                 $division_name = trim($row[$columnMap['division']]);
                 \Log::info('Looking for division: ' . $division_name);
@@ -274,25 +256,27 @@ class StudentController extends BaseController
     }
 
     /**
-     * Download the student import template
+     * Download the student import template Excel file.
      */
-    public function downloadTemplate(): JsonResponse
+    public function downloadTemplate()
     {
-        try {
-            $filePath = public_path('excel/students.xlsx');
-            if (!file_exists($filePath)) {
-                $filePath = base_path('excel/students.xlsx');
-                if (!file_exists($filePath)) {
-                    return $this->sendError('Template Error', ['error' => 'Template file not found'], 404);
-                }
-            }
-            
-            return response()->download($filePath, 'students.xlsx', [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="students.xlsx"'
-            ]);
-        } catch (\Exception $e) {
-            return $this->sendError('Download Error', ['error' => $e->getMessage()], 500);
+        // Path to the template located in backend/excel/students.xlsx
+        $filePath = base_path('excel/students.xlsx');
+
+        if (!file_exists($filePath)) {
+            return $this->sendError('File not found', ['error' => 'Template not found'], 404);
         }
+
+        // Return the file as a download response
+        return response()->download(
+            $filePath,
+            'students_template.xlsx',
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]
+        );
     }
-}
+ 
+ 
+ 
+ }

@@ -110,8 +110,7 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Student", key: "one" },
           { label: "PRN", key: "two" },
-          { label: "Subject", key: "three" },
-          { label: "Division", key: "four" },
+           { label: "Division", key: "three" },
 
           { label: "Action", key: "action" },
         ],
@@ -200,8 +199,7 @@ export default function Dashboardholiday() {
       id: item?.id,
       one: item?.student_name || "Unknown",
       two: item?.prn || "NA",
-      three: item?.subject_name || "NA",
-      four: item?.division_name || "NA",
+      three: item?.division_name || "NA",
 
       delete: "/students/" + item?.id,
     };P
