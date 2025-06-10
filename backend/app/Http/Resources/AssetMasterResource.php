@@ -19,6 +19,7 @@ class AssetMasterResource extends JsonResource
             'institute_id' => $this->institute_id,
             'asset_category_ids' => $this->asset_category_ids ?? [],
             'asset_type' => $this->asset_type,
+            'asset_identity_number' => $this->asset_identity_number,
             'unit' => $this->unit,
             'service_required' => $this->service_required,
             'created_at' => $this->created_at,

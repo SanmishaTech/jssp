@@ -186,10 +186,11 @@ export default function Dashboardholiday() {
         title: "Asset Master",
         description: "Manage Asset Master and view their details.",
         headers: [
-          { label: "Asset Type", key: "one" },
-          { label: "Service Required", key: "two" },
-          { label: "Asset Category", key: "three" },
-          { label: "Unit", key: "four" },
+          { label: "Asset Identity Number", key: "one" },
+          { label: "Asset Type", key: "two" },
+          { label: "Service Required", key: "three" },
+          { label: "Asset Category", key: "four" },
+          { label: "Unit", key: "five" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -284,8 +285,9 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
-    one: item.asset_type || "Unknown",
-    two: (() => {
+    one: item.asset_identity_number || "N/A",
+    two: item.asset_type || "Unknown",
+    three: (() => {
       // Convert to string for safer comparison
       const serviceReq = String(item.service_required);
       if (serviceReq === '1' || serviceReq === 'true') {
@@ -296,7 +298,7 @@ export default function Dashboardholiday() {
         return "Unknown";
       }
     })(),
-    three: (() => {
+    four: (() => {
       let categories = [];
       
       if (Array.isArray(item.asset_category_ids)) {
@@ -319,8 +321,7 @@ export default function Dashboardholiday() {
         return categories.join(", ") || "Unknown";
       }
     })(),
-    four: item.unit || "-",
-
+    five: item.unit || "-",
     delete: "/assetmasters/" + item.id,
   }));
 

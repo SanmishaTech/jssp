@@ -141,6 +141,10 @@ export default function ViewAssetMasterDialog({
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
+                      <p className="text-sm font-medium text-muted-foreground">Asset Number</p>
+                      <p className="font-semibold">{assetMaster.asset_identity_number || "N/A"}</p>
+                    </div>
+                    <div className="space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Asset Type</p>
                       <p className="font-semibold">{assetMaster.asset_type || "N/A"}</p>
                     </div>
@@ -149,12 +153,13 @@ export default function ViewAssetMasterDialog({
                       <p className="text-sm font-medium text-muted-foreground">Service Required</p>
                       <p className="font-semibold">{formatServiceRequired(assetMaster.service_required)}</p>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-1">
+                    <div className="space-y-1">
                     <p className="text-sm font-medium text-muted-foreground">Unit</p>
                     <p className="font-semibold">{assetMaster.unit || "N/A"}</p>
                   </div>
+                  </div>
+                  
+
                   
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-muted-foreground">Asset Categories</p>

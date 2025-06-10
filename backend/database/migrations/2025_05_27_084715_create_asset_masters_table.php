@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('asset_type')->nullable();
             $table->string('unit')->nullable();
             $table->boolean('service_required')->default(false);
+            $table->string('asset_identity_number')->unique()->nullable();
             $table->timestamps();
         });
     }

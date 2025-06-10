@@ -62,6 +62,14 @@ class AssetMasterController extends BaseController
         $assetmaster->unit = $request->input('unit');
         $assetmaster->service_required = $request->input('service_required');
         $assetmaster->save();
+
+        // Generate and save the unique asset identity number
+        $institute = $assetmaster->institute;
+        // Assuming the institute model has a 'code' property for the identifier
+        $instituteCode = $institute->code ?? 'INST';
+        $paddedId = str_pad($assetmaster->id, 3, '0', STR_PAD_LEFT);
+        $assetmaster->asset_identity_number = $instituteCode . '-' . now()->format('my') . '-' . $paddedId;
+        $assetmaster->save();
         
         return $this->sendResponse([ "AssetMaster" => new AssetMasterResource($assetmaster)], "AssetMaster stored successfully");
     }
