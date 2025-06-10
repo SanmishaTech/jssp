@@ -270,13 +270,21 @@ export default function ResponsiveLabDashboard() {
     }
   }, [userRole, selectedStaffId]);
 
+  // hide the page scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   return (
     <div className="flex h-screen ">
       {/* Sidebar for larger screens */}
       {/* <Sidebar className="hidden md:block w-64 shadow-md" /> */}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold">
             Welcome, {currentUser.name} 
@@ -627,7 +635,7 @@ export default function ResponsiveLabDashboard() {
               <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center">
                   <BookOpenCheck className="h-5 w-5 mr-2" />
-                  Today's Syllabus Progress
+                  Overall Syllabus Progress
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>

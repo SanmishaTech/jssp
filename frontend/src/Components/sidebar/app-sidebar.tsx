@@ -182,7 +182,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
           
         </div>
       
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto no-scrollbar">
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -213,10 +213,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
                       {openDropdowns[item.title] && (
                         <div className="ml-4">
                           {item.children.map((child: MenuItem) => (
-                            <SidebarMenuItem key={child.title}>
+                            <SidebarMenuItem key={child.title} className="my-1">
                               <SidebarMenuButton asChild>
-                                <a href={child.url} className={`flex items-center ${child.url && currentPath.startsWith(child.url) ? "bg-blue-100 text-blue-600" : ""}`}>
-                                  {child.icon && React.createElement(child.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
+                                <a href={child.url} className={`flex items-center ${child.url && currentPath.startsWith(child.url) ? "bg-[#339999] text-white" : ""}`}>
+                                  {child.icon && React.createElement(child.icon, { className: `mr-2 ${child.url && currentPath.startsWith(child.url) ? 'text-white' : 'text-gray-600 dark:text-blue-300'}` })}
                                   <span>{child.title}</span>
                                 </a>
                               </SidebarMenuButton>
