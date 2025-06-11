@@ -44,7 +44,7 @@
 
         /* Styling for the date div */
         .date {
-            text-align: right;
+            text-align: center;
             font-size: 11px;
             color: #666;
             margin-bottom: 25px; /* Space before next header */
@@ -151,17 +151,18 @@
 </head>
 <body>
     <div class="container">
+    
         <div class="header">
             <h1>Jevandeep Shaishnik Santha POI's</h1>
-            <p>Institute: {{ $staff->institute?->institute_name ?? 'N/A' }}</p>
+            <!-- <p>Institute: {{ $staff->institute?->institute_name ?? 'N/A' }}</p> -->
         </div>
-        <div class="date">
-            <p>Generated on: {{ $date }}</p>
-        </div>
+      
         <div class="header">
             <h1>{{ $staff->institute?->institute_name ?? 'N/A' }}</h1>
-            <p>Staff Profile: {{ $staff->staff_name ?? 'N/A' }}</p>
+            <!-- <p>Staff Profile: {{ $staff->staff_name ?? 'N/A' }}</p> -->
         </div>
+
+      
 
         <div class="profile-section">
             <h2>Personal Information</h2>
@@ -184,7 +185,7 @@
                 </div>
                 <div class="detail-item">
                     <strong>Date of Birth:</strong>
-                    <span>{{ isset($staff->dob) && $staff->dob ? \Carbon\Carbon::parse($staff->dob)->format('F j, Y') : 'N/A' }}</span>
+                    <span>{{ isset($staff->date_of_birth) && $staff->date_of_birth ? \Carbon\Carbon::parse($staff->date_of_birth)->format('F j, Y') : 'N/A' }}</span>
                 </div>
                 <div class="detail-item">
                     <strong>Gender:</strong>
@@ -220,34 +221,90 @@
             </div>
         </div>
 
-        {{--
-        @if(isset($staff->qualifications) && $staff->qualifications->count() > 0)
+        @if(isset($staff->education) && $staff->education->count() > 0)
         <div class="profile-section">
-            <h2>Qualifications</h2>
+            <h2>Educational Qualifications</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Degree</th>
-                        <th>Institution</th>
+                        <th>Qualification</th>
+                        <th>College / Institution</th>
+                        <th>Board / University</th>
                         <th>Year of Passing</th>
+                        <th>Percentage / CGPA</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($staff->qualifications as $qualification)
+                    @foreach($staff->education as $edu)
                     <tr>
-                        <td>{{ $qualification->degree ?? 'N/A' }}</td>
-                        <td>{{ $qualification->institution ?? 'N/A' }}</td>
-                        <td>{{ $qualification->year_of_passing ?? 'N/A' }}</td>
+                        <td>{{ $edu->qualification ?? 'N/A' }}</td>
+                        <td>{{ $edu->college_name ?? 'N/A' }}</td>
+                        <td>{{ $edu->board_university ?? 'N/A' }}</td>
+                        <td>{{ $edu->passing_year ?? 'N/A' }}</td>
+                        <td>{{ $edu->percentage ?? 'N/A' }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
         @endif
-        --}}
+
+        @if(isset($staff->papers) && $staff->papers->count() > 0)
+        <div class="profile-section">
+            <h2>Research / Conference Papers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Journal Title</th>
+                        <th>Research Topic</th>
+                        <th>Publication ID</th>
+                        <th>Volume</th>
+                        <th>Issue</th>
+                        <th>Year</th>
+                        <th>Peer Reviewed</th>
+                        <th>Co-author</th>
+                     </tr>
+                </thead>
+                <tbody>
+                    @foreach($staff->papers as $paper)
+                    <tr>
+                        <td>{{ $paper->journal_title ?? 'N/A' }}</td>
+                        <td>{{ $paper->research_topic ?? 'N/A' }}</td>
+                        <td>{{ $paper->publication_identifier ?? 'N/A' }}</td>
+                        <td>{{ $paper->volume ?? 'N/A' }}</td>
+                        <td>{{ $paper->issue ?? 'N/A' }}</td>
+                        <td>{{ $paper->year_of_publication ?? 'N/A' }}</td>
+                        <td>{{ isset($paper->peer_reviewed) ? ($paper->peer_reviewed ? 'Yes' : 'No') : 'N/A' }}</td>
+                        <td>{{ $paper->coauthor ?? 'N/A' }}</td>
+                       
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endif
+
+        @if(!empty($staff->medical_history) || !empty($staff->medical_image_path))
+        <div class="profile-section">
+            <h2>Medical Information</h2>
+
+            @if(!empty($staff->medical_history))
+                <p><strong>History:</strong> {{ $staff->medical_history }}</p>
+            @endif
+
+            @if(!empty($staff->medical_image_path))
+                <div style="margin-top: 10px; text-align:center;">
+                    <img src="{{ public_path('storage/staff_medical_images/' . $staff->medical_image_path) }}" alt="Medical Image" style="max-width: 250px; height: auto; border:1px solid #ddd; padding:4px;" />
+                </div>
+            @endif
+        </div>
+        @endif
 
         <div class="footer">
             <p>&copy; {{ \Carbon\Carbon::now()->format('Y') }} {{ $staff->institute?->institute_name ?? 'Your Institution Name' }}. All rights reserved.</p>
+        </div>
+        <div class="date">
+            <p>Generated on: {{ $date }}</p>
         </div>
     </div>
 </body>

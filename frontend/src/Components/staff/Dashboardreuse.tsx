@@ -178,18 +178,14 @@ export default function Dashboard({
       const response = await axios.get(`/api/staff/${staffId}/pdf`, {
         responseType: 'blob',
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `staff_${staffId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      const file = new Blob([response.data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
     } catch (error) {
-      console.error('Failed to download PDF', error);
+      console.error('Failed to view PDF', error);
     }
   };
+  
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background/30">

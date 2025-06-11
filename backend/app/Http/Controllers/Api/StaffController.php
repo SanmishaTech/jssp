@@ -596,7 +596,7 @@ public function index(Request $request): JsonResponse
      */
     public function pdf($id)
     {
-        $staff = Staff::with('institute')->findOrFail($id);
+        $staff = Staff::with(['institute', 'education', 'papers'])->findOrFail($id);
         $date = now()->format('Y-m-d H:i:s'); // Or any other format you prefer
         $html = view('pdf.staff', compact('staff', 'date'))->render();
 

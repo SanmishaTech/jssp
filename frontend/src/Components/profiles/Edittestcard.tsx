@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -126,6 +126,22 @@ type FieldProps = {
 };
 
 function ProfileForm({ formData }) {
+  // Sanitize incoming formData to ensure nullable string fields are coerced to empty strings
+  const sanitizedFormData = useMemo(() => {
+    if (!formData || typeof formData !== 'object') return {};
+
+    // Helper to convert null/undefined primitive values to empty string. Leave arrays & objects untouched.
+    const sanitized: Record<string, any> = {};
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value === null || value === undefined) {
+        sanitized[key] = '';
+      } else {
+        sanitized[key] = value;
+      }
+    });
+    return sanitized;
+  }, [formData]);
+
   const defaultValues: Partial<ProfileFormValues> = {
     staff_name: '',
     employee_code: '',
@@ -154,7 +170,7 @@ function ProfileForm({ formData }) {
         percentage: '',
       }
     ],
-    ...formData
+    ...sanitizedFormData
   };
   
   const form = useForm<ProfileFormValues>({
@@ -162,6 +178,18 @@ function ProfileForm({ formData }) {
     defaultValues,
     mode: "onChange",
   });
+  
+  // When new form data arrives (after API fetch), reset the form so UI reflects it.
+  useEffect(() => {
+    // Avoid resetting if sanitizedFormData is empty (initial mount)
+    if (sanitizedFormData && Object.keys(sanitizedFormData).length > 0) {
+      form.reset({
+        ...defaultValues,
+        ...sanitizedFormData,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sanitizedFormData]);
   
   const navigate = useNavigate();
   const [academicYears, setAcademicYears] = useState<{id: string, academic_year: string}[]>([]);

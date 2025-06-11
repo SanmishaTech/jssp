@@ -574,28 +574,38 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
+               <FormField
+  control={form.control}
+  name="date_of_birth"
+  render={({ field }) => {
+    // Calculate the date 18 years ago
+    const today = new Date();
+    const eighteenYearsAgo = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+    const maxDate = eighteenYearsAgo.toISOString().split('T')[0]; // Format as YYYY-MM-DD
 
-            
+    return (
+      <FormItem>
+        <FormLabel>
+          Date of Birth<span className="text-red-500">*</span>
+        </FormLabel>
+        <FormControl>
+          <Input
+            id="date_of_birth"
+            type="date"
+            max={maxDate} // Limit to 18 years ago
+            {...field}
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    );
+  }}
+/>
 
-                <FormField
-                  control={form.control}
-                  name="date_of_birth"
-                  render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date of Birth<span className="text-red-500">*</span></FormLabel>
-                        <FormControl>
-                          <Input
-                            id="date_of_birth"
-                            type="date"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                  )}
-                />
-               
-                 
                 {isTeachingStaff && (
                   <div className="flex gap-5">
                       <FormField
