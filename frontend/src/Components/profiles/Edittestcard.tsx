@@ -45,7 +45,7 @@ import {
 
 const profileFormSchema = z.object({
   staff_name: z.string().nonempty("Staff Name Required"),
-  employee_code: z.string().nonempty("Employee Code Required"),
+  employee_code: z.any().optional(),
    date_of_birth: z.any().optional(),
   address: z.string().optional(),
   mobile: z.string().optional(),
@@ -607,7 +607,7 @@ function ProfileForm({ formData }) {
       console.log('Server response:', response.data);
       toast.success("Profile Updated Successfully");
       // Navigate to memberdashboard after successful update
-      navigate({ to: "/memberdashboard" });
+      navigate({ to: "/dashboards" });
     } catch (error: any) {
       console.error('Error submitting form:', error);
       if (axios.isAxiosError(error) && error.response) {
@@ -1170,7 +1170,7 @@ function ProfileForm({ formData }) {
           </TabsContent>
         </Tabs>
         
-        {activeTab !== 'education' && (
+        {activeTab !== 'education' && activeTab !== 'papers' && (
           <div className="flex justify-end w-full gap-3">
             <Button
               onClick={() => navigate({ to: "/dashboards" })}
@@ -1258,11 +1258,6 @@ export default function SettingsProfilePage() {
           <h2 className="text-2xl font-bold">Profile</h2>
           <p className="text-sm text-muted-foreground">Edit/Update the Profile</p>
         </div>
-        {formData?.institute_name && (
-          <span className="text-muted-foreground">
-            {formData.institute_name}
-          </span>
-        )}
       </div>
       
       <div className="space-y-6">

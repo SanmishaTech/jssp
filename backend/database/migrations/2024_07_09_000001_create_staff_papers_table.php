@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('staff_papers', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('staff_id');
-            $table->string('paper_path');
-            $table->string('paper_title')->nullable();
+            $table->string('journal_title')->nullable();
+           $table->string('research_topic')->nullable();
+           $table->string('publication_identifier')->nullable();
+           $table->string('volume')->nullable();
+           $table->string('issue')->nullable();
+           $table->string('year_of_publication')->nullable();
+           $table->string('peer_reviewed')->nullable();
+           $table->string('coauthor')->nullable();
+           $table->string('certificate_path')->nullable();
             $table->timestamps();
-            
-           
         });
     }
 

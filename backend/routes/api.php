@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\StaffPaperController;
 use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\AssetMasterController;
 use App\Http\Controllers\Api\BankAccountController;
@@ -199,6 +200,8 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::resource('staffEducations', StaffEducationController::class);
    Route::get('/all_staffEducations', [StaffEducationController::class, 'allStaffEducations'])->name("staffEducations.all");
 
+   Route::resource('staffPapers', StaffPaperController::class);
+   Route::get('/all_staffPapers', [StaffPaperController::class, 'allStaffPapers'])->name("staffPapers.all");
 
    
 });

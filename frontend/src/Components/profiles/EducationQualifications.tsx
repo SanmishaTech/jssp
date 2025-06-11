@@ -215,7 +215,7 @@ const EducationQualifications = () => {
                 </span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-white sm:max-w-[425px]">
+            <DialogContent className="bg-white sm:max-w-[550px] rounded-lg shadow-lg">
               <DialogHeader>
                 <DialogTitle>{editingId ? 'Edit Qualification' : 'Add New Qualification'}</DialogTitle>
                 <DialogDescription>
@@ -226,67 +226,84 @@ const EducationQualifications = () => {
               <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="qualification" className="text-right">
+                    <Label htmlFor="qualification" className="text-right text-sm font-medium">
                       Qualification
                     </Label>
                     <Input
                       id="qualification"
                       name="qualification"
+                      placeholder="e.g., Bachelor of Science"
                       value={formData.qualification}
                       onChange={handleChange}
+                      required
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="college_name" className="text-right">
+                    <Label htmlFor="college_name" className="text-right text-sm font-medium">
                       College Name
                     </Label>
                     <Input
                       id="college_name"
                       name="college_name"
+                      placeholder="e.g., XYZ University"
                       value={formData.college_name}
                       onChange={handleChange}
+                      required
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="board_university" className="text-right">
+                    <Label htmlFor="board_university" className="text-right text-sm font-medium">
                       Board/University
                     </Label>
                     <Input
                       id="board_university"
                       name="board_university"
+                      placeholder="e.g., ABC Board"
                       value={formData.board_university}
                       onChange={handleChange}
+                      required
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="passing_year" className="text-right">
+                    <Label htmlFor="passing_year" className="text-right text-sm font-medium">
                       Passing Year
                     </Label>
                     <Input
                       id="passing_year"
                       name="passing_year"
+                      type="number"
+                      placeholder="YYYY"
+                      min={1900}
+                      max={2100}
                       value={formData.passing_year}
                       onChange={handleChange}
+                      required
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="percentage" className="text-right">
+                    <Label htmlFor="percentage" className="text-right text-sm font-medium">
                       Percentage
                     </Label>
                     <Input
                       id="percentage"
                       name="percentage"
+                      type="number"
+                      placeholder="e.g., 85"
+                      min={0}
+                      max={100}
+                      step={0.01}
                       value={formData.percentage}
                       onChange={handleChange}
+                      required
                       className="col-span-3"
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="certificate" className="text-right">
+                    <Label htmlFor="certificate" className="text-right text-sm font-medium">
                       Certificate
                     </Label>
                     <Input
@@ -295,7 +312,7 @@ const EducationQualifications = () => {
                       type="file"
                       accept="application/pdf"
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="col-span-3 file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                     />
                   </div>
                   {editingId && (
