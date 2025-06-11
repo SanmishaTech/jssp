@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Editor } from "primereact/editor";
 import {
   Select,
   SelectContent,
@@ -30,7 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -41,7 +41,7 @@ const profileFormSchema = z.object({
   venue: z.string().trim().nonempty("Venue is Required"),
   date: z.string().trim().nonempty("Date is Required"),
   time: z.string().trim().nonempty("Time is Required"),
-  synopsis: z.string().trim().nonempty("Synopsis is Required"),
+  synopsis: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -171,10 +171,13 @@ function ProfileForm() {
                   <FormItem>
                     <FormLabel>
                       Sysnopsis
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
+                     </FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Sysnopsis..." {...field} />
+                      <Editor
+                        value={field.value}
+                        onTextChange={(e) => field.onChange(e.htmlValue)}
+                        style={{ height: "200px" }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
- use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Models\Meeting;
- use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\MeetingResource;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Database\QueryException;
 
 class MeetingController extends BaseController
 {
@@ -49,8 +50,6 @@ class MeetingController extends BaseController
 
     public function store(Request $request): JsonResponse
     {
-        
-        
         // Create a new staff record and assign the institute_id from the logged-in admin
         $meeting = new Meeting();
         $meeting->institute_id = Auth::user()->staff->institute_id;  
@@ -58,7 +57,14 @@ class MeetingController extends BaseController
         $meeting->date = $request->input('date');
         $meeting->time = $request->input('time');
         $meeting->synopsis = $request->input('synopsis');
-        $meeting->save();
+        try {
+            $meeting->save();
+        } catch (QueryException $e) {
+            if ($e->getCode() === '22001') { // Data too long
+                return $this->sendError('Text is too long', ['error' => 'Synopsis text exceeds allowed length']);
+            }
+            throw $e;
+        }
         
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting stored successfully");
     }
@@ -92,7 +98,14 @@ class MeetingController extends BaseController
         $meeting->date = $request->input('date');
         $meeting->time = $request->input('time');
         $meeting->synopsis = $request->input('synopsis');
-           $meeting->save();
+        try {
+            $meeting->save();
+        } catch (QueryException $e) {
+            if ($e->getCode() === '22001') {
+                return $this->sendError('Text is too long', ['error' => 'Synopsis text exceeds allowed length']);
+            }
+            throw $e;
+        }
        
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting updated successfully");
 

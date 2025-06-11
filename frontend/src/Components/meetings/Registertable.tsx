@@ -117,6 +117,13 @@ export default function Dashboardholiday() {
       },
     });
   }, []);
+
+  // Utility to strip HTML tags for synopsis display and truncate to 25 chars
+  const getSynopsisPreview = (html: string = "") => {
+    const text = html.replace(/<[^>]+>/g, "");
+    return text.length > 25 ? text.slice(0, 25) + "..." : text;
+  };
+
   const navigate = useNavigate();
 
   // Handlers for actions
@@ -174,7 +181,7 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  const mappedTableData = data?.map((item) => {
+  const mappedTableData: any[] = data?.map((item) => {
     const services = item?.services || [];
     const paidAmount = item?.paymentMode?.paidAmount || 0;
 
@@ -192,7 +199,7 @@ export default function Dashboardholiday() {
       one: item?.venue || "Unknown",
       two: item?.date || "NA",
       three: item?.time || "NA",
-      four: item?.synopsis || "NA",
+      four: getSynopsisPreview(item?.synopsis),
 
       delete: "/meetings/" + item?.id,
     };

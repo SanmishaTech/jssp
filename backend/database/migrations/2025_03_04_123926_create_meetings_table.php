@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('institute_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
-            
             $table->string("venue")->nullable();
             $table->string("date")->nullable();
             $table->string("time")->nullable();
-            $table->string("synopsis")->nullable(); 
-
+            $table->longtext("synopsis")->nullable(); 
             $table->timestamps();
         });
     }

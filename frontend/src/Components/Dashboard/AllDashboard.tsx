@@ -278,6 +278,12 @@ export default function ResponsiveLabDashboard() {
     };
   }, []);
 
+  // Strip HTML tags and truncate to 100 chars
+  const getSynopsisPreview = (html: string = "") => {
+    const text = html.replace(/<[^>]+>/g, "");
+    return text.length > 20 ? text.slice(0, 20) + "..." : text;
+  };
+
   return (
     <div className="flex h-screen ">
       {/* Sidebar for larger screens */}
@@ -427,7 +433,9 @@ export default function ResponsiveLabDashboard() {
                         <span className="ml-2 text-xs text-muted-foreground">({item.type})</span>
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {item.type === 'meeting' ? item.synopsis : item.description}
+                        {getSynopsisPreview(
+                          item.type === 'meeting' ? item.synopsis : item.description
+                        )}
                       </p>
                     </div>
                     <div className="text-right">
