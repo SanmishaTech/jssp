@@ -191,34 +191,44 @@
                     <strong>Gender:</strong>
                     <span>{{ isset($staff->gender) ? ucfirst($staff->gender) : 'N/A' }}</span>
                 </div>
+                <div class="detail-item">
+                    <strong>Blood Group:</strong>
+                    <span>{{ isset($staff->blood_group) ? ucfirst($staff->blood_group) : 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Highest Qualification:</strong>
+                    <span>{{ $staff->highest_qualification ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>PAN Number:</strong>
+                    <span>{{ $staff->pan_number ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Aadhaar Number:</strong>
+                    <span>{{ $staff->aadhaar_number ?? 'N/A' }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Experience:</strong>
+                    <span>{{ $staff->experience ?? 'N/A' }} {{ $staff->experience ? 'years' : '' }}</span>
+                </div>
                  <div class="detail-item" style="grid-column: 1 / -1;"> <!-- Full width for address -->
                     <strong>Address:</strong>
                     <span>{{ $staff->address ?? ($staff->permanent_address ?? 'N/A') }}</span>
                 </div>
-            </div>
-        </div>
-
-        <div class="profile-section">
-            <h2>Employment Details</h2>
-            <div class="details-grid">
                 <div class="detail-item">
-                    <strong>Department:</strong>
-                    <span>{{ $staff->department->name ?? ($staff->department_name ?? 'N/A') }}</span>
+                    <strong>Subject Type:</strong>
+                    <span>{{ $staff->subject_type ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Designation:</strong>
-                    <span>{{ $staff->designation->name ?? ($staff->designation_name ?? 'N/A') }}</span>
+                    <strong>Salary:</strong>
+                    <span>{{ $staff->salary ?? 'N/A' }}</span>
                 </div>
                 <div class="detail-item">
-                    <strong>Date of Joining:</strong>
-                    <span>{{ isset($staff->date_of_joining) && $staff->date_of_joining ? \Carbon\Carbon::parse($staff->date_of_joining)->format('F j, Y') : 'N/A' }}</span>
+                    <strong>Mode of Payment:</strong>
+                    <span>{{ $staff->mode_of_payment ?? 'N/A' }}</span>
                 </div>
-                <div class="detail-item">
-                    <strong>Employment Type:</strong>
-                    <span>{{ isset($staff->employment_type) ? ucfirst($staff->employment_type) : 'N/A' }}</span>
-                </div>
-                <!-- Add more employment details as needed -->
-            </div>
+               
+             </div>
         </div>
 
         @if(isset($staff->education) && $staff->education->count() > 0)

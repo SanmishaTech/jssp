@@ -77,6 +77,7 @@ const profileFormSchema = z.object({
   ).optional(),
 
   gender: z.any().optional(),
+  blood_group: z.any().optional(),
   experience: z.any().optional(),
   highest_qualification: z.any().optional(),
   medical_history: z.any().optional(),
@@ -150,6 +151,7 @@ function ProfileForm({ formData }) {
     mobile: '',
     email: '',
     gender: '',
+    blood_group: '',
     experience: '',
     highest_qualification: '',
     pan_number: '',
@@ -794,6 +796,37 @@ function ProfileForm({ formData }) {
                                 <SelectItem value="Male">Male</SelectItem>
                                 <SelectItem value="Female">Female</SelectItem>
                                 <SelectItem value="Other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="blood_group"
+                      render={({ field }) => (
+                        <FormItem >
+                          <FormLabel>Blood Group</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              value={field.value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Blood Group" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="A+">A+</SelectItem>
+                                <SelectItem value="A-">A-</SelectItem>
+                                <SelectItem value="B+">B+</SelectItem>
+                                <SelectItem value="B-">B-</SelectItem>
+                                <SelectItem value="AB+">AB+</SelectItem>
+                                <SelectItem value="AB-">AB-</SelectItem>
+                                <SelectItem value="O+">O+</SelectItem>
+                                <SelectItem value="O-">O-</SelectItem>
                               </SelectContent>
                             </Select>
                           </FormControl>

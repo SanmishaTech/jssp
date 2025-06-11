@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\User;
 use App\Models\Staff;
 use App\Models\StaffImage;
-use App\Models\StaffEducation;
-use App\Models\StaffEducationCertificate;
+ 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -92,6 +91,7 @@ public function index(Request $request): JsonResponse
         $staff->mobile = $request->input('mobile');
         $staff->academic_years_id = $request->input('academic_years_id');
         $staff->gender = $request->input('gender');
+        $staff->blood_group = $request->input('blood_group');
         $staff->experience = $request->input('experience');
         $staff->highest_qualification = $request->input('highest_qualification');
         $staff->pan_number = $request->input('pan_number');
@@ -149,45 +149,6 @@ public function index(Request $request): JsonResponse
                 StaffImage::create([
                     'staff_id' => $staff->id,
                     'image_path' => $originalName
-                ]);
-            }
-        }
-        
-        // Handle education details
-        if ($request->has('education') && is_array($request->input('education'))) {
-            foreach ($request->input('education') as $educationData) {
-                StaffEducation::create([
-                    'staff_id' => $staff->id,
-                    'qualification' => $educationData['qualification'],
-                    'college_name' => $educationData['college_name'],
-                    'board_university' => $educationData['board_university'],
-                    'passing_year' => $educationData['passing_year'],
-                    'percentage' => $educationData['percentage'],
-                ]);
-            }
-        }
-        
-        // Handle education certificate uploads
-        if ($request->hasFile('certificates')) {
-            foreach ($request->file('certificates') as $certificate) {
-                // Get original filename and ensure uniqueness
-                $originalName = $certificate->getClientOriginalName();
-                $uniqueName = time() . '_' . $originalName;
-                
-                // Ensure the directory exists
-                Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
-                
-                // Store the certificate in the staff_education_certificates directory with a unique name
-                $path = $certificate->storeAs('staff_education_certificates', $uniqueName, 'public');
-                
-                // Get the certificate title from the original filename (without extension)
-                $certificateTitle = pathinfo($originalName, PATHINFO_FILENAME);
-                
-                // Store the certificate info in the database
-                StaffEducationCertificate::create([
-                    'staff_id' => $staff->id,
-                    'certificate_path' => $uniqueName,
-                    'certificate_title' => $certificateTitle
                 ]);
             }
         }
@@ -279,6 +240,7 @@ public function index(Request $request): JsonResponse
         $staff->email = $request->input('email');
         $staff->mobile = $request->input('mobile');
         $staff->gender = $request->input('gender');
+        $staff->blood_group = $request->input('blood_group');
         $staff->experience = $request->input('experience');
         $staff->academic_years_id = $request->input('academic_years_id');
         $staff->highest_qualification = $request->input('highest_qualification');
@@ -374,110 +336,6 @@ public function index(Request $request): JsonResponse
                 ]);
             }
         }
-        
-        // Handle education details
-        // First, delete existing education records if specified
-        if ($request->input('delete_existing_education') === 'true') {
-            Log::info('Deleting all existing education records for staff ID: ' . $staff->id);
-            $staff->education()->delete();
-        } 
-        // Or delete specific education records
-        elseif ($request->has('deleted_education_ids')) {
-            $deletedEduIds = json_decode($request->input('deleted_education_ids'), true);
-            Log::info('Deleting specific education records: ', $deletedEduIds);
-            if (is_array($deletedEduIds) && count($deletedEduIds) > 0) {
-                StaffEducation::whereIn('id', $deletedEduIds)->delete();
-            }
-        }
-        
-        // Add/update education details
-        if ($request->has('education')) {
-            Log::info('Education data received in request: ' . $request->input('education'));
-            
-            // Decode JSON string if it's a string
-            $educationData = $request->input('education');
-            if (is_string($educationData)) {
-                $educationData = json_decode($educationData, true);
-                Log::info('Decoded education data: ', $educationData ?: []);
-            }
-            
-            if (is_array($educationData) && count($educationData) > 0) {
-                foreach ($educationData as $eduItem) {
-                    // If ID exists, update the record
-                    if (isset($eduItem['id']) && $eduItem['id']) {
-                        $education = StaffEducation::find($eduItem['id']);
-                        if ($education && $education->staff_id == $staff->id) {
-                            Log::info('Updating education record ID: ' . $eduItem['id']);
-                            $education->update([
-                                'qualification' => $eduItem['qualification'],
-                                'college_name' => $eduItem['college_name'],
-                                'board_university' => $eduItem['board_university'],
-                                'passing_year' => $eduItem['passing_year'],
-                                'percentage' => $eduItem['percentage'],
-                            ]);
-                        }
-                    } else {
-                        // Create a new record
-                        Log::info('Creating new education record for staff ID: ' . $staff->id);
-                        Log::info('Education data: ', $eduItem);
-                        StaffEducation::create([
-                            'staff_id' => $staff->id,
-                            'qualification' => $eduItem['qualification'],
-                            'college_name' => $eduItem['college_name'],
-                            'board_university' => $eduItem['board_university'],
-                            'passing_year' => $eduItem['passing_year'],
-                            'percentage' => $eduItem['percentage'],
-                        ]);
-                    }
-                }
-            } else {
-                Log::warning('Education data is empty or not an array');
-            }
-        } else {
-            Log::info('No education data in request for staff ID: ' . $staff->id);
-        }
-
-        // Handle education certificate uploads and deletions
-        if ($request->has('deleted_certificate_ids')) {
-            $deletedCertificateIds = json_decode($request->input('deleted_certificate_ids'), true);
-            Log::info('Deleting certificate IDs: ' . $request->input('deleted_certificate_ids'));
-            
-            if (is_array($deletedCertificateIds) && count($deletedCertificateIds) > 0) {
-                foreach ($staff->educationCertificates as $certificate) {
-                    if (in_array($certificate->id, $deletedCertificateIds)) {
-                        // Delete the file from storage using the correct path
-                        Log::info('Deleting certificate file: ' . $certificate->certificate_path);
-                        Storage::disk('public')->delete('staff_education_certificates/'.$certificate->certificate_path);
-                        $certificate->delete();
-                    }
-                }
-            }
-        }
-
-        // Add new education certificates
-        if ($request->hasFile('certificates')) {
-            foreach ($request->file('certificates') as $certificate) {
-                // Get original filename and ensure uniqueness
-                $originalName = $certificate->getClientOriginalName();
-                $uniqueName = time() . '_' . $originalName;
-                
-                // Ensure the directory exists
-                Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
-                
-                // Store the certificate in the staff_education_certificates directory with a unique name
-                $path = $certificate->storeAs('staff_education_certificates', $uniqueName, 'public');
-                
-                // Get the certificate title from the original filename (without extension)
-                $certificateTitle = pathinfo($originalName, PATHINFO_FILENAME);
-                
-                // Store the certificate info in the database
-                StaffEducationCertificate::create([
-                    'staff_id' => $staff->id,
-                    'certificate_path' => $uniqueName,
-                    'certificate_title' => $certificateTitle
-                ]);
-            }
-        }
        
         return response()->json([
             'status' => true,
@@ -507,9 +365,6 @@ public function index(Request $request): JsonResponse
             $image->delete();
         }
 
-        // Delete associated education records
-        $staff->education()->delete();
-
         $user = User::find($staff->user_id);
         $staff->delete();
         $user->delete();
@@ -531,36 +386,27 @@ public function index(Request $request): JsonResponse
 
         // Check if the file exists
         if (!file_exists($path)) {
-            // Try staff education certificates path
-            $certificatePath = storage_path('app/public/staff_education_certificates/'.$document);
-            Log::info('Trying certificate path: ' . $certificatePath);
-            Log::info('File exists at certificate path: ' . (file_exists($certificatePath) ? 'Yes' : 'No'));
+            // Try medical images path
+            $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
+            Log::info('Trying medical image path: ' . $medicalImagePath);
+            Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
             
-            if (file_exists($certificatePath)) {
-                $path = $certificatePath;
+            if (file_exists($medicalImagePath)) {
+                $path = $medicalImagePath;
             } else {
-                // Try medical images path
-                $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
-                Log::info('Trying medical image path: ' . $medicalImagePath);
-                Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
+                // Try alternate path for events
+                $alternatePath = storage_path('app/public/events/'.$document);
+                Log::info('Trying alternate path: ' . $alternatePath);
+                Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
                 
-                if (file_exists($medicalImagePath)) {
-                    $path = $medicalImagePath;
+                if (file_exists($alternatePath)) {
+                    $path = $alternatePath;
                 } else {
-                    // Try alternate path for events
-                    $alternatePath = storage_path('app/public/events/'.$document);
-                    Log::info('Trying alternate path: ' . $alternatePath);
-                    Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
-                    
-                    if (file_exists($alternatePath)) {
-                        $path = $alternatePath;
-                    } else {
-                        return response()->json([
-                            'status' => false,
-                            'message' => "Document not found",
-                            'errors' => ['error'=>['Document not found.']]
-                        ], 404);
-                    }
+                    return response()->json([
+                        'status' => false,
+                        'message' => "Document not found",
+                        'errors' => ['error'=>['Document not found.']]
+                    ], 404);
                 }
             }
         }
@@ -596,7 +442,7 @@ public function index(Request $request): JsonResponse
      */
     public function pdf($id)
     {
-        $staff = Staff::with(['institute', 'education', 'papers'])->findOrFail($id);
+        $staff = Staff::with(['institute','education','papers'])->findOrFail($id);
         $date = now()->format('Y-m-d H:i:s'); // Or any other format you prefer
         $html = view('pdf.staff', compact('staff', 'date'))->render();
 
