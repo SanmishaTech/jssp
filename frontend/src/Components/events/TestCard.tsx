@@ -5,6 +5,8 @@ import { z } from "zod";
 import { MoveLeft, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Editor } from "primereact/editor";
+
 import {
   Card,
   CardContent,
@@ -41,7 +43,7 @@ const profileFormSchema = z.object({
   venue: z.string().trim().nonempty("Venue is Required"),
   date: z.string().trim().nonempty("Date is Required"),
   time: z.string().trim().nonempty("Time is Required"),
-  synopsis: z.string().trim().nonempty("Synopsis is Required"),
+  synopsis: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -218,7 +220,12 @@ function ProfileForm() {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Sysnopsis..." {...field} />
+                    <Editor
+                        className="w-full"
+                        value={field.value}
+                        onTextChange={(e) => field.onChange(e.htmlValue)}
+                        style={{ minHeight: "200px", maxHeight: "345px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

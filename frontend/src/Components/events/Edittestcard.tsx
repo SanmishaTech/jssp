@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Editor } from "primereact/editor";
+
 import {
   Select,
   SelectContent,
@@ -42,7 +44,7 @@ const profileFormSchema = z.object({
   venue: z.string().trim().nonempty("Venue is Required"),
   date: z.string().trim().nonempty("Date is Required"),
   time: z.string().trim().nonempty("Time is Required"),
-  synopsis: z.string().trim().nonempty("Synopsis is Required"),
+  synopsis: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -266,7 +268,12 @@ function ProfileForm({ formData }) {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Sysnopsis..." {...field} />
+                      <Editor
+                        className="w-full"
+                        value={field.value}
+                        onTextChange={(e) => field.onChange(e.htmlValue)}
+                        style={{ minHeight: "200px", maxHeight: "345px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

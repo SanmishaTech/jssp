@@ -18,7 +18,8 @@ export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const [config, setConfig] = useState(null);
-  const [data, setData] = useState([]);
+  // Explicitly type as any[] to avoid TypeScript 'never' inference
+  const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,10 +74,11 @@ export default function Dashboardholiday() {
   // Define the dashboard configuration
   useEffect(() => {
     setConfig({
-      // breadcrumbs: [
-      //   { label: "Dashboard", href: "/dashboard" },
-      //   { label: "Roms" },
-      // ],
+      breadcrumbs: [
+        { label: "Home", href: "/dashboards" },
+        { label: "/", href: "" },
+        { label: "Event" },
+      ],
       searchPlaceholder: "Search Event...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
@@ -147,7 +149,7 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  const mappedTableData = data?.map((item) => {
+  const mappedTableData = data?.map((item: any) => {
     const services = item?.services || [];
     const paidAmount = item?.paymentMode?.paidAmount || 0;
 
@@ -160,12 +162,20 @@ export default function Dashboardholiday() {
     // Calculate balance amount based on total service price and paid amount.
     const balanceAmount =
       totalServicePrice - paidAmount > 0 ? totalServicePrice - paidAmount : 0;
+    const processedSynopsisRaw = item?.synopsis
+        ? item.synopsis.replace(/<[^>]*>/g, "") // strip HTML tags
+        : "NA";
+      const processedSynopsis =
+        processedSynopsisRaw.length > 25
+          ? processedSynopsisRaw.slice(0, 25) + "..."
+          : processedSynopsisRaw;
+
     return {
       id: item?.id,
       one: item?.venue || "Unknown",
       two: item?.date || "NA",
       three: item?.time || "NA",
-      four: item?.synopsis || "NA",
+      four: processedSynopsis,
 
       delete: "/events/" + item?.id,
     };

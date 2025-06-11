@@ -182,10 +182,11 @@ function ProfileForm({ formData }) {
                       Sysnopsis
                      </FormLabel>
                     <FormControl>
-                      <Editor
+                    <Editor
+                        className="w-full"
                         value={field.value}
                         onTextChange={(e) => field.onChange(e.htmlValue)}
-                        style={{ height: "200px" }}
+                        style={{ minHeight: "200px", maxHeight: "345px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
                       />
                     </FormControl>
                     <FormMessage />

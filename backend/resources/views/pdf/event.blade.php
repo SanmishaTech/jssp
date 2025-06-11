@@ -131,7 +131,10 @@
        
       <p><strong>Location:</strong> {{ $event->location ?? 'N/A' }} &nbsp;&nbsp;&nbsp; <strong>Start Date:</strong> {{ $event->start_date ? \Carbon\Carbon::parse($event->start_date)->format('Y-m-d H:i A') : 'N/A' }}</p>
       <div class="description-section">
-      <p><strong>Description:</strong> {{ $event->description ?? 'N/A' }}</p>
+      <div style="word-wrap: break-word; overflow-wrap: anywhere;">
+        <strong>Description:</strong>
+        {!! $event->description ?? 'N/A' !!}
+      </div>
     </div>
     </div>
    

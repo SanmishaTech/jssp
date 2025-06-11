@@ -239,69 +239,33 @@ export function Dashboard({
     <div className="flex min-h-screen w-full flex-col ">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:px-6">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-end gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <Breadcrumb className="hidden md:flex">
-            <BreadcrumbList>
-              {breadcrumbs?.map((breadcrumb, index) => (
-                <BreadcrumbItem key={index}>
-                  {breadcrumb.href ? (
-                    <BreadcrumbLink asChild>
-                      <Link to={breadcrumb.href}>{breadcrumb.label}</Link>
-                    </BreadcrumbLink>
-                  ) : (
-                    <BreadcrumbPage>{breadcrumb.label}</BreadcrumbPage>
-                  )}
-                </BreadcrumbItem>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
-
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="overflow-hidden rounded-full"
-              >
-                <img
-                  src={userAvatar}
-                  width={36}
-                  height={36}
-                  alt="Avatar"
-                  className="overflow-hidden rounded-full"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <AlertDialog open={open} onOpenChange={setOpen}>
-                <AlertDialogTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    Logout
-                  </DropdownMenuItem>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      You will be logged out from your account.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <Button variant="outline" onClick={() => setOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" onClick={handleLogout}>
-                      Logout
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-        </header>
-
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                 <Breadcrumb className="flex md:flex">
+                   <BreadcrumbList className="flex items-center space-x-2">
+                     {breadcrumbs?.map((breadcrumb, index) => (
+                       <React.Fragment key={index}>
+                         <BreadcrumbItem>
+                           {breadcrumb.href ? (
+                             <BreadcrumbLink asChild>
+                               <Link
+                                 to={breadcrumb.href}
+                                 className="text-muted-foreground hover:text-foreground transition-colors"
+                               >
+                                 {breadcrumb.label}
+                               </Link>
+                             </BreadcrumbLink>
+                           ) : (
+                             <BreadcrumbPage className="text-muted-foreground">
+                               {breadcrumb.label}
+                             </BreadcrumbPage>
+                           )}
+                         </BreadcrumbItem>
+                       </React.Fragment>
+                     ))}
+                   </BreadcrumbList>
+                 </Breadcrumb>
+               </header>
+ 
         {/* Main Content */}
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Tabs defaultValue="all">
@@ -313,7 +277,7 @@ export function Dashboard({
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <div className="ml-auto flex items-center gap-2">
+              <div className="ml-auto flex items-center gap-2 hidden">
                 <div className="flex flex-1 items-center space-x-2">
                   <div className="relative w-full flex items-center gap-2">
                     <div className="relative flex-1">
@@ -350,30 +314,6 @@ export function Dashboard({
                     </Button>
                   </div>
                 </div>
-                {/* <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                      <ListFilter className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {tableColumns?.filters?.map((filter, index) => (
-                      <DropdownMenuCheckboxItem
-                        key={index}
-                        checked={filter.checked}
-                        onCheckedChange={() => onFilterChange(filter.value)}
-                      >
-                        {filter.label}
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
-
                 <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -384,9 +324,49 @@ export function Dashboard({
             </div>
             <TabsContent value="all">
               <Card className="bg-accent/40">
-                <CardHeader>
-                  <CardTitle>{tableColumns.title}</CardTitle>
-                  <CardDescription>{tableColumns.description}</CardDescription>
+                <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+                  <div>
+                    <CardTitle>{tableColumns.title}</CardTitle>
+                    <CardDescription>{tableColumns.description}</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2 w-full md:w-auto">
+                    <div className="relative flex-1 md:w-64">
+                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder={searchPlaceholder}
+                        value={searchInput}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSearchClick();
+                          }
+                        }}
+                        className="w-full rounded-lg bg-background pl-8"
+                      />
+                      {searchInput && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                          onClick={handleClearSearch}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleSearchClick}
+                      className="h-9"
+                    >
+                      Search
+                    </Button>
+                    <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Event</span>
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -536,7 +516,12 @@ export function Dashboard({
 
               <div className="space-y-1">
                 <h4 className="font-semibold text-sm">Synopsis</h4>
-                <p className="text-sm">{selectedEvent.synopsis}</p>
+                {/* Render synopsis as HTML so formatting inserted via rich-text editor is preserved */}
+                <div
+                  className="text-sm max-w-none break-all whitespace-pre-wrap"
+                  style={{ overflowWrap: 'anywhere' }}
+                  dangerouslySetInnerHTML={{ __html: selectedEvent.synopsis || "" }}
+                />
               </div>
 
               {/* Image gallery section */}

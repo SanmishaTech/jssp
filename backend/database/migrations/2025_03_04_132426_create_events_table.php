@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string("venue")->nullable();
             $table->string("date")->nullable();
             $table->string("time")->nullable();
-            $table->string("synopsis")->nullable(); 
+            $table->longtext("synopsis")->nullable(); 
             $table->timestamps();
         });
     }
