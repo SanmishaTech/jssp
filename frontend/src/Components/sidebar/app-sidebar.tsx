@@ -193,7 +193,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                         <SidebarMenuButton asChild>
                           <button
                             onClick={() => toggleDropdown(item.title)}
-                            className={`flex items-center w-full ${item.children?.some(child => child.url && currentPath.startsWith(child.url)) ? "bg-blue-100 text-blue-600" : ""}`}
+                            className={`flex items-center w-full ${item.children?.some(child => child.url && currentPath.startsWith(child.url)) ? "bg-blue-200 text-blue-600" : ""}`}
                           >
                             {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
                             <span>{item.title}</span>

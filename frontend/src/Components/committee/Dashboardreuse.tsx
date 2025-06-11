@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import AlertDialogbox from "./AlertBox";
 import {
@@ -176,19 +177,35 @@ export default function Dashboard({
 
   const handleDownloadPdf = async (committeeId: number | string) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(`/api/committee/${committeeId}/pdf`, {
-        responseType: 'blob',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+        responseType: "blob", // Ensure the response is a blob (PDF file)
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const currentDate = new Date();
+      const day = ("0" + currentDate.getDate()).slice(-2);
+      const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+
       link.href = url;
-      link.setAttribute('download', `committee_${committeeId}.pdf`);
+      link.download = `Committee_${committeeId}_${formattedDate}.pdf`;
+
       document.body.appendChild(link);
       link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      toast.success("PDF downloaded successfully");
     } catch (error) {
-      console.error('Failed to download PDF', error);
+      console.error("Failed to download PDF", error);
+      toast.error("Failed to download PDF");
     }
   };
 
@@ -340,11 +357,10 @@ export default function Dashboard({
                                 )}
                               </div>
                             </TableHead>
-                            
                           ))}
-                             <TableHead className="text-xs font-medium text-muted-foreground py-3">
-                                                      PDF
-                                                    </TableHead>
+                          <TableHead className="text-xs font-medium text-muted-foreground py-3">
+                            PDF
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -429,16 +445,15 @@ export default function Dashboard({
                                     row[header.key]
                                   )}
                                 </TableCell>
-                                
                               ))}
-                               <TableCell>
-                                                              <button
-                                                                onClick={() => handleDownloadPdf(row.id)}
-                                                                style={{ border: 'none', background: 'transparent' }}
-                                                              >
-                                                              <FileText/>
-                                                              </button>
-                                                            </TableCell>
+                              <TableCell>
+                                <button
+                                  onClick={() => handleDownloadPdf(row.id)}
+                                  style={{ border: "none", background: "transparent" }}
+                                >
+                                  <FileText />
+                                </button>
+                              </TableCell>
                             </TableRow>
                           </React.Fragment>
                         ))}

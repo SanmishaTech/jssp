@@ -153,19 +153,33 @@ export function Dashboard({
 
   const handleDownloadPdf = async (eventId: number | string) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(`/api/event/${eventId}/pdf`, {
-        responseType: 'blob',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+        responseType: "blob",
       });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const currentDate = new Date();
+      const day = ("0" + currentDate.getDate()).slice(-2);
+      const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+
       link.href = url;
-      link.setAttribute('download', `event_${eventId}.pdf`);
+      link.download = `Event_${eventId}_${formattedDate}.pdf`;
       document.body.appendChild(link);
       link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      toast.success("PDF downloaded successfully");
     } catch (error) {
-      console.error('Failed to download PDF', error);
+      console.error("Failed to download PDF", error);
+      toast.error("Failed to download PDF");
     }
   };
 

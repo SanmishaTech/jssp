@@ -221,13 +221,8 @@ class CommitteeController extends BaseController
         // Write the HTML content into the PDF
         $mpdf->WriteHTML($html);
 
-        // Output the PDF as a string
-        $pdfOutput = $mpdf->Output('committee_' . $committee->id . '.pdf', 'S');
-
-        // Return the PDF file with appropriate headers
-        return response($pdfOutput, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="committee_' . $committee->id . '.pdf"'); // Changed to inline for easier viewing
+        // Output the PDF directly to the browser for download
+        return $mpdf->Output('committee_' . $committee->id . '.pdf', 'D'); // Download the PDF
     }
 
  

@@ -43,8 +43,8 @@ class NoticeController extends Controller
                 ->paginate(20);
         }
 
-        // Mark notices as read for non-admin/superadmin viewers (auto-read)
-        if (!in_array($role, ['admin', 'superadmin'])) {
+        // Mark notices as read automatically for every viewer except superadmin (requires valid staff ID)
+        if ($role !== 'superadmin' && $staffId) {
             foreach ($notices as $notice) {
                 NoticeRead::firstOrCreate(
                     [

@@ -461,12 +461,7 @@ public function index(Request $request): JsonResponse
         // Write the HTML content into the PDF
         $mpdf->WriteHTML($html);
 
-        // Output the PDF as a string
-        $pdfOutput = $mpdf->Output('staff_' . $staff->id . '.pdf', 'S');
-
-        // Return the PDF file with appropriate headers
-        return response($pdfOutput, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="staff_' . $staff->id . '.pdf"');
+        // Output the PDF directly to the browser for download
+        return $mpdf->Output('staff_' . $staff->id . '.pdf', 'D'); // Download the PDF
     }
 }

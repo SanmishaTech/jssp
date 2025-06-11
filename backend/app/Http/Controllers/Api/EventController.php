@@ -311,10 +311,7 @@ class EventController extends BaseController
         // Configure mPDF. Adding tempDir is good practice.
         $mpdf = new Mpdf(['format' => 'A4', 'tempDir' => storage_path('app/mpdf')]);
         $mpdf->WriteHTML($html);
-        $pdfOutput = $mpdf->Output('event_' . $eventModel->id . '.pdf', 'S'); // 'S' returns as string
-
-        return response($pdfOutput, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="event_' . $eventModel->id . '.pdf"'); // Changed to 'inline' for easier preview
+        // Output the PDF directly to the browser for download
+        return $mpdf->Output('event_' . $eventModel->id . '.pdf', 'D'); // Download the PDF
     }
 }

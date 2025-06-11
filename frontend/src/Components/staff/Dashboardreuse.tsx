@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 import AlertDialogbox from "./AlertBox";
 import {
   Breadcrumb,
@@ -175,14 +176,35 @@ export default function Dashboard({
 
   const handleDownloadPdf = async (staffId: number | string) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get(`/api/staff/${staffId}/pdf`, {
-        responseType: 'blob',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+        responseType: "blob", // Ensure the response is a blob (PDF file)
       });
-      const file = new Blob([response.data], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_blank');
+
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const currentDate = new Date();
+      const day = ("0" + currentDate.getDate()).slice(-2);
+      const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+
+      link.href = url;
+      link.download = `Staff_${staffId}_${formattedDate}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("PDF downloaded successfully");
     } catch (error) {
-      console.error('Failed to view PDF', error);
+      console.error("Failed to download PDF", error);
+      toast.error("Failed to download PDF");
     }
   };
   
