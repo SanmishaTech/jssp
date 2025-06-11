@@ -404,11 +404,14 @@ const PaperUpload = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Qualification</TableHead>
-              <TableHead>College Name</TableHead>
-              <TableHead>Board/University</TableHead>
-              <TableHead>Passing Year</TableHead>
-              <TableHead>Percentage</TableHead>
+              <TableHead>Journal Title</TableHead>
+              <TableHead>Research Topic</TableHead>
+              <TableHead>Publification Identifier</TableHead>
+              <TableHead>Volume</TableHead>
+              <TableHead>Issue</TableHead>
+               <TableHead>Year of Publication</TableHead>
+              <TableHead>Peer Reviewed</TableHead>
+              <TableHead>Co-Author</TableHead>
               <TableHead>Certificate</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -421,7 +424,10 @@ const PaperUpload = () => {
                 <TableCell>{paper.publication_identifier}</TableCell>
                 <TableCell>{paper.volume}</TableCell>
                 <TableCell>{paper.issue}</TableCell>
-                <TableCell>
+                <TableCell>{paper.year_of_publication}</TableCell>
+                <TableCell>{paper.peer_reviewed}</TableCell>
+                <TableCell>{paper.coauthor}</TableCell>
+                 <TableCell>
                   {paper.certificate_url ? (
                     <Button variant="link" size="sm" onClick={() => handleViewCertificate(paper.certificate_url!)}>
                       View
