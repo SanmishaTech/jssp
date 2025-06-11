@@ -63,8 +63,27 @@ class SubjectHoursController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $staff = Staff::where('user_id', $user->id)->first();
-        
+
+        // Determine which staff record to use:
+        // 1. If the authenticated user is an admin and has supplied a `staff_id` query param,
+        //    we attempt to fetch that staff member (must exist and be a teaching staff).
+        // 2. Otherwise, we default to the staff record linked to the authenticated user
+        //    (standard teaching-staff workflow).
+
+        if ($user && (($user->role ?? null) === 'admin' || $user->hasRole('admin')) && $request->has('staff_id')) {
+            $staff = Staff::find($request->input('staff_id'));
+
+            // Validate that the selected staff exists and is indeed a teaching staff member
+            if (!$staff || !optional($staff->user)->hasRole('teachingstaff')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid staff selection',
+                ], 404);
+            }
+        } else {
+            $staff = Staff::where('user_id', $user->id)->first();
+        }
+
         if (!$staff) {
             return response()->json([
                 'status' => 'error',
@@ -112,16 +131,65 @@ class SubjectHoursController extends Controller
         
         // Parse subject_id properly - could be a JSON string or already an array
         $subjectIds = $this->parseArrayField($staffData->subject_id);
+
+        // Fallback: if no subject_ids are specified on the staff record, derive them
+        // from existing subject_hours entries for this staff. This ensures that we
+        // can still return subjects even if the staff table hasn’t been fully
+        // populated with assignment IDs.
+        if (empty($subjectIds)) {
+            $subjectIds = SubjectHours::where('staff_id', $staff->id)
+                ->distinct()
+                ->pluck('subject_id')
+                ->toArray();
+        }
+        
         if (!empty($subjectIds)) {
             try {
                 // Get subjects with their sub-subjects
                 $subjects = Subject::with('subSubjects')->whereIn('id', $subjectIds)->get();
                 
-                // Rename 'subSubjects' to 'sub_subjects' in the response
+                // Ensure consistent property name for frontend
                 $subjects->each(function ($subject) {
-                    $subject->sub_subjects = $subject->subSubjects;
-                    unset($subject->subSubjects);
+                    if (isset($subject->subSubjects)) {
+                        $subject->sub_subjects = $subject->subSubjects;
+                        unset($subject->subSubjects);
+                    }
                 });
+                
+                // If we still have no subjects (e.g., staff had no assignments table data),
+                // derive them entirely from subject_hours.
+                if ($subjects->isEmpty()) {
+                    $derivedIds = SubjectHours::where('staff_id', $staff->id)
+                        ->distinct()
+                        ->pluck('subject_id')
+                        ->toArray();
+
+                    if (!empty($derivedIds)) {
+                        $subjects = Subject::with('subSubjects')
+                            ->whereIn('id', $derivedIds)
+                            ->get();
+
+                        // Ensure consistent property name for frontend
+                        $subjects->each(function ($subject) {
+                            if (isset($subject->subSubjects)) {
+                                $subject->sub_subjects = $subject->subSubjects;
+                                unset($subject->subSubjects);
+                            }
+                        });
+
+                        // Attach hours same as earlier
+                        foreach ($subjects as $subject) {
+                            foreach ($subject->sub_subjects as $subSubject) {
+                                $hours = SubjectHours::where([
+                                    'staff_id' => $staff->id,
+                                    'subject_id' => $subject->id,
+                                    'sub_subject_id' => $subSubject->id,
+                                ])->first();
+                                $subSubject->hours = $hours ? $hours->hours : 0;
+                            }
+                        }
+                    }
+                }
                 
                 // Get hours for each sub-subject
                 foreach ($subjects as $subject) {

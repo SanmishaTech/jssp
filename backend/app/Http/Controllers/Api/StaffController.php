@@ -41,6 +41,15 @@ public function index(Request $request): JsonResponse
         });
     }
 
+    // Optional role filter (e.g., ?role=teachingstaff)
+    if ($request->query('role')) {
+        $roleFilter = $request->query('role');
+        // Filter via Spatie roles relation on users -> roles.name
+        $query->whereHas('user.roles', function ($q) use ($roleFilter) {
+            $q->where('name', $roleFilter);
+        });
+    }
+
     // Paginate the results.
     $staff = $query->paginate(7);
 
