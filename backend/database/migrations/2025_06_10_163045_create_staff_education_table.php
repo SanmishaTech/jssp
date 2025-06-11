@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('staff_education', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('staff_id');
-             $table->string('qualification')->nullable();
-            $table->string('college_name')->nullable();
-            $table->string('board_university')->nullable();
-            $table->year('passing_year')->nullable();
-            $table->decimal('percentage', 5, 2)->nullable();
+            $table->string('qualification')->nullable();
+           $table->string('college_name')->nullable();
+           $table->string('board_university')->nullable();
+           $table->year('passing_year')->nullable();
+           $table->decimal('percentage', 5, 2)->nullable();
+            // Added column to store certificate file name
+            $table->string('certificate_path')->nullable();
             $table->timestamps();
         });
     }
@@ -30,4 +32,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('staff_education');
     }
-}; 
+};

@@ -48,11 +48,12 @@ use App\Http\Controllers\Api\AcademicYearController;
 use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\PurchaseOrderController;
+use App\Http\Controllers\Api\StaffEducationController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
+use App\Http\Controllers\Api\NoticeController; // Added this line
 use App\Http\Controllers\Api\SyllabusController; // Added this line
 use App\Http\Controllers\Api\DashboardController; // Added for dashboard
-use App\Http\Controllers\Api\NoticeController; // Added this line
 
 
 Route::post('/login', [UserController::class, 'login']);
@@ -194,6 +195,9 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    // Dashboard route
    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.data');
 
+
+   Route::resource('staffEducations', StaffEducationController::class);
+   Route::get('/all_staffEducations', [StaffEducationController::class, 'allStaffEducations'])->name("staffEducations.all");
 
 
    

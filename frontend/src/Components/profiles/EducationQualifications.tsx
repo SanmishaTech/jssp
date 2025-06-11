@@ -1,379 +1,383 @@
-import { X, Upload, File } from "lucide-react";
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
-  CardContent 
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useFieldArray, UseFormReturn } from "react-hook-form";
-import { useState } from "react";
-import { toast } from "sonner";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
 
-interface EducationQualificationsProps {
-  form: UseFormReturn<any>;
-  existingDocuments?: any[];
-  onAddDocuments?: (files: File[]) => void;
-  onRemoveDocument?: (id: number) => void;
-  onRemoveNewDocument?: (index: number) => void;
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+// Define the type for a single education entry
+interface Education {
+  id: number;
+  qualification: string;
+  college_name: string;
+  board_university: string;
+  passing_year: string;
+  percentage: string;
+  certificate_path?: string;
+  certificate_url?: string;
 }
 
-export default function EducationQualifications({ 
-  form, 
-  existingDocuments = [], 
-  onAddDocuments, 
-  onRemoveDocument,
-  onRemoveNewDocument 
-}: EducationQualificationsProps) {
-  const { control } = form;
-  
-  // UseFieldArray hook for managing dynamic education fields
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "education",
+const EducationQualifications = () => {
+  const [educations, setEducations] = useState<Education[]>([]);
+  const [open, setOpen] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [formData, setFormData] = useState({
+    qualification: '',
+    college_name: '',
+    board_university: '',
+    passing_year: '',
+    percentage: '',
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [deleteCertificate, setDeleteCertificate] = useState(false);
 
-  // State for certificate upload functionality
-  const [selectedDocuments, setSelectedDocuments] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<(string | null)[]>([]);
+  const fetchEducations = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
 
-  // Function to add a new education field
-  const addEducationField = () => {
-    append({
+      const response = await axios.get('/api/staffEducations', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.status && response.data.data?.StaffEducation) {
+        const eduPayload = response.data.data.StaffEducation;
+        // If it is paginated, data may be under eduPayload.data
+        const list = Array.isArray(eduPayload)
+          ? eduPayload
+          : Array.isArray(eduPayload.data)
+            ? eduPayload.data
+            : [];
+        setEducations(list);
+      }
+    } catch (error) {
+      console.error('Error fetching education qualifications:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEducations();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === 'certificate') {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files.length > 0) {
+        const file = files[0];
+        if (file.type !== 'application/pdf') {
+          alert('Please select a PDF file');
+          (e.target as HTMLInputElement).value = '';
+          return;
+        }
+        setSelectedFile(file);
+      }
+      return;
+    }
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({
       qualification: '',
       college_name: '',
       board_university: '',
       passing_year: '',
       percentage: '',
     });
+    setSelectedFile(null);
+    setDeleteCertificate(false);
   };
 
-  // Function to handle removal of an education field
-  const removeEducationField = (index: number) => {
-    remove(index);
-  };
-  
-  // Certificate handling functions
-  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!onAddDocuments) return;
-    
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      // Limit to a total of 10 certificates (existing + new)
-      const totalAllowed = 10 - existingDocuments.length;
-      const newFiles = files.slice(0, totalAllowed);
-      
-      if (totalAllowed <= 0) {
-        toast.error("Maximum 10 certificates allowed");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
         return;
       }
-      
-      if (files.length > totalAllowed) {
-        toast.warning(`Only ${totalAllowed} more certificates can be added. Maximum limit is 10.`);
-      }
-      
-      // Add the new files to the state
-      setSelectedDocuments(prev => [...prev, ...newFiles]);
-      
-      // Notify parent component
-      onAddDocuments(newFiles);
-      
-      // Create preview URLs if applicable (for PDFs, images, etc.)
-      const newPreviewUrls = newFiles.map(file => {
-        // For images and PDFs we can create object URLs
-        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-          return URL.createObjectURL(file);
-        }
-        // For other files, return null
-        return null;
+
+      const fd = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        fd.append(key, value);
       });
-      
-      setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
-      
-      // Reset the input field to allow selecting the same file again
-      e.target.value = '';
+      if (selectedFile) {
+        fd.append('certificate', selectedFile);
+      }
+      if (deleteCertificate) {
+        fd.append('delete_certificate', '1');
+      }
+
+      if (editingId) {
+        await axios.post(`/api/staffEducations/${editingId}?_method=PUT`, fd, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      } else {
+        await axios.post('/api/staffEducations', fd, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+      }
+      fetchEducations(); // Refresh
+      setOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving education qualification:', error);
+      alert('Failed to save qualification. Please check the console for details.');
     }
   };
 
-  const removeNewDocument = (index: number) => {
-    if (!onRemoveNewDocument) return;
-    
-    // Remove from local state
-    setSelectedDocuments(prev => {
-      const updated = [...prev];
-      updated.splice(index, 1);
-      return updated;
+  const handleEdit = (edu: Education) => {
+    setEditingId(edu.id);
+    setFormData({
+      qualification: edu.qualification,
+      college_name: edu.college_name,
+      board_university: edu.board_university,
+      passing_year: edu.passing_year,
+      percentage: edu.percentage,
     });
-
-    // Revoke the object URL if it exists
-    if (previewUrls[index]) {
-      URL.revokeObjectURL(previewUrls[index]);
-    }
-    
-    // Remove from preview URLs
-    setPreviewUrls(prev => {
-      const updated = [...prev];
-      updated.splice(index, 1);
-      return updated;
-    });
-    
-    // Notify parent
-    onRemoveNewDocument(index);
+    setSelectedFile(null);
+    setDeleteCertificate(false);
+    setOpen(true);
   };
-  
-  // Function to get appropriate icon for file type
-  const getFileIcon = (filename: string) => {
-    const extension = filename.split('.').pop()?.toLowerCase();
-    
-    switch (extension) {
-      case 'pdf':
-        return <File className="w-4 h-4 text-red-500" />;
-      case 'doc':
-      case 'docx':
-        return <File className="w-4 h-4 text-blue-500" />;
-      case 'xls':
-      case 'xlsx':
-        return <File className="w-4 h-4 text-green-500" />;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif':
-        return <File className="w-4 h-4 text-purple-500" />;
-      default:
-        return <File className="w-4 h-4 text-gray-500" />;
+
+  const handleDelete = async (id: number) => {
+    const confirmDel = window.confirm('Are you sure you want to delete this qualification?');
+    if (!confirmDel) return;
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      await axios.delete(`/api/staffEducations/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchEducations();
+    } catch (error) {
+      console.error('Error deleting qualification:', error);
+      alert('Failed to delete qualification');
     }
+  };
+
+  const handleViewCertificate = (fileUrl: string) => {
+    window.open(fileUrl, '_blank');
   };
 
   return (
-    <Card className="w-full">
+    <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Educational Qualifications</CardTitle>
-        </div>
-        <CardDescription>Add your educational qualifications and details</CardDescription>
+        <CardTitle>Educational Qualifications</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border border-gray-300 px-4 py-2 text-left">Qualification</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Institute Name</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Board/University</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Passing Year</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Percentage</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fields.map((field, index) => (
-                  <tr key={field.id} className="border-b">
-                    <td className="border border-gray-300 p-2">
-                      <FormField
-                        control={control}
-                        name={`education.${index}.qualification`}
-                        render={({ field }) => (
-                          <FormControl>
-                            <Input 
-                              placeholder="Degree/Diploma" 
-                              {...field} 
-                              className="w-full"
-                            />
-                          </FormControl>
-                        )}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <FormField
-                        control={control}
-                        name={`education.${index}.college_name`}
-                        render={({ field }) => (
-                          <FormControl>
-                            <Input 
-                              placeholder="College/Institution" 
-                              {...field} 
-                              className="w-full"
-                            />
-                          </FormControl>
-                        )}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <FormField
-                        control={control}
-                        name={`education.${index}.board_university`}
-                        render={({ field }) => (
-                          <FormControl>
-                            <Input 
-                              placeholder="Board/University" 
-                              {...field} 
-                              className="w-full"
-                            />
-                          </FormControl>
-                        )}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <FormField
-                        control={control}
-                        name={`education.${index}.passing_year`}
-                        render={({ field }) => (
-                          <FormControl>
-                            <Input 
-                              placeholder="YYYY" 
-                              {...field} 
-                              className="w-full"
-                              maxLength={4}
-                              onInput={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.value = target.value.replace(/\D/g, "").substring(0, 4);
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <FormField
-                        control={control}
-                        name={`education.${index}.percentage`}
-                        render={({ field }) => (
-                          <FormControl>
-                            <Input 
-                              placeholder="0-100" 
-                              {...field} 
-                              className="w-full"
-                              onInput={(e) => {
-                                const target = e.target as HTMLInputElement;
-                                target.value = target.value.replace(/[^0-9.]/g, "");
-                                if (target.value !== '' && parseFloat(target.value) > 100) {
-                                  target.value = '100';
-                                }
-                              }}
-                            />
-                          </FormControl>
-                        )}
-                      />
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      <Button
-                        type="button"
-                        onClick={() => removeEducationField(index)}
-                        className="bg-blue-300 hover:bg-blue-600 text-white"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Button
-            type="button"
-            onClick={addEducationField}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-          >
-            Add Education
-          </Button>
-        </div>
-        
-        {/* Certificate Upload Section */}
-        <div className="mt-6 space-y-4">
-          <h3 className="text-lg font-medium">Education Certificates</h3>
-          <p className="text-sm text-gray-500">Upload education certificates (PDF, DOC, XLS, Images, etc.)</p>
-          
-          <div className="flex items-center justify-center w-full">
-            <label htmlFor="certificate-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-8 h-8 mb-3 text-gray-500" />
-                <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">Click to upload certificates</span>
-                </p>
-                <p className="text-xs text-gray-500">PDF, DOC, XLS, Images, etc.</p>
-              </div>
-              <input
-                id="certificate-upload"
-                type="file"
-                className="hidden"
-                onChange={handleDocumentChange}
-                multiple
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                disabled={existingDocuments.length + selectedDocuments.length >= 10}
-              />
-            </label>
-          </div>
-
-          {/* Display existing certificates */}
-          {existingDocuments.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-700">Existing Certificates</h4>
-              <div className="grid grid-cols-1 gap-2">
-                {existingDocuments.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                    <div className="flex items-center space-x-2">
-                      {getFileIcon(doc.certificate_path || doc.document_path || doc.name || "")}
-                      <a 
-                        href={`/api/staff-file/${doc.certificate_path || doc.document_path || doc.name}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer truncate max-w-xs"
-                      >
-                        {doc.certificate_path || doc.document_path || doc.name || `Certificate ${doc.id}`}
-                      </a>
-                    </div>
-                    {onRemoveDocument && (
-                      <button
-                        type="button"
-                        onClick={() => onRemoveDocument(doc.id)}
-                        className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
+        <div className="flex justify-end mb-4">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="h-8 gap-1">
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Add Qualification
+                </span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-white sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>{editingId ? 'Edit Qualification' : 'Add New Qualification'}</DialogTitle>
+                <DialogDescription>
+                  Enter the details of your qualification. Click save when
+                  you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} encType="multipart/form-data">
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="qualification" className="text-right">
+                      Qualification
+                    </Label>
+                    <Input
+                      id="qualification"
+                      name="qualification"
+                      value={formData.qualification}
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Display newly added certificates */}
-          {selectedDocuments.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-700">New Certificates</h4>
-              <div className="grid grid-cols-1 gap-2">
-                {selectedDocuments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                    <div className="flex items-center space-x-2">
-                      {getFileIcon(file.name)}
-                      <span className="text-sm text-gray-700 truncate max-w-xs">
-                        {file.name}
-                      </span>
-                    </div>
-                    {onRemoveNewDocument && (
-                      <button
-                        type="button"
-                        onClick={() => removeNewDocument(index)}
-                        className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="college_name" className="text-right">
+                      College Name
+                    </Label>
+                    <Input
+                      id="college_name"
+                      name="college_name"
+                      value={formData.college_name}
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="board_university" className="text-right">
+                      Board/University
+                    </Label>
+                    <Input
+                      id="board_university"
+                      name="board_university"
+                      value={formData.board_university}
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="passing_year" className="text-right">
+                      Passing Year
+                    </Label>
+                    <Input
+                      id="passing_year"
+                      name="passing_year"
+                      value={formData.passing_year}
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="percentage" className="text-right">
+                      Percentage
+                    </Label>
+                    <Input
+                      id="percentage"
+                      name="percentage"
+                      value={formData.percentage}
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="certificate" className="text-right">
+                      Certificate
+                    </Label>
+                    <Input
+                      id="certificate"
+                      name="certificate"
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleChange}
+                      className="col-span-3"
+                    />
+                  </div>
+                  {editingId && (
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label className="text-right">Current</Label>
+                      <div className="col-span-3 flex items-center gap-2">
+                        {educations.find((e) => e.id === editingId)?.certificate_url ? (
+                          <>
+                            <Button
+                              type="button"
+                              variant="link"
+                              onClick={() => handleViewCertificate(educations.find((e) => e.id === editingId)!.certificate_url!)}
+                            >
+                              View
+                            </Button>
+                            <Label className="flex items-center gap-1">
+                              <input
+                                type="checkbox"
+                                checked={deleteCertificate}
+                                onChange={(e) => setDeleteCertificate(e.target.checked)}
+                              />
+                              <span>Delete</span>
+                            </Label>
+                          </>
+                        ) : (
+                          <span>No certificate</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button type="submit">Save changes</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Qualification</TableHead>
+              <TableHead>College Name</TableHead>
+              <TableHead>Board/University</TableHead>
+              <TableHead>Passing Year</TableHead>
+              <TableHead>Percentage</TableHead>
+              <TableHead>Certificate</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {educations.map((edu) => (
+              <TableRow key={edu.id}>
+                <TableCell>{edu.qualification}</TableCell>
+                <TableCell>{edu.college_name}</TableCell>
+                <TableCell>{edu.board_university}</TableCell>
+                <TableCell>{edu.passing_year}</TableCell>
+                <TableCell>{edu.percentage}</TableCell>
+                <TableCell>
+                  {edu.certificate_url ? (
+                    <Button variant="link" size="sm" onClick={() => handleViewCertificate(edu.certificate_url!)}>
+                      View
+                    </Button>
+                  ) : (
+                    'N/A'
+                  )}
+                </TableCell>
+                <TableCell className="flex gap-2">
+                  <Button variant="ghost" size="icon" onClick={() => handleEdit(edu)}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => handleDelete(edu.id)}>
+                    <Trash2 className="w-4 h-4 text-red-600" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default EducationQualifications;

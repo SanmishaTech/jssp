@@ -299,7 +299,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </div>
           </div>
           <div className="h-px bg-muted my-1" />
-          {(role === 'viceprincipal' || role === 'teachingstaff' || role === 'cashier' || role === 'backoffice' || role === 'accountant' || role === 'admission' || role === 'admin') && (
+          {(role === 'viceprincipal' || role === 'teachingstaff' || role === 'cashier' || role === 'backoffice' || role === 'accountant' || role === 'admission' || role === 'admin' || role === 'nonteachingstaff') && (
             <button
               onClick={handleUpdateProfile}
               className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left"

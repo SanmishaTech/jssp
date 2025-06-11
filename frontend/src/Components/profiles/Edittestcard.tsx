@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft, X } from "lucide-react";
+import { MoveLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { toast } from "sonner";
@@ -635,13 +635,19 @@ function ProfileForm({ formData }) {
     }
   }
 
+  const [activeTab, setActiveTab] = useState<string>("profile");
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs
+          defaultValue="profile"
+          onValueChange={(val:string)=>setActiveTab(val)}
+          className="w-full"
+        >
           <TabsList className="grid grid-cols-4 h-auto w-full">
             <TabsTrigger className="px-4 py-2" value="profile">Staff Profile</TabsTrigger>
             <TabsTrigger className="px-4 py-2" value="education">Education</TabsTrigger>
@@ -747,22 +753,22 @@ function ProfileForm({ formData }) {
                       render={({ field }) => (
                         <FormItem >
                           <FormLabel>Gender</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            value={field.value}
-                          >
-                            <FormControl>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              value={field.value}
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select gender" />
                               </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Male">Male</SelectItem>
-                              <SelectItem value="Female">Female</SelectItem>
-                              <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
+                              <SelectContent>
+                                <SelectItem value="Male">Male</SelectItem>
+                                <SelectItem value="Female">Female</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -1164,37 +1170,39 @@ function ProfileForm({ formData }) {
           </TabsContent>
         </Tabs>
         
-        <div className="flex justify-end w-full gap-3">
-          <Button
-            onClick={() => navigate({ to: "/dashboards" })}
-            className="self-center"
-            type="button"
-          >
-            Cancel
-          </Button>
-          <Button 
-            className="self-center mr-8" 
-            type="button"
-            onClick={() => {
-              // Get current form values
-              const values = form.getValues();
-              console.log('Current form values:', values);
-              console.log('Selected papers before submission:', selectedPapers);
-              
-              // Trigger validation
-              form.trigger().then(isValid => {
-                if (isValid) {
-                  onSubmit(values);
-                } else {
-                  console.log('Form validation errors:', form.formState.errors);
-                  toast.error("Please fix the form errors before submitting");
-                }
-              });
-            }}
-          >
-            Update Staff
-          </Button>
-        </div>
+        {activeTab !== 'education' && (
+          <div className="flex justify-end w-full gap-3">
+            <Button
+              onClick={() => navigate({ to: "/dashboards" })}
+              className="self-center"
+              type="button"
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="self-center mr-8" 
+              type="button"
+              onClick={() => {
+                // Get current form values
+                const values = form.getValues();
+                console.log('Current form values:', values);
+                console.log('Selected papers before submission:', selectedPapers);
+                
+                // Trigger validation
+                form.trigger().then(isValid => {
+                  if (isValid) {
+                    onSubmit(values);
+                  } else {
+                    console.log('Form validation errors:', form.formState.errors);
+                    toast.error("Please fix the form errors before submitting");
+                  }
+                });
+              }}
+            >
+              Update Staff
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );
