@@ -439,7 +439,7 @@ function LeaveApprovalDashboard() {
       
       {/* Approval/Rejection Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="bg-white shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">
               {actionType === "approve" ? "Approve Leave" : "Reject Leave"}
@@ -494,7 +494,7 @@ function LeaveApprovalDashboard() {
       
       {/* Leave Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="bg-white sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
             <DialogDescription>

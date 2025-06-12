@@ -518,7 +518,7 @@ function LeaveForm() {
       
       {/* Leave Details Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="bg-white sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
             <DialogDescription>
