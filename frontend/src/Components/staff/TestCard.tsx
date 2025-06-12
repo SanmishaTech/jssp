@@ -568,6 +568,7 @@ function ProfileForm() {
                           <SelectItem value="accountant">Accountant</SelectItem>
                            <SelectItem value="cashier">Cashier</SelectItem>
                           <SelectItem value="backoffice">Back Office</SelectItem>
+                          <SelectItem value="storekeeper">Store Keeper</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

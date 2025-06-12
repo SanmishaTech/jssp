@@ -23,8 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 
 const profileFormSchema = z.object({
-  medium_code: z.string().trim().nonempty("Medium Code is Required"),
-  medium_title: z.string().trim().nonempty("Medium Title is Required"),
+  faculty_code: z.string().trim().nonempty("Medium Code is Required"),
+  faculty_title: z.string().trim().nonempty("Medium Title is Required"),
   organization: z.string().trim().nonempty("Organization is Required"),
   userId: z.string().optional(),
 });
@@ -129,15 +129,15 @@ export default function AddCourseDialog({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="medium_title"
+                      name="faculty_title"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Title
+                            Faculty Title
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Title..." {...field} />
+                            <Input placeholder="Faculty Title..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -145,15 +145,15 @@ export default function AddCourseDialog({
                     />
                     <FormField
                       control={form.control}
-                      name="medium_code"
+                      name="faculty_code"
                       render={({ field }: FormFieldProps) => (
                         <FormItem>
                           <FormLabel>
-                            Medium Code
+                            Faculty Code
                             <span className="text-red-500">*</span>
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Medium Code..." {...field} />
+                            <Input placeholder="Faculty Code..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

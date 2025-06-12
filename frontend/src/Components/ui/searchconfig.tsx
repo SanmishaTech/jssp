@@ -646,11 +646,30 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/inventory",
       icon: Home,
     },
+
     {
-      title: "Leave Application",
-      url: "/leave",
-      icon: FileText,
+      title: "Staff Management",
+      icon: Users,
+      children: [
+        {
+          title: "Staff",
+          url: "/staff",
+          icon: Users,
+        },
+        {
+          title: "Committees",
+          url: "/committee",
+          icon: UserCheck,
+        },
+     
+        {
+          title: "Leave Application",
+          url: "/leave",
+          icon: FileText,
+        },
+      ]
     },
+    
     {
       title: "Complaints",
       url: "/complaints",
@@ -830,6 +849,103 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/complaints",
       icon: MessageCircle,
     },
+   
+  ],
+  storekeeper: [
+    
+    {
+      title: "Dashboard",
+      url: "/dashboards",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    }, 
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+   
+    {
+      title: "Staff Management",
+      icon: Users,
+      children: [
+        {
+          title: "Staff",
+          url: "/staff",
+          icon: Users,
+        },
+        {
+          title: "Committees",
+          url: "/committee",
+          icon: UserCheck,
+        },
+     
+        {
+          title: "Leave Application",
+          url: "/leave",
+          icon: FileText,
+        },
+      ]
+    },
+    {
+      title: "Inventory Management",
+      icon: Package,
+      children: [
+        {
+          title: "Vendors",
+          url: "/vendors",
+          icon: Truck,
+        },
+        {
+          title: "Asset Categories",
+          url: "/assetcategories",
+          icon: Package,
+        },
+        {
+          title: "Asset Masters",
+          url: "/assetmasters",
+          icon: Truck,
+        },
+        {
+          title: "Requisitions",
+          url: "/requisitions",
+          icon: Truck,
+        },
+        {
+          title: "Inventory",
+          url: "/inventory",
+          icon: Package,
+        },
+        {
+          title: "Purchase Order",
+          url: "/purchaseorders",
+          icon: Truck,
+        },
+       
+      ]
+    },
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+   
+  
+    
    
   ],
 };

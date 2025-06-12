@@ -16,6 +16,7 @@ use Database\Seeders\CreateMemberUserSeeder;
 use Database\Seeders\NonTeachingStaffSeeder;
 use Database\Seeders\CreateCashierRoleSeeder;
 use Database\Seeders\CreateSuperAdminUserSeeder;
+use Database\Seeders\StoreKeeperSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -40,6 +41,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TeachingStaffSeeder::class);
         $this->call(NonTeachingStaffSeeder::class);
         $this->call(VicePrincipalSeeder::class);
+        $this->call(StoreKeeperSeeder::class);
 
     }
 }

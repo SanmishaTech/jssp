@@ -25,7 +25,7 @@ class CourseController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('medium_code', 'like', '%' . $searchTerm . '%');
+                $query->where('faculty_code', 'like', '%' . $searchTerm . '%');
             });
         }
     
@@ -55,8 +55,8 @@ class CourseController extends BaseController
         // Create a new staff record and assign the institute_id from the logged-in admin
         $course = new Course();
         $course->institute_id = Auth::user()->staff->institute_id;  
-        $course->medium_code = $request->input('medium_code');
-        $course->medium_title = $request->input('medium_title');
+        $course->faculty_code = $request->input('faculty_code');
+        $course->faculty_title = $request->input('faculty_title');
         $course->organization = $request->input('organization');
         $course->save();
         
@@ -88,8 +88,8 @@ class CourseController extends BaseController
        
                        
         $course->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
-         $course->medium_code = $request->input('medium_code');
-        $course->medium_title = $request->input('medium_title');
+         $course->faculty_code = $request->input('faculty_code');
+        $course->faculty_title = $request->input('faculty_title');
         $course->organization = $request->input('organization');
            $course->save();
        

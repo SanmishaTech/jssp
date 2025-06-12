@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
 
             // courses fields
-            $table->string('medium_code')->nullable();
-            $table->string('medium_title')->nullable();
+            $table->string('faculty_code')->nullable();
+            $table->string('faculty_title')->nullable();
             $table->string('organization')->nullable();
             $table->timestamps();
         });

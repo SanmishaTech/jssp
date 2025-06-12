@@ -24,13 +24,13 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'medium_code' => [
+            'faculty_code' => [
                 'required',
-                'unique:courses,medium_code',
+                'unique:courses,faculty_code',
             ],
-            'medium_title' => [
+            'faculty_title' => [
                 'required',
-                'unique:courses,medium_title',
+                'unique:courses,faculty_title',
             ],
             
         ];
@@ -38,13 +38,13 @@ class CourseRequest extends FormRequest
        
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
         
-         $rules['medium_code'] = [
+         $rules['faculty_code'] = [
             'required',
-            'unique:courses,medium_code,' .$this->route('course'),
+            'unique:courses,faculty_code,' .$this->route('course'),
         ];
-        $rules['medium_title'] = [
+        $rules['faculty_title'] = [
             'required',
-            'unique:courses,medium_title,'.$this->route('course') ,
+            'unique:courses,faculty_title,'.$this->route('course') ,
         ];
     }
     

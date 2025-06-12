@@ -258,7 +258,7 @@ const PaperUpload = () => {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="research_topic" className="text-right">
-                      Research Topic
+                      Research Paper Title
                     </Label>
                     <Input
                       id="research_topic"
@@ -271,7 +271,7 @@ const PaperUpload = () => {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="publication_identifier" className="text-right">
-                      Publication Identifier
+                      ISSN / ISBN
                     </Label>
                     <Input
                       id="publication_identifier"
@@ -405,8 +405,8 @@ const PaperUpload = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Journal Title</TableHead>
-              <TableHead>Research Topic</TableHead>
-              <TableHead>Publification Identifier</TableHead>
+              <TableHead>Research Paper Title</TableHead>
+              <TableHead>ISSN/ISBN</TableHead>
               <TableHead>Volume</TableHead>
               <TableHead>Issue</TableHead>
                <TableHead>Year of Publication</TableHead>

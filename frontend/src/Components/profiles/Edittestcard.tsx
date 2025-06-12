@@ -44,11 +44,20 @@ import {
 } from "@/components/ui/tabs";
 
 const profileFormSchema = z.object({
-  staff_name: z.string().nonempty("Staff Name Required"),
+  staff_name: z.preprocess(
+    (val) => (val === null || val === undefined ? '' : String(val)),
+    z.string().nonempty("Staff Name Required")
+  ),
   employee_code: z.any().optional(),
-   date_of_birth: z.any().optional(),
-  address: z.string().optional(),
-  mobile: z.string().optional(),
+  date_of_birth: z.any().optional(),
+  address: z.preprocess(
+    (val) => (val === null || val === undefined ? '' : String(val)),
+    z.string().optional()
+  ),
+  mobile: z.preprocess(
+    (val) => (val === null || val === undefined ? '' : String(val)),
+    z.string().optional()
+  ),
   email: z
     .string()
     .nonempty("Email is required")
@@ -83,9 +92,9 @@ const profileFormSchema = z.object({
   medical_history: z.any().optional(),
   medical_image: z.any().optional(),
   delete_medical_image: z.boolean().optional(),
- pan_number: z.any().optional(),
-   aadhaar_number: z.any().optional(),
-    subject_type: z.any().optional(),
+  pan_number: z.any().optional(),
+  aadhaar_number: z.any().optional(),
+  subject_type: z.any().optional(),
   mode_of_payment: z.any().optional(),
   bank_name: z.any().optional(),
   account_number: z.any().optional(),
@@ -136,6 +145,9 @@ function ProfileForm({ formData }) {
     Object.entries(formData).forEach(([key, value]) => {
       if (value === null || value === undefined) {
         sanitized[key] = '';
+      } else if (typeof value === 'number' || typeof value === 'boolean') {
+        // Coerce non-string primitives (number/boolean) to string to satisfy zod string validations
+        sanitized[key] = String(value);
       } else {
         sanitized[key] = value;
       }
@@ -146,7 +158,7 @@ function ProfileForm({ formData }) {
   const defaultValues: Partial<ProfileFormValues> = {
     staff_name: '',
     employee_code: '',
-     date_of_birth: '',
+    date_of_birth: '',
     address: '',
     mobile: '',
     email: '',
@@ -156,7 +168,7 @@ function ProfileForm({ formData }) {
     highest_qualification: '',
     pan_number: '',
     aadhaar_number: '',
-      subject_type: '',
+    subject_type: '',
     mode_of_payment: 'Online',
     bank_name: '',
     account_number: '',

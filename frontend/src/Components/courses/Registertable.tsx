@@ -7,8 +7,8 @@ import EditCourseDialog from "./EditCourseDialog";
 
 interface Course {
   id: string;
-  medium_title: string;
-  medium_code: string;
+  faculty_title: string;
+  faculty_code: string;
   organization: string;
 }
 
@@ -104,8 +104,8 @@ export default function Dashboardholiday() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const typeofschema = {
-    medium_code: "String",
-    medium_title: "String",
+    faculty_code: "String",
+    faculty_title: "String",
     organization: "String",
   };
 
@@ -170,8 +170,8 @@ export default function Dashboardholiday() {
         title: "Courses",
         description: "Manage Courses and view their details.",
         headers: [
-          { label: "Medium Title", key: "one" },
-          { label: "Medium Code", key: "two" },
+          { label: "Faculty Title", key: "one" },
+          { label: "Faculty Code", key: "two" },
           { label: "Affiliated University", key: "three" },
           { label: "Action", key: "action" },
         ],
@@ -261,8 +261,8 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
-    one: item.medium_title || "Unknown",
-    two: item.medium_code || "NA",
+    one: item.faculty_title || "Unknown",
+    two: item.faculty_code || "NA",
     three: item.organization || "NA",
     delete: "/courses/" + item.id,
   }));
