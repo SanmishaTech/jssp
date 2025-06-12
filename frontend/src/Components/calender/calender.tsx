@@ -91,7 +91,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
         date: new Date(meeting.date),
         title: `Meeting at ${meeting.venue}`,
         type: 'meeting' as const,
-        description: meeting.synopsis,
+        description: stripHtmlTags(meeting.synopsis),
         time: meeting.time
       }));
 
@@ -108,7 +108,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
         date: new Date(event.date),
         title: `Event at ${event.venue}`,
         type: 'event' as const,
-        description: event.synopsis,
+        description: stripHtmlTags(event.synopsis),
         time: event.time
       }));
 
@@ -120,6 +120,12 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
       console.error('Error fetching meetings and events:', error);
       return [];
     }
+  };
+
+  // Utility function to strip HTML tags from a string
+  const stripHtmlTags = (html: string): string => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '');
   };
 
   // Function to fetch holidays from the all_holiday endpoint
@@ -204,29 +210,13 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
       
       let weeklyHolidaysList: WeeklyHoliday[] = [];
       
-      // Handle the specific format from the API:
-      // {
-      //   "status": true,
-      //   "message": "Weekly holidays retrieved successfully",
-      //   "data": {
-      //       "WeeklyHoliday": {
-      //           "id": 2,
-      //           "institute_id": 2,
-      //           "holiday_days": [2, 6],
-      //           "holiday_days_names": ["Tuesday", "Saturday"],
-      //           "description": "Weekly Holiday",
-      //           "is_active": true,
-      //           "created_at": "2025-05-24T07:01:01.000000Z",
-      //           "updated_at": "2025-05-24T07:08:10.000000Z"
-      //       }
-      //   }
-      // }
+      const weeklyHoliday = response.data?.data?.WeeklyHoliday;
       
-      if (response.data?.status === true && 
-          response.data?.data?.WeeklyHoliday && 
-          response.data.data.WeeklyHoliday.is_active) {
+      // Consider the weekly holiday configuration "active" unless the API explicitly marks it as inactive (false).
+      const isActive = weeklyHoliday && weeklyHoliday.is_active !== false; // Treat true or null/undefined as active
+      
+      if (response.data?.status === true && weeklyHoliday && isActive) {
         
-        const weeklyHoliday = response.data.data.WeeklyHoliday;
         console.log('Found weekly holiday config:', weeklyHoliday);
         
         // Check if holiday_days array exists
@@ -251,8 +241,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
         console.warn('No weekly holidays found in API response, adding default ones for testing');
         weeklyHolidaysList = [
           { day_of_week: 0, is_active: true },  // Sunday
-          { day_of_week: 6, is_active: true }   // Saturday
-        ];
+         ];
       }
       
       setWeeklyHolidays(weeklyHolidaysList);
@@ -265,8 +254,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
       // Even if API fails, add some default weekly holidays for testing
       const defaultHolidays = [
         { day_of_week: 0, is_active: true },  // Sunday
-        { day_of_week: 6, is_active: true }   // Saturday
-      ];
+       ];
       setWeeklyHolidays(defaultHolidays);
       return generateWeeklyHolidayEvents(defaultHolidays);
     }

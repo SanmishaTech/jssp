@@ -173,7 +173,9 @@ export default function Dashboardholiday() {
     return {
       id: item?.id,
       one: item?.venue || "Unknown",
-      two: item?.date || "NA",
+      two: item?.date
+      ? new Date(item.date).toLocaleDateString("en-GB").replace(/\//g, "-")
+      : "NA",
       three: item?.time || "NA",
       four: processedSynopsis,
 
