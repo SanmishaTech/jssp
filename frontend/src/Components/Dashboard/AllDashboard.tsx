@@ -279,8 +279,9 @@ export default function ResponsiveLabDashboard() {
   }, []);
 
   // Strip HTML tags and truncate to 100 chars
-  const getSynopsisPreview = (html: string = "") => {
-    const text = html.replace(/<[^>]+>/g, "");
+  const getSynopsisPreview = (html?: string | null) => {
+    const safeHtml = html ?? "";
+    const text = safeHtml.replace(/<[^>]+>/g, "");
     return text.length > 20 ? text.slice(0, 20) + "..." : text;
   };
 

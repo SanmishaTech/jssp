@@ -28,6 +28,10 @@ class Inventory extends Model
     return $this->belongsTo(Room::class);
   }
 
+  public function transfers(){
+    return $this->hasMany(Transfer::class);
+  }
+
   public function assetMaster(){
     return $this->belongsTo(AssetMaster::class);
   }

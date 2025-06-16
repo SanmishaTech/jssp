@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import DetailsDialog from "./DetailsDialog";
+import TransferDialog from "./TransferDialog";
 import { Link } from "@tanstack/react-router";
 import {
   File,
+ 
   PlusCircle,
   Search,
   Pencil,
@@ -45,7 +47,7 @@ import {
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import MultiSelectorComponent from "./profile";
+
 
 import {
   Table,
@@ -136,6 +138,8 @@ export default function Dashboard({
   // State for selected row and details dialog
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  // State for transfer dialog
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   // Handler to toggle row expansion with debug logs
   const toggleRow = (rowId) => {
@@ -155,6 +159,11 @@ export default function Dashboard({
       url: url,
     });
     // Implement edit functionality here
+  };
+
+  const handleTransfer = (item: any) => {
+    setSelectedItem(item);
+    setTransferDialogOpen(true);
   };
 
   const handleDelete = (id) => {
@@ -326,6 +335,13 @@ export default function Dashboard({
                 item={selectedItem}
               />
 
+              {/* Transfer Dialog */}
+              <TransferDialog
+                isOpen={transferDialogOpen}
+                onOpenChange={setTransferDialogOpen}
+                item={selectedItem}
+              />
+
               {/* <Additem
                 typeofschema={typeofschema}
                 add={tableData?.add}
@@ -340,7 +356,6 @@ export default function Dashboard({
                   title="No Inventory Available"
                   description="You can add a new inventory to get started."
                   icons={[FileText, FileSymlink, Files]}
-                  typeofschema={typeofschema}
                 />
               ) : (
                 <Card className="bg-card border border-border shadow-sm overflow-hidden">
@@ -416,6 +431,15 @@ export default function Dashboard({
                                             }
                                           >
                                             Edit
+                                          </DropdownItem>
+
+                                          <DropdownItem
+                                            key="transfer"
+                                            description="Transfer inventory to another room"
+                                            onPress={() => handleTransfer(row)}
+                                            startContent={<Files className={iconClasses} />}
+                                          >
+                                            Transfer
                                           </DropdownItem>
                                         </DropdownSection>
                                         {/* <DropdownSection title="Danger zone">

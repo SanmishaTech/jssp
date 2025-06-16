@@ -35,6 +35,7 @@ use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
 use App\Http\Controllers\Api\InstituteController;
 use App\Http\Controllers\Api\InventoryController;
+use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\AttendanceController;
@@ -106,7 +107,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('events', EventController::class);
    Route::get('/all_events', [EventController::class, 'allEvents'])->name("events.all");
 
-   Route::resource('inventory', InventoryController::class); 
+   Route::resource('inventory', InventoryController::class);
+
+   // Inventory Transfer routes
+   Route::apiResource('transfers', TransferController::class)->only(['index','store']);
+   Route::post('/transfers/{transfer}/approve', [TransferController::class, 'approve'])->name('transfers.approve');
+   Route::post('/transfers/{transfer}/reject',  [TransferController::class, 'reject'])->name('transfers.reject'); 
  
    Route::resource('complaints', ComplaintController::class);
    Route::get('/all_complaints', [ComplaintController::class, 'allComplaints'])->name("complaints.all");

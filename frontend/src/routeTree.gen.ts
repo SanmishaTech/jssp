@@ -15,6 +15,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as WeeklyholidayIndexImport } from './routes/weeklyholiday/index'
 import { Route as VendorsIndexImport } from './routes/vendors/index'
 import { Route as TrustiesIndexImport } from './routes/trusties/index'
+import { Route as TransferIndexImport } from './routes/transfer/index'
 import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
 import { Route as TaskmanagerIndexImport } from './routes/taskmanager/index'
 import { Route as SyllabusIndexImport } from './routes/syllabus/index'
@@ -108,6 +109,12 @@ const VendorsIndexRoute = VendorsIndexImport.update({
 const TrustiesIndexRoute = TrustiesIndexImport.update({
   id: '/trusties/',
   path: '/trusties/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TransferIndexRoute = TransferIndexImport.update({
+  id: '/transfer/',
+  path: '/transfer/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -823,6 +830,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeachertimetableIndexImport
       parentRoute: typeof rootRoute
     }
+    '/transfer/': {
+      id: '/transfer/'
+      path: '/transfer'
+      fullPath: '/transfer'
+      preLoaderRoute: typeof TransferIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/trusties/': {
       id: '/trusties/'
       path: '/trusties'
@@ -1088,6 +1102,7 @@ export interface FileRoutesByFullPath {
   '/syllabus': typeof SyllabusIndexRoute
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
+  '/transfer': typeof TransferIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/vendors': typeof VendorsIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
@@ -1164,6 +1179,7 @@ export interface FileRoutesByTo {
   '/syllabus': typeof SyllabusIndexRoute
   '/taskmanager': typeof TaskmanagerIndexRoute
   '/teachertimetable': typeof TeachertimetableIndexRoute
+  '/transfer': typeof TransferIndexRoute
   '/trusties': typeof TrustiesIndexRoute
   '/vendors': typeof VendorsIndexRoute
   '/weeklyholiday': typeof WeeklyholidayIndexRoute
@@ -1241,6 +1257,7 @@ export interface FileRoutesById {
   '/syllabus/': typeof SyllabusIndexRoute
   '/taskmanager/': typeof TaskmanagerIndexRoute
   '/teachertimetable/': typeof TeachertimetableIndexRoute
+  '/transfer/': typeof TransferIndexRoute
   '/trusties/': typeof TrustiesIndexRoute
   '/vendors/': typeof VendorsIndexRoute
   '/weeklyholiday/': typeof WeeklyholidayIndexRoute
@@ -1319,6 +1336,7 @@ export interface FileRouteTypes {
     | '/syllabus'
     | '/taskmanager'
     | '/teachertimetable'
+    | '/transfer'
     | '/trusties'
     | '/vendors'
     | '/weeklyholiday'
@@ -1394,6 +1412,7 @@ export interface FileRouteTypes {
     | '/syllabus'
     | '/taskmanager'
     | '/teachertimetable'
+    | '/transfer'
     | '/trusties'
     | '/vendors'
     | '/weeklyholiday'
@@ -1469,6 +1488,7 @@ export interface FileRouteTypes {
     | '/syllabus/'
     | '/taskmanager/'
     | '/teachertimetable/'
+    | '/transfer/'
     | '/trusties/'
     | '/vendors/'
     | '/weeklyholiday/'
@@ -1546,6 +1566,7 @@ export interface RootRouteChildren {
   SyllabusIndexRoute: typeof SyllabusIndexRoute
   TaskmanagerIndexRoute: typeof TaskmanagerIndexRoute
   TeachertimetableIndexRoute: typeof TeachertimetableIndexRoute
+  TransferIndexRoute: typeof TransferIndexRoute
   TrustiesIndexRoute: typeof TrustiesIndexRoute
   VendorsIndexRoute: typeof VendorsIndexRoute
   WeeklyholidayIndexRoute: typeof WeeklyholidayIndexRoute
@@ -1622,6 +1643,7 @@ const rootRouteChildren: RootRouteChildren = {
   SyllabusIndexRoute: SyllabusIndexRoute,
   TaskmanagerIndexRoute: TaskmanagerIndexRoute,
   TeachertimetableIndexRoute: TeachertimetableIndexRoute,
+  TransferIndexRoute: TransferIndexRoute,
   TrustiesIndexRoute: TrustiesIndexRoute,
   VendorsIndexRoute: VendorsIndexRoute,
   WeeklyholidayIndexRoute: WeeklyholidayIndexRoute,
@@ -1707,6 +1729,7 @@ export const routeTree = rootRoute
         "/syllabus/",
         "/taskmanager/",
         "/teachertimetable/",
+        "/transfer/",
         "/trusties/",
         "/vendors/",
         "/weeklyholiday/",
@@ -1865,6 +1888,9 @@ export const routeTree = rootRoute
     },
     "/teachertimetable/": {
       "filePath": "teachertimetable/index.tsx"
+    },
+    "/transfer/": {
+      "filePath": "transfer/index.tsx"
     },
     "/trusties/": {
       "filePath": "trusties/index.tsx"
