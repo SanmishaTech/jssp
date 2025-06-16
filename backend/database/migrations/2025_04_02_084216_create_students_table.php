@@ -20,7 +20,8 @@ return new class extends Migration
             // Students fields
             $table->string('student_name')->nullable();
             $table->string('prn')->nullable();
-            $table->timestamps();
+            $table->string('abcId')->nullable();
+             $table->timestamps();
         });
     }
 

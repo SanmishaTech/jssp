@@ -222,7 +222,7 @@ export default function SettingsProfilePage() {
                                         ? course.id.toString()
                                         : "";
                                     return courseId === field.value;
-                                  })?.medium_title || "Select Course..."
+                                  })?.faculty_title || "Select Course..."
                                 : "Select Course..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -255,7 +255,7 @@ export default function SettingsProfilePage() {
                                           setOpen(false);
                                         }}
                                       >
-                                        {course.medium_title}
+                                        {course.faculty_title}
                                         <Check
                                           className={cn(
                                             "ml-auto",

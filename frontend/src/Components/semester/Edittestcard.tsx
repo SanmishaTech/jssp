@@ -178,7 +178,7 @@ function ProfileForm({ formData }) {
                                 ? courses.find(
                                     (course) =>
                                       course.id.toString() === field.value
-                                  )?.medium_title ||
+                                  )?.faculty_title ||
                                   formData.course_name ||
                                   "Select Course..."
                                 : "Select Course..."}
@@ -208,7 +208,7 @@ function ProfileForm({ formData }) {
                                         setOpen(false);
                                       }}
                                     >
-                                      {course.medium_title}
+                                      {course.faculty_title}
                                       <Check
                                         className={cn(
                                           "ml-auto",

@@ -53,7 +53,7 @@ import { Separator } from "@/components/ui/separator";
 // Define interfaces for our data types
 interface Course {
   id: number;
-  medium_title: string;
+  faculty_title: string;
 }
 
 interface Room {
@@ -243,7 +243,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                 ? courses.find(
                                     (course) =>
                                       course.id.toString() === field.value
-                                  )?.medium_title || "Select Course..."
+                                  )?.faculty_title || "Select Course..."
                                 : "Select Course..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -268,7 +268,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                                         );
                                       }}
                                     >
-                                      {course.medium_title}
+                                      {course.faculty_title}
                                       <Check
                                         className={cn(
                                           "ml-auto",

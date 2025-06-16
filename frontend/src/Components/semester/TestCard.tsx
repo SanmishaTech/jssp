@@ -174,7 +174,7 @@ function ProfileForm() {
                                   ? courses.find(
                                       (course) =>
                                         course.id.toString() === field.value
-                                    )?.medium_title
+                                    )?.faculty_title
                                   : "Select Course..."}
                                 <ChevronsUpDown className="opacity-50" />
                               </Button>
@@ -202,7 +202,7 @@ function ProfileForm() {
                                           setOpen(false);
                                         }}
                                       >
-                                        {course.medium_title}
+                                        {course.faculty_title}
                                         <Check
                                           className={cn(
                                             "ml-auto",

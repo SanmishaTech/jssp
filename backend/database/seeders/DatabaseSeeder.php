@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\AdmissionSeeder;
 use Database\Seeders\AccountantSeeder;
-use Database\Seeders\BackOfficeSeeder;
+use Database\Seeders\LibrarianSeeder;
 use Database\Seeders\TeachingStaffSeeder;
 use Database\Seeders\VicePrincipalSeeder;
 use Database\Seeders\CreateAdminUserSeeder;
@@ -17,6 +17,7 @@ use Database\Seeders\NonTeachingStaffSeeder;
 use Database\Seeders\CreateCashierRoleSeeder;
 use Database\Seeders\CreateSuperAdminUserSeeder;
 use Database\Seeders\StoreKeeperSeeder;
+use Database\Seeders\HODSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -37,11 +38,12 @@ class DatabaseSeeder extends Seeder
         $this->call(CreateCashierRoleSeeder::class);
         $this->call(AdmissionSeeder::class);
         $this->call(AccountantSeeder::class);
-        $this->call(BackOfficeSeeder::class);
+        $this->call(LibrarianSeeder::class);
         $this->call(TeachingStaffSeeder::class);
         $this->call(NonTeachingStaffSeeder::class);
         $this->call(VicePrincipalSeeder::class);
         $this->call(StoreKeeperSeeder::class);
+        $this->call(HODSeeder::class);
 
     }
 }

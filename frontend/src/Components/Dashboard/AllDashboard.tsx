@@ -326,27 +326,31 @@ export default function ResponsiveLabDashboard() {
           </Card>
           */}
 
-          <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Staff Count
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{myLeads}</div>
-            </CardContent>
-          </Card>
+          {(userRole === 'admin' || userRole === 'viceprincipal') && (
+            <>
+              <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Staff Count
+                  </CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{myLeads}</div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Committies</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{openLeadsCount}</div>
-            </CardContent>
-          </Card>
+              <Card className="bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Committies</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{openLeadsCount}</div>
+                </CardContent>
+              </Card>
+            </>
+          )}
 
         </div>
 

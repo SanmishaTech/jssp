@@ -63,6 +63,7 @@ class StudentController extends BaseController
          $student->division_id = $request->input('division_id');
         $student->student_name = $request->input('student_name');
         $student->prn = $request->input('prn');
+        $student->abcId = $request->input('abcId');
         $student->save();
         
         return $this->sendResponse([new StudentResource($student)], "Student stored successfully");
@@ -96,6 +97,7 @@ class StudentController extends BaseController
          $student->division_id = $request->input('division_id');
         $student->student_name = $request->input('student_name');
         $student->prn = $request->input('prn');
+        $student->abcId = $request->input('abcId');
         $student->save();
        
         return $this->sendResponse([ new StudentResource($student)], "Student updated successfully");

@@ -7,15 +7,15 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class BackOfficeSeeder extends Seeder
+class HODSeeder extends Seeder
 {
-    /**
+  /**
      * Run the database seeds.
      */
     public function run(): void
     {
         // Create or retrieve the cashier role
-        $role = Role::firstOrCreate(['name' => 'backoffice']);     
+        $role = Role::firstOrCreate(['name' => 'hod']);     
 
         // Assign all permissions to the cashier role
         $permissions = Permission::pluck('id', 'id')->all();

@@ -31,6 +31,7 @@ const profileFormSchema = z.object({
     .trim()
     .nonempty("First Installment Date is Required"),
   prn: z.string().trim().nonempty("First Installment Amount is Required"),
+  abcId: z.string().trim().nonempty("First Installment Amount is Required"),
 
   userId: z.string().optional(),
 });
@@ -158,6 +159,21 @@ export default function AddScholarshipDialog({
                           </FormLabel>
                           <FormControl>
                             <Input placeholder="PRN..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="abcId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            ABC ID <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input placeholder="ABC ID..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

@@ -62,7 +62,8 @@ const TaskManager: React.FC = () => {
   // Check if user is admin
   useEffect(() => {
     const userRole = localStorage.getItem('user_role');
-    setIsAdmin(userRole !== 'admin' );
+    // Grant elevated permissions to admin and viceprincipal roles
+    setIsAdmin(userRole === 'admin' || userRole === 'viceprincipal' );
   }, []);
 
   // Fetch tasks from API
@@ -369,25 +370,27 @@ const TaskManager: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center space-x-2">
-                <Label className="whitespace-nowrap">Assignee:</Label>
-                <Select 
-                  value={filterAssignee?.toString() || 'all'} 
-                  onValueChange={(value) => setFilterAssignee(value === 'all' ? null : Number(value))}
-                >
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Assignee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Assignees</SelectItem>
-                    {staffMembers.map((staff) => (
-                      <SelectItem key={staff.id} value={staff.id.toString()}>
-                        {staff.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {isAdmin && (
+                <div className="flex items-center space-x-2">
+                  <Label className="whitespace-nowrap">Assignee:</Label>
+                  <Select 
+                    value={filterAssignee?.toString() || 'all'} 
+                    onValueChange={(value) => setFilterAssignee(value === 'all' ? null : Number(value))}
+                  >
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue placeholder="Assignee" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Assignees</SelectItem>
+                      {staffMembers.map((staff) => (
+                        <SelectItem key={staff.id} value={staff.id.toString()}>
+                          {staff.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <Button
                 variant="outline"
                 onClick={resetFilters}

@@ -30,7 +30,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface Course {
   id: string | number;
-  medium_title: string;
+  faculty_title: string;
 }
 
 interface Semester {
@@ -39,7 +39,7 @@ interface Semester {
   course_name?: string;
   course?: {
     id: number;
-    medium_title: string;
+    faculty_title: string;
   };
 }
 
@@ -226,7 +226,7 @@ export default function AddSubjectDialog({
                             key={course.id ? course.id.toString() : ''}
                             value={course.id ? course.id.toString() : ''}
                           >
-                            {course.medium_title}
+                            {course.faculty_title}
                           </option>
                         ))}
                       </select>

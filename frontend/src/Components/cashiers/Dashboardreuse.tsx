@@ -436,8 +436,8 @@ export default function Dashboard({
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
                   className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
-                  title="No cashiers Available"
-                  description="You can add a new cash to get started."
+                  title="No Data Available"
+                  description="You can add a cash to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />

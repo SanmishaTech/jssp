@@ -69,7 +69,8 @@ interface Semester {
 const formSchema = z.object({
   student_name: z.string().nonempty("Student Name is required"),
   prn: z.string().nonempty("PRN is required"),
-   division_id: z.string().nonempty("Division is required"),
+  abcId: z.string().optional(),
+  division_id: z.string().nonempty("Division is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -77,7 +78,8 @@ type FormValues = z.infer<typeof formSchema>;
 const defaultValues: FormValues = {
   student_name: "",
   prn: "",
-   division_id: "",
+  abcId: "",
+  division_id: "",
 };
 
 function ProfileForm({ formData }: { formData: FormValues }) {
@@ -247,6 +249,21 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="PRN..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="abcId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  ABC ID 
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="ABC ID..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

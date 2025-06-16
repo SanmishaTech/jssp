@@ -20,6 +20,7 @@ class StudentResource extends JsonResource
             'institute_name' => $this->institute ? $this->institute->institute_name : null,
             'student_name' => $this -> student_name,
             'prn' => $this -> prn,
+            'abcId' => $this -> abcId,
             'subject_id' => $this -> subject_id,
             'subject_name' => $this-> subject ? $this->subject->subject_name : null,
             'division_id' => $this -> division_id,

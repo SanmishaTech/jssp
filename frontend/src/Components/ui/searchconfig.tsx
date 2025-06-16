@@ -645,31 +645,7 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Inventory",
       url: "/inventory",
       icon: Home,
-    },
-
-    {
-      title: "Staff Management",
-      icon: Users,
-      children: [
-        {
-          title: "Staff",
-          url: "/staff",
-          icon: Users,
-        },
-        {
-          title: "Committees",
-          url: "/committee",
-          icon: UserCheck,
-        },
-     
-        {
-          title: "Leave Application",
-          url: "/leave",
-          icon: FileText,
-        },
-      ]
-    },
-    
+    },   
     {
       title: "Complaints",
       url: "/complaints",
