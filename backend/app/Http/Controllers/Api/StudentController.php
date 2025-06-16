@@ -159,11 +159,17 @@ class StudentController extends BaseController
             $columnMap = [
                 'student_name' => array_search('Student Name', $headers),
                 'prn' => array_search('PRN', $headers),
-                'division' => array_search('Division', $headers) !== false ? array_search('Division', $headers) : array_search('Division Name', $headers)
+                'division' => array_search('Division', $headers) !== false ? array_search('Division', $headers) : array_search('Division Name', $headers),
+                // Optional column ABC (maps to abcId attribute on Student model)
+                'abcId' => array_search('ABC', $headers)
             ];
 
             // Validate that all required columns are present
             foreach ($columnMap as $key => $index) {
+                // Skip validation for optional ABC column
+                if ($key === 'abcId') {
+                    continue;
+                }
                 if ($index === false) {
                     return $this->sendError('Import Error', ['error' => "Required column '{$key}' not found in the uploaded file."], 422);
                 }
@@ -223,6 +229,10 @@ class StudentController extends BaseController
                     $student = new Student();
                     $student->student_name = trim($row[$columnMap['student_name']]);
                     $student->prn = trim($row[$columnMap['prn']]);
+                     // Set optional ABC column if present and not empty
+                     if ($columnMap['abcId'] !== false && isset($row[$columnMap['abcId']]) && trim($row[$columnMap['abcId']]) !== '') {
+                         $student->abcId = trim($row[$columnMap['abcId']]);
+                     }
                      $student->division_id = $division->id;
                     $student->institute_id = $instituteId;
                     $student->save();
