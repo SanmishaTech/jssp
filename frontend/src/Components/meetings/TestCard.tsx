@@ -1,53 +1,49 @@
-import { Link, Navigate } from "react-router-dom";
+import React from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MoveLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
+  
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Editor } from "primereact/editor";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import axios from "axios";
 import { toast } from "sonner";
-import { useNavigate } from "@tanstack/react-router";
 
-import { Separator } from "@/components/ui/separator";
+
+
 
 const profileFormSchema = z.object({
   venue: z.string().trim().nonempty("Venue is Required"),
   date: z.string().trim().nonempty("Date is Required"),
   time: z.string().trim().nonempty("Time is Required"),
   synopsis: z.any().optional(),
+  staff_ids: z.array(z.string()).min(1, "Select at least one staff"),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 // This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {};
+const defaultValues: Partial<ProfileFormValues> = { staff_ids: [] };
 
 function ProfileForm() {
   const form = useForm<ProfileFormValues>({
@@ -55,25 +51,59 @@ function ProfileForm() {
     defaultValues,
     mode: "onChange",
   });
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
+  
   const token = localStorage.getItem("token");
-  //   const { fields, append } = useFieldArray({
+    const [staffOptions, setStaffOptions] = React.useState<{ label: string; value: string }[]>([]);
+  React.useEffect(() => {
+    axios.get('/api/staff').then(res => {
+      const opts = (res.data?.data?.Staff || []).map((s: any) => {
+        const name = s.staff_name || s.name;
+        let role: string | undefined = s.role || s.role_name;
+        if (role) {
+          const lower = role.toLowerCase().replace(/\s+/g, "");
+          if (lower === "nonteachingstaff" || lower === "non-teachingstaff" || lower === "nonteaching staff") {
+            role = "Non-Teaching Staff";
+          } else if (lower === "teachingstaff" || lower === "teaching staff") {
+            role = "Teaching Staff";
+          } else if (lower === "viceprincipal" || lower === "vice principal") {
+            role = "Vice Principal";
+          } else if (lower === "officesuperintendent" || lower === "office superintendent") {
+            role = "Office Superintendent";
+          } else {
+            role = role
+              .replace(/[-_]/g, " ")
+              .split(" ")
+              .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+              .join(" ");
+          }
+        }
+        return {
+          label: role ? `${name} (${role})` : name,
+          value: String(s.id),
+        };
+      });
+      setStaffOptions(opts);
+    });
+  }, []);
+
+//   const { fields, append } = useFieldArray({
   //     name: "urls",
   //     control: form.control,
   //   });
 
   async function onSubmit(data: ProfileFormValues) {
-    data.userId = User?._id;
+    // convert staff_ids to numbers
+    const payload = { ...data, staff_ids: data.staff_ids.map((id)=>Number(id)) };
+    
     try {
       await axios
-        .post(`/api/meetings`, data, {
+        .post(`/api/meetings`, payload, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((res) => {
+        .then(() => {
           toast.success("Meeting Created Successfully");
           window.history.back();
         });
@@ -115,6 +145,24 @@ function ProfileForm() {
             <CardHeader></CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-3 mb-3">
+                <FormField
+                  control={form.control}
+                  name="staff_ids"
+                  render={({ field }) => (
+                    <FormItem className="col-span-3">
+                      <FormLabel>Staff Members <span className="text-red-500">*</span></FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          options={staffOptions}
+                          defaultValue={field.value}
+                          onValueChange={(val)=> field.onChange(val)}
+                          placeholder="Select staff members"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="venue"

@@ -45,6 +45,7 @@ import {
 // } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import MultiSelectorComponent from "./profile";
+import MeetingDetailsDialog from "./MeetingDetailsDialog";
 
 import {
   Table,
@@ -124,6 +125,8 @@ export default function Dashboard({
   const [handleopen, setHandleopen] = useState(false);
   const [toggleopen, setToggleopen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState<any | null>(null);
 
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -324,7 +327,15 @@ export default function Dashboard({
                       <TableBody>
                         {tableData?.map((row) => (
                           <React.Fragment key={row.id}>
-                            <TableRow>
+                            <TableRow
+                              onClick={() => {
+                                if (row.original) {
+                                  setSelectedMeeting(row.original);
+                                  setDialogOpen(true);
+                                }
+                              }}
+                              className="cursor-pointer hover:bg-muted/20"
+                            >
                               {tableColumns?.headers?.map((header, index) => (
                                 <TableCell
                                   key={index}
@@ -444,6 +455,11 @@ export default function Dashboard({
             </TabsContent>
             {/* Add more TabsContent as needed */}
           </Tabs>
+            <MeetingDetailsDialog
+              isOpen={dialogOpen}
+              onClose={() => setDialogOpen(false)}
+              meeting={selectedMeeting}
+            />
         </main>
       </div>
     </div>

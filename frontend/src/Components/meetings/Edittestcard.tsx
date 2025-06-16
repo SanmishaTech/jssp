@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -39,6 +40,7 @@ import { Separator } from "@/components/ui/separator";
 import { Editor } from "primereact/editor";
 
 const profileFormSchema = z.object({
+  staff_ids: z.array(z.string()).min(1, "Select at least one staff"),
   venue: z.string().trim().nonempty("Venue is Required"),
   date: z.string().trim().nonempty("Date is Required"),
   time: z.string().trim().nonempty("Time is Required"),
@@ -57,11 +59,25 @@ function ProfileForm({ formData }) {
     mode: "onChange",
   });
   const { id } = useParams({ from: "/meetings/edit/$id" });
+  const [staffOptions, setStaffOptions] = useState<{ label: string; value: string }[]>([]);
+
+  // fetch staff list for dropdown
+  useEffect(() => {
+    axios.get('/api/staff').then(res => {
+      const opts = (res.data?.data?.Staff || []).map((s: any) => ({ label: s.staff_name || s.name, value: String(s.id) }));
+      setStaffOptions(opts);
+    });
+  }, []);
 
   const { reset } = form;
 
   // Reset form values when formData changes
   useEffect(() => {
+    // convert numeric staff_ids to strings for MultiSelect default values
+    if (Array.isArray(formData.staff_ids)) {
+      formData.staff_ids = formData.staff_ids.map((sid: any) => String(sid));
+    }
+
     formData.name = formData?.user?.name;
     formData.email = formData?.user?.email;
     reset(formData);
@@ -71,8 +87,10 @@ function ProfileForm({ formData }) {
   const token = localStorage.getItem("token");
 
   async function onSubmit(data: ProfileFormValues) {
+    // convert staff_ids to numbers before sending
+    const payload = { ...data, staff_ids: data.staff_ids?.map((id) => Number(id)) };
     try {
-      await axios.put(`/api/meetings/${id}`, data, {
+      await axios.put(`/api/meetings/${id}`, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -124,6 +142,27 @@ function ProfileForm({ formData }) {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-3 mb-3">
+                <FormField
+                  control={form.control}
+                  name="staff_ids"
+                  render={({ field }) => (
+                    <FormItem className="col-span-3">
+                      <FormLabel>
+                        Staff Members <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          key={JSON.stringify(field.value)}
+                          options={staffOptions}
+                          defaultValue={field.value || []}
+                          onValueChange={(val) => field.onChange(val)}
+                          placeholder="Select staff members"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="venue"
@@ -226,7 +265,12 @@ export default function SettingsProfilePage() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setFormData(response.data.data.Meeting);
+      const meeting = response.data.data.Meeting;
+      // Map staff objects to staff_ids array expected by the form
+      meeting.staff_ids = Array.isArray(meeting.staff)
+        ? meeting.staff.map((s: { id: number }) => String(s.id))
+        : [];
+      setFormData(meeting);
     };
     if (id) {
       fetchData();

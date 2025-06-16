@@ -119,8 +119,10 @@ export default function Dashboardholiday() {
   }, []);
 
   // Utility to strip HTML tags for synopsis display and truncate to 25 chars
-  const getSynopsisPreview = (html: string = "") => {
-    const text = html.replace(/<[^>]+>/g, "");
+  // Accepts string | null | undefined to guard against runtime errors when synopsis is missing
+  const getSynopsisPreview = (html?: string | null) => {
+    const safeHtml = html ?? ""; // convert null/undefined to empty string
+    const text = safeHtml.replace(/<[^>]+>/g, "");
     return text.length > 25 ? text.slice(0, 25) + "..." : text;
   };
 
@@ -200,7 +202,7 @@ export default function Dashboardholiday() {
       two: item?.date || "NA",
       three: item?.time || "NA",
       four: getSynopsisPreview(item?.synopsis),
-
+      original: item, // keep full object for detail dialog
       delete: "/meetings/" + item?.id,
     };
   });

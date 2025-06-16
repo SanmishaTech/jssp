@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\HODSeeder;
 use Illuminate\Database\Seeder;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\AdmissionSeeder;
-use Database\Seeders\AccountantSeeder;
 use Database\Seeders\LibrarianSeeder;
+use Database\Seeders\AccountantSeeder;
+use Database\Seeders\StoreKeeperSeeder;
 use Database\Seeders\TeachingStaffSeeder;
 use Database\Seeders\VicePrincipalSeeder;
 use Database\Seeders\CreateAdminUserSeeder;
@@ -16,8 +18,7 @@ use Database\Seeders\CreateMemberUserSeeder;
 use Database\Seeders\NonTeachingStaffSeeder;
 use Database\Seeders\CreateCashierRoleSeeder;
 use Database\Seeders\CreateSuperAdminUserSeeder;
-use Database\Seeders\StoreKeeperSeeder;
-use Database\Seeders\HODSeeder;
+use Database\Seeders\OfficeSuperintendentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call(VicePrincipalSeeder::class);
         $this->call(StoreKeeperSeeder::class);
         $this->call(HODSeeder::class);
+        $this->call(OfficeSuperintendentSeeder::class);
 
     }
 }

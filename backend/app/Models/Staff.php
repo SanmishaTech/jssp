@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Institute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Staff extends Model
 {
@@ -48,5 +49,13 @@ class Staff extends Model
     public function educationCertificates(): HasMany
     {
         return $this->hasMany(StaffEducationCertificate::class);
+    }
+
+    /**
+     * Meetings associated with the staff member.
+     */
+    public function meetings(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Meeting::class, 'meeting_staff');
     }
 }

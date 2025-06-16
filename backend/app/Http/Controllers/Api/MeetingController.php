@@ -19,7 +19,7 @@ class MeetingController extends BaseController
         $instituteId = Auth::user()->staff->institute_id;
     
         // Start the query by filtering staff based on the institute_id.
-        $query = Meeting::where('institute_id', $instituteId);
+        $query = Meeting::with('staff')->where('institute_id', $instituteId);
     
         // If there's a search term, apply additional filtering.
         if ($request->query('search')) {
@@ -51,6 +51,16 @@ class MeetingController extends BaseController
     public function store(Request $request): JsonResponse
     {
         // Create a new staff record and assign the institute_id from the logged-in admin
+        // Validate request
+        $validated = $request->validate([
+            'venue'      => 'required|string|max:255',
+            'date'       => 'required|date',
+            'time'       => 'required',
+            'synopsis'   => 'nullable|string',
+            'staff_ids'  => 'required|array|min:1',
+            'staff_ids.*'=> 'exists:staff,id',
+        ]);
+
         $meeting = new Meeting();
         $meeting->institute_id = Auth::user()->staff->institute_id;  
         $meeting->venue = $request->input('venue');
@@ -66,13 +76,18 @@ class MeetingController extends BaseController
             throw $e;
         }
         
+        // Attach staff members
+        $meeting->staff()->attach($validated['staff_ids']);
+        // Reload relations
+        $meeting->load('staff');
+
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting stored successfully");
     }
 
 
     public function show(string $id): JsonResponse
     {
-        $meeting = Meeting::find($id);
+        $meeting = Meeting::with('staff')->find($id);
 
         if(!$meeting){
             return $this->sendError("Meeting not found", ['error'=>'Meeting not found']);
@@ -86,18 +101,28 @@ class MeetingController extends BaseController
     public function update(Request $request, string $id): JsonResponse
     {
  
-        $meeting = Meeting::find($id);
+        $meeting = Meeting::with('staff')->find($id);
 
         if(!$meeting){
             return $this->sendError("Meeting not found", ['error'=>'Meeting not found']);
         }
        
                        
-        $meeting->institute_id = Auth::user()->staff->institute_id; // This will be 1 based on your admin login response
-        $meeting->venue = $request->input('venue');
-        $meeting->date = $request->input('date');
-        $meeting->time = $request->input('time');
-        $meeting->synopsis = $request->input('synopsis');
+        // Validate request
+        $validated = $request->validate([
+            'venue'      => 'required|string|max:255',
+            'date'       => 'required|date',
+            'time'       => 'required',
+            'synopsis'   => 'nullable|string',
+            'staff_ids'  => 'required|array|min:1',
+            'staff_ids.*'=> 'exists:staff,id',
+        ]);
+
+        $meeting->institute_id = Auth::user()->staff->institute_id;
+        $meeting->venue = $validated['venue'];
+        $meeting->date  = $validated['date'];
+        $meeting->time  = $validated['time'];
+        $meeting->synopsis = $validated['synopsis'] ?? null;
         try {
             $meeting->save();
         } catch (QueryException $e) {
@@ -107,6 +132,10 @@ class MeetingController extends BaseController
             throw $e;
         }
        
+        // Sync staff members
+        $meeting->staff()->sync($validated['staff_ids']);
+        $meeting->load('staff');
+
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting updated successfully");
 
     }
@@ -114,7 +143,7 @@ class MeetingController extends BaseController
 
     public function destroy(string $id): JsonResponse
     {
-        $meeting = Meeting::find($id);
+        $meeting = Meeting::with('staff')->find($id);
         if(!$meeting){
             return $this->sendError("Meeting not found", ['error'=> 'Meeting not found']);
         }
@@ -128,7 +157,7 @@ class MeetingController extends BaseController
         $instituteId = Auth::user()->staff->institute_id;
     
         // Filter staff based on the institute_id.
-        $meeting = Meeting::where('institute_id', $instituteId)->get();
+        $meeting = Meeting::with('staff')->where('institute_id', $instituteId)->get();
     
         return $this->sendResponse(
             ["Meeting" => MeetingResource::collection($meeting)],

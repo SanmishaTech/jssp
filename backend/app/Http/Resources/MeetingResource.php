@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\StaffResource;
 
 class MeetingResource extends JsonResource
 {
@@ -22,6 +23,15 @@ class MeetingResource extends JsonResource
             'date' => $this->date,
             'time' => $this->time,
             'synopsis' => $this->synopsis,
+            'staff' => $this->whenLoaded('staff', function () {
+                return $this->staff->map(function ($staff) {
+                    return [
+                        'id' => $staff->id,
+                        'name' => $staff->staff_name,
+                        'role' => $staff->user ? $staff->user->getRoleNames()->first() : null,
+                    ];
+                });
+            }),
         ];
     }
 }
