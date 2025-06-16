@@ -16,6 +16,7 @@ class TransferResource extends JsonResource
         return [
             'id'                => $this->id,
             'inventory_id'      => $this->inventory_id,
+            'inventory_name'    => $this->inventory_name,
             'from_room_id'      => $this->from_room_id,
             'from_institute_id' => $this->from_institute_id,
             'to_room_id'        => $this->to_room_id,

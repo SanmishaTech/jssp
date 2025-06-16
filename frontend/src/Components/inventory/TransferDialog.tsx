@@ -111,9 +111,7 @@ export default function TransferDialog({ isOpen, onOpenChange, item }: TransferD
         },
       );
       setSuccess("Transfer request submitted");
-      // redirect to transfer list page
-      navigate({ to: "/transfer" });
-    } catch (err: any) {
+      } catch (err: any) {
       setError(err?.response?.data?.message || "Transfer failed");
     } finally {
       setLoading(false);

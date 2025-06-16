@@ -37,6 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface Transfer {
   id: number;
@@ -91,7 +92,7 @@ export default function Edittestcard() {
   const fetchInventoryDetails = async (inventoryId: number) => {
     setLoadingInventory(true);
     try {
-      const res = await axios.get(`/api/inventories/${inventoryId}`, {
+      const res = await axios.get(`/api/inventory/${inventoryId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setInventoryDetails(res.data.data.Inventory || res.data.data);
@@ -147,15 +148,14 @@ export default function Edittestcard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Inventory ID</TableHead>
+                     <TableHead>Inventory Name</TableHead>
                     <TableHead>Quantity</TableHead>
-                    <TableHead>From Institute</TableHead>
-                    <TableHead>From Room</TableHead>
+                   
                     <TableHead>To Institute</TableHead>
                     <TableHead>To Room</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Requested At</TableHead>
+                    <TableHead>Info</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -163,16 +163,31 @@ export default function Edittestcard() {
                   {pending.length > 0 ? (
                     pending.map((t) => (
                       <TableRow key={t.id}>
-                        <TableCell className="font-medium">{t.id}</TableCell>
-                        <TableCell>{t.inventory_id}</TableCell>
+                         <TableCell>{t.asset_master_name}</TableCell>
                         <TableCell>{t.quantity}</TableCell>
-                        <TableCell>{t.from_institute_id || "N/A"}</TableCell>
-                        <TableCell>{t.from_room_id || "N/A"}</TableCell>
-                        <TableCell>{t.to_institute_id || "N/A"}</TableCell>
+                         <TableCell>{t.to_institute_id || "N/A"}</TableCell>
                         <TableCell>{t.to_room_id || "N/A"}</TableCell>
                         <TableCell>{getStatusBadge(t.status)}</TableCell>
                         <TableCell>
                           {new Date(t.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleViewInventory(t.inventory_id)}
+                                >
+                                  <Info className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View Details</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </TableCell>
                         <TableCell className="text-right space-x-2">
                           <Button
@@ -221,6 +236,7 @@ export default function Edittestcard() {
                     <TableHead>To Room</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Date</TableHead>
+                    <TableHead>Info</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -242,11 +258,29 @@ export default function Edittestcard() {
                               : new Date(t.created_at).toLocaleDateString()
                           }
                         </TableCell>
+                        <TableCell>
+                          <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleViewInventory(t.inventory_id)}
+                                >
+                                  <Info className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>View Details</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center">
+                      <TableCell colSpan={10} className="text-center">
                         No transfer history.
                       </TableCell>
                     </TableRow>
@@ -260,26 +294,59 @@ export default function Edittestcard() {
 
       {/* Inventory Details Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="bg-white max-w-2xl">
           <DialogHeader>
             <DialogTitle>Inventory Details</DialogTitle>
             <DialogDescription>
               Detailed information about the selected inventory item.
             </DialogDescription>
           </DialogHeader>
+          <Separator className="my-4" />
           {loadingInventory ? (
             <div className="py-6 text-center">Loading...</div>
           ) : inventoryDetails ? (
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {Object.entries(inventoryDetails).map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="font-medium capitalize">
-                    {key.replace(/_/g, " ")}
-                  </span>
-                  <span>{String(value)}</span>
-                </div>
-              ))}
+            <div className="max-h-96 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-x-4 gap-y-3 items-center">
+                {Object.entries(inventoryDetails).map(([key, value]) => {
+                const formatValue = (val: any): string => {
+                  if (Array.isArray(val)) {
+                    return val
+                      .map((v) =>
+                        typeof v === "object" && v !== null
+                          ? (v.label ?? "")
+                          : String(v)
+                      )
+                      .filter((s) => s.length > 0)
+                      .join(", ");
+                  }
+                  if (typeof val === "object" && val !== null) {
+                    if (val.label) return String(val.label);
+                    return "";
+                  }
+                  return String(val);
+                };
+
+                const formatKey = (k: string): string =>
+                  k
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+                const formatted = formatValue(value);
+                if (!formatted) return null;
+
+                return (
+                  <React.Fragment key={key}>
+                    <span className="col-span-1 font-semibold text-gray-500 text-right">
+                      {formatKey(key)}
+                    </span>
+                    <span className="col-span-2 text-gray-800 whitespace-pre-wrap">
+                      {formatted}
+                    </span>
+                  </React.Fragment>
+                );
+              })}
             </div>
+          </div>
           ) : (
             <div className="py-6 text-center">No details available.</div>
           )}

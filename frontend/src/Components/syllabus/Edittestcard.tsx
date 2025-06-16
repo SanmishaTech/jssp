@@ -316,7 +316,7 @@ const Edittestcard = () => {
               </div>
             </>
           )}
-          {role !== 'teachingstaff' && role !== 'admin' && (
+          {role !== 'teachingstaff' && role !== 'admin' &&  role!== 'hod' && role !== 'viceprincipal' && (
             <div className="text-red-500 font-semibold">You do not have permission to view this page.</div>
           )}
         </div>

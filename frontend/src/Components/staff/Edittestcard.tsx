@@ -103,8 +103,7 @@ function ProfileForm({ formData }) {
       if (formData.course_id && Array.isArray(formData.course_id)) {
         // Store original course_id for reference (as IDs only)
         const originalCourseIds = formData.course_id;
-        console.log("Original course_id from API:", originalCourseIds);
-        
+         
         // We'll update this once courses are loaded
         formDataCopy.course_id = [];
         
@@ -116,8 +115,7 @@ function ProfileForm({ formData }) {
       if (formData.subject_id && Array.isArray(formData.subject_id)) {
         // Store original subject_id for reference (as IDs only)
         const originalSubjectIds = formData.subject_id;
-        console.log("Original subject_id from API:", originalSubjectIds);
-        
+         
         // We'll update this once subjects are loaded
         formDataCopy.subject_id = [];
         
@@ -158,8 +156,7 @@ function ProfileForm({ formData }) {
           },
         });
         
-        console.log('Course API response:', response.data);
-        
+         
         // Handle the specific response structure
         if (response.data?.status && response.data?.data?.Course && Array.isArray(response.data.data.Course)) {
           // Map the course data to the format expected by MultipleSelect
@@ -168,18 +165,15 @@ function ProfileForm({ formData }) {
             name: course.medium_title || course.medium_code || 'Unnamed Course'
           }));
           
-          console.log('Mapped courses:', mappedCourses);
-          setCourses(mappedCourses);
+           setCourses(mappedCourses);
           
           // Get saved course IDs from session storage or directly from formData
           const courseIdsFromFormData = formData?.course_id || [];
-          console.log('Course IDs from formData:', courseIdsFromFormData);
-          
+           
           if (Array.isArray(courseIdsFromFormData) && courseIdsFromFormData.length > 0) {
             // If they're already objects with key/name, use them directly
             if (typeof courseIdsFromFormData[0] === 'object' && courseIdsFromFormData[0].key) {
-              console.log('Using course objects directly:', courseIdsFromFormData);
-              setSelectedCourses(courseIdsFromFormData);
+               setSelectedCourses(courseIdsFromFormData);
               form.setValue('course_id', courseIdsFromFormData);
             } 
             // If they're strings (IDs), map them to objects
@@ -188,14 +182,12 @@ function ProfileForm({ formData }) {
                 courseIdsFromFormData.includes(course.key)
               );
               
-              console.log('Mapped selected courses:', selectedCourses);
-              setSelectedCourses(selectedCourses);
+               setSelectedCourses(selectedCourses);
               form.setValue('course_id', selectedCourses, { shouldDirty: false, shouldValidate: false });
             }
           }
         } else {
-          console.log('Unexpected response structure:', response.data);
-          toast.error('Could not find courses in the response');
+           toast.error('Could not find courses in the response');
         }
       } catch (error) {
         console.error('Error fetching courses:', error);
@@ -211,8 +203,7 @@ function ProfileForm({ formData }) {
           },
         });
         
-        console.log('Semester API response:', response.data);
-        
+         
         // Handle the specific response structure for semesters (might be different from courses)
         if (response.data?.status && response.data?.data?.Semester && Array.isArray(response.data.data.Semester)) {
           // Map the semester data to the format expected by MultipleSelect based on the actual API response
@@ -225,18 +216,15 @@ function ProfileForm({ formData }) {
             name: semester.semester || 'Unnamed Semester'
           }));
           
-          console.log('Mapped semesters:', mappedSemesters);
-          setSemesters(mappedSemesters);
+           setSemesters(mappedSemesters);
           
           // Get saved semester IDs from directly from formData
           const semesterIdsFromFormData = formData?.semester_id || [];
-          console.log('Semester IDs from formData:', semesterIdsFromFormData);
-          
+           
           if (Array.isArray(semesterIdsFromFormData) && semesterIdsFromFormData.length > 0) {
             // If they're already objects with key/name, use them directly
             if (typeof semesterIdsFromFormData[0] === 'object' && semesterIdsFromFormData[0].key) {
-              console.log('Using semester objects directly:', semesterIdsFromFormData);
-              setSelectedSemesters(semesterIdsFromFormData);
+               setSelectedSemesters(semesterIdsFromFormData);
               form.setValue('semester_id', semesterIdsFromFormData);
             } 
             // If they're strings (IDs), map them to objects
@@ -245,15 +233,12 @@ function ProfileForm({ formData }) {
                 semesterIdsFromFormData.includes(semester.key)
               );
               
-              console.log('Mapped selected semesters:', selectedSemesters);
-              setSelectedSemesters(selectedSemesters);
+               setSelectedSemesters(selectedSemesters);
               form.setValue('semester_id', selectedSemesters, { shouldDirty: false, shouldValidate: false });
             }
           }
         } else {
-          console.log('Unexpected semester response structure:', response.data);
-          // Don't show error toast for semesters to avoid multiple errors if API is not ready
-        }
+         }
       } catch (error) {
         console.error('Error fetching semesters:', error);
         // Don't show error toast for semesters to avoid multiple errors if API is not ready
@@ -268,8 +253,7 @@ function ProfileForm({ formData }) {
           },
         });
         
-        console.log('Subject API response:', response.data);
-        
+         
         if (response.data?.status && response.data?.data?.Subject && Array.isArray(response.data.data.Subject)) {
           // Map the subject data
           const mappedSubjects = response.data.data.Subject.map((subject: { 
@@ -281,8 +265,7 @@ function ProfileForm({ formData }) {
             name: subject.subject_name || subject.subject_code || 'Unnamed Subject'
           }));
           
-          console.log('Mapped subjects:', mappedSubjects);
-          setSubjects(mappedSubjects);
+           setSubjects(mappedSubjects);
           
           // Check for original subject_id values to select
           const originalSubjectIds = sessionStorage.getItem('original_subject_ids');
@@ -300,16 +283,14 @@ function ProfileForm({ formData }) {
                 );
               }
               
-              console.log('Matched subjects based on IDs:', matchedSubjects);
-              setSelectedSubjects(matchedSubjects);
+               setSelectedSubjects(matchedSubjects);
               form.setValue('subject_id', matchedSubjects);
             } catch (e) {
               console.error('Error parsing stored subject IDs:', e);
             }
           }
         } else {
-          console.log('Unexpected subject response structure:', response.data);
-        }
+         }
       } catch (error) {
         console.error('Error fetching subjects:', error);
       }
@@ -323,8 +304,7 @@ function ProfileForm({ formData }) {
           },
         });
         
-        console.log('Academic Years API response:', response.data);
-        
+         
         // Handle the specific response structure for academic years
         if (response.data?.status && response.data?.data?.AcademicYears && Array.isArray(response.data.data.AcademicYears)) {
           // Map the academic year data to the format expected by the select element
@@ -336,11 +316,9 @@ function ProfileForm({ formData }) {
             academic_year: year.academic_year || 'Unnamed Academic Year'
           }));
           
-          console.log('Mapped academic years:', mappedAcademicYears);
-          setAcademicYears(mappedAcademicYears);
+           setAcademicYears(mappedAcademicYears);
         } else {
-          console.log('Unexpected academic years response structure:', response.data);
-        }
+         }
       } catch (error) {
         console.error('Error fetching academic years:', error);
       }
@@ -425,8 +403,7 @@ function ProfileForm({ formData }) {
         
         // Send the course IDs as a JSON string
         formData.append('course_id', JSON.stringify(courseIds));
-        console.log('Course IDs being sent:', courseIds);
-      } else {
+       } else {
         // If no courses selected, send an empty array
         formData.append('course_id', JSON.stringify([]));
       }
@@ -445,8 +422,7 @@ function ProfileForm({ formData }) {
         
         // Send the semester IDs as a JSON string
         formData.append('semester_id', JSON.stringify(semesterIds));
-        console.log('Semester IDs being sent:', semesterIds);
-      } else {
+       } else {
         // If no semesters selected, send an empty array
         formData.append('semester_id', JSON.stringify([]));
       }
@@ -465,8 +441,7 @@ function ProfileForm({ formData }) {
         
         // Send the subject IDs as a JSON string
         formData.append('subject_id', JSON.stringify(subjectIds));
-        console.log('Subject IDs being sent:', subjectIds);
-      } else {
+       } else {
         // If no subjects selected, send an empty array
         formData.append('subject_id', JSON.stringify([]));
       }
@@ -662,6 +637,8 @@ function ProfileForm({ formData }) {
                           <SelectItem value="librarian">Librarian</SelectItem>
                           <SelectItem value="storekeeper">Store Keeper</SelectItem>
                           <SelectItem value="hod">HOD</SelectItem>
+                           <SelectItem value="officesuperintendent">Office SuperIntendent</SelectItem>
+                          
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -741,8 +718,7 @@ function ProfileForm({ formData }) {
                       control={form.control}
                       name="course_id"
                       render={({ field }) => {
-                        // Check value for debugging
-                        console.log("Current field value:", field.value);
+                        
                         
                         return (
                           <FormItem className="space-y-3">
@@ -753,8 +729,7 @@ function ProfileForm({ formData }) {
                                 onChange={(selectedItems: {key: string, name: string}[]) => {
                                   field.onChange(selectedItems);
                                   setSelectedCourses(selectedItems);
-                                  console.log("Selected courses updated:", selectedItems);
-                                }}
+                                 }}
                                 defaultValue={selectedCourses.length > 0 ? selectedCourses : (field.value || [])}
                                 placeholder="Select courses"
                                 customTag={customTag}
@@ -775,9 +750,7 @@ function ProfileForm({ formData }) {
                       control={form.control}
                       name="semester_id"
                       render={({ field }) => {
-                        // Check value for debugging
-                        console.log("Current semester field value:", field.value);
-                        
+                          
                         return (
                           <FormItem className="space-y-3">
                             <FormLabel>Semesters</FormLabel>
@@ -787,8 +760,7 @@ function ProfileForm({ formData }) {
                                 onChange={(selectedItems: {key: string, name: string}[]) => {
                                   field.onChange(selectedItems);
                                   setSelectedSemesters(selectedItems);
-                                  console.log("Selected semesters updated:", selectedItems);
-                                }}
+                                 }}
                                 defaultValue={selectedSemesters.length > 0 ? selectedSemesters : (field.value || [])}
                                 placeholder="Select semesters"
                                 customTag={customTag}
@@ -809,9 +781,7 @@ function ProfileForm({ formData }) {
                       control={form.control}
                       name="subject_id"
                       render={({ field }) => {
-                        // Check value for debugging
-                        console.log("Current subject field value:", field.value);
-                        
+                          
                         return (
                           <FormItem className="space-y-3">
                             <FormLabel>Subjects</FormLabel>
@@ -821,8 +791,7 @@ function ProfileForm({ formData }) {
                                 onChange={(selectedItems: {key: string, name: string}[]) => {
                                   field.onChange(selectedItems);
                                   setSelectedSubjects(selectedItems);
-                                  console.log("Selected subjects updated:", selectedItems);
-                                }}
+                                 }}
                                 defaultValue={selectedSubjects.length > 0 ? selectedSubjects : (field.value || [])}
                                 placeholder="Select subjects"
                                 customTag={customTag}

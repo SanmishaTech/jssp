@@ -143,7 +143,7 @@ const Edittestcard = () => {
     return Array.from(map.values());
   }, [subjectHours]);
 
-  if (role !== 'admin') {
+  if (role !== 'admin' && role!== 'hod' && role !== 'viceprincipal' ) {
     return (
       <div className="p-4">
         <h1 className="text-xl font-semibold text-red-600">You do not have permission to view this page.</h1>
