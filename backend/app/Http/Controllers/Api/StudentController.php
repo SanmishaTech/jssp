@@ -26,6 +26,11 @@ class StudentController extends BaseController
         // Start the query by filtering staff based on the institute_id.
         $query = Student::where('institute_id', $instituteId);
     
+        // Filter by division if provided
+        if ($request->query('division_id')) {
+            $query->where('division_id', $request->query('division_id'));
+        }
+
         // If there's a search term, apply additional filtering.
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -105,6 +110,19 @@ class StudentController extends BaseController
     }
 
 
+    /**
+     * Update id_card_issued flag for a student.
+     */
+    public function updateIdCard(Request $request, Student $student): JsonResponse
+    {
+        $validated = $request->validate([
+            'id_card_issued' => 'required|boolean',
+        ]);
+
+        $student->update($validated);
+        return $this->sendResponse([ new StudentResource($student) ], 'ID Card status updated');
+    }
+
     public function destroy(string $id): JsonResponse
     {
         $student = Student::find($id);
@@ -116,13 +134,18 @@ class StudentController extends BaseController
     }
 
 
-    public function allStudents(): JsonResponse
+    public function allStudents(Request $request): JsonResponse
     {
         // Get the institute ID from the logged-in user's staff details.
         $instituteId = Auth::user()->staff->institute_id;
     
-        // Filter staff based on the institute_id.
-        $student = Student::where('institute_id', $instituteId)->get();
+        // Build query filtered by institute.
+        $query = Student::where('institute_id', $instituteId);
+        // If division filter provided
+        if ($request->query('division_id')) {
+            $query->where('division_id', $request->query('division_id'));
+        }
+        $student = $query->get();
     
         return $this->sendResponse(
             ["Student" => StudentResource::collection($student)],

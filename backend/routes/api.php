@@ -144,7 +144,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_academic_years', [AcademicYearController::class, 'allAcademicYears'])->name("academic_years.all");
    
    // Custom student routes must be defined before the resource route to avoid conflicts
-   Route::get('/students/download-template', [StudentController::class, 'downloadTemplate'])->name("students.download-template");
+   Route::get('/students/download-template', [StudentController::class, 'downloadTemplate'])->name('students.download-template');
+   Route::patch('/students/{student}/id-card', [StudentController::class, 'updateIdCard'])->name('students.id_card');
    Route::resource('students', StudentController::class);
    Route::get('/all_students', [StudentController::class, 'allStudents'])->name("students.all");
    Route::post('/students/import', [StudentController::class, 'import'])->name("students.import");

@@ -47,6 +47,7 @@ import { Route as ComplaintsIndexImport } from './routes/complaints/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
 import { Route as CashbookIndexImport } from './routes/cashbook/index'
+import { Route as CardIndexImport } from './routes/card/index'
 import { Route as CalenderIndexImport } from './routes/calender/index'
 import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
 import { Route as BankIndexImport } from './routes/bank/index'
@@ -301,6 +302,12 @@ const CashiersIndexRoute = CashiersIndexImport.update({
 const CashbookIndexRoute = CashbookIndexImport.update({
   id: '/cashbook/',
   path: '/cashbook/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CardIndexRoute = CardIndexImport.update({
+  id: '/card/',
+  path: '/card/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -611,6 +618,13 @@ declare module '@tanstack/react-router' {
       path: '/calender'
       fullPath: '/calender'
       preLoaderRoute: typeof CalenderIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/card/': {
+      id: '/card/'
+      path: '/card'
+      fullPath: '/card'
+      preLoaderRoute: typeof CardIndexImport
       parentRoute: typeof rootRoute
     }
     '/cashbook/': {
@@ -1071,6 +1085,7 @@ export interface FileRoutesByFullPath {
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
+  '/card': typeof CardIndexRoute
   '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
@@ -1148,6 +1163,7 @@ export interface FileRoutesByTo {
   '/bank': typeof BankIndexRoute
   '/bankaccounts': typeof BankaccountsIndexRoute
   '/calender': typeof CalenderIndexRoute
+  '/card': typeof CardIndexRoute
   '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
@@ -1226,6 +1242,7 @@ export interface FileRoutesById {
   '/bank/': typeof BankIndexRoute
   '/bankaccounts/': typeof BankaccountsIndexRoute
   '/calender/': typeof CalenderIndexRoute
+  '/card/': typeof CardIndexRoute
   '/cashbook/': typeof CashbookIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
@@ -1305,6 +1322,7 @@ export interface FileRouteTypes {
     | '/bank'
     | '/bankaccounts'
     | '/calender'
+    | '/card'
     | '/cashbook'
     | '/cashiers'
     | '/committee'
@@ -1381,6 +1399,7 @@ export interface FileRouteTypes {
     | '/bank'
     | '/bankaccounts'
     | '/calender'
+    | '/card'
     | '/cashbook'
     | '/cashiers'
     | '/committee'
@@ -1457,6 +1476,7 @@ export interface FileRouteTypes {
     | '/bank/'
     | '/bankaccounts/'
     | '/calender/'
+    | '/card/'
     | '/cashbook/'
     | '/cashiers/'
     | '/committee/'
@@ -1535,6 +1555,7 @@ export interface RootRouteChildren {
   BankIndexRoute: typeof BankIndexRoute
   BankaccountsIndexRoute: typeof BankaccountsIndexRoute
   CalenderIndexRoute: typeof CalenderIndexRoute
+  CardIndexRoute: typeof CardIndexRoute
   CashbookIndexRoute: typeof CashbookIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
@@ -1612,6 +1633,7 @@ const rootRouteChildren: RootRouteChildren = {
   BankIndexRoute: BankIndexRoute,
   BankaccountsIndexRoute: BankaccountsIndexRoute,
   CalenderIndexRoute: CalenderIndexRoute,
+  CardIndexRoute: CardIndexRoute,
   CashbookIndexRoute: CashbookIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
@@ -1698,6 +1720,7 @@ export const routeTree = rootRoute
         "/bank/",
         "/bankaccounts/",
         "/calender/",
+        "/card/",
         "/cashbook/",
         "/cashiers/",
         "/committee/",
@@ -1795,6 +1818,9 @@ export const routeTree = rootRoute
     },
     "/calender/": {
       "filePath": "calender/index.tsx"
+    },
+    "/card/": {
+      "filePath": "card/index.tsx"
     },
     "/cashbook/": {
       "filePath": "cashbook/index.tsx"

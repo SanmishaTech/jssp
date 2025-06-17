@@ -25,6 +25,7 @@ class StudentResource extends JsonResource
             'subject_name' => $this-> subject ? $this->subject->subject_name : null,
             'division_id' => $this -> division_id,
             'division_name' => $this-> division ? $this->division->division : null,
+            'id_card_issued' => $this->id_card_issued,
 
         ];
     }
