@@ -56,8 +56,10 @@ import { Route as AssetmastersIndexImport } from './routes/assetmasters/index'
 import { Route as AssetcategoriesIndexImport } from './routes/assetcategories/index'
 import { Route as AllocationIndexImport } from './routes/allocation/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
+import { Route as AddedcommitteeIndexImport } from './routes/addedcommittee/index'
 import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
 import { Route as CashbookIdImport } from './routes/cashbook/$id'
+import { Route as AddedcommitteeIdImport } from './routes/addedcommittee/$id'
 import { Route as VendorsAddIndexImport } from './routes/vendors/add/index'
 import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
 import { Route as StudentsAddIndexImport } from './routes/students/add/index'
@@ -359,6 +361,12 @@ const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AddedcommitteeIndexRoute = AddedcommitteeIndexImport.update({
+  id: '/addedcommittee/',
+  path: '/addedcommittee/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AcademicyearsIndexRoute = AcademicyearsIndexImport.update({
   id: '/academicyears/',
   path: '/academicyears/',
@@ -368,6 +376,12 @@ const AcademicyearsIndexRoute = AcademicyearsIndexImport.update({
 const CashbookIdRoute = CashbookIdImport.update({
   id: '/cashbook/$id',
   path: '/cashbook/$id',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AddedcommitteeIdRoute = AddedcommitteeIdImport.update({
+  id: '/addedcommittee/$id',
+  path: '/addedcommittee/$id',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -550,6 +564,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/addedcommittee/$id': {
+      id: '/addedcommittee/$id'
+      path: '/addedcommittee/$id'
+      fullPath: '/addedcommittee/$id'
+      preLoaderRoute: typeof AddedcommitteeIdImport
+      parentRoute: typeof rootRoute
+    }
     '/cashbook/$id': {
       id: '/cashbook/$id'
       path: '/cashbook/$id'
@@ -562,6 +583,13 @@ declare module '@tanstack/react-router' {
       path: '/academicyears'
       fullPath: '/academicyears'
       preLoaderRoute: typeof AcademicyearsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/addedcommittee/': {
+      id: '/addedcommittee/'
+      path: '/addedcommittee'
+      fullPath: '/addedcommittee'
+      preLoaderRoute: typeof AddedcommitteeIndexImport
       parentRoute: typeof rootRoute
     }
     '/admissions/': {
@@ -1075,8 +1103,10 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
+  '/addedcommittee': typeof AddedcommitteeIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/allocation': typeof AllocationIndexRoute
   '/assetcategories': typeof AssetcategoriesIndexRoute
@@ -1153,8 +1183,10 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
+  '/addedcommittee': typeof AddedcommitteeIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
   '/allocation': typeof AllocationIndexRoute
   '/assetcategories': typeof AssetcategoriesIndexRoute
@@ -1232,8 +1264,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears/': typeof AcademicyearsIndexRoute
+  '/addedcommittee/': typeof AddedcommitteeIndexRoute
   '/admissions/': typeof AdmissionsIndexRoute
   '/allocation/': typeof AllocationIndexRoute
   '/assetcategories/': typeof AssetcategoriesIndexRoute
@@ -1312,8 +1346,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears'
+    | '/addedcommittee'
     | '/admissions'
     | '/allocation'
     | '/assetcategories'
@@ -1389,8 +1425,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears'
+    | '/addedcommittee'
     | '/admissions'
     | '/allocation'
     | '/assetcategories'
@@ -1466,8 +1504,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears/'
+    | '/addedcommittee/'
     | '/admissions/'
     | '/allocation/'
     | '/assetcategories/'
@@ -1545,8 +1585,10 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddedcommitteeIdRoute: typeof AddedcommitteeIdRoute
   CashbookIdRoute: typeof CashbookIdRoute
   AcademicyearsIndexRoute: typeof AcademicyearsIndexRoute
+  AddedcommitteeIndexRoute: typeof AddedcommitteeIndexRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
   AllocationIndexRoute: typeof AllocationIndexRoute
   AssetcategoriesIndexRoute: typeof AssetcategoriesIndexRoute
@@ -1623,8 +1665,10 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddedcommitteeIdRoute: AddedcommitteeIdRoute,
   CashbookIdRoute: CashbookIdRoute,
   AcademicyearsIndexRoute: AcademicyearsIndexRoute,
+  AddedcommitteeIndexRoute: AddedcommitteeIndexRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
   AllocationIndexRoute: AllocationIndexRoute,
   AssetcategoriesIndexRoute: AssetcategoriesIndexRoute,
@@ -1710,8 +1754,10 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/addedcommittee/$id",
         "/cashbook/$id",
         "/academicyears/",
+        "/addedcommittee/",
         "/admissions/",
         "/allocation/",
         "/assetcategories/",
@@ -1789,11 +1835,17 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
+    "/addedcommittee/$id": {
+      "filePath": "addedcommittee/$id.tsx"
+    },
     "/cashbook/$id": {
       "filePath": "cashbook/$id.tsx"
     },
     "/academicyears/": {
       "filePath": "academicyears/index.tsx"
+    },
+    "/addedcommittee/": {
+      "filePath": "addedcommittee/index.tsx"
     },
     "/admissions/": {
       "filePath": "admissions/index.tsx"

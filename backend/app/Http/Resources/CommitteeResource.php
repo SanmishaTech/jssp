@@ -22,7 +22,9 @@ class CommitteeResource extends JsonResource
             'staff'         => $this->commiteeStaff->map(function ($staff) {
                 return [
                     'staff_id'    => $staff->staff_id,
+                    'staff_name'  => $staff->staff ? $staff->staff->staff_name : null,
                     'designation' => $staff->designation,
+                    'role'        => ($staff->staff && $staff->staff->user) ? $staff->staff->user->getRoleNames()->first() : null,
                 ];
             })->toArray(),
         ];

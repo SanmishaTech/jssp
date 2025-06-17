@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useGetData } from "@/Components/HTTP/GET"; // fetch helper
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -11,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../ui/sidebar";
-import { User, LogOut, Search } from "lucide-react";
+import { User, LogOut, Search, UserCheck } from "lucide-react";
 import { CommandMenu } from "../ui/CommandMenu";
 import {
   AlertDialog,
@@ -30,6 +31,11 @@ import {
 import background from "../../images/Jeevandeep-logo.jpeg";
 import { searchconfig, MenuItem } from "../ui/searchconfig";
 
+interface Committee {
+  id: number;
+  commitee_name: string;
+}
+
 interface AppSidebarProps {
   role: string;
 }
@@ -42,7 +48,51 @@ interface UserData {
 
 
 export function AppSidebar({ role }: AppSidebarProps) {
-  const items = useMemo(() => searchconfig[role as keyof typeof searchconfig] || [], [role]);
+  // Fetch committees list – used to dynamically populate sidebar under Staff Management
+  const committeeQuery = useGetData({
+    endpoint: "/api/all_committee",
+    params: { queryKey: ["committees"] },
+  });
+
+  // Extract committees once query succeeds (useGetData returns parsed JSON per project convention)
+  const committees: Committee[] = useMemo(() => {
+    if (committeeQuery.data && (committeeQuery.data as any).data?.Commitee) {
+      return (committeeQuery.data as any).data.Commitee as Committee[];
+    }
+    return [];
+  }, [committeeQuery.data]);
+  // Base items from static config
+const baseItems = useMemo(() => searchconfig[role as keyof typeof searchconfig] || [], [role]);
+
+// Inject dynamic "Added Committees" dropdown at root level
+const items = useMemo(() => {
+  if (!committees.length) return baseItems;
+
+  const newItems: MenuItem[] = baseItems.map((it) => ({ ...it }));
+  const staffMgmtIdx = newItems.findIndex((it) => it.title === "Staff Management");
+  if (staffMgmtIdx === -1) return baseItems;
+
+  // Remove any existing "Added Committees" to avoid duplicates
+  const existingIdx = newItems.findIndex((it) => it.title === "Added Committees");
+  if (existingIdx !== -1) newItems.splice(existingIdx, 1);
+
+  const committeeMenuItems: MenuItem[] = committees.map((c) => ({
+    title: c.commitee_name,
+    url: `/addedcommittee/${c.id}`,
+    icon: UserCheck,
+  }));
+
+  const addedDropdown: MenuItem = {
+    title: "Added Committees",
+    icon: UserCheck,
+    children: committeeMenuItems,
+  };
+
+  // Insert right after Staff Management
+  newItems.splice(staffMgmtIdx + 1, 0, addedDropdown);
+
+  return newItems;
+}, [baseItems, committees]);
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
