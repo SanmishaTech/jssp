@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../ui/sidebar";
-import { User, LogOut, Search, UserCheck } from "lucide-react";
+import { User, LogOut, Search, UserCheck, CalendarClock } from "lucide-react";
 import { CommandMenu } from "../ui/CommandMenu";
 import {
   AlertDialog,
@@ -76,14 +76,21 @@ const items = useMemo(() => {
   const existingIdx = newItems.findIndex((it) => it.title === "Added Committees");
   if (existingIdx !== -1) newItems.splice(existingIdx, 1);
 
-  const committeeMenuItems: MenuItem[] = committees.map((c) => ({
-    title: c.commitee_name,
-    url: `/addedcommittee/${c.id}`,
-    icon: UserCheck,
-  }));
+  const committeeMenuItems: MenuItem[] = [
+    ...committees.map((c) => ({
+      title: c.commitee_name,
+      url: `/addedcommittee/${c.id}`,
+      icon: UserCheck,
+    })),
+    {
+      title: "Committee Meetings",
+      url: "/committeemeeting",
+      icon: CalendarClock,
+    },
+  ];
 
   const addedDropdown: MenuItem = {
-    title: "Added Committees",
+    title: "Created Committees",
     icon: UserCheck,
     children: committeeMenuItems,
   };

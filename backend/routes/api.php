@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\MeetingController;
+use App\Http\Controllers\Api\CommitteeMeetingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
@@ -118,6 +119,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_complaints', [ComplaintController::class, 'allComplaints'])->name("complaints.all");
 
    Route::resource('committee', CommitteeController::class);
+
+   // Committee Meetings routes
+   Route::resource('committee-meetings', CommitteeMeetingController::class);
+   Route::get('/all_committee_meetings', [CommitteeMeetingController::class, 'allMeetings'])->name('committeemeetings.all');
    Route::get('/all_committee', [CommitteeController::class, 'allCommitees'])->name("committees.all");
 
    Route::resource('tasks', TaskController::class);

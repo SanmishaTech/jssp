@@ -44,6 +44,7 @@ import { Route as DivisionsIndexImport } from './routes/divisions/index'
 import { Route as DashboardsIndexImport } from './routes/dashboards/index'
 import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
+import { Route as CommitteemeetingIndexImport } from './routes/committeemeeting/index'
 import { Route as CommitteeIndexImport } from './routes/committee/index'
 import { Route as CashiersIndexImport } from './routes/cashiers/index'
 import { Route as CashbookIndexImport } from './routes/cashbook/index'
@@ -286,6 +287,12 @@ const CoursesIndexRoute = CoursesIndexImport.update({
 const ComplaintsIndexRoute = ComplaintsIndexImport.update({
   id: '/complaints/',
   path: '/complaints/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CommitteemeetingIndexRoute = CommitteemeetingIndexImport.update({
+  id: '/committeemeeting/',
+  path: '/committeemeeting/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -674,6 +681,13 @@ declare module '@tanstack/react-router' {
       path: '/committee'
       fullPath: '/committee'
       preLoaderRoute: typeof CommitteeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/committeemeeting/': {
+      id: '/committeemeeting/'
+      path: '/committeemeeting'
+      fullPath: '/committeemeeting'
+      preLoaderRoute: typeof CommitteemeetingIndexImport
       parentRoute: typeof rootRoute
     }
     '/complaints/': {
@@ -1119,6 +1133,7 @@ export interface FileRoutesByFullPath {
   '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
+  '/committeemeeting': typeof CommitteemeetingIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/dashboards': typeof DashboardsIndexRoute
@@ -1199,6 +1214,7 @@ export interface FileRoutesByTo {
   '/cashbook': typeof CashbookIndexRoute
   '/cashiers': typeof CashiersIndexRoute
   '/committee': typeof CommitteeIndexRoute
+  '/committeemeeting': typeof CommitteemeetingIndexRoute
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/dashboards': typeof DashboardsIndexRoute
@@ -1280,6 +1296,7 @@ export interface FileRoutesById {
   '/cashbook/': typeof CashbookIndexRoute
   '/cashiers/': typeof CashiersIndexRoute
   '/committee/': typeof CommitteeIndexRoute
+  '/committeemeeting/': typeof CommitteemeetingIndexRoute
   '/complaints/': typeof ComplaintsIndexRoute
   '/courses/': typeof CoursesIndexRoute
   '/dashboards/': typeof DashboardsIndexRoute
@@ -1362,6 +1379,7 @@ export interface FileRouteTypes {
     | '/cashbook'
     | '/cashiers'
     | '/committee'
+    | '/committeemeeting'
     | '/complaints'
     | '/courses'
     | '/dashboards'
@@ -1441,6 +1459,7 @@ export interface FileRouteTypes {
     | '/cashbook'
     | '/cashiers'
     | '/committee'
+    | '/committeemeeting'
     | '/complaints'
     | '/courses'
     | '/dashboards'
@@ -1520,6 +1539,7 @@ export interface FileRouteTypes {
     | '/cashbook/'
     | '/cashiers/'
     | '/committee/'
+    | '/committeemeeting/'
     | '/complaints/'
     | '/courses/'
     | '/dashboards/'
@@ -1601,6 +1621,7 @@ export interface RootRouteChildren {
   CashbookIndexRoute: typeof CashbookIndexRoute
   CashiersIndexRoute: typeof CashiersIndexRoute
   CommitteeIndexRoute: typeof CommitteeIndexRoute
+  CommitteemeetingIndexRoute: typeof CommitteemeetingIndexRoute
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
   CoursesIndexRoute: typeof CoursesIndexRoute
   DashboardsIndexRoute: typeof DashboardsIndexRoute
@@ -1681,6 +1702,7 @@ const rootRouteChildren: RootRouteChildren = {
   CashbookIndexRoute: CashbookIndexRoute,
   CashiersIndexRoute: CashiersIndexRoute,
   CommitteeIndexRoute: CommitteeIndexRoute,
+  CommitteemeetingIndexRoute: CommitteemeetingIndexRoute,
   ComplaintsIndexRoute: ComplaintsIndexRoute,
   CoursesIndexRoute: CoursesIndexRoute,
   DashboardsIndexRoute: DashboardsIndexRoute,
@@ -1770,6 +1792,7 @@ export const routeTree = rootRoute
         "/cashbook/",
         "/cashiers/",
         "/committee/",
+        "/committeemeeting/",
         "/complaints/",
         "/courses/",
         "/dashboards/",
@@ -1882,6 +1905,9 @@ export const routeTree = rootRoute
     },
     "/committee/": {
       "filePath": "committee/index.tsx"
+    },
+    "/committeemeeting/": {
+      "filePath": "committeemeeting/index.tsx"
     },
     "/complaints/": {
       "filePath": "complaints/index.tsx"
