@@ -97,6 +97,7 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/memo",
       icon: FileText,
     },
+
   
     {
       title: "Holidays",
@@ -112,6 +113,18 @@ export const searchconfig: Record<string, MenuItem[]> = {
           url: "/weeklyholiday",
           icon: Calendar,
         }
+      ]
+    },
+    {
+      title: "Exam",
+      icon: Calendar,
+      children: [
+        {
+          title: "Add Exam",
+          url: "/addexam",
+          icon: Calendar,
+        },
+       
       ]
     },
    

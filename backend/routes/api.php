@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\ExamController;
 use App\Http\Controllers\Api\MemoController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\TaskController;
@@ -18,7 +19,6 @@ use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\HolidayController;
 use App\Http\Controllers\Api\MeetingController;
-use App\Http\Controllers\Api\CommitteeMeetingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\PeticashController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SemesterController;
+use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\AdmissionController;
 use App\Http\Controllers\Api\CommitteeController;
 use App\Http\Controllers\Api\ComplaintController;
@@ -36,7 +37,6 @@ use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
 use App\Http\Controllers\Api\InstituteController;
 use App\Http\Controllers\Api\InventoryController;
-use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\AttendanceController;
@@ -52,6 +52,7 @@ use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\PurchaseOrderController;
 use App\Http\Controllers\Api\StaffEducationController;
+use App\Http\Controllers\Api\CommitteeMeetingController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 use App\Http\Controllers\Api\NoticeController; // Added this line
@@ -122,6 +123,11 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    // Committee Meetings routes
    Route::resource('committee-meetings', CommitteeMeetingController::class);
+    
+    // Exams routes
+    Route::resource('exams', ExamController::class);
+    Route::get('/all_exams', [ExamController::class, 'allExams'])->name("exams.all");
+
    Route::get('/all_committee_meetings', [CommitteeMeetingController::class, 'allMeetings'])->name('committeemeetings.all');
    Route::get('/all_committee', [CommitteeController::class, 'allCommitees'])->name("committees.all");
 
