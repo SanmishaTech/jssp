@@ -39,6 +39,7 @@ import { Route as LeaveIndexImport } from './routes/leave/index'
 import { Route as InventoryIndexImport } from './routes/inventory/index'
 import { Route as InstitutesIndexImport } from './routes/institutes/index'
 import { Route as HolidayIndexImport } from './routes/holiday/index'
+import { Route as ExamcalenderIndexImport } from './routes/examcalender/index'
 import { Route as EventsIndexImport } from './routes/events/index'
 import { Route as DivisionsIndexImport } from './routes/divisions/index'
 import { Route as DashboardsIndexImport } from './routes/dashboards/index'
@@ -258,6 +259,12 @@ const InstitutesIndexRoute = InstitutesIndexImport.update({
 const HolidayIndexRoute = HolidayIndexImport.update({
   id: '/holiday/',
   path: '/holiday/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ExamcalenderIndexRoute = ExamcalenderIndexImport.update({
+  id: '/examcalender/',
+  path: '/examcalender/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -739,6 +746,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/examcalender/': {
+      id: '/examcalender/'
+      path: '/examcalender'
+      fullPath: '/examcalender'
+      preLoaderRoute: typeof ExamcalenderIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/holiday/': {
       id: '/holiday/'
       path: '/holiday'
@@ -1154,6 +1168,7 @@ export interface FileRoutesByFullPath {
   '/dashboards': typeof DashboardsIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
+  '/examcalender': typeof ExamcalenderIndexRoute
   '/holiday': typeof HolidayIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
@@ -1236,6 +1251,7 @@ export interface FileRoutesByTo {
   '/dashboards': typeof DashboardsIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
+  '/examcalender': typeof ExamcalenderIndexRoute
   '/holiday': typeof HolidayIndexRoute
   '/institutes': typeof InstitutesIndexRoute
   '/inventory': typeof InventoryIndexRoute
@@ -1319,6 +1335,7 @@ export interface FileRoutesById {
   '/dashboards/': typeof DashboardsIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/examcalender/': typeof ExamcalenderIndexRoute
   '/holiday/': typeof HolidayIndexRoute
   '/institutes/': typeof InstitutesIndexRoute
   '/inventory/': typeof InventoryIndexRoute
@@ -1403,6 +1420,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/divisions'
     | '/events'
+    | '/examcalender'
     | '/holiday'
     | '/institutes'
     | '/inventory'
@@ -1484,6 +1502,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/divisions'
     | '/events'
+    | '/examcalender'
     | '/holiday'
     | '/institutes'
     | '/inventory'
@@ -1565,6 +1584,7 @@ export interface FileRouteTypes {
     | '/dashboards/'
     | '/divisions/'
     | '/events/'
+    | '/examcalender/'
     | '/holiday/'
     | '/institutes/'
     | '/inventory/'
@@ -1648,6 +1668,7 @@ export interface RootRouteChildren {
   DashboardsIndexRoute: typeof DashboardsIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  ExamcalenderIndexRoute: typeof ExamcalenderIndexRoute
   HolidayIndexRoute: typeof HolidayIndexRoute
   InstitutesIndexRoute: typeof InstitutesIndexRoute
   InventoryIndexRoute: typeof InventoryIndexRoute
@@ -1730,6 +1751,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardsIndexRoute: DashboardsIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
+  ExamcalenderIndexRoute: ExamcalenderIndexRoute,
   HolidayIndexRoute: HolidayIndexRoute,
   InstitutesIndexRoute: InstitutesIndexRoute,
   InventoryIndexRoute: InventoryIndexRoute,
@@ -1821,6 +1843,7 @@ export const routeTree = rootRoute
         "/dashboards/",
         "/divisions/",
         "/events/",
+        "/examcalender/",
         "/holiday/",
         "/institutes/",
         "/inventory/",
@@ -1949,6 +1972,9 @@ export const routeTree = rootRoute
     },
     "/events/": {
       "filePath": "events/index.tsx"
+    },
+    "/examcalender/": {
+      "filePath": "examcalender/index.tsx"
     },
     "/holiday/": {
       "filePath": "holiday/index.tsx"
