@@ -48,6 +48,10 @@ interface UserData {
 
 
 export function AppSidebar({ role }: AppSidebarProps) {
+  const pathMatches = (path: string, url?: string) => {
+    if (!url) return false;
+    return path === url || path.startsWith(url + "/");
+  };
   // Fetch committees list – used to dynamically populate sidebar under Staff Management
   const committeeQuery = useGetData({
     endpoint: "/api/all_committee",
@@ -55,12 +59,33 @@ export function AppSidebar({ role }: AppSidebarProps) {
   });
 
   // Extract committees once query succeeds (useGetData returns parsed JSON per project convention)
-  const committees: Committee[] = useMemo(() => {
+  const committeesRaw: Committee[] = useMemo(() => {
     if (committeeQuery.data && (committeeQuery.data as any).data?.Commitee) {
       return (committeeQuery.data as any).data.Commitee as Committee[];
     }
     return [];
   }, [committeeQuery.data]);
+
+  // Read logged-in staff id (if available)
+  const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+  const loggedStaffId = useMemo(() => {
+    if (!userStr) return null;
+    try {
+      const u = JSON.parse(userStr);
+      return u.staff_id || u.id || null;
+    } catch {
+      return null;
+    }
+  }, [userStr]);
+
+  // Filter committees: admins/VP see all, others only committees they belong to (requires backend to include staff array)
+  const committees: Committee[] = useMemo(() => {
+    if (role === 'admin' || role === 'viceprincipal') return committeesRaw;
+    return committeesRaw.filter((c: any) => {
+      if (!c.staff || !Array.isArray(c.staff)) return false;
+      return c.staff.some((s: any) => s.staff_id === loggedStaffId);
+    });
+  }, [committeesRaw, role, loggedStaffId]);
   // Base items from static config
 const baseItems = useMemo(() => searchconfig[role as keyof typeof searchconfig] || [], [role]);
 
@@ -68,14 +93,14 @@ const baseItems = useMemo(() => searchconfig[role as keyof typeof searchconfig] 
 const items = useMemo(() => {
   if (!committees.length) return baseItems;
 
-  const newItems: MenuItem[] = baseItems.map((it) => ({ ...it }));
-  const staffMgmtIdx = newItems.findIndex((it) => it.title === "Staff Management");
-  if (staffMgmtIdx === -1) return baseItems;
+  // Deep-clone base items so we don't mutate state memo value
+  const newItems: MenuItem[] = baseItems.map((it) => ({ ...it, children: it.children ? it.children.map(c => ({ ...c })) : undefined }));
 
-  // Remove any existing "Added Committees" to avoid duplicates
-  const existingIdx = newItems.findIndex((it) => it.title === "Added Committees");
+  // Remove any existing "Created Committees" to avoid duplicates
+  const existingIdx = newItems.findIndex((it) => it.title === "Created Committees");
   if (existingIdx !== -1) newItems.splice(existingIdx, 1);
 
+  // Build dropdown with committees + meetings link
   const committeeMenuItems: MenuItem[] = [
     ...committees.map((c) => ({
       title: c.commitee_name,
@@ -95,8 +120,14 @@ const items = useMemo(() => {
     children: committeeMenuItems,
   };
 
-  // Insert right after Staff Management
-  newItems.splice(staffMgmtIdx + 1, 0, addedDropdown);
+  // Insert at root top if Staff Management is not present
+  if (!newItems.find(item => item.title === 'Staff Management')) {
+    newItems.unshift(addedDropdown);
+  } else {
+    // Insert right after Staff Management
+    const staffMgmtIdx = newItems.findIndex(item => item.title === 'Staff Management');
+    newItems.splice(staffMgmtIdx + 1, 0, addedDropdown);
+  }
 
   return newItems;
 }, [baseItems, committees]);
@@ -178,7 +209,7 @@ const items = useMemo(() => {
     items.forEach(item => {
       if (item.children) {
         const hasActiveChild = item.children.some(child => 
-          child.url && currentPath.startsWith(child.url)
+          pathMatches(currentPath, child.url)
         );
         if (hasActiveChild) {
           setOpenDropdowns(prev => ({ ...prev, [item.title]: true }));
@@ -250,7 +281,7 @@ const items = useMemo(() => {
                         <SidebarMenuButton asChild>
                           <button
                             onClick={() => toggleDropdown(item.title)}
-                            className={`flex items-center w-full ${item.children?.some(child => child.url && currentPath.startsWith(child.url)) ? "bg-blue-200 text-blue-600" : ""}`}
+                            className={`flex items-center w-full ${item.children?.some(child => pathMatches(currentPath, child.url)) ? "bg-blue-200 text-blue-600" : ""}`}
                           >
                             {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
                             <span>{item.title}</span>
@@ -272,8 +303,8 @@ const items = useMemo(() => {
                           {item.children.map((child: MenuItem) => (
                             <SidebarMenuItem key={child.title} className="my-1">
                               <SidebarMenuButton asChild>
-                                <a href={child.url} className={`flex items-center ${child.url && currentPath.startsWith(child.url) ? "bg-[#339999] text-white" : ""}`}>
-                                  {child.icon && React.createElement(child.icon, { className: `mr-2 ${child.url && currentPath.startsWith(child.url) ? 'text-white' : 'text-gray-600 dark:text-blue-300'}` })}
+                                <a href={child.url} className={`flex items-center ${pathMatches(currentPath, child.url) ? "bg-[#339999] text-white" : ""}`}>
+                                  {child.icon && React.createElement(child.icon, { className: `mr-2 ${pathMatches(currentPath, child.url) ? 'text-white' : 'text-gray-600 dark:text-blue-300'}` })}
                                   <span>{child.title}</span>
                                 </a>
                               </SidebarMenuButton>
@@ -285,7 +316,7 @@ const items = useMemo(() => {
                   ) : (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
-                        <a href={item.url} className={`flex items-center ${item.url && currentPath === item.url ? "bg-blue-100 text-blue-600" : ""}`}>
+                        <a href={item.url} className={`flex items-center ${item.url && pathMatches(currentPath, item.url) ? "bg-blue-100 text-blue-600" : ""}`}>
                             {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
                           <span>{item.title}</span>
                         </a>
