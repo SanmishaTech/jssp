@@ -3,11 +3,25 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './calender.css';
 import axios from 'axios';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
+interface Supervisor {
+  id: number;
+  staff_name: string;
+}
 
 interface Exam {
   date: Date;
   title: string;
+  id?: number;
+  exam_code?: string;
+  course?: string;
+  duration_minutes?: number;
+  supervisors?: Supervisor[];
   type: 'exam' | 'weekly-holiday' | 'holiday';
   description?: string;
   time?: string;
@@ -17,8 +31,6 @@ interface Exam {
 interface CalendarProps {
   exams?: Exam[];
 }
-
-
 
 interface Holiday {
   id: string;
@@ -41,6 +53,11 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
   const [selectedExams, setSelectedExams] = useState<Exam[]>([]);
   const [exams, setExams] = useState<Exam[]>([]);
   const [weeklyHolidays, setWeeklyHolidays] = useState<WeeklyHoliday[]>([]);
+  const [detailsExam, setDetailsExam] = useState<Exam | null>(null);
+  const [allExams, setAllExams] = useState<{id:number; exam_title:string}[]>([]);
+  const [allSubjects, setAllSubjects] = useState<{id:number; subject_name:string}[]>([]);
+  const [staffOptions, setStaffOptions] = useState<Supervisor[]>([]);
+  const [selectedSupervisorIds, setSelectedSupervisorIds] = useState<number[]>([]);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -68,26 +85,60 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
     };
     
     fetchAllData();
+    // load staff for supervisor selection
+    fetchStaff();
+    fetchAllExams();
+    fetchAllSubjects();
   }, []);
 
  
+  // Fetch staff list for supervisor selection
+  const fetchAllExams = async () => {
+    try {
+      const res = await axios.get('/api/all_exams', { headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      const list = res.data.data.Exam || [];
+      setAllExams(list.map((e:any)=>({id:e.id, exam_title:e.exam_title})));
+    }catch(err){console.error('error fetching all exams', err);}  
+  };
+
+  const fetchAllSubjects = async () => {
+    try {
+      const res = await axios.get('/api/all_subjects', { headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      const list = res.data.data.Subject || [];
+      setAllSubjects(list.map((s:any)=>({id:s.id, subject_name:s.subject_name})));
+    }catch(err){console.error('error fetch subjects', err);}  
+  };
+
+  const fetchStaff = async () => {
+    try {
+      const res = await axios.get('/api/all_staff', { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` } });
+      const staffData: Supervisor[] = res.data.data.Staff || [];
+      setStaffOptions(staffData.map((s:any)=>({id:s.id, staff_name:s.staff_name})));
+    } catch(err){ console.error('error fetching staff', err);}  
+  };
+
   const fetchExams = async () => {
     try {
       // Fetch exams
-      const examsResponse = await axios.get('/api/exams', {
+      const examsResponse = await axios.get('/api/exam-calendars', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
       
-      const examsData = examsResponse.data.data.Exam || [];
+      const examsData = examsResponse.data.data.ExamCalendar || [];
       const formattedExams = examsData.map((exam: any) => ({
         date: new Date(exam.date),
-        title: `Exam`,
+        title: exam.exam_name || 'Exam',
         type: 'exam' as const,
-        description: stripHtmlTags(exam.synopsis),
-        time: exam.time
+        description: stripHtmlTags(exam.description),
+        time: exam.exam_time,
+         id: exam.id,
+         exam_code: exam.exam_code,
+         course: exam.course,
+         duration_minutes: exam.duration_minutes,
+         supervisors: exam.supervisors || []
       }));
 
       console.log(`Fetched ${formattedExams.length} exams`);
@@ -359,6 +410,37 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
     return time;
   };
 
+  const refreshCalendar = async () => {
+    const [examData, weeklyHolidayExams, holidayExams] = await Promise.all([
+      fetchExams(), fetchWeeklyHolidays(), fetchHolidays()
+    ]);
+    setExams([
+      ...(examData||[]), ...(weeklyHolidayExams||[]), ...(holidayExams||[])
+    ]);
+  };
+
+  const openDetailsDialog = (exam: Exam) => {
+    setDetailsExam(exam);
+    setSelectedSupervisorIds(exam.supervisors?.map(s=>s.id) || []);
+  };
+
+  const toggleSupervisor = (id:number) => {
+    setSelectedSupervisorIds(prev => {
+      if (prev.includes(id)) return prev.filter(pid=>pid!==id);
+      if (prev.length >=2) return prev;  // max 2
+      return [...prev, id];
+    });
+  };
+
+  const saveSupervisors = async () => {
+    if(!detailsExam) return;
+    try{
+      await axios.post(`/api/exam-calendars/${detailsExam.id}/supervisors`, { staff_ids: selectedSupervisorIds }, { headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      const updated = { ...detailsExam, supervisors: staffOptions.filter(s=>selectedSupervisorIds.includes(s.id)) };
+      setDetailsExam(updated);
+    }catch(err){ console.error('error saving supervisors', err);}  
+  };
+
   const getTileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
       const dateExams = exams.filter(
@@ -377,7 +459,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
           {hasHoliday && (
             <div className="holiday-indicator">H</div>
           )}
-          <div className="exam-indicator">
+          <div className="exam-indicator relative">
             {dateExams.slice(0, 3).map((exam, index) => (
               exam.type !== 'weekly-holiday' && (
                 <div 
@@ -386,7 +468,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
                            exam.type === 'holiday' ? 'holiday-title' : 'exam-title'}
                   title={`${exam.title}${exam.description ? ` - ${exam.description}` : ''}`}
                 >
-                  {exam.time && <span className="exam-time">{formatExamTime(exam.time)}</span>}
+                  
                   {exam.title}
                   {exam.endDate && <span> (until {exam.endDate.toLocaleDateString()})</span>}
                 </div>
@@ -420,6 +502,28 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
     ));
   };
 
+  // -- Add Exam Handler --
+  const handleAddExam = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(form);
+      const payload: Record<string, unknown> = {
+        exam_name: formData.get('exam_name') as string,
+        exam_code: formData.get('exam_code') as string,
+        date: selectedDate.toISOString().substring(0,10),
+        exam_time: formData.get('exam_time') as string,
+        duration_minutes: Number(formData.get('duration_minutes'))||null,
+        course_id: formData.get('course_id')||null,
+        subject_id: formData.get('subject_id')||null,
+        description: ''
+      };
+      await axios.post('/api/exam-calendars', payload, { headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }});
+      await refreshCalendar();
+      // close dialog via click event
+    }catch(err){ console.error('add exam error', err);}  
+  }
+
   return (
     <div className="calendar-wrapper">
       <div className="calendar-container">
@@ -437,49 +541,129 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
           }
         />
       </div>
-      {selectedExams.length > 0 && (
-        <div className="selected-date-events">
-          <h3>Details for {selectedDate.toLocaleDateString(undefined, { 
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}</h3>
-          
-          {/* Show holidays first */}
-          {selectedExams.some(e => e.type === 'holiday') && (
-            <div className="holiday-section">
-              <h4>Holidays</h4>
-              {renderExamsList('holiday')}
+      {/* Details container, always visible */}
+      <div className="selected-date-events">
+        <h3>Details for {selectedDate.toLocaleDateString(undefined, {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}</h3>
+
+        {/* Show holidays first */}
+        {selectedExams.some(e => e.type === 'holiday') && (
+          <div className="holiday-section">
+            <h4>Holidays</h4>
+            {renderExamsList('holiday')}
+          </div>
+        )}
+
+        {/* Add Exam Dialog */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" size="sm" className="mb-2 flex items-center gap-2 w-full">
+              <PlusCircle className="h-4 w-4" />
+              Add Exam
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-white sm:max-w-lg rounded-lg p-6 shadow-xl">
+            <DialogHeader>
+              <DialogTitle>Add Exam</DialogTitle>
+            </DialogHeader>
+            <form className="space-y-4" onSubmit={handleAddExam}>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Exam</label>
+                <select name="exam_id" className="border rounded-md p-2" defaultValue="">
+                  <option value="" disabled>Select Exam</option>
+                  {allExams.map((ex, idx) => (
+                    <option key={idx} value={ex.id}>{ex.exam_title}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Exam Name</label>
+                <Input name="exam_name" placeholder="Enter exam name" />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Subject</label>
+                <select name="subject_id" className="border rounded-md p-2" defaultValue="">
+                  <option value="" disabled>Select Subject</option>
+                  {allSubjects.map((sub, idx)=> (
+                    <option key={idx} value={sub.id}>{sub.subject_name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Exam Code</label>
+                <Input name="exam_code" placeholder="Enter exam code" />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Exam Time</label>
+                <Input name="exam_time" type="time" />
+              </div>
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium">Exam Duration (minutes)</label>
+                <Input name="duration_minutes" type="number" min="0" />
+              </div>
+              <DialogFooter className="pt-2">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Save</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+        <h4 className="mt-4 mb-2 font-semibold">Exam List</h4>
+        {selectedExams.filter(exam => exam.type !== 'holiday').length > 0 ? (
+          selectedExams.filter(exam => exam.type !== 'holiday').map((exam, index) => (
+            <div
+              key={index}
+              className={`event-details ${exam.type}-details cursor-pointer`}
+              onClick={() => openDetailsDialog(exam)}
+            >
+              <h4>{exam.title}</h4>
+              {exam.time && <p className="exam-time">{formatExamTime(exam.time)}</p>}
+              {exam.description && <p className="exam-description">{exam.description}</p>}
             </div>
-          )}
-          
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="flex w-full justify-start space-x-1">
-              <TabsTrigger className="flex-1" value="all">All</TabsTrigger>
-              <TabsTrigger className="flex-1" value="exams">Exams</TabsTrigger>
-             </TabsList>
-            <TabsContent value="all">
-              {selectedExams
-                .filter(exam => exam.type !== 'holiday')
-                .map((exam, index) => (
-                  <div 
-                    key={index} 
-                    className={`event-details ${exam.type}-details`}
-                  >
-                    <h4>{exam.title}</h4>
-                    {exam.time && <p className="exam-time">{formatExamTime(exam.time)}</p>}
-                    {exam.description && <p className="exam-description">{exam.description}</p>}
-                  </div>
-                ))}
-            </TabsContent>
-            <TabsContent value="exams">
-              {renderExamsList('exam')}
-            </TabsContent>
-          
-          </Tabs>
-        </div>
-      )}
+          ))
+        ) : (
+          <p className="text-muted-foreground text-sm">No exams scheduled for this day.</p>
+        )}
+        {/* Details Exam Dialog */}
+        {detailsExam && (
+          <Dialog open={!!detailsExam} onOpenChange={(open)=>!open && setDetailsExam(null)}>
+            <DialogContent className="bg-white sm:max-w-lg rounded-lg p-6 shadow-xl">
+              <DialogHeader>
+                <DialogTitle>Exam Details</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-2">
+                <p><strong>Title:</strong> {detailsExam.title}</p>
+                {detailsExam.course && <p><strong>Course:</strong> {detailsExam.course}</p>}
+                {detailsExam.exam_code && <p><strong>Code:</strong> {detailsExam.exam_code}</p>}
+                {detailsExam.time && <p><strong>Time:</strong> {detailsExam.time}</p>}
+                {detailsExam.duration_minutes && <p><strong>Duration:</strong> {detailsExam.duration_minutes} mins</p>}
+                {detailsExam.description && <p><strong>Description:</strong> {detailsExam.description}</p>}
+              </div>
+              <div className="mt-4">
+                <h4 className="font-medium mb-2">Supervisors (max 2)</h4>
+                <div className="max-h-48 overflow-auto space-y-1">
+                  {staffOptions.map(opt=> (
+                    <label key={opt.id} className="flex items-center space-x-2">
+                      <input type="checkbox" checked={selectedSupervisorIds.includes(opt.id)} onChange={()=>toggleSupervisor(opt.id)} disabled={!selectedSupervisorIds.includes(opt.id) && selectedSupervisorIds.length>=2}/>
+                      <span>{opt.staff_name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <DialogFooter className="pt-4">
+                <Button variant="outline" onClick={()=>setDetailsExam(null)}>Close</Button>
+                <Button onClick={saveSupervisors}>Save</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
     </div>
   );
 };
