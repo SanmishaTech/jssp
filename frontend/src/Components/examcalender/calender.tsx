@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import ExamDetailDialog from "./examdetaildialog";
 import AddExamDialog, { ExamFormData } from "./addexamdialog";
 import AlertDialogbox from "./AlertBox";
-import { PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -27,10 +27,12 @@ export interface Exam {
   date: Date;
   title: string;
   id?: number;
+  exam_id_name?: string;
   exam_code?: string;
   course?: string;
   duration_minutes?: number;
   supervisors?: Supervisor[];
+  staff_id?: number[];
   type: 'exam' | 'weekly-holiday' | 'holiday';
   description?: string;
   time?: string;
@@ -132,6 +134,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
         return {
           date: new Date(exam.date),
           title: exam.exam_name || 'Exam',
+          exam_id_name: exam.exam_id_name,
           type: 'exam' as const,
           description: stripHtmlTags(exam.description),
           time: exam.exam_time,
@@ -139,7 +142,8 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
           exam_code: exam.exam_code,
           course: exam.course,
           duration_minutes: exam.duration_minutes,
-          supervisors: supervisors
+          supervisors: supervisors,
+          staff_id: (exam.staff_id || []).map((id: string) => parseInt(id, 10))
         };
       });
 
@@ -431,22 +435,6 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
     }
   };
 
-  const handleEdit = (exam: Exam) => {
-    const formData: ExamFormData = {
-      id: exam.id,
-      exam_name: exam.title,
-      exam_code: exam.exam_code,
-      exam_time: exam.time,
-      duration_minutes: exam.duration_minutes,
-      // @ts-ignore
-      subject_id: exam.subject_id,
-      // @ts-ignore
-      exam_id: exam.exam_id,
-    };
-    setExamToEdit(formData);
-    setIsAddExamDialogOpen(true);
-  };
-
   const handleDelete = (examId?: number) => {
     if (examId) {
       setDeleteExamId(examId);
@@ -588,17 +576,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
                   {exam.description && <p className="exam-description">{exam.description}</p>}
                 </div>
                 <div className="flex items-center">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      {/* <Button variant="ghost" size="icon" onClick={() => handleEdit(exam)}>
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Button> */}
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Edit Exam</p>
-                    </TooltipContent>
-                  </Tooltip>
+
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" size="icon" onClick={() => handleDelete(exam.id)}>
@@ -622,6 +600,7 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
           <ExamDetailDialog
           exam={detailsExam}
           onClose={() => setDetailsExam(null)}
+          allStaff={allStaff}
         />
         )}
       </div>

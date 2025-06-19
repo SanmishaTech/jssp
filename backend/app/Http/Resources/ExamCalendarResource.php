@@ -18,6 +18,7 @@ class ExamCalendarResource extends JsonResource
             'id'               => $this->id,
             'institute_id'     => $this->institute_id,
             'exam_id'          => $this->exam_id,
+            'exam_id_name'     => $this->exam_id_name,
             'exam_name'        => $this->exam_name,
             'exam_code'        => $this->exam_code,
             'date'             => $this->date?->toDateString(),

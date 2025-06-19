@@ -29,6 +29,8 @@ class ExamCalendar extends Model
         'staff_id' => 'array',
     ];
 
+    protected $appends = ['exam_id_name'];
+
     public function institute()
     {
         return $this->belongsTo(Institute::class);
@@ -47,6 +49,11 @@ class ExamCalendar extends Model
     public function subject()
     {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function getExamIdNameAttribute()
+    {
+        return $this->exam?->exam_title;
     }
 
 

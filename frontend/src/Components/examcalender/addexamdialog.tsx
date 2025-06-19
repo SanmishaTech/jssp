@@ -39,8 +39,14 @@ const profileFormSchema = z.object({
     exam_code: z.string().optional(),
     exam_time: z.string().optional(),
     duration_minutes: z.coerce.number().optional(),
-    subject_id: z.coerce.number().optional(),
-    exam_id: z.coerce.number().optional(),
+    subject_id: z.coerce.number({
+        required_error: "Subject is required.",
+        invalid_type_error: "Subject is required.",
+    }).positive("Subject is required."),
+    exam_id: z.coerce.number({
+        required_error: "Exam is required.",
+        invalid_type_error: "Exam is required.",
+    }).positive("Exam is required."),
     staff_id: z.array(z.object({
       value: z.string(),
       label: z.string()
@@ -72,11 +78,22 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
         exam_code: '',
         exam_time: '',
         duration_minutes: undefined,
-        subject_id: undefined,
-        exam_id: undefined,
+        subject_id: 0,
+        exam_id: 0,
         staff_id: [],
     },
   });
+
+  const subjectId = form.watch('subject_id');
+
+  useEffect(() => {
+    if (!isEditMode && subjectId && subjectId > 0) {
+        const subject = allSubjects.find(s => s.id === subjectId);
+        if (subject) {
+            form.setValue('exam_name', subject.subject_name);
+        }
+    }
+  }, [subjectId, allSubjects, form, isEditMode]);
 
   useEffect(() => {
     if (open) {
@@ -96,6 +113,8 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
         form.reset({
           ...examToEdit,
           date: examToEdit.date ? examToEdit.date.split('T')[0] : '',
+          subject_id: examToEdit.subject_id || 0,
+          exam_id: examToEdit.exam_id || 0,
           staff_id: staffIdsAsOptions,
         });
       } else {
@@ -110,35 +129,13 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
           exam_code: '',
           exam_time: '',
           duration_minutes: undefined,
-          subject_id: undefined,
-          exam_id: undefined,
+          subject_id: 0,
+          exam_id: 0,
           staff_id: [],
         });
       }
     }
   }, [open, examToEdit, form, selectedDate, allStaff]);
-
-  async function onSubmit(data: ProfileFormValues) {
-    try {
-      const submissionData = {
-        ...data,
-        staff_id: data.staff_id.map(option => option.value),
-      };
-
-      if (isEditMode) {
-        await axios.put(`/api/exam-calendars/${examToEdit.id}`, submissionData);
-        toast.success("Exam updated successfully");
-      } else {
-        await axios.post('/api/exam-calendars', submissionData);
-        toast.success("Exam added successfully");
-      }
-      fetchData();
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Submission failed", error);
-      toast.error("An error occurred during submission.");
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -147,7 +144,27 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
           <DialogTitle>{isEditMode ? 'Edit Exam' : 'Add Exam'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(async (data) => {
+                try {
+                    const submissionData = {
+                        ...data,
+                        staff_id: data.staff_id.map(option => parseInt(option.value, 10)),
+                    };
+
+                    if (isEditMode) {
+                        await axios.put(`/api/exam-calendars/${examToEdit.id}`, submissionData);
+                        toast.success("Exam updated successfully");
+                    } else {
+                        await axios.post('/api/exam-calendars', submissionData);
+                        toast.success("Exam added successfully");
+                    }
+                    fetchData();
+                    onOpenChange(false);
+                } catch (error) {
+                    console.error("Submission failed", error);
+                    toast.error("An error occurred during submission.");
+                }
+            })} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="exam_id"
@@ -156,7 +173,7 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
                         <FormLabel>Exam</FormLabel>
                         <FormControl>
                             <select {...field} className="border rounded-md p-2 w-full">
-                                <option value="" disabled>Select Exam</option>
+                                <option value={0} disabled>Select Exam</option>
                                 {allExams.map((ex) => (
                                     <option key={ex.id} value={ex.id}>{ex.exam_title}</option>
                                 ))}
@@ -197,7 +214,7 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
                         <FormLabel>Subject</FormLabel>
                         <FormControl>
                             <select {...field} className="border rounded-md p-2 w-full">
-                                <option value="" disabled>Select Subject</option>
+                                <option value={0} disabled>Select Subject</option>
                                 {allSubjects.map((sub) => (
                                     <option key={sub.id} value={sub.id}>{sub.subject_name}</option>
                                 ))}

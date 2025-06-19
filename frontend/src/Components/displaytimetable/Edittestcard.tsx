@@ -18,6 +18,7 @@ import {
 interface SupervisionDuty {
   id: number;
   exam_name: string;
+  exam_id_name: string;
   date: string;
   exam_time: string;
   course_name: string;
@@ -77,6 +78,7 @@ const Edittestcard = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Exam</TableHead>
                   <TableHead>Exam Name</TableHead>
                   <TableHead>Subject</TableHead>
                   <TableHead>Date</TableHead>
@@ -88,6 +90,7 @@ const Edittestcard = () => {
                 {supervisionDuties.length > 0 ? (
                   supervisionDuties.map((duty) => (
                     <TableRow key={duty.id}>
+                      <TableCell>{duty.exam_id_name}</TableCell>
                       <TableCell>{duty.exam_name}</TableCell>
                       <TableCell>{duty.subject_name}</TableCell>
                       <TableCell>{duty.date}</TableCell>

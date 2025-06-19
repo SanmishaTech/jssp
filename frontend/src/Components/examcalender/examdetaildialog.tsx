@@ -1,18 +1,28 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/Components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Exam } from "./calender";
+import { Exam, Supervisor } from "./calender";
 import { Calendar, Clock, Tag, Timer, Users } from 'lucide-react';
 
 interface ExamDetailDialogProps {
   exam: Exam;
   onClose: () => void;
+  allStaff: Supervisor[];
 }
 
 const ExamDetailDialog: React.FC<ExamDetailDialogProps> = ({
   exam,
   onClose,
+  allStaff,
 }) => {
+
+  const getSupervisorName = (staffId: number) => {
+    const staff = allStaff.find(s => s.id === staffId);
+    return staff ? staff.staff_name : `Unknown Staff (ID: ${staffId})`;
+  };
+
+  const assignedStaffIds = exam.staff_id || [];
+
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="bg-gray-50 sm:max-w-2xl rounded-lg p-6 shadow-xl">
@@ -32,6 +42,11 @@ const ExamDetailDialog: React.FC<ExamDetailDialogProps> = ({
               <span className="text-gray-800">{exam.exam_code}</span>
             </div>
             <div className="flex items-center space-x-3">
+              <Tag className="h-5 w-5 text-gray-500" />
+              <span className="font-medium text-gray-600">Exam Name</span>
+              <span className="text-gray-800">{exam.exam_id_name}</span>
+            </div>
+            <div className="flex items-center space-x-3">
               <Clock className="h-5 w-5 text-gray-500" />
               <span className="font-medium text-gray-600">Time</span>
               <span className="text-gray-800">{exam.time}</span>
@@ -49,11 +64,11 @@ const ExamDetailDialog: React.FC<ExamDetailDialogProps> = ({
                 <Users className="h-6 w-6 text-gray-600" />
                 <h4 className="text-lg font-semibold">Assigned Supervisors</h4>
             </div>
-            {(exam.supervisors && exam.supervisors.length > 0) ? (
+            {(assignedStaffIds.length > 0) ? (
                 <div className="flex flex-wrap gap-2">
-                    {exam.supervisors.map((supervisor) => (
-                        <span key={supervisor.id} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
-                            {supervisor.staff_name}
+                    {assignedStaffIds.map((staffId: number) => (
+                        <span key={staffId} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                            {getSupervisorName(staffId)}
                         </span>
                     ))}
                 </div>
