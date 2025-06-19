@@ -30,6 +30,7 @@ import { Route as RequisitionsIndexImport } from './routes/requisitions/index'
 import { Route as PurchaseordersIndexImport } from './routes/purchaseorders/index'
 import { Route as ProfilesIndexImport } from './routes/profiles/index'
 import { Route as PeticashIndexImport } from './routes/peticash/index'
+import { Route as PaperevaluationIndexImport } from './routes/paperevaluation/index'
 import { Route as NoticeIndexImport } from './routes/notice/index'
 import { Route as MemoIndexImport } from './routes/memo/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
@@ -206,6 +207,12 @@ const ProfilesIndexRoute = ProfilesIndexImport.update({
 const PeticashIndexRoute = PeticashIndexImport.update({
   id: '/peticash/',
   path: '/peticash/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PaperevaluationIndexRoute = PaperevaluationIndexImport.update({
+  id: '/paperevaluation/',
+  path: '/paperevaluation/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -830,6 +837,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoticeIndexImport
       parentRoute: typeof rootRoute
     }
+    '/paperevaluation/': {
+      id: '/paperevaluation/'
+      path: '/paperevaluation'
+      fullPath: '/paperevaluation'
+      preLoaderRoute: typeof PaperevaluationIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/peticash/': {
       id: '/peticash/'
       path: '/peticash'
@@ -1193,6 +1207,7 @@ export interface FileRoutesByFullPath {
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
   '/notice': typeof NoticeIndexRoute
+  '/paperevaluation': typeof PaperevaluationIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/purchaseorders': typeof PurchaseordersIndexRoute
@@ -1277,6 +1292,7 @@ export interface FileRoutesByTo {
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
   '/notice': typeof NoticeIndexRoute
+  '/paperevaluation': typeof PaperevaluationIndexRoute
   '/peticash': typeof PeticashIndexRoute
   '/profiles': typeof ProfilesIndexRoute
   '/purchaseorders': typeof PurchaseordersIndexRoute
@@ -1362,6 +1378,7 @@ export interface FileRoutesById {
   '/meetings/': typeof MeetingsIndexRoute
   '/memo/': typeof MemoIndexRoute
   '/notice/': typeof NoticeIndexRoute
+  '/paperevaluation/': typeof PaperevaluationIndexRoute
   '/peticash/': typeof PeticashIndexRoute
   '/profiles/': typeof ProfilesIndexRoute
   '/purchaseorders/': typeof PurchaseordersIndexRoute
@@ -1448,6 +1465,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/memo'
     | '/notice'
+    | '/paperevaluation'
     | '/peticash'
     | '/profiles'
     | '/purchaseorders'
@@ -1531,6 +1549,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/memo'
     | '/notice'
+    | '/paperevaluation'
     | '/peticash'
     | '/profiles'
     | '/purchaseorders'
@@ -1614,6 +1633,7 @@ export interface FileRouteTypes {
     | '/meetings/'
     | '/memo/'
     | '/notice/'
+    | '/paperevaluation/'
     | '/peticash/'
     | '/profiles/'
     | '/purchaseorders/'
@@ -1699,6 +1719,7 @@ export interface RootRouteChildren {
   MeetingsIndexRoute: typeof MeetingsIndexRoute
   MemoIndexRoute: typeof MemoIndexRoute
   NoticeIndexRoute: typeof NoticeIndexRoute
+  PaperevaluationIndexRoute: typeof PaperevaluationIndexRoute
   PeticashIndexRoute: typeof PeticashIndexRoute
   ProfilesIndexRoute: typeof ProfilesIndexRoute
   PurchaseordersIndexRoute: typeof PurchaseordersIndexRoute
@@ -1783,6 +1804,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingsIndexRoute: MeetingsIndexRoute,
   MemoIndexRoute: MemoIndexRoute,
   NoticeIndexRoute: NoticeIndexRoute,
+  PaperevaluationIndexRoute: PaperevaluationIndexRoute,
   PeticashIndexRoute: PeticashIndexRoute,
   ProfilesIndexRoute: ProfilesIndexRoute,
   PurchaseordersIndexRoute: PurchaseordersIndexRoute,
@@ -1876,6 +1898,7 @@ export const routeTree = rootRoute
         "/meetings/",
         "/memo/",
         "/notice/",
+        "/paperevaluation/",
         "/peticash/",
         "/profiles/",
         "/purchaseorders/",
@@ -2028,6 +2051,9 @@ export const routeTree = rootRoute
     },
     "/notice/": {
       "filePath": "notice/index.tsx"
+    },
+    "/paperevaluation/": {
+      "filePath": "paperevaluation/index.tsx"
     },
     "/peticash/": {
       "filePath": "peticash/index.tsx"

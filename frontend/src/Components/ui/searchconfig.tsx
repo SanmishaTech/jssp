@@ -128,6 +128,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
           title: "Exam Calender",
           url: "/examcalender",
           icon: Calendar,
+        },
+        {
+          title: "Paper Evaluation ",
+          url: "/paperevaluation",
+          icon: Calendar,
         }
        
       ]

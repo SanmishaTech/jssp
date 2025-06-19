@@ -58,7 +58,7 @@ use App\Http\Controllers\Api\ProductCategoriesController;
 use App\Http\Controllers\Api\NoticeController; // Added this line
 use App\Http\Controllers\Api\SyllabusController; // Added this line
 use App\Http\Controllers\Api\DashboardController; // Added for dashboard
-
+use App\Http\Controllers\Api\PaperEvaluationController; // Added this line
 
 Route::post('/login', [UserController::class, 'login']);
 
@@ -219,6 +219,8 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    // Dashboard route
    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.data');
 
+   Route::resource('paper-evaluations', PaperEvaluationController::class);
+   Route::get('/all_paper_evaluations', [PaperEvaluationController::class, 'allPaperEvaluations'])->name("paper-evaluations.all");
 
    Route::resource('staffEducations', StaffEducationController::class);
    Route::get('/all_staffEducations', [StaffEducationController::class, 'allStaffEducations'])->name("staffEducations.all");
