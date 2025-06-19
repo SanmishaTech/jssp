@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Api;
   
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
+use Illuminate\Http\JsonResponse;
   
 class BaseController extends Controller
 {
     /**
      * status response method.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendResponse($result, $message)
+    public function sendResponse($result, $message): JsonResponse
     {
         $response = [
             'status' => true,
@@ -26,9 +27,9 @@ class BaseController extends Controller
     /**
      * return error response.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError($error, $errorMessages = [], $code = 401)
+    public function sendError($error, $errorMessages = [], $code = 401): JsonResponse
     {
         $response = [
             'status' => false,

@@ -101,6 +101,15 @@ interface TodaysSyllabusProgress {
   remarks?: string;
 }
 
+interface SupervisionDuty {
+  id: number;
+  exam_name: string;
+  date: string;
+  exam_time: string;
+  course_name: string;
+  subject_name: string;
+}
+
 // StaffMember interface might not be needed if not used elsewhere after consolidation
 // interface StaffMember {
 //   id: number;
@@ -137,6 +146,7 @@ export default function ResponsiveLabDashboard() {
   const [memosData, setMemosData] = useState<Memo[]>([]);
   const [upcomingBirthdaysData, setUpcomingBirthdaysData] = useState<StaffBirthday[]>([]);
   const [todaysSyllabusProgress, setTodaysSyllabusProgress] = useState<TodaysSyllabusProgress[]>([]);
+  const [supervisionDuties, setSupervisionDuties] = useState<SupervisionDuty[]>([]);
   const [staffList, setStaffList] = useState<{ id: number; staff_name: string }[]>([]);
   const [selectedStaffId, setSelectedStaffId] = useState<number | null>(null);
   // teachingCount and nonTeachingCount are not currently set by the new API
@@ -175,6 +185,18 @@ export default function ResponsiveLabDashboard() {
           setComplaintsData(data.complaints || []);
           setMemosData(data.memos || []);
           setUpcomingBirthdaysData(data.upcoming_birthdays || []);
+
+          if (currentUser.role === 'teachingstaff') {
+            const supervisionResponse = await axios.get('/api/supervision-duties', {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            });
+            if (supervisionResponse.data.status && supervisionResponse.data.data) {
+              setSupervisionDuties(supervisionResponse.data.data.SupervisionDuties || []);
+            }
+          }
 
           // Combine and sort meetings and events
           const typedMeetings = (response.data.data.meetings || []).map((m: Meeting) => ({
@@ -355,7 +377,44 @@ export default function ResponsiveLabDashboard() {
 
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-7 mt-4 mb-3">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mt-4 mb-3">
+          {userRole === 'teachingstaff' && supervisionDuties.length > 0 && (
+            <Card className="col-span-4">
+              <CardHeader>
+                <CardTitle>My Supervision Duties</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Exam Name</TableHead>
+                      <TableHead>Subject</TableHead>
+                      <TableHead>Time</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {supervisionDuties.slice(0, 5).map((duty) => (
+                      <TableRow key={duty.id}>
+                        <TableCell>{duty.exam_name}</TableCell>
+                        <TableCell>{duty.subject_name}</TableCell>
+                        <TableCell>{duty.exam_time}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {supervisionDuties.length > 5 && (
+                  <div className="mt-4 text-right">
+                    <button
+                      onClick={() => navigate({ to: "/displaytimetable" })}
+                      className="text-xs hover:text-blue-500"
+                    >
+                      Show More...
+                    </button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
           { (userRole === 'admin' || userRole === 'viceprincipal') && (
             <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2">

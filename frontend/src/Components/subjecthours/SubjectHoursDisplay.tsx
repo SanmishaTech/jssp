@@ -252,7 +252,7 @@ export default function SubjectHoursDisplay() {
                   <div className="grid grid-cols-1 gap-1">
                     {staffInfo.course_id.map(courseId => (
                       <div key={courseId} className="text-sm text-gray-700 py-1 px-2 bg-gray-100 rounded">
-                        {courses.find(c => c.id === courseId)?.medium_title}
+                        {courses.find(c => c.id === courseId)?.faculty_title}
                       </div>
                     ))}
                   </div>

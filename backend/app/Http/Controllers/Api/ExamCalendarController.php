@@ -113,5 +113,23 @@ class ExamCalendarController extends BaseController
         return $this->sendResponse([], 'Exam calendar deleted successfully');
     }
 
-   
+    public function getSupervisionDuties(Request $request): JsonResponse
+    {
+        $staffId = Auth::user()->staff->id ?? null;
+
+        if (!$staffId) {
+            return $this->sendError('Staff not found', [], 404);
+        }
+
+        $query = ExamCalendar::query()->where(function ($q) use ($staffId) {
+            $q->whereJsonContains('staff_id', $staffId)
+              ->orWhereJsonContains('staff_id', (string) $staffId);
+        });
+
+        $duties = $query->orderBy('date')->get();
+
+        return $this->sendResponse([
+            'SupervisionDuties' => ExamCalendarResource::collection($duties)
+        ], 'Supervision duties retrieved successfully');
+    }
 }

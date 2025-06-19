@@ -163,9 +163,9 @@ function ProfileForm() {
         // Handle the specific response structure
         if (response.data?.status && response.data?.data?.Course && Array.isArray(response.data.data.Course)) {
           // Map the course data to the format expected by MultipleSelect
-          const mappedCourses = response.data.data.Course.map((course: { id: number, medium_title?: string, medium_code?: string }) => ({
+          const mappedCourses = response.data.data.Course.map((course: { id: number, faculty_title?: string, faculty_code?: string }) => ({
             key: String(course.id),
-            name: course.medium_title || course.medium_code || 'Unnamed Course'
+            name: course.faculty_title || course.faculty_code || 'Unnamed Course'
           }));
           
           console.log('Mapped courses:', mappedCourses);

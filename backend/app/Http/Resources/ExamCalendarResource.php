@@ -25,6 +25,7 @@ class ExamCalendarResource extends JsonResource
             'duration_minutes' => $this->duration_minutes,
             'course_id'        => $this->course_id,
             'subject_id'       => $this->subject_id,
+            'course_name'      => $this->course?->course_name,
             'subject_name'     => $this->subject?->subject_name,
             'description'      => $this->description,
             'created_at'       => $this->created_at?->toDateTimeString(),

@@ -131,6 +131,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
     // Exam Calendar routes
     Route::resource('exam-calendars', \App\Http\Controllers\Api\ExamCalendarController::class);
     Route::post('/exam-calendars/{exam_calendar}/supervisors', [\App\Http\Controllers\Api\ExamCalendarController::class, 'assignSupervisors'])->name('exam-calendars.supervisors');
+    Route::get('/supervision-duties', [\App\Http\Controllers\Api\ExamCalendarController::class, 'getSupervisionDuties'])->name('supervision-duties');
 
    Route::get('/all_committee_meetings', [CommitteeMeetingController::class, 'allMeetings'])->name('committeemeetings.all');
    Route::get('/all_committee', [CommitteeController::class, 'allCommitees'])->name("committees.all");

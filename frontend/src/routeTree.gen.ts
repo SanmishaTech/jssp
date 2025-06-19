@@ -42,6 +42,7 @@ import { Route as HolidayIndexImport } from './routes/holiday/index'
 import { Route as ExamcalenderIndexImport } from './routes/examcalender/index'
 import { Route as EventsIndexImport } from './routes/events/index'
 import { Route as DivisionsIndexImport } from './routes/divisions/index'
+import { Route as DisplaytimetableIndexImport } from './routes/displaytimetable/index'
 import { Route as DashboardsIndexImport } from './routes/dashboards/index'
 import { Route as CoursesIndexImport } from './routes/courses/index'
 import { Route as ComplaintsIndexImport } from './routes/complaints/index'
@@ -277,6 +278,12 @@ const EventsIndexRoute = EventsIndexImport.update({
 const DivisionsIndexRoute = DivisionsIndexImport.update({
   id: '/divisions/',
   path: '/divisions/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DisplaytimetableIndexRoute = DisplaytimetableIndexImport.update({
+  id: '/displaytimetable/',
+  path: '/displaytimetable/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -732,6 +739,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/displaytimetable/': {
+      id: '/displaytimetable/'
+      path: '/displaytimetable'
+      fullPath: '/displaytimetable'
+      preLoaderRoute: typeof DisplaytimetableIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/divisions/': {
       id: '/divisions/'
       path: '/divisions'
@@ -1166,6 +1180,7 @@ export interface FileRoutesByFullPath {
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/dashboards': typeof DashboardsIndexRoute
+  '/displaytimetable': typeof DisplaytimetableIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
   '/examcalender': typeof ExamcalenderIndexRoute
@@ -1249,6 +1264,7 @@ export interface FileRoutesByTo {
   '/complaints': typeof ComplaintsIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/dashboards': typeof DashboardsIndexRoute
+  '/displaytimetable': typeof DisplaytimetableIndexRoute
   '/divisions': typeof DivisionsIndexRoute
   '/events': typeof EventsIndexRoute
   '/examcalender': typeof ExamcalenderIndexRoute
@@ -1333,6 +1349,7 @@ export interface FileRoutesById {
   '/complaints/': typeof ComplaintsIndexRoute
   '/courses/': typeof CoursesIndexRoute
   '/dashboards/': typeof DashboardsIndexRoute
+  '/displaytimetable/': typeof DisplaytimetableIndexRoute
   '/divisions/': typeof DivisionsIndexRoute
   '/events/': typeof EventsIndexRoute
   '/examcalender/': typeof ExamcalenderIndexRoute
@@ -1418,6 +1435,7 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/courses'
     | '/dashboards'
+    | '/displaytimetable'
     | '/divisions'
     | '/events'
     | '/examcalender'
@@ -1500,6 +1518,7 @@ export interface FileRouteTypes {
     | '/complaints'
     | '/courses'
     | '/dashboards'
+    | '/displaytimetable'
     | '/divisions'
     | '/events'
     | '/examcalender'
@@ -1582,6 +1601,7 @@ export interface FileRouteTypes {
     | '/complaints/'
     | '/courses/'
     | '/dashboards/'
+    | '/displaytimetable/'
     | '/divisions/'
     | '/events/'
     | '/examcalender/'
@@ -1666,6 +1686,7 @@ export interface RootRouteChildren {
   ComplaintsIndexRoute: typeof ComplaintsIndexRoute
   CoursesIndexRoute: typeof CoursesIndexRoute
   DashboardsIndexRoute: typeof DashboardsIndexRoute
+  DisplaytimetableIndexRoute: typeof DisplaytimetableIndexRoute
   DivisionsIndexRoute: typeof DivisionsIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
   ExamcalenderIndexRoute: typeof ExamcalenderIndexRoute
@@ -1749,6 +1770,7 @@ const rootRouteChildren: RootRouteChildren = {
   ComplaintsIndexRoute: ComplaintsIndexRoute,
   CoursesIndexRoute: CoursesIndexRoute,
   DashboardsIndexRoute: DashboardsIndexRoute,
+  DisplaytimetableIndexRoute: DisplaytimetableIndexRoute,
   DivisionsIndexRoute: DivisionsIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
   ExamcalenderIndexRoute: ExamcalenderIndexRoute,
@@ -1841,6 +1863,7 @@ export const routeTree = rootRoute
         "/complaints/",
         "/courses/",
         "/dashboards/",
+        "/displaytimetable/",
         "/divisions/",
         "/events/",
         "/examcalender/",
@@ -1966,6 +1989,9 @@ export const routeTree = rootRoute
     },
     "/dashboards/": {
       "filePath": "dashboards/index.tsx"
+    },
+    "/displaytimetable/": {
+      "filePath": "displaytimetable/index.tsx"
     },
     "/divisions/": {
       "filePath": "divisions/index.tsx"
