@@ -19,12 +19,14 @@ class ExamCalendar extends Model
         'duration_minutes',
         'course_id',
         'subject_id',
+        'staff_id',
         'description',
     ];
 
     protected $casts = [
         'date' => 'date',
         'exam_time' => 'datetime:H:i:s',
+        'staff_id' => 'array',
     ];
 
     public function institute()
@@ -47,11 +49,5 @@ class ExamCalendar extends Model
         return $this->belongsTo(Subject::class);
     }
 
-    /**
-     * Supervisors (staff) assigned to this exam calendar entry.
-     */
-    public function supervisors()
-    {
-        return $this->belongsToMany(Staff::class, 'exam_calendar_staff');
-    }
+
 }

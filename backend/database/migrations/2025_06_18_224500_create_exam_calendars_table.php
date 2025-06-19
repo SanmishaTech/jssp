@@ -17,11 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('exam_id')->nullable(); // optional reference to exams master table
             $table->string('exam_name');
             $table->string('exam_code')->nullable();
-            $table->date('date');
+            $table->date('date')->nullable();
             $table->time('exam_time')->nullable();
             $table->integer('duration_minutes')->nullable();
             $table->unsignedBigInteger('course_id')->nullable();
             $table->unsignedBigInteger('subject_id')->nullable();
+            $table->json('staff_id')->nullable();
             $table->longText('description')->nullable();
             $table->timestamps();
 

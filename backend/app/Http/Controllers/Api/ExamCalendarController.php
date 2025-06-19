@@ -17,7 +17,7 @@ class ExamCalendarController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = ExamCalendar::with('supervisors');
+        $query = ExamCalendar::query();
 
         $instituteId = Auth::user()->staff->institute_id ?? null;
         if ($instituteId) {
@@ -51,6 +51,8 @@ class ExamCalendarController extends BaseController
             'subject_id'       => 'nullable|exists:subjects,id',
             'description'      => 'nullable|string',
             'exam_id'          => 'nullable|exists:exams,id',
+            'staff_id'         => 'nullable|array',
+            'staff_id.*'       => 'exists:staff,id',
         ]);
 
         if ($validator->fails()) {
@@ -70,7 +72,7 @@ class ExamCalendarController extends BaseController
      */
     public function show(ExamCalendar $examCalendar): JsonResponse
     {
-        return $this->sendResponse(['ExamCalendar' => new ExamCalendarResource($examCalendar->load('supervisors'))], 'Exam calendar retrieved successfully');
+        return $this->sendResponse(['ExamCalendar' => new ExamCalendarResource($examCalendar)], 'Exam calendar retrieved successfully');
     }
 
     /**
@@ -88,6 +90,8 @@ class ExamCalendarController extends BaseController
             'subject_id'       => 'nullable|exists:subjects,id',
             'description'      => 'nullable|string',
             'exam_id'          => 'nullable|exists:exams,id',
+            'staff_id'         => 'sometimes|nullable|array',
+            'staff_id.*'       => 'sometimes|exists:staff,id',
         ]);
 
         if ($validator->fails()) {
@@ -109,22 +113,5 @@ class ExamCalendarController extends BaseController
         return $this->sendResponse([], 'Exam calendar deleted successfully');
     }
 
-    /**
-     * Assign supervisors to an exam calendar entry (max 2).
-     */
-    public function assignSupervisors(Request $request, ExamCalendar $examCalendar): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'staff_ids'   => 'required|array|max:2',
-            'staff_ids.*' => 'exists:staff,id',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation error', $validator->errors(), 422);
-        }
-
-        $examCalendar->supervisors()->sync($request->input('staff_ids'));
-
-        return $this->sendResponse(['ExamCalendar' => new ExamCalendarResource($examCalendar->load('supervisors'))], 'Supervisors assigned successfully');
-    }
+   
 }
