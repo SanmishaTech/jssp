@@ -20,6 +20,7 @@ import { Route as TaskmanagerIndexRouteImport } from './routes/taskmanager/index
 import { Route as SyllabusIndexRouteImport } from './routes/syllabus/index'
 import { Route as SubjectsIndexRouteImport } from './routes/subjects/index'
 import { Route as SubjecthoursIndexRouteImport } from './routes/subjecthours/index'
+import { Route as StudentsummaryIndexRouteImport } from './routes/studentsummary/index'
 import { Route as StudentsIndexRouteImport } from './routes/students/index'
 import { Route as StaffIndexRouteImport } from './routes/staff/index'
 import { Route as SemesterIndexRouteImport } from './routes/semester/index'
@@ -147,6 +148,11 @@ const SubjectsIndexRoute = SubjectsIndexRouteImport.update({
 const SubjecthoursIndexRoute = SubjecthoursIndexRouteImport.update({
   id: '/subjecthours/',
   path: '/subjecthours/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudentsummaryIndexRoute = StudentsummaryIndexRouteImport.update({
+  id: '/studentsummary/',
+  path: '/studentsummary/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentsIndexRoute = StudentsIndexRouteImport.update({
@@ -556,6 +562,7 @@ export interface FileRoutesByFullPath {
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
   '/students': typeof StudentsIndexRoute
+  '/studentsummary': typeof StudentsummaryIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/syllabus': typeof SyllabusIndexRoute
@@ -641,6 +648,7 @@ export interface FileRoutesByTo {
   '/semester': typeof SemesterIndexRoute
   '/staff': typeof StaffIndexRoute
   '/students': typeof StudentsIndexRoute
+  '/studentsummary': typeof StudentsummaryIndexRoute
   '/subjecthours': typeof SubjecthoursIndexRoute
   '/subjects': typeof SubjectsIndexRoute
   '/syllabus': typeof SyllabusIndexRoute
@@ -727,6 +735,7 @@ export interface FileRoutesById {
   '/semester/': typeof SemesterIndexRoute
   '/staff/': typeof StaffIndexRoute
   '/students/': typeof StudentsIndexRoute
+  '/studentsummary/': typeof StudentsummaryIndexRoute
   '/subjecthours/': typeof SubjecthoursIndexRoute
   '/subjects/': typeof SubjectsIndexRoute
   '/syllabus/': typeof SyllabusIndexRoute
@@ -814,6 +823,7 @@ export interface FileRouteTypes {
     | '/semester'
     | '/staff'
     | '/students'
+    | '/studentsummary'
     | '/subjecthours'
     | '/subjects'
     | '/syllabus'
@@ -899,6 +909,7 @@ export interface FileRouteTypes {
     | '/semester'
     | '/staff'
     | '/students'
+    | '/studentsummary'
     | '/subjecthours'
     | '/subjects'
     | '/syllabus'
@@ -984,6 +995,7 @@ export interface FileRouteTypes {
     | '/semester/'
     | '/staff/'
     | '/students/'
+    | '/studentsummary/'
     | '/subjecthours/'
     | '/subjects/'
     | '/syllabus/'
@@ -1070,6 +1082,7 @@ export interface RootRouteChildren {
   SemesterIndexRoute: typeof SemesterIndexRoute
   StaffIndexRoute: typeof StaffIndexRoute
   StudentsIndexRoute: typeof StudentsIndexRoute
+  StudentsummaryIndexRoute: typeof StudentsummaryIndexRoute
   SubjecthoursIndexRoute: typeof SubjecthoursIndexRoute
   SubjectsIndexRoute: typeof SubjectsIndexRoute
   SyllabusIndexRoute: typeof SyllabusIndexRoute
@@ -1187,6 +1200,13 @@ declare module '@tanstack/react-router' {
       path: '/subjecthours'
       fullPath: '/subjecthours'
       preLoaderRoute: typeof SubjecthoursIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studentsummary/': {
+      id: '/studentsummary/'
+      path: '/studentsummary'
+      fullPath: '/studentsummary'
+      preLoaderRoute: typeof StudentsummaryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/students/': {
@@ -1742,6 +1762,7 @@ const rootRouteChildren: RootRouteChildren = {
   SemesterIndexRoute: SemesterIndexRoute,
   StaffIndexRoute: StaffIndexRoute,
   StudentsIndexRoute: StudentsIndexRoute,
+  StudentsummaryIndexRoute: StudentsummaryIndexRoute,
   SubjecthoursIndexRoute: SubjecthoursIndexRoute,
   SubjectsIndexRoute: SubjectsIndexRoute,
   SyllabusIndexRoute: SyllabusIndexRoute,

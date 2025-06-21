@@ -59,6 +59,7 @@ use App\Http\Controllers\Api\NoticeController; // Added this line
 use App\Http\Controllers\Api\SyllabusController; // Added this line
 use App\Http\Controllers\Api\DashboardController; // Added for dashboard
 use App\Http\Controllers\Api\PaperEvaluationController; // Added this line
+use App\Http\Controllers\Api\StudentSummaryController;
 
 Route::post('/login', [UserController::class, 'login']);
 
@@ -154,6 +155,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    // Syllabus routes (index for get and store for update/create)
    Route::resource('syllabus', SyllabusController::class)->only(['index','store']);
    Route::resource('notices', NoticeController::class)->only(['index','store']);
+   Route::get('/student-summary/pdf', [StudentSummaryController::class, 'pdf'])->name('student-summary.pdf');
+   Route::apiResource('student-summary', StudentSummaryController::class)->only(['index', 'store']);
    Route::get('notices/{notice}/reads', [NoticeController::class, 'reads']);
 
    Route::resource('academic_years', AcademicYearController::class);

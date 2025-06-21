@@ -10,6 +10,7 @@ use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\AdmissionSeeder;
 use Database\Seeders\LibrarianSeeder;
 use Database\Seeders\AccountantSeeder;
+use Database\Seeders\BackOfficeSeeder;
 use Database\Seeders\StoreKeeperSeeder;
 use Database\Seeders\TeachingStaffSeeder;
 use Database\Seeders\VicePrincipalSeeder;
@@ -46,6 +47,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StoreKeeperSeeder::class);
         $this->call(HODSeeder::class);
         $this->call(OfficeSuperintendentSeeder::class);
+        $this->call(BackOfficeSeeder::class);
 
     }
 }

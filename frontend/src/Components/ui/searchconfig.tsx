@@ -133,7 +133,8 @@ export const searchconfig: Record<string, MenuItem[]> = {
           title: "Paper Evaluation ",
           url: "/paperevaluation",
           icon: Calendar,
-        }
+        },
+      
        
       ]
     },
@@ -298,6 +299,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
           title: "Students",
           url: "/students",
           icon: UsersRound,
+        },
+        {
+          title: "Student Summary",
+          url: "/studentsummary",
+          icon: FileText,
         },
         {
           title: "CashBook",
@@ -1108,6 +1114,8 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/teachers-paper-evaluation",
       icon: FileText,
     },
+   
+
 
     {
       title: "Syllabus",
