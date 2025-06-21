@@ -30,8 +30,8 @@ axios.interceptors.response.use(
   }
 );
 
-export const Route = createFileRoute<{ id?: string }>("/bank/:id?")({
-  beforeLoad: async () => {
+   export const Route = createFileRoute("/bank/")({
+    beforeLoad: async () => {
     // Check authentication
     const token = localStorage.getItem("token");
     if (!token) {

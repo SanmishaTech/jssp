@@ -1103,6 +1103,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/displaytimetable",
       icon: FileText,
     },
+    {
+      title: "Paper Evaluation",
+      url: "/teachers-paper-evaluation",
+      icon: FileText,
+    },
 
     {
       title: "Syllabus",
