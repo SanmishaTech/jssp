@@ -43,6 +43,7 @@ import { useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Edit } from 'lucide-react';
 
 // Define the type for a paper evaluation
 interface PaperEvaluation {
@@ -492,7 +493,7 @@ function PaperEvaluationForm() {
                     <TableCell>
                       <Dialog open={editingEvaluation?.id === evaluation.id} onOpenChange={() => handleEditClick(evaluation)}>
                         <DialogTrigger asChild>
-                          <Button variant="outline">Edit</Button>
+                          <Edit className="cursor-pointer h-5 w-5" onClick={() => handleEditClick(evaluation)} />
                         </DialogTrigger>
                         {editingEvaluation?.id === evaluation.id && (
                           <DialogContent className="bg-white">
