@@ -101,27 +101,54 @@ class StudentSummaryController extends Controller
             });
         }
 
+        if ($request->filled('filter_column') && $request->filled('filter_value')) {
+            $column = $request->input('filter_column');
+            $value = $request->input('filter_value') === 'true' ? 1 : 0;
+
+            $allowedColumns = [
+                'challan_paid',
+                'exam_form_filled',
+                'college_fees_paid',
+                'exam_fees_paid',
+                'hallticket',
+            ];
+
+            if (in_array($column, $allowedColumns)) {
+                $query->where($column, $value);
+            }
+        }
+
         $summaries = $query->get();
 
-        // Ensure summaries exist for all students if the search is empty
-        if (!$request->filled('search')) {
-            $existingStudentIds = $summaries->pluck('student_id')->toArray();
-            $allStudentIds = \App\Models\Student::pluck('id')->toArray();
-            $missingIds = array_diff($allStudentIds, $existingStudentIds);
-            foreach ($missingIds as $id) {
-                StudentSummary::create(['student_id' => $id]);
+        // Determine selected columns for the PDF header
+        $columnConfig = [
+            'challan_paid' => 'Challan Paid',
+            'exam_form_filled' => 'Exam Form Filled',
+            'college_fees_paid' => 'College Fees Paid',
+            'exam_fees_paid' => 'Exam Fees Paid',
+            'hallticket' => 'Hall Ticket',
+        ];
+
+        $columnKeys = $request->filled('columns')
+            ? array_filter(explode(',', $request->input('columns')))
+            : array_keys($columnConfig);
+        
+        $selectedColumns = [];
+        foreach ($columnKeys as $key) {
+            if (array_key_exists($key, $columnConfig)) {
+                $selectedColumns[$key] = $columnConfig[$key];
             }
-            $summaries = StudentSummary::with('student')->get(); // Re-fetch all
         }
 
         $data = [
             'summaries' => $summaries,
             'title' => 'Student Summary Report',
             'date' => now()->format('d-m-Y'),
-            'institute' => Auth::user()->staff->institute->institute_name ?? 'N/A'
+            'institute' => Auth::user()->staff->institute->institute_name ?? 'N/A',
+            'columns' => $selectedColumns
         ];
 
-        $pdf = new Mpdf();
+        $pdf = new Mpdf(['tempDir' => storage_path('app/mpdf')]);
         $html = View::make('pdf.student-summary', $data)->render();
         $pdf->WriteHTML($html);
 

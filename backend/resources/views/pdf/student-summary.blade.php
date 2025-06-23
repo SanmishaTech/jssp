@@ -64,11 +64,9 @@
         <thead>
             <tr>
                 <th>Student Name</th>
-                <th>Challan Paid</th>
-                <th>Exam Form Filled</th>
-                <th>College Fees Paid</th>
-                <th>Exam Fees Paid</th>
-                <th>Hall Ticket</th>
+                @foreach($columns as $key => $label)
+                    <th>{{ $label }}</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
@@ -76,11 +74,9 @@
                 @if($summary->student)
                     <tr>
                         <td>{{ $summary->student->student_name }}</td>
-                        <td>{{ $summary->challan_paid ? 'Yes' : 'No' }}</td>
-                        <td>{{ $summary->exam_form_filled ? 'Yes' : 'No' }}</td>
-                        <td>{{ $summary->college_fees_paid ? 'Yes' : 'No' }}</td>
-                        <td>{{ $summary->exam_fees_paid ? 'Yes' : 'No' }}</td>
-                        <td>{{ $summary->hallticket ? 'Yes' : 'No' }}</td>
+                        @foreach($columns as $key => $label)
+                            <td>{{ $summary->$key ? 'Yes' : 'No' }}</td>
+                        @endforeach
                     </tr>
                 @endif
             @endforeach

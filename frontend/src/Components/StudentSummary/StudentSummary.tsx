@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useGetData } from '@/Components/HTTP/GET';
+import { useGetData } from '@/components/HTTP/GET';
+import { usePostData } from '@/components/HTTP/POST';
 import {
   Card,
   CardContent,
@@ -17,29 +18,59 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/Components/ui/dialog';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+
 import { Checkbox } from '@/Components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
-import { usePostData } from '@/components/HTTP/POST';
+
+interface StudentSummaryData {
+  id: number;
+  student_name: string;
+  challan_paid: boolean;
+  exam_form_filled: boolean;
+  college_fees_paid: boolean;
+  exam_fees_paid: boolean;
+  hallticket: boolean;
+}
+
+type StudentSummaryBooleanField = keyof Omit<StudentSummaryData, 'id' | 'student_name'>;
 
 const StudentSummary = () => {
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<StudentSummaryData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState<{ [key: number]: boolean }>({});
+
+  const [challanPaidHeaderChecked, setChallanPaidHeaderChecked] = useState<boolean | 'indeterminate'>(false);
+  const [examFormHeaderChecked, setExamFormHeaderChecked] = useState<boolean | 'indeterminate'>(false);
+  const [collegeFeesHeaderChecked, setCollegeFeesHeaderChecked] = useState<boolean | 'indeterminate'>(false);
+  const [examFeesHeaderChecked, setExamFeesHeaderChecked] = useState<boolean | 'indeterminate'>(false);
+  const [hallTicketHeaderChecked, setHallTicketHeaderChecked] = useState<boolean | 'indeterminate'>(false);
+
+  const columnOptions = [
+    { key: 'challan_paid', label: 'Challan Paid' },
+    { key: 'exam_form_filled', label: 'Exam Form Filled' },
+    { key: 'college_fees_paid', label: 'College Fees Paid' },
+    { key: 'exam_fees_paid', label: 'Exam Fees Paid' },
+    { key: 'hallticket', label: 'Hall Ticket' },
+  ];
+  const [selectedColumn, setSelectedColumn] = useState<string>('');
+  const [selectedFilterValue, setSelectedFilterValue] = useState<string>('');
+
   const { data: studentData, error, isLoading } = useGetData({
     endpoint: '/api/student-summary',
     params: { queryKey: ['studentSummary'] },
   });
 
-  const { mutate, isPending: isUpdating } = usePostData({
+  const { mutate } = usePostData({
     endpoint: '/api/student-summary',
     params: {},
   });
@@ -47,12 +78,10 @@ const StudentSummary = () => {
   useEffect(() => {
     if (studentData) {
       const data = studentData as any;
-      if (data && data.data && Array.isArray(data.data.StudentSummary)) {
+      if (data?.data?.StudentSummary) {
         setStudents(data.data.StudentSummary);
-      } else if (data && data.data && Array.isArray(data.data)) {
+      } else if (Array.isArray(data?.data)) {
         setStudents(data.data);
-      } else if (Array.isArray(data)) {
-        setStudents(data);
       }
     }
   }, [studentData]);
@@ -61,23 +90,19 @@ const StudentSummary = () => {
   const selectAllTimersRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    // This effect runs once on mount and returns a cleanup function.
-    // The cleanup function is called when the component unmounts.
     const timers = updateTimers.current;
     return () => {
       Object.values(timers).forEach(timerId => clearTimeout(timerId));
       selectAllTimersRef.current.forEach(timerId => clearTimeout(timerId));
     };
-  }, []); // Empty dependency array ensures this runs only on mount and unmount.
+  }, []);
 
-  const handleCheckboxChange = (id: number, field:string, checked: boolean) => {
-    let studentToUpdate: any;
-
-    // Optimistically update local state first for instant UI feedback
+  const handleCheckboxChange = (id: number, field: StudentSummaryBooleanField, checked: boolean) => {
+    setIsUpdating(prev => ({ ...prev, [id]: true }));
+    let studentToUpdate: StudentSummaryData | undefined;
     setStudents(prevStudents =>
       prevStudents.map(student => {
         if (student.id === id) {
-          // This is the student we are updating.
           studentToUpdate = { ...student, [field]: checked };
           return studentToUpdate;
         }
@@ -85,152 +110,146 @@ const StudentSummary = () => {
       })
     );
 
-    // Clear any existing timer for this specific student to prevent multiple updates in quick succession.
     if (updateTimers.current[id]) {
       clearTimeout(updateTimers.current[id]);
     }
 
-    // Set a new timer to send the update to the backend after a short delay.
-    // This is called "debouncing".
     updateTimers.current[id] = setTimeout(() => {
       if (studentToUpdate) {
         const payload = {
-          ...studentToUpdate,
-          student_id: studentToUpdate.id, // The backend expects 'student_id'.
+          id: studentToUpdate.id,
+          field: field,
+          value: checked,
         };
-        delete payload.id; // Clean up the payload.
-
-        // Call the mutation to update the data on the server.
-        mutate(payload);
+        mutate(payload, {
+          onSettled: () => {
+            setIsUpdating(prev => ({ ...prev, [id]: false }));
+            delete updateTimers.current[id];
+          },
+        });
       }
-    }, 500); // Wait for 500ms of inactivity before sending the update.
+    }, 1000);
   };
 
-  const filteredStudents = useMemo(() => students.filter(student =>
-    student.student_name.toLowerCase().includes(searchTerm.toLowerCase())
-  ), [students, searchTerm]);
+  const filteredStudents = useMemo(() => {
+    let results = students;
+    if (searchTerm) {
+      results = results.filter(student =>
+        student.student_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (selectedColumn && selectedColumn !== 'none' && selectedFilterValue && selectedFilterValue !== 'all') {
+      const filterBool = selectedFilterValue === 'true';
+      results = results.filter(student => student[selectedColumn as StudentSummaryBooleanField] === filterBool);
+    }
+    return results;
+  }, [students, searchTerm, selectedColumn, selectedFilterValue]);
 
-  const [challanPaidHeaderChecked, setChallanPaidHeaderChecked] = useState<boolean | 'indeterminate'>(false);
-  const [examFormHeaderChecked, setExamFormHeaderChecked] = useState<boolean | 'indeterminate'>(false);
-  const [collegeFeesHeaderChecked, setCollegeFeesHeaderChecked] = useState<boolean | 'indeterminate'>(false);
-  const [examFeesHeaderChecked, setExamFeesHeaderChecked] = useState<boolean | 'indeterminate'>(false);
-  const [hallTicketHeaderChecked, setHallTicketHeaderChecked] = useState<boolean | 'indeterminate'>(false);
-
-  const handleSelectAllChange = (field: string) => {
-    // Clear any pending select-all updates to prevent race conditions
+  const handleSelectAllChange = (field: StudentSummaryBooleanField) => {
     selectAllTimersRef.current.forEach(timerId => clearTimeout(timerId));
-
     const totalFiltered = filteredStudents.length;
     if (totalFiltered === 0) return;
 
-    const totalChecked = filteredStudents.filter(s => s[field]).length;
+    const totalChecked = filteredStudents.filter((s: StudentSummaryData) => s[field]).length;
     const areAllChecked = totalChecked === totalFiltered;
     const newCheckedState = !areAllChecked;
-
+    
     const filteredStudentIds = new Set(filteredStudents.map(s => s.id));
-    const payloads: any[] = [];
 
-    // Optimistically update the UI for immediate feedback
     setStudents(prevStudents =>
-        prevStudents.map(student => {
-            if (filteredStudentIds.has(student.id)) {
-                const payload = { ...student, [field]: newCheckedState, student_id: student.id };
-                delete payload.id;
-                payloads.push(payload);
-                return { ...student, [field]: newCheckedState };
-            }
-            return student;
-        })
+      prevStudents.map(student => {
+        if (filteredStudentIds.has(student.id)) {
+          return { ...student, [field]: newCheckedState };
+        }
+        return student;
+      })
     );
 
-    // To prevent flooding the server with requests, we send them one by one
-    // with a small delay between each. This is a form of throttling.
+    const payloads = filteredStudents.map(student => ({
+      id: student.id,
+      field: field,
+      value: newCheckedState,
+    }));
+
     const newTimers: NodeJS.Timeout[] = [];
     payloads.forEach((payload, index) => {
-        const timerId = setTimeout(() => {
-            mutate(payload);
-        }, index * 100); // Stagger requests by 100ms
-        newTimers.push(timerId);
+      const timerId = setTimeout(() => {
+        mutate(payload);
+      }, index * 100);
+      newTimers.push(timerId);
     });
     selectAllTimersRef.current = newTimers;
 
     if (payloads.length > 0) {
-        const reloadTimer = setTimeout(() => {
-            window.location.reload();
-        }, payloads.length * 100 + 1000); // Wait for staggered requests + 1s buffer
-        selectAllTimersRef.current.push(reloadTimer);
+      const reloadTimer = setTimeout(() => {
+        window.location.reload();
+      }, payloads.length * 100 + 1000);
+      selectAllTimersRef.current.push(reloadTimer);
     }
   };
 
-  useEffect(() => {
+  const getHeaderCheckboxState = (field: StudentSummaryBooleanField): boolean | 'indeterminate' => {
     const totalFiltered = filteredStudents.length;
-    const setHeaderState = (
-      totalChecked: number,
-      setState: React.Dispatch<React.SetStateAction<boolean | 'indeterminate'>>
-    ) => {
-      if (totalFiltered === 0) {
-        setState(false);
-        return;
-      }
-      if (totalChecked === totalFiltered) {
-        setState(true);
-      } else if (totalChecked > 0) {
-        setState('indeterminate');
-      } else {
-        setState(false);
-      }
-    };
-
-    setHeaderState(filteredStudents.filter(s => s.challan_paid).length, setChallanPaidHeaderChecked);
-    setHeaderState(filteredStudents.filter(s => s.exam_form_filled).length, setExamFormHeaderChecked);
-    setHeaderState(filteredStudents.filter(s => s.college_fees_paid).length, setCollegeFeesHeaderChecked);
-    setHeaderState(filteredStudents.filter(s => s.exam_fees_paid).length, setExamFeesHeaderChecked);
-    setHeaderState(filteredStudents.filter(s => s.hallticket).length, setHallTicketHeaderChecked);
+    if (totalFiltered === 0) return false;
+    const totalChecked = filteredStudents.filter((s: StudentSummaryData) => s[field]).length;
+    if (totalChecked === 0) return false;
+    if (totalChecked === totalFiltered) return true;
+    return 'indeterminate';
+  };
+  
+  useEffect(() => {
+    setChallanPaidHeaderChecked(getHeaderCheckboxState('challan_paid'));
+    setExamFormHeaderChecked(getHeaderCheckboxState('exam_form_filled'));
+    setCollegeFeesHeaderChecked(getHeaderCheckboxState('college_fees_paid'));
+    setExamFeesHeaderChecked(getHeaderCheckboxState('exam_fees_paid'));
+    setHallTicketHeaderChecked(getHeaderCheckboxState('hallticket'));
   }, [filteredStudents]);
 
-  const handleDownloadPdf = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Authentication token not found. Please log in again.');
-      return;
-    }
+  const handleDownloadPdf = async () => {
+    setIsDownloading(true);
+    try {
+      const params = new URLSearchParams();
 
-    let reportUrl = '/api/student-summary/pdf';
-    if (searchTerm) {
-      reportUrl += `?search=${encodeURIComponent(searchTerm)}`;
-    }
-
-    fetch(reportUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      // The PDF should reflect the current filters shown on screen
+      if (searchTerm) {
+        params.append('search', searchTerm);
       }
-      return response.blob();
-    })
-    .then(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `student-summary-report.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if (selectedColumn && selectedColumn !== 'none' && selectedFilterValue && selectedFilterValue !== 'all') {
+        params.append('filter_column', selectedColumn);
+        params.append('filter_value', selectedFilterValue);
+      }
 
-      setIsReportDialogOpen(false);
+      // Also pass all column keys to render in the PDF
+      const allColumnKeys = columnOptions.map(c => c.key).join(',');
+      params.append('columns', allColumnKeys);
 
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-      }, 100);
-    })
-    .catch(error => {
-      console.error('Error downloading report:', error);
-      alert('Failed to download report. Please try again.');
-    });
+      const token = localStorage.getItem('token');
+      const url = `/api/student-summary/pdf?${params.toString()}`;
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'student-summary.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+      } else {
+        console.error('Failed to download PDF');
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      // You might want to show a user-facing error message here
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   if (error) {
@@ -248,38 +267,52 @@ const StudentSummary = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      
       <Card className='m-4'>
         <CardHeader>
-          <CardTitle>Student Summary</CardTitle>
-          <CardDescription>An overview of student administrative statuses.</CardDescription>
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>Student Summary</CardTitle>
+              <CardDescription>
+                An overview of student documentation and fee status.
+              </CardDescription>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2 pt-4">
             <Input
-              placeholder="Search by student name..."
+              placeholder="Filter by student name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-sm"
             />
-            <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline">Report</Button>
-              </DialogTrigger>
-              <DialogContent className='bg-white'>
-                <DialogHeader>
-                  <DialogTitle>Download Report</DialogTitle>
-                  <DialogDescription>
-                    The generated report will include all students currently displayed in the table.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="py-4">
-                  <p>Click the button below to download the student summary report as a PDF.</p>
-                </div>
-                <DialogFooter>
-                  <Button variant="secondary" onClick={() => setIsReportDialogOpen(false)}>Cancel</Button>
-                  <Button onClick={handleDownloadPdf}>Download PDF</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <Select value={selectedColumn} onValueChange={v => {
+                setSelectedColumn(v);
+                if (v === 'none') setSelectedFilterValue('');
+            }}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by column" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {columnOptions.map(option => (
+                        <SelectItem key={option.key} value={option.key}>
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Select value={selectedFilterValue} onValueChange={setSelectedFilterValue} disabled={!selectedColumn || selectedColumn === 'none'}>
+                <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Value" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+            </Select>
+            <Button onClick={handleDownloadPdf} disabled={isDownloading}>
+                {isDownloading ? 'Downloading...' : 'Download PDF'}
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -287,7 +320,7 @@ const StudentSummary = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                                <TableHead>
+                <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
                       id="selectAllChallanPaid"
@@ -299,7 +332,7 @@ const StudentSummary = () => {
                     </label>
                   </div>
                 </TableHead>
-                                <TableHead>
+                <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
                       id="selectAllExamForm"
@@ -311,7 +344,7 @@ const StudentSummary = () => {
                     </label>
                   </div>
                 </TableHead>
-                                <TableHead>
+                <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
                       id="selectAllCollegeFees"
@@ -323,7 +356,7 @@ const StudentSummary = () => {
                     </label>
                   </div>
                 </TableHead>
-                                <TableHead>
+                <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
                       id="selectAllExamFees"
@@ -335,7 +368,7 @@ const StudentSummary = () => {
                     </label>
                   </div>
                 </TableHead>
-                                <TableHead>
+                <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
                       id="selectAllHallTicket"
@@ -369,35 +402,35 @@ const StudentSummary = () => {
                       <Checkbox
                         checked={student.challan_paid || false}
                         onCheckedChange={(checked) => handleCheckboxChange(student.id, 'challan_paid', !!checked)}
-                        disabled={isUpdating}
+                        disabled={isUpdating[student.id]}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Checkbox
                         checked={student.exam_form_filled || false}
                         onCheckedChange={(checked) => handleCheckboxChange(student.id, 'exam_form_filled', !!checked)}
-                        disabled={isUpdating}
+                        disabled={isUpdating[student.id]}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Checkbox
                         checked={student.college_fees_paid || false}
                         onCheckedChange={(checked) => handleCheckboxChange(student.id, 'college_fees_paid', !!checked)}
-                        disabled={isUpdating}
+                        disabled={isUpdating[student.id]}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Checkbox
                         checked={student.exam_fees_paid || false}
                         onCheckedChange={(checked) => handleCheckboxChange(student.id, 'exam_fees_paid', !!checked)}
-                        disabled={isUpdating}
+                        disabled={isUpdating[student.id]}
                       />
                     </TableCell>
                     <TableCell className="text-center">
                       <Checkbox
                         checked={student.hallticket || false}
                         onCheckedChange={(checked) => handleCheckboxChange(student.id, 'hallticket', !!checked)}
-                        disabled={isUpdating}
+                        disabled={isUpdating[student.id]}
                       />
                     </TableCell>
                   </TableRow>
