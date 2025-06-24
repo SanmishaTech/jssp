@@ -104,7 +104,7 @@ class LeaveController extends BaseController
         $instituteId = $user->staff->institute_id;
         $title = 'New Leave Application';
         $description = $user->name . ' has applied for leave from ' . $leave->from_date . ' to ' . $leave->to_date . '.';
-        $link = '/leave-approvals';
+        $link = '/leaveapproval';
 
         if ($roles->contains('admin')) {
             // Admin leave requests go to superadmin
