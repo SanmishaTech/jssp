@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Notification;
+use Illuminate\Http\Request;
+use App\Models\CommiteeStaff;
+use App\Models\CommitteeMeeting;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Resources\CommitteeMeetingResource;
-use App\Models\CommitteeMeeting;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
+ 
 class CommitteeMeetingController extends BaseController
 {
     /**
@@ -67,6 +69,23 @@ class CommitteeMeetingController extends BaseController
                 return $this->sendError('Text is too long', ['error' => 'Synopsis text exceeds allowed length']);
             }
             throw $e;
+        }
+
+        // Notify committee members about the meeting
+        $committeeMembers = CommiteeStaff::with('staff.user')
+        ->where('commitees_id', $meeting->committee_id)
+        ->get();
+
+        foreach ($committeeMembers as $member) {
+            if ($member->staff && $member->staff->user) {
+                Notification::sendToUser(
+                    $member->staff->user,
+                    'Committee Meeting Scheduled',
+                    "A committee meeting has been scheduled at {$meeting->venue} on {$meeting->date} at {$meeting->time}.",
+                    '/committeemeeting',
+                    Auth::user()
+                );
+            }
         }
 
         return $this->sendResponse(['meeting' => new CommitteeMeetingResource($meeting)], 'Meeting stored successfully');

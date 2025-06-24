@@ -97,6 +97,22 @@ class LeaveController extends BaseController
         $leave->approved_by = '';
         $leave->approved_at = '';
         $leave->save();
+
+        // Notify relevant approvers
+        $user = Auth::user();
+        $roles = $user->roles->pluck('name');
+        $instituteId = $user->staff->institute_id;
+        $title = 'New Leave Application';
+        $description = $user->name . ' has applied for leave from ' . $leave->from_date . ' to ' . $leave->to_date . '.';
+        $link = '/leave-approvals';
+
+        if ($roles->contains('admin')) {
+            // Admin leave requests go to superadmin
+            Notification::sendToRoles(['superadmin'], $title, $description, $link, $user);
+        } else {
+            // Other staff leave requests go to admin & viceprincipal of same institute
+            Notification::sendToInstituteRoles($instituteId, ['admin', 'viceprincipal'], $title, $description, $link, $user);
+        }
         
         return $this->sendResponse(["Leave" => new LeaveResource($leave)], "Leave application submitted successfully");
     }
