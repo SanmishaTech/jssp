@@ -8,513 +8,1197 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as WeeklyholidayIndexRouteImport } from './routes/weeklyholiday/index'
-import { Route as VendorsIndexRouteImport } from './routes/vendors/index'
-import { Route as TrustiesIndexRouteImport } from './routes/trusties/index'
-import { Route as TransferIndexRouteImport } from './routes/transfer/index'
-import { Route as TeachertimetableIndexRouteImport } from './routes/teachertimetable/index'
-import { Route as TeachersPaperEvaluationIndexRouteImport } from './routes/teachers-paper-evaluation/index'
-import { Route as TaskmanagerIndexRouteImport } from './routes/taskmanager/index'
-import { Route as SyllabusIndexRouteImport } from './routes/syllabus/index'
-import { Route as SubjectsIndexRouteImport } from './routes/subjects/index'
-import { Route as SubjecthoursIndexRouteImport } from './routes/subjecthours/index'
-import { Route as StudentsummaryIndexRouteImport } from './routes/studentsummary/index'
-import { Route as StudentsIndexRouteImport } from './routes/students/index'
-import { Route as StaffIndexRouteImport } from './routes/staff/index'
-import { Route as SemesterIndexRouteImport } from './routes/semester/index'
-import { Route as ScholarshipsIndexRouteImport } from './routes/scholarships/index'
-import { Route as RoomsIndexRouteImport } from './routes/rooms/index'
-import { Route as RequisitionsIndexRouteImport } from './routes/requisitions/index'
-import { Route as PurchaseordersIndexRouteImport } from './routes/purchaseorders/index'
-import { Route as ProfilesIndexRouteImport } from './routes/profiles/index'
-import { Route as PeticashIndexRouteImport } from './routes/peticash/index'
-import { Route as PaperevaluationIndexRouteImport } from './routes/paperevaluation/index'
-import { Route as NoticeIndexRouteImport } from './routes/notice/index'
-import { Route as MemoIndexRouteImport } from './routes/memo/index'
-import { Route as MeetingsIndexRouteImport } from './routes/meetings/index'
-import { Route as LoginIndexRouteImport } from './routes/login/index'
-import { Route as LeaveapprovalIndexRouteImport } from './routes/leaveapproval/index'
-import { Route as LeaveIndexRouteImport } from './routes/leave/index'
-import { Route as InventoryIndexRouteImport } from './routes/inventory/index'
-import { Route as InstitutesIndexRouteImport } from './routes/institutes/index'
-import { Route as HolidayIndexRouteImport } from './routes/holiday/index'
-import { Route as ExamcalenderIndexRouteImport } from './routes/examcalender/index'
-import { Route as EventsIndexRouteImport } from './routes/events/index'
-import { Route as DivisionsIndexRouteImport } from './routes/divisions/index'
-import { Route as DisplaytimetableIndexRouteImport } from './routes/displaytimetable/index'
-import { Route as DashboardsIndexRouteImport } from './routes/dashboards/index'
-import { Route as CoursesIndexRouteImport } from './routes/courses/index'
-import { Route as ComplaintsIndexRouteImport } from './routes/complaints/index'
-import { Route as CommitteemeetingIndexRouteImport } from './routes/committeemeeting/index'
-import { Route as CommitteeIndexRouteImport } from './routes/committee/index'
-import { Route as CashiersIndexRouteImport } from './routes/cashiers/index'
-import { Route as CashbookIndexRouteImport } from './routes/cashbook/index'
-import { Route as CardIndexRouteImport } from './routes/card/index'
-import { Route as CalenderIndexRouteImport } from './routes/calender/index'
-import { Route as BankaccountsIndexRouteImport } from './routes/bankaccounts/index'
-import { Route as BankIndexRouteImport } from './routes/bank/index'
-import { Route as AttendenceIndexRouteImport } from './routes/attendence/index'
-import { Route as AssetmastersIndexRouteImport } from './routes/assetmasters/index'
-import { Route as AssetcategoriesIndexRouteImport } from './routes/assetcategories/index'
-import { Route as AllocationIndexRouteImport } from './routes/allocation/index'
-import { Route as AdmissionsIndexRouteImport } from './routes/admissions/index'
-import { Route as AddexamIndexRouteImport } from './routes/addexam/index'
-import { Route as AddedcommitteeIndexRouteImport } from './routes/addedcommittee/index'
-import { Route as AcademicyearsIndexRouteImport } from './routes/academicyears/index'
-import { Route as CashbookIdRouteImport } from './routes/cashbook/$id'
-import { Route as AddedcommitteeIdRouteImport } from './routes/addedcommittee/$id'
-import { Route as VendorsAddIndexRouteImport } from './routes/vendors/add/index'
-import { Route as TrustiesAddIndexRouteImport } from './routes/trusties/add/index'
-import { Route as StudentsAddIndexRouteImport } from './routes/students/add/index'
-import { Route as StaffAddIndexRouteImport } from './routes/staff/add/index'
-import { Route as SemesterAddIndexRouteImport } from './routes/semester/add/index'
-import { Route as PeticashAddIndexRouteImport } from './routes/peticash/add/index'
-import { Route as MeetingsAddIndexRouteImport } from './routes/meetings/add/index'
-import { Route as InventoryAddIndexRouteImport } from './routes/inventory/add/index'
-import { Route as InstitutesAddIndexRouteImport } from './routes/institutes/add/index'
-import { Route as EventsAddIndexRouteImport } from './routes/events/add/index'
-import { Route as DivisionsAddIndexRouteImport } from './routes/divisions/add/index'
-import { Route as ComplaintsAddIndexRouteImport } from './routes/complaints/add/index'
-import { Route as CommitteeAddIndexRouteImport } from './routes/committee/add/index'
-import { Route as CashbookAddIndexRouteImport } from './routes/cashbook/add/index'
-import { Route as BankAddIndexRouteImport } from './routes/bank/add/index'
-import { Route as VendorsEditIdRouteImport } from './routes/vendors/edit/$id'
-import { Route as TrustiesEditIdRouteImport } from './routes/trusties/edit/$id'
-import { Route as StudentsEditIdRouteImport } from './routes/students/edit/$id'
-import { Route as StaffEditIdRouteImport } from './routes/staff/edit/$id'
-import { Route as SemesterEditIdRouteImport } from './routes/semester/edit/$id'
-import { Route as MeetingsEditIdRouteImport } from './routes/meetings/edit/$id'
-import { Route as InventoryEditIdRouteImport } from './routes/inventory/edit/$id'
-import { Route as InstitutesEditIdRouteImport } from './routes/institutes/edit/$id'
-import { Route as EventsEditIdRouteImport } from './routes/events/edit/$id'
-import { Route as DivisionsEditIdRouteImport } from './routes/divisions/edit/$id'
-import { Route as ComplaintsEditIdRouteImport } from './routes/complaints/edit/$id'
-import { Route as CommitteeEditIdRouteImport } from './routes/committee/edit/$id'
-import { Route as CashbookEditIdRouteImport } from './routes/cashbook/edit/$id'
+// Import Routes
 
-const IndexRoute = IndexRouteImport.update({
+import { Route as rootRoute } from './routes/__root'
+import { Route as IndexImport } from './routes/index'
+import { Route as WeeklyholidayIndexImport } from './routes/weeklyholiday/index'
+import { Route as VendorsIndexImport } from './routes/vendors/index'
+import { Route as TrustiesIndexImport } from './routes/trusties/index'
+import { Route as TransferIndexImport } from './routes/transfer/index'
+import { Route as TeachertimetableIndexImport } from './routes/teachertimetable/index'
+import { Route as TeachersPaperEvaluationIndexImport } from './routes/teachers-paper-evaluation/index'
+import { Route as TaskmanagerIndexImport } from './routes/taskmanager/index'
+import { Route as SyllabusIndexImport } from './routes/syllabus/index'
+import { Route as SubjectsIndexImport } from './routes/subjects/index'
+import { Route as SubjecthoursIndexImport } from './routes/subjecthours/index'
+import { Route as StudentsummaryIndexImport } from './routes/studentsummary/index'
+import { Route as StudentsIndexImport } from './routes/students/index'
+import { Route as StaffIndexImport } from './routes/staff/index'
+import { Route as SemesterIndexImport } from './routes/semester/index'
+import { Route as ScholarshipsIndexImport } from './routes/scholarships/index'
+import { Route as RoomsIndexImport } from './routes/rooms/index'
+import { Route as RequisitionsIndexImport } from './routes/requisitions/index'
+import { Route as PurchaseordersIndexImport } from './routes/purchaseorders/index'
+import { Route as ProfilesIndexImport } from './routes/profiles/index'
+import { Route as PeticashIndexImport } from './routes/peticash/index'
+import { Route as PaperevaluationIndexImport } from './routes/paperevaluation/index'
+import { Route as NoticeIndexImport } from './routes/notice/index'
+import { Route as MemoIndexImport } from './routes/memo/index'
+import { Route as MeetingsIndexImport } from './routes/meetings/index'
+import { Route as LoginIndexImport } from './routes/login/index'
+import { Route as LeaveapprovalIndexImport } from './routes/leaveapproval/index'
+import { Route as LeaveIndexImport } from './routes/leave/index'
+import { Route as InventoryIndexImport } from './routes/inventory/index'
+import { Route as InstitutesIndexImport } from './routes/institutes/index'
+import { Route as HolidayIndexImport } from './routes/holiday/index'
+import { Route as ExamcalenderIndexImport } from './routes/examcalender/index'
+import { Route as EventsIndexImport } from './routes/events/index'
+import { Route as DivisionsIndexImport } from './routes/divisions/index'
+import { Route as DisplaytimetableIndexImport } from './routes/displaytimetable/index'
+import { Route as DashboardsIndexImport } from './routes/dashboards/index'
+import { Route as CoursesIndexImport } from './routes/courses/index'
+import { Route as ComplaintsIndexImport } from './routes/complaints/index'
+import { Route as CommitteemeetingIndexImport } from './routes/committeemeeting/index'
+import { Route as CommitteeIndexImport } from './routes/committee/index'
+import { Route as CashiersIndexImport } from './routes/cashiers/index'
+import { Route as CashbookIndexImport } from './routes/cashbook/index'
+import { Route as CardIndexImport } from './routes/card/index'
+import { Route as CalenderIndexImport } from './routes/calender/index'
+import { Route as BankaccountsIndexImport } from './routes/bankaccounts/index'
+import { Route as BankIndexImport } from './routes/bank/index'
+import { Route as AttendenceIndexImport } from './routes/attendence/index'
+import { Route as AssetmastersIndexImport } from './routes/assetmasters/index'
+import { Route as AssetcategoriesIndexImport } from './routes/assetcategories/index'
+import { Route as AllocationIndexImport } from './routes/allocation/index'
+import { Route as AdmissionsIndexImport } from './routes/admissions/index'
+import { Route as AddexamIndexImport } from './routes/addexam/index'
+import { Route as AddedcommitteeIndexImport } from './routes/addedcommittee/index'
+import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
+import { Route as CashbookIdImport } from './routes/cashbook/$id'
+import { Route as AddedcommitteeIdImport } from './routes/addedcommittee/$id'
+import { Route as VendorsAddIndexImport } from './routes/vendors/add/index'
+import { Route as TrustiesAddIndexImport } from './routes/trusties/add/index'
+import { Route as StudentsAddIndexImport } from './routes/students/add/index'
+import { Route as StaffAddIndexImport } from './routes/staff/add/index'
+import { Route as SemesterAddIndexImport } from './routes/semester/add/index'
+import { Route as PeticashAddIndexImport } from './routes/peticash/add/index'
+import { Route as MeetingsAddIndexImport } from './routes/meetings/add/index'
+import { Route as InventoryAddIndexImport } from './routes/inventory/add/index'
+import { Route as InstitutesAddIndexImport } from './routes/institutes/add/index'
+import { Route as EventsAddIndexImport } from './routes/events/add/index'
+import { Route as DivisionsAddIndexImport } from './routes/divisions/add/index'
+import { Route as ComplaintsAddIndexImport } from './routes/complaints/add/index'
+import { Route as CommitteeAddIndexImport } from './routes/committee/add/index'
+import { Route as CashbookAddIndexImport } from './routes/cashbook/add/index'
+import { Route as BankAddIndexImport } from './routes/bank/add/index'
+import { Route as VendorsEditIdImport } from './routes/vendors/edit/$id'
+import { Route as TrustiesEditIdImport } from './routes/trusties/edit/$id'
+import { Route as StudentsEditIdImport } from './routes/students/edit/$id'
+import { Route as StaffEditIdImport } from './routes/staff/edit/$id'
+import { Route as SemesterEditIdImport } from './routes/semester/edit/$id'
+import { Route as MeetingsEditIdImport } from './routes/meetings/edit/$id'
+import { Route as InventoryEditIdImport } from './routes/inventory/edit/$id'
+import { Route as InstitutesEditIdImport } from './routes/institutes/edit/$id'
+import { Route as EventsEditIdImport } from './routes/events/edit/$id'
+import { Route as DivisionsEditIdImport } from './routes/divisions/edit/$id'
+import { Route as ComplaintsEditIdImport } from './routes/complaints/edit/$id'
+import { Route as CommitteeEditIdImport } from './routes/committee/edit/$id'
+import { Route as CashbookEditIdImport } from './routes/cashbook/edit/$id'
+
+// Create/Update Routes
+
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const WeeklyholidayIndexRoute = WeeklyholidayIndexRouteImport.update({
+
+const WeeklyholidayIndexRoute = WeeklyholidayIndexImport.update({
   id: '/weeklyholiday/',
   path: '/weeklyholiday/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const VendorsIndexRoute = VendorsIndexRouteImport.update({
+
+const VendorsIndexRoute = VendorsIndexImport.update({
   id: '/vendors/',
   path: '/vendors/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const TrustiesIndexRoute = TrustiesIndexRouteImport.update({
+
+const TrustiesIndexRoute = TrustiesIndexImport.update({
   id: '/trusties/',
   path: '/trusties/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const TransferIndexRoute = TransferIndexRouteImport.update({
+
+const TransferIndexRoute = TransferIndexImport.update({
   id: '/transfer/',
   path: '/transfer/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const TeachertimetableIndexRoute = TeachertimetableIndexRouteImport.update({
+
+const TeachertimetableIndexRoute = TeachertimetableIndexImport.update({
   id: '/teachertimetable/',
   path: '/teachertimetable/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
+
 const TeachersPaperEvaluationIndexRoute =
-  TeachersPaperEvaluationIndexRouteImport.update({
+  TeachersPaperEvaluationIndexImport.update({
     id: '/teachers-paper-evaluation/',
     path: '/teachers-paper-evaluation/',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => rootRoute,
   } as any)
-const TaskmanagerIndexRoute = TaskmanagerIndexRouteImport.update({
+
+const TaskmanagerIndexRoute = TaskmanagerIndexImport.update({
   id: '/taskmanager/',
   path: '/taskmanager/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SyllabusIndexRoute = SyllabusIndexRouteImport.update({
+
+const SyllabusIndexRoute = SyllabusIndexImport.update({
   id: '/syllabus/',
   path: '/syllabus/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SubjectsIndexRoute = SubjectsIndexRouteImport.update({
+
+const SubjectsIndexRoute = SubjectsIndexImport.update({
   id: '/subjects/',
   path: '/subjects/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SubjecthoursIndexRoute = SubjecthoursIndexRouteImport.update({
+
+const SubjecthoursIndexRoute = SubjecthoursIndexImport.update({
   id: '/subjecthours/',
   path: '/subjecthours/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StudentsummaryIndexRoute = StudentsummaryIndexRouteImport.update({
+
+const StudentsummaryIndexRoute = StudentsummaryIndexImport.update({
   id: '/studentsummary/',
   path: '/studentsummary/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StudentsIndexRoute = StudentsIndexRouteImport.update({
+
+const StudentsIndexRoute = StudentsIndexImport.update({
   id: '/students/',
   path: '/students/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StaffIndexRoute = StaffIndexRouteImport.update({
+
+const StaffIndexRoute = StaffIndexImport.update({
   id: '/staff/',
   path: '/staff/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SemesterIndexRoute = SemesterIndexRouteImport.update({
+
+const SemesterIndexRoute = SemesterIndexImport.update({
   id: '/semester/',
   path: '/semester/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ScholarshipsIndexRoute = ScholarshipsIndexRouteImport.update({
+
+const ScholarshipsIndexRoute = ScholarshipsIndexImport.update({
   id: '/scholarships/',
   path: '/scholarships/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const RoomsIndexRoute = RoomsIndexRouteImport.update({
+
+const RoomsIndexRoute = RoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const RequisitionsIndexRoute = RequisitionsIndexRouteImport.update({
+
+const RequisitionsIndexRoute = RequisitionsIndexImport.update({
   id: '/requisitions/',
   path: '/requisitions/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const PurchaseordersIndexRoute = PurchaseordersIndexRouteImport.update({
+
+const PurchaseordersIndexRoute = PurchaseordersIndexImport.update({
   id: '/purchaseorders/',
   path: '/purchaseorders/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ProfilesIndexRoute = ProfilesIndexRouteImport.update({
+
+const ProfilesIndexRoute = ProfilesIndexImport.update({
   id: '/profiles/',
   path: '/profiles/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const PeticashIndexRoute = PeticashIndexRouteImport.update({
+
+const PeticashIndexRoute = PeticashIndexImport.update({
   id: '/peticash/',
   path: '/peticash/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const PaperevaluationIndexRoute = PaperevaluationIndexRouteImport.update({
+
+const PaperevaluationIndexRoute = PaperevaluationIndexImport.update({
   id: '/paperevaluation/',
   path: '/paperevaluation/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const NoticeIndexRoute = NoticeIndexRouteImport.update({
+
+const NoticeIndexRoute = NoticeIndexImport.update({
   id: '/notice/',
   path: '/notice/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const MemoIndexRoute = MemoIndexRouteImport.update({
+
+const MemoIndexRoute = MemoIndexImport.update({
   id: '/memo/',
   path: '/memo/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const MeetingsIndexRoute = MeetingsIndexRouteImport.update({
+
+const MeetingsIndexRoute = MeetingsIndexImport.update({
   id: '/meetings/',
   path: '/meetings/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LoginIndexRoute = LoginIndexRouteImport.update({
+
+const LoginIndexRoute = LoginIndexImport.update({
   id: '/login/',
   path: '/login/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LeaveapprovalIndexRoute = LeaveapprovalIndexRouteImport.update({
+
+const LeaveapprovalIndexRoute = LeaveapprovalIndexImport.update({
   id: '/leaveapproval/',
   path: '/leaveapproval/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const LeaveIndexRoute = LeaveIndexRouteImport.update({
+
+const LeaveIndexRoute = LeaveIndexImport.update({
   id: '/leave/',
   path: '/leave/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InventoryIndexRoute = InventoryIndexRouteImport.update({
+
+const InventoryIndexRoute = InventoryIndexImport.update({
   id: '/inventory/',
   path: '/inventory/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InstitutesIndexRoute = InstitutesIndexRouteImport.update({
+
+const InstitutesIndexRoute = InstitutesIndexImport.update({
   id: '/institutes/',
   path: '/institutes/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const HolidayIndexRoute = HolidayIndexRouteImport.update({
+
+const HolidayIndexRoute = HolidayIndexImport.update({
   id: '/holiday/',
   path: '/holiday/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ExamcalenderIndexRoute = ExamcalenderIndexRouteImport.update({
+
+const ExamcalenderIndexRoute = ExamcalenderIndexImport.update({
   id: '/examcalender/',
   path: '/examcalender/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const EventsIndexRoute = EventsIndexRouteImport.update({
+
+const EventsIndexRoute = EventsIndexImport.update({
   id: '/events/',
   path: '/events/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const DivisionsIndexRoute = DivisionsIndexRouteImport.update({
+
+const DivisionsIndexRoute = DivisionsIndexImport.update({
   id: '/divisions/',
   path: '/divisions/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const DisplaytimetableIndexRoute = DisplaytimetableIndexRouteImport.update({
+
+const DisplaytimetableIndexRoute = DisplaytimetableIndexImport.update({
   id: '/displaytimetable/',
   path: '/displaytimetable/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const DashboardsIndexRoute = DashboardsIndexRouteImport.update({
+
+const DashboardsIndexRoute = DashboardsIndexImport.update({
   id: '/dashboards/',
   path: '/dashboards/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CoursesIndexRoute = CoursesIndexRouteImport.update({
+
+const CoursesIndexRoute = CoursesIndexImport.update({
   id: '/courses/',
   path: '/courses/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ComplaintsIndexRoute = ComplaintsIndexRouteImport.update({
+
+const ComplaintsIndexRoute = ComplaintsIndexImport.update({
   id: '/complaints/',
   path: '/complaints/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CommitteemeetingIndexRoute = CommitteemeetingIndexRouteImport.update({
+
+const CommitteemeetingIndexRoute = CommitteemeetingIndexImport.update({
   id: '/committeemeeting/',
   path: '/committeemeeting/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CommitteeIndexRoute = CommitteeIndexRouteImport.update({
+
+const CommitteeIndexRoute = CommitteeIndexImport.update({
   id: '/committee/',
   path: '/committee/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CashiersIndexRoute = CashiersIndexRouteImport.update({
+
+const CashiersIndexRoute = CashiersIndexImport.update({
   id: '/cashiers/',
   path: '/cashiers/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CashbookIndexRoute = CashbookIndexRouteImport.update({
+
+const CashbookIndexRoute = CashbookIndexImport.update({
   id: '/cashbook/',
   path: '/cashbook/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CardIndexRoute = CardIndexRouteImport.update({
+
+const CardIndexRoute = CardIndexImport.update({
   id: '/card/',
   path: '/card/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CalenderIndexRoute = CalenderIndexRouteImport.update({
+
+const CalenderIndexRoute = CalenderIndexImport.update({
   id: '/calender/',
   path: '/calender/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const BankaccountsIndexRoute = BankaccountsIndexRouteImport.update({
+
+const BankaccountsIndexRoute = BankaccountsIndexImport.update({
   id: '/bankaccounts/',
   path: '/bankaccounts/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const BankIndexRoute = BankIndexRouteImport.update({
+
+const BankIndexRoute = BankIndexImport.update({
   id: '/bank/',
   path: '/bank/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AttendenceIndexRoute = AttendenceIndexRouteImport.update({
+
+const AttendenceIndexRoute = AttendenceIndexImport.update({
   id: '/attendence/',
   path: '/attendence/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AssetmastersIndexRoute = AssetmastersIndexRouteImport.update({
+
+const AssetmastersIndexRoute = AssetmastersIndexImport.update({
   id: '/assetmasters/',
   path: '/assetmasters/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AssetcategoriesIndexRoute = AssetcategoriesIndexRouteImport.update({
+
+const AssetcategoriesIndexRoute = AssetcategoriesIndexImport.update({
   id: '/assetcategories/',
   path: '/assetcategories/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AllocationIndexRoute = AllocationIndexRouteImport.update({
+
+const AllocationIndexRoute = AllocationIndexImport.update({
   id: '/allocation/',
   path: '/allocation/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AdmissionsIndexRoute = AdmissionsIndexRouteImport.update({
+
+const AdmissionsIndexRoute = AdmissionsIndexImport.update({
   id: '/admissions/',
   path: '/admissions/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AddexamIndexRoute = AddexamIndexRouteImport.update({
+
+const AddexamIndexRoute = AddexamIndexImport.update({
   id: '/addexam/',
   path: '/addexam/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AddedcommitteeIndexRoute = AddedcommitteeIndexRouteImport.update({
+
+const AddedcommitteeIndexRoute = AddedcommitteeIndexImport.update({
   id: '/addedcommittee/',
   path: '/addedcommittee/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AcademicyearsIndexRoute = AcademicyearsIndexRouteImport.update({
+
+const AcademicyearsIndexRoute = AcademicyearsIndexImport.update({
   id: '/academicyears/',
   path: '/academicyears/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CashbookIdRoute = CashbookIdRouteImport.update({
+
+const CashbookIdRoute = CashbookIdImport.update({
   id: '/cashbook/$id',
   path: '/cashbook/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const AddedcommitteeIdRoute = AddedcommitteeIdRouteImport.update({
+
+const AddedcommitteeIdRoute = AddedcommitteeIdImport.update({
   id: '/addedcommittee/$id',
   path: '/addedcommittee/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const VendorsAddIndexRoute = VendorsAddIndexRouteImport.update({
+
+const VendorsAddIndexRoute = VendorsAddIndexImport.update({
   id: '/vendors/add/',
   path: '/vendors/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const TrustiesAddIndexRoute = TrustiesAddIndexRouteImport.update({
+
+const TrustiesAddIndexRoute = TrustiesAddIndexImport.update({
   id: '/trusties/add/',
   path: '/trusties/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StudentsAddIndexRoute = StudentsAddIndexRouteImport.update({
+
+const StudentsAddIndexRoute = StudentsAddIndexImport.update({
   id: '/students/add/',
   path: '/students/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StaffAddIndexRoute = StaffAddIndexRouteImport.update({
+
+const StaffAddIndexRoute = StaffAddIndexImport.update({
   id: '/staff/add/',
   path: '/staff/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SemesterAddIndexRoute = SemesterAddIndexRouteImport.update({
+
+const SemesterAddIndexRoute = SemesterAddIndexImport.update({
   id: '/semester/add/',
   path: '/semester/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const PeticashAddIndexRoute = PeticashAddIndexRouteImport.update({
+
+const PeticashAddIndexRoute = PeticashAddIndexImport.update({
   id: '/peticash/add/',
   path: '/peticash/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const MeetingsAddIndexRoute = MeetingsAddIndexRouteImport.update({
+
+const MeetingsAddIndexRoute = MeetingsAddIndexImport.update({
   id: '/meetings/add/',
   path: '/meetings/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InventoryAddIndexRoute = InventoryAddIndexRouteImport.update({
+
+const InventoryAddIndexRoute = InventoryAddIndexImport.update({
   id: '/inventory/add/',
   path: '/inventory/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InstitutesAddIndexRoute = InstitutesAddIndexRouteImport.update({
+
+const InstitutesAddIndexRoute = InstitutesAddIndexImport.update({
   id: '/institutes/add/',
   path: '/institutes/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const EventsAddIndexRoute = EventsAddIndexRouteImport.update({
+
+const EventsAddIndexRoute = EventsAddIndexImport.update({
   id: '/events/add/',
   path: '/events/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const DivisionsAddIndexRoute = DivisionsAddIndexRouteImport.update({
+
+const DivisionsAddIndexRoute = DivisionsAddIndexImport.update({
   id: '/divisions/add/',
   path: '/divisions/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ComplaintsAddIndexRoute = ComplaintsAddIndexRouteImport.update({
+
+const ComplaintsAddIndexRoute = ComplaintsAddIndexImport.update({
   id: '/complaints/add/',
   path: '/complaints/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CommitteeAddIndexRoute = CommitteeAddIndexRouteImport.update({
+
+const CommitteeAddIndexRoute = CommitteeAddIndexImport.update({
   id: '/committee/add/',
   path: '/committee/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CashbookAddIndexRoute = CashbookAddIndexRouteImport.update({
+
+const CashbookAddIndexRoute = CashbookAddIndexImport.update({
   id: '/cashbook/add/',
   path: '/cashbook/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const BankAddIndexRoute = BankAddIndexRouteImport.update({
+
+const BankAddIndexRoute = BankAddIndexImport.update({
   id: '/bank/add/',
   path: '/bank/add/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const VendorsEditIdRoute = VendorsEditIdRouteImport.update({
+
+const VendorsEditIdRoute = VendorsEditIdImport.update({
   id: '/vendors/edit/$id',
   path: '/vendors/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const TrustiesEditIdRoute = TrustiesEditIdRouteImport.update({
+
+const TrustiesEditIdRoute = TrustiesEditIdImport.update({
   id: '/trusties/edit/$id',
   path: '/trusties/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StudentsEditIdRoute = StudentsEditIdRouteImport.update({
+
+const StudentsEditIdRoute = StudentsEditIdImport.update({
   id: '/students/edit/$id',
   path: '/students/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const StaffEditIdRoute = StaffEditIdRouteImport.update({
+
+const StaffEditIdRoute = StaffEditIdImport.update({
   id: '/staff/edit/$id',
   path: '/staff/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const SemesterEditIdRoute = SemesterEditIdRouteImport.update({
+
+const SemesterEditIdRoute = SemesterEditIdImport.update({
   id: '/semester/edit/$id',
   path: '/semester/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const MeetingsEditIdRoute = MeetingsEditIdRouteImport.update({
+
+const MeetingsEditIdRoute = MeetingsEditIdImport.update({
   id: '/meetings/edit/$id',
   path: '/meetings/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InventoryEditIdRoute = InventoryEditIdRouteImport.update({
+
+const InventoryEditIdRoute = InventoryEditIdImport.update({
   id: '/inventory/edit/$id',
   path: '/inventory/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const InstitutesEditIdRoute = InstitutesEditIdRouteImport.update({
+
+const InstitutesEditIdRoute = InstitutesEditIdImport.update({
   id: '/institutes/edit/$id',
   path: '/institutes/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const EventsEditIdRoute = EventsEditIdRouteImport.update({
+
+const EventsEditIdRoute = EventsEditIdImport.update({
   id: '/events/edit/$id',
   path: '/events/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const DivisionsEditIdRoute = DivisionsEditIdRouteImport.update({
+
+const DivisionsEditIdRoute = DivisionsEditIdImport.update({
   id: '/divisions/edit/$id',
   path: '/divisions/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const ComplaintsEditIdRoute = ComplaintsEditIdRouteImport.update({
+
+const ComplaintsEditIdRoute = ComplaintsEditIdImport.update({
   id: '/complaints/edit/$id',
   path: '/complaints/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CommitteeEditIdRoute = CommitteeEditIdRouteImport.update({
+
+const CommitteeEditIdRoute = CommitteeEditIdImport.update({
   id: '/committee/edit/$id',
   path: '/committee/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
-const CashbookEditIdRoute = CashbookEditIdRouteImport.update({
+
+const CashbookEditIdRoute = CashbookEditIdImport.update({
   id: '/cashbook/edit/$id',
   path: '/cashbook/edit/$id',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRoute,
 } as any)
+
+// Populate the FileRoutesByPath interface
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/addedcommittee/$id': {
+      id: '/addedcommittee/$id'
+      path: '/addedcommittee/$id'
+      fullPath: '/addedcommittee/$id'
+      preLoaderRoute: typeof AddedcommitteeIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/$id': {
+      id: '/cashbook/$id'
+      path: '/cashbook/$id'
+      fullPath: '/cashbook/$id'
+      preLoaderRoute: typeof CashbookIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/academicyears/': {
+      id: '/academicyears/'
+      path: '/academicyears'
+      fullPath: '/academicyears'
+      preLoaderRoute: typeof AcademicyearsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/addedcommittee/': {
+      id: '/addedcommittee/'
+      path: '/addedcommittee'
+      fullPath: '/addedcommittee'
+      preLoaderRoute: typeof AddedcommitteeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/addexam/': {
+      id: '/addexam/'
+      path: '/addexam'
+      fullPath: '/addexam'
+      preLoaderRoute: typeof AddexamIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/admissions/': {
+      id: '/admissions/'
+      path: '/admissions'
+      fullPath: '/admissions'
+      preLoaderRoute: typeof AdmissionsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/allocation/': {
+      id: '/allocation/'
+      path: '/allocation'
+      fullPath: '/allocation'
+      preLoaderRoute: typeof AllocationIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/assetcategories/': {
+      id: '/assetcategories/'
+      path: '/assetcategories'
+      fullPath: '/assetcategories'
+      preLoaderRoute: typeof AssetcategoriesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/assetmasters/': {
+      id: '/assetmasters/'
+      path: '/assetmasters'
+      fullPath: '/assetmasters'
+      preLoaderRoute: typeof AssetmastersIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/attendence/': {
+      id: '/attendence/'
+      path: '/attendence'
+      fullPath: '/attendence'
+      preLoaderRoute: typeof AttendenceIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/bank/': {
+      id: '/bank/'
+      path: '/bank'
+      fullPath: '/bank'
+      preLoaderRoute: typeof BankIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/bankaccounts/': {
+      id: '/bankaccounts/'
+      path: '/bankaccounts'
+      fullPath: '/bankaccounts'
+      preLoaderRoute: typeof BankaccountsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/calender/': {
+      id: '/calender/'
+      path: '/calender'
+      fullPath: '/calender'
+      preLoaderRoute: typeof CalenderIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/card/': {
+      id: '/card/'
+      path: '/card'
+      fullPath: '/card'
+      preLoaderRoute: typeof CardIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/': {
+      id: '/cashbook/'
+      path: '/cashbook'
+      fullPath: '/cashbook'
+      preLoaderRoute: typeof CashbookIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashiers/': {
+      id: '/cashiers/'
+      path: '/cashiers'
+      fullPath: '/cashiers'
+      preLoaderRoute: typeof CashiersIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/committee/': {
+      id: '/committee/'
+      path: '/committee'
+      fullPath: '/committee'
+      preLoaderRoute: typeof CommitteeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/committeemeeting/': {
+      id: '/committeemeeting/'
+      path: '/committeemeeting'
+      fullPath: '/committeemeeting'
+      preLoaderRoute: typeof CommitteemeetingIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/complaints/': {
+      id: '/complaints/'
+      path: '/complaints'
+      fullPath: '/complaints'
+      preLoaderRoute: typeof ComplaintsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/courses/': {
+      id: '/courses/'
+      path: '/courses'
+      fullPath: '/courses'
+      preLoaderRoute: typeof CoursesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/dashboards/': {
+      id: '/dashboards/'
+      path: '/dashboards'
+      fullPath: '/dashboards'
+      preLoaderRoute: typeof DashboardsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/displaytimetable/': {
+      id: '/displaytimetable/'
+      path: '/displaytimetable'
+      fullPath: '/displaytimetable'
+      preLoaderRoute: typeof DisplaytimetableIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/divisions/': {
+      id: '/divisions/'
+      path: '/divisions'
+      fullPath: '/divisions'
+      preLoaderRoute: typeof DivisionsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/examcalender/': {
+      id: '/examcalender/'
+      path: '/examcalender'
+      fullPath: '/examcalender'
+      preLoaderRoute: typeof ExamcalenderIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/holiday/': {
+      id: '/holiday/'
+      path: '/holiday'
+      fullPath: '/holiday'
+      preLoaderRoute: typeof HolidayIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/institutes/': {
+      id: '/institutes/'
+      path: '/institutes'
+      fullPath: '/institutes'
+      preLoaderRoute: typeof InstitutesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/inventory/': {
+      id: '/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/leave/': {
+      id: '/leave/'
+      path: '/leave'
+      fullPath: '/leave'
+      preLoaderRoute: typeof LeaveIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/leaveapproval/': {
+      id: '/leaveapproval/'
+      path: '/leaveapproval'
+      fullPath: '/leaveapproval'
+      preLoaderRoute: typeof LeaveapprovalIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/meetings/': {
+      id: '/meetings/'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof MeetingsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/memo/': {
+      id: '/memo/'
+      path: '/memo'
+      fullPath: '/memo'
+      preLoaderRoute: typeof MemoIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/notice/': {
+      id: '/notice/'
+      path: '/notice'
+      fullPath: '/notice'
+      preLoaderRoute: typeof NoticeIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/paperevaluation/': {
+      id: '/paperevaluation/'
+      path: '/paperevaluation'
+      fullPath: '/paperevaluation'
+      preLoaderRoute: typeof PaperevaluationIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/peticash/': {
+      id: '/peticash/'
+      path: '/peticash'
+      fullPath: '/peticash'
+      preLoaderRoute: typeof PeticashIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/profiles/': {
+      id: '/profiles/'
+      path: '/profiles'
+      fullPath: '/profiles'
+      preLoaderRoute: typeof ProfilesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/purchaseorders/': {
+      id: '/purchaseorders/'
+      path: '/purchaseorders'
+      fullPath: '/purchaseorders'
+      preLoaderRoute: typeof PurchaseordersIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/requisitions/': {
+      id: '/requisitions/'
+      path: '/requisitions'
+      fullPath: '/requisitions'
+      preLoaderRoute: typeof RequisitionsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/rooms/': {
+      id: '/rooms/'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof RoomsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/scholarships/': {
+      id: '/scholarships/'
+      path: '/scholarships'
+      fullPath: '/scholarships'
+      preLoaderRoute: typeof ScholarshipsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/semester/': {
+      id: '/semester/'
+      path: '/semester'
+      fullPath: '/semester'
+      preLoaderRoute: typeof SemesterIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/staff/': {
+      id: '/staff/'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/students/': {
+      id: '/students/'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof StudentsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/studentsummary/': {
+      id: '/studentsummary/'
+      path: '/studentsummary'
+      fullPath: '/studentsummary'
+      preLoaderRoute: typeof StudentsummaryIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/subjecthours/': {
+      id: '/subjecthours/'
+      path: '/subjecthours'
+      fullPath: '/subjecthours'
+      preLoaderRoute: typeof SubjecthoursIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/subjects/': {
+      id: '/subjects/'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof SubjectsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/syllabus/': {
+      id: '/syllabus/'
+      path: '/syllabus'
+      fullPath: '/syllabus'
+      preLoaderRoute: typeof SyllabusIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/taskmanager/': {
+      id: '/taskmanager/'
+      path: '/taskmanager'
+      fullPath: '/taskmanager'
+      preLoaderRoute: typeof TaskmanagerIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/teachers-paper-evaluation/': {
+      id: '/teachers-paper-evaluation/'
+      path: '/teachers-paper-evaluation'
+      fullPath: '/teachers-paper-evaluation'
+      preLoaderRoute: typeof TeachersPaperEvaluationIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/teachertimetable/': {
+      id: '/teachertimetable/'
+      path: '/teachertimetable'
+      fullPath: '/teachertimetable'
+      preLoaderRoute: typeof TeachertimetableIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/transfer/': {
+      id: '/transfer/'
+      path: '/transfer'
+      fullPath: '/transfer'
+      preLoaderRoute: typeof TransferIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/trusties/': {
+      id: '/trusties/'
+      path: '/trusties'
+      fullPath: '/trusties'
+      preLoaderRoute: typeof TrustiesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/vendors/': {
+      id: '/vendors/'
+      path: '/vendors'
+      fullPath: '/vendors'
+      preLoaderRoute: typeof VendorsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/weeklyholiday/': {
+      id: '/weeklyholiday/'
+      path: '/weeklyholiday'
+      fullPath: '/weeklyholiday'
+      preLoaderRoute: typeof WeeklyholidayIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/edit/$id': {
+      id: '/cashbook/edit/$id'
+      path: '/cashbook/edit/$id'
+      fullPath: '/cashbook/edit/$id'
+      preLoaderRoute: typeof CashbookEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/committee/edit/$id': {
+      id: '/committee/edit/$id'
+      path: '/committee/edit/$id'
+      fullPath: '/committee/edit/$id'
+      preLoaderRoute: typeof CommitteeEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/complaints/edit/$id': {
+      id: '/complaints/edit/$id'
+      path: '/complaints/edit/$id'
+      fullPath: '/complaints/edit/$id'
+      preLoaderRoute: typeof ComplaintsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/divisions/edit/$id': {
+      id: '/divisions/edit/$id'
+      path: '/divisions/edit/$id'
+      fullPath: '/divisions/edit/$id'
+      preLoaderRoute: typeof DivisionsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/events/edit/$id': {
+      id: '/events/edit/$id'
+      path: '/events/edit/$id'
+      fullPath: '/events/edit/$id'
+      preLoaderRoute: typeof EventsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/institutes/edit/$id': {
+      id: '/institutes/edit/$id'
+      path: '/institutes/edit/$id'
+      fullPath: '/institutes/edit/$id'
+      preLoaderRoute: typeof InstitutesEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/inventory/edit/$id': {
+      id: '/inventory/edit/$id'
+      path: '/inventory/edit/$id'
+      fullPath: '/inventory/edit/$id'
+      preLoaderRoute: typeof InventoryEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/meetings/edit/$id': {
+      id: '/meetings/edit/$id'
+      path: '/meetings/edit/$id'
+      fullPath: '/meetings/edit/$id'
+      preLoaderRoute: typeof MeetingsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/semester/edit/$id': {
+      id: '/semester/edit/$id'
+      path: '/semester/edit/$id'
+      fullPath: '/semester/edit/$id'
+      preLoaderRoute: typeof SemesterEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/staff/edit/$id': {
+      id: '/staff/edit/$id'
+      path: '/staff/edit/$id'
+      fullPath: '/staff/edit/$id'
+      preLoaderRoute: typeof StaffEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/students/edit/$id': {
+      id: '/students/edit/$id'
+      path: '/students/edit/$id'
+      fullPath: '/students/edit/$id'
+      preLoaderRoute: typeof StudentsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/trusties/edit/$id': {
+      id: '/trusties/edit/$id'
+      path: '/trusties/edit/$id'
+      fullPath: '/trusties/edit/$id'
+      preLoaderRoute: typeof TrustiesEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/vendors/edit/$id': {
+      id: '/vendors/edit/$id'
+      path: '/vendors/edit/$id'
+      fullPath: '/vendors/edit/$id'
+      preLoaderRoute: typeof VendorsEditIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/bank/add/': {
+      id: '/bank/add/'
+      path: '/bank/add'
+      fullPath: '/bank/add'
+      preLoaderRoute: typeof BankAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/cashbook/add/': {
+      id: '/cashbook/add/'
+      path: '/cashbook/add'
+      fullPath: '/cashbook/add'
+      preLoaderRoute: typeof CashbookAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/committee/add/': {
+      id: '/committee/add/'
+      path: '/committee/add'
+      fullPath: '/committee/add'
+      preLoaderRoute: typeof CommitteeAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/complaints/add/': {
+      id: '/complaints/add/'
+      path: '/complaints/add'
+      fullPath: '/complaints/add'
+      preLoaderRoute: typeof ComplaintsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/divisions/add/': {
+      id: '/divisions/add/'
+      path: '/divisions/add'
+      fullPath: '/divisions/add'
+      preLoaderRoute: typeof DivisionsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/events/add/': {
+      id: '/events/add/'
+      path: '/events/add'
+      fullPath: '/events/add'
+      preLoaderRoute: typeof EventsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/institutes/add/': {
+      id: '/institutes/add/'
+      path: '/institutes/add'
+      fullPath: '/institutes/add'
+      preLoaderRoute: typeof InstitutesAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/inventory/add/': {
+      id: '/inventory/add/'
+      path: '/inventory/add'
+      fullPath: '/inventory/add'
+      preLoaderRoute: typeof InventoryAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/meetings/add/': {
+      id: '/meetings/add/'
+      path: '/meetings/add'
+      fullPath: '/meetings/add'
+      preLoaderRoute: typeof MeetingsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/peticash/add/': {
+      id: '/peticash/add/'
+      path: '/peticash/add'
+      fullPath: '/peticash/add'
+      preLoaderRoute: typeof PeticashAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/semester/add/': {
+      id: '/semester/add/'
+      path: '/semester/add'
+      fullPath: '/semester/add'
+      preLoaderRoute: typeof SemesterAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/staff/add/': {
+      id: '/staff/add/'
+      path: '/staff/add'
+      fullPath: '/staff/add'
+      preLoaderRoute: typeof StaffAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/students/add/': {
+      id: '/students/add/'
+      path: '/students/add'
+      fullPath: '/students/add'
+      preLoaderRoute: typeof StudentsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/trusties/add/': {
+      id: '/trusties/add/'
+      path: '/trusties/add'
+      fullPath: '/trusties/add'
+      preLoaderRoute: typeof TrustiesAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/vendors/add/': {
+      id: '/vendors/add/'
+      path: '/vendors/add'
+      fullPath: '/vendors/add'
+      preLoaderRoute: typeof VendorsAddIndexImport
+      parentRoute: typeof rootRoute
+    }
+  }
+}
+
+// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -602,6 +1286,7 @@ export interface FileRoutesByFullPath {
   '/trusties/add': typeof TrustiesAddIndexRoute
   '/vendors/add': typeof VendorsAddIndexRoute
 }
+
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/addedcommittee/$id': typeof AddedcommitteeIdRoute
@@ -688,8 +1373,9 @@ export interface FileRoutesByTo {
   '/trusties/add': typeof TrustiesAddIndexRoute
   '/vendors/add': typeof VendorsAddIndexRoute
 }
+
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
+  __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
@@ -775,6 +1461,7 @@ export interface FileRoutesById {
   '/trusties/add/': typeof TrustiesAddIndexRoute
   '/vendors/add/': typeof VendorsAddIndexRoute
 }
+
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -1036,6 +1723,7 @@ export interface FileRouteTypes {
     | '/vendors/add/'
   fileRoutesById: FileRoutesById
 }
+
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddedcommitteeIdRoute: typeof AddedcommitteeIdRoute
@@ -1121,599 +1809,6 @@ export interface RootRouteChildren {
   StudentsAddIndexRoute: typeof StudentsAddIndexRoute
   TrustiesAddIndexRoute: typeof TrustiesAddIndexRoute
   VendorsAddIndexRoute: typeof VendorsAddIndexRoute
-}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/weeklyholiday/': {
-      id: '/weeklyholiday/'
-      path: '/weeklyholiday'
-      fullPath: '/weeklyholiday'
-      preLoaderRoute: typeof WeeklyholidayIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vendors/': {
-      id: '/vendors/'
-      path: '/vendors'
-      fullPath: '/vendors'
-      preLoaderRoute: typeof VendorsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trusties/': {
-      id: '/trusties/'
-      path: '/trusties'
-      fullPath: '/trusties'
-      preLoaderRoute: typeof TrustiesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/transfer/': {
-      id: '/transfer/'
-      path: '/transfer'
-      fullPath: '/transfer'
-      preLoaderRoute: typeof TransferIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/teachertimetable/': {
-      id: '/teachertimetable/'
-      path: '/teachertimetable'
-      fullPath: '/teachertimetable'
-      preLoaderRoute: typeof TeachertimetableIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/teachers-paper-evaluation/': {
-      id: '/teachers-paper-evaluation/'
-      path: '/teachers-paper-evaluation'
-      fullPath: '/teachers-paper-evaluation'
-      preLoaderRoute: typeof TeachersPaperEvaluationIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/taskmanager/': {
-      id: '/taskmanager/'
-      path: '/taskmanager'
-      fullPath: '/taskmanager'
-      preLoaderRoute: typeof TaskmanagerIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/syllabus/': {
-      id: '/syllabus/'
-      path: '/syllabus'
-      fullPath: '/syllabus'
-      preLoaderRoute: typeof SyllabusIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subjects/': {
-      id: '/subjects/'
-      path: '/subjects'
-      fullPath: '/subjects'
-      preLoaderRoute: typeof SubjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subjecthours/': {
-      id: '/subjecthours/'
-      path: '/subjecthours'
-      fullPath: '/subjecthours'
-      preLoaderRoute: typeof SubjecthoursIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studentsummary/': {
-      id: '/studentsummary/'
-      path: '/studentsummary'
-      fullPath: '/studentsummary'
-      preLoaderRoute: typeof StudentsummaryIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/students/': {
-      id: '/students/'
-      path: '/students'
-      fullPath: '/students'
-      preLoaderRoute: typeof StudentsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff/': {
-      id: '/staff/'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof StaffIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/semester/': {
-      id: '/semester/'
-      path: '/semester'
-      fullPath: '/semester'
-      preLoaderRoute: typeof SemesterIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scholarships/': {
-      id: '/scholarships/'
-      path: '/scholarships'
-      fullPath: '/scholarships'
-      preLoaderRoute: typeof ScholarshipsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rooms/': {
-      id: '/rooms/'
-      path: '/rooms'
-      fullPath: '/rooms'
-      preLoaderRoute: typeof RoomsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/requisitions/': {
-      id: '/requisitions/'
-      path: '/requisitions'
-      fullPath: '/requisitions'
-      preLoaderRoute: typeof RequisitionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/purchaseorders/': {
-      id: '/purchaseorders/'
-      path: '/purchaseorders'
-      fullPath: '/purchaseorders'
-      preLoaderRoute: typeof PurchaseordersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profiles/': {
-      id: '/profiles/'
-      path: '/profiles'
-      fullPath: '/profiles'
-      preLoaderRoute: typeof ProfilesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/peticash/': {
-      id: '/peticash/'
-      path: '/peticash'
-      fullPath: '/peticash'
-      preLoaderRoute: typeof PeticashIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/paperevaluation/': {
-      id: '/paperevaluation/'
-      path: '/paperevaluation'
-      fullPath: '/paperevaluation'
-      preLoaderRoute: typeof PaperevaluationIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notice/': {
-      id: '/notice/'
-      path: '/notice'
-      fullPath: '/notice'
-      preLoaderRoute: typeof NoticeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/memo/': {
-      id: '/memo/'
-      path: '/memo'
-      fullPath: '/memo'
-      preLoaderRoute: typeof MemoIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meetings/': {
-      id: '/meetings/'
-      path: '/meetings'
-      fullPath: '/meetings'
-      preLoaderRoute: typeof MeetingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leaveapproval/': {
-      id: '/leaveapproval/'
-      path: '/leaveapproval'
-      fullPath: '/leaveapproval'
-      preLoaderRoute: typeof LeaveapprovalIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leave/': {
-      id: '/leave/'
-      path: '/leave'
-      fullPath: '/leave'
-      preLoaderRoute: typeof LeaveIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inventory/': {
-      id: '/inventory/'
-      path: '/inventory'
-      fullPath: '/inventory'
-      preLoaderRoute: typeof InventoryIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/institutes/': {
-      id: '/institutes/'
-      path: '/institutes'
-      fullPath: '/institutes'
-      preLoaderRoute: typeof InstitutesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/holiday/': {
-      id: '/holiday/'
-      path: '/holiday'
-      fullPath: '/holiday'
-      preLoaderRoute: typeof HolidayIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/examcalender/': {
-      id: '/examcalender/'
-      path: '/examcalender'
-      fullPath: '/examcalender'
-      preLoaderRoute: typeof ExamcalenderIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events/': {
-      id: '/events/'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/divisions/': {
-      id: '/divisions/'
-      path: '/divisions'
-      fullPath: '/divisions'
-      preLoaderRoute: typeof DivisionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/displaytimetable/': {
-      id: '/displaytimetable/'
-      path: '/displaytimetable'
-      fullPath: '/displaytimetable'
-      preLoaderRoute: typeof DisplaytimetableIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboards/': {
-      id: '/dashboards/'
-      path: '/dashboards'
-      fullPath: '/dashboards'
-      preLoaderRoute: typeof DashboardsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/courses/': {
-      id: '/courses/'
-      path: '/courses'
-      fullPath: '/courses'
-      preLoaderRoute: typeof CoursesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/complaints/': {
-      id: '/complaints/'
-      path: '/complaints'
-      fullPath: '/complaints'
-      preLoaderRoute: typeof ComplaintsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/committeemeeting/': {
-      id: '/committeemeeting/'
-      path: '/committeemeeting'
-      fullPath: '/committeemeeting'
-      preLoaderRoute: typeof CommitteemeetingIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/committee/': {
-      id: '/committee/'
-      path: '/committee'
-      fullPath: '/committee'
-      preLoaderRoute: typeof CommitteeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cashiers/': {
-      id: '/cashiers/'
-      path: '/cashiers'
-      fullPath: '/cashiers'
-      preLoaderRoute: typeof CashiersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cashbook/': {
-      id: '/cashbook/'
-      path: '/cashbook'
-      fullPath: '/cashbook'
-      preLoaderRoute: typeof CashbookIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/card/': {
-      id: '/card/'
-      path: '/card'
-      fullPath: '/card'
-      preLoaderRoute: typeof CardIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calender/': {
-      id: '/calender/'
-      path: '/calender'
-      fullPath: '/calender'
-      preLoaderRoute: typeof CalenderIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bankaccounts/': {
-      id: '/bankaccounts/'
-      path: '/bankaccounts'
-      fullPath: '/bankaccounts'
-      preLoaderRoute: typeof BankaccountsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bank/': {
-      id: '/bank/'
-      path: '/bank'
-      fullPath: '/bank'
-      preLoaderRoute: typeof BankIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/attendence/': {
-      id: '/attendence/'
-      path: '/attendence'
-      fullPath: '/attendence'
-      preLoaderRoute: typeof AttendenceIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assetmasters/': {
-      id: '/assetmasters/'
-      path: '/assetmasters'
-      fullPath: '/assetmasters'
-      preLoaderRoute: typeof AssetmastersIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assetcategories/': {
-      id: '/assetcategories/'
-      path: '/assetcategories'
-      fullPath: '/assetcategories'
-      preLoaderRoute: typeof AssetcategoriesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/allocation/': {
-      id: '/allocation/'
-      path: '/allocation'
-      fullPath: '/allocation'
-      preLoaderRoute: typeof AllocationIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admissions/': {
-      id: '/admissions/'
-      path: '/admissions'
-      fullPath: '/admissions'
-      preLoaderRoute: typeof AdmissionsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/addexam/': {
-      id: '/addexam/'
-      path: '/addexam'
-      fullPath: '/addexam'
-      preLoaderRoute: typeof AddexamIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/addedcommittee/': {
-      id: '/addedcommittee/'
-      path: '/addedcommittee'
-      fullPath: '/addedcommittee'
-      preLoaderRoute: typeof AddedcommitteeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/academicyears/': {
-      id: '/academicyears/'
-      path: '/academicyears'
-      fullPath: '/academicyears'
-      preLoaderRoute: typeof AcademicyearsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cashbook/$id': {
-      id: '/cashbook/$id'
-      path: '/cashbook/$id'
-      fullPath: '/cashbook/$id'
-      preLoaderRoute: typeof CashbookIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/addedcommittee/$id': {
-      id: '/addedcommittee/$id'
-      path: '/addedcommittee/$id'
-      fullPath: '/addedcommittee/$id'
-      preLoaderRoute: typeof AddedcommitteeIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vendors/add/': {
-      id: '/vendors/add/'
-      path: '/vendors/add'
-      fullPath: '/vendors/add'
-      preLoaderRoute: typeof VendorsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trusties/add/': {
-      id: '/trusties/add/'
-      path: '/trusties/add'
-      fullPath: '/trusties/add'
-      preLoaderRoute: typeof TrustiesAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/students/add/': {
-      id: '/students/add/'
-      path: '/students/add'
-      fullPath: '/students/add'
-      preLoaderRoute: typeof StudentsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff/add/': {
-      id: '/staff/add/'
-      path: '/staff/add'
-      fullPath: '/staff/add'
-      preLoaderRoute: typeof StaffAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/semester/add/': {
-      id: '/semester/add/'
-      path: '/semester/add'
-      fullPath: '/semester/add'
-      preLoaderRoute: typeof SemesterAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/peticash/add/': {
-      id: '/peticash/add/'
-      path: '/peticash/add'
-      fullPath: '/peticash/add'
-      preLoaderRoute: typeof PeticashAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meetings/add/': {
-      id: '/meetings/add/'
-      path: '/meetings/add'
-      fullPath: '/meetings/add'
-      preLoaderRoute: typeof MeetingsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inventory/add/': {
-      id: '/inventory/add/'
-      path: '/inventory/add'
-      fullPath: '/inventory/add'
-      preLoaderRoute: typeof InventoryAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/institutes/add/': {
-      id: '/institutes/add/'
-      path: '/institutes/add'
-      fullPath: '/institutes/add'
-      preLoaderRoute: typeof InstitutesAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events/add/': {
-      id: '/events/add/'
-      path: '/events/add'
-      fullPath: '/events/add'
-      preLoaderRoute: typeof EventsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/divisions/add/': {
-      id: '/divisions/add/'
-      path: '/divisions/add'
-      fullPath: '/divisions/add'
-      preLoaderRoute: typeof DivisionsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/complaints/add/': {
-      id: '/complaints/add/'
-      path: '/complaints/add'
-      fullPath: '/complaints/add'
-      preLoaderRoute: typeof ComplaintsAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/committee/add/': {
-      id: '/committee/add/'
-      path: '/committee/add'
-      fullPath: '/committee/add'
-      preLoaderRoute: typeof CommitteeAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cashbook/add/': {
-      id: '/cashbook/add/'
-      path: '/cashbook/add'
-      fullPath: '/cashbook/add'
-      preLoaderRoute: typeof CashbookAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bank/add/': {
-      id: '/bank/add/'
-      path: '/bank/add'
-      fullPath: '/bank/add'
-      preLoaderRoute: typeof BankAddIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vendors/edit/$id': {
-      id: '/vendors/edit/$id'
-      path: '/vendors/edit/$id'
-      fullPath: '/vendors/edit/$id'
-      preLoaderRoute: typeof VendorsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trusties/edit/$id': {
-      id: '/trusties/edit/$id'
-      path: '/trusties/edit/$id'
-      fullPath: '/trusties/edit/$id'
-      preLoaderRoute: typeof TrustiesEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/students/edit/$id': {
-      id: '/students/edit/$id'
-      path: '/students/edit/$id'
-      fullPath: '/students/edit/$id'
-      preLoaderRoute: typeof StudentsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/staff/edit/$id': {
-      id: '/staff/edit/$id'
-      path: '/staff/edit/$id'
-      fullPath: '/staff/edit/$id'
-      preLoaderRoute: typeof StaffEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/semester/edit/$id': {
-      id: '/semester/edit/$id'
-      path: '/semester/edit/$id'
-      fullPath: '/semester/edit/$id'
-      preLoaderRoute: typeof SemesterEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meetings/edit/$id': {
-      id: '/meetings/edit/$id'
-      path: '/meetings/edit/$id'
-      fullPath: '/meetings/edit/$id'
-      preLoaderRoute: typeof MeetingsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inventory/edit/$id': {
-      id: '/inventory/edit/$id'
-      path: '/inventory/edit/$id'
-      fullPath: '/inventory/edit/$id'
-      preLoaderRoute: typeof InventoryEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/institutes/edit/$id': {
-      id: '/institutes/edit/$id'
-      path: '/institutes/edit/$id'
-      fullPath: '/institutes/edit/$id'
-      preLoaderRoute: typeof InstitutesEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events/edit/$id': {
-      id: '/events/edit/$id'
-      path: '/events/edit/$id'
-      fullPath: '/events/edit/$id'
-      preLoaderRoute: typeof EventsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/divisions/edit/$id': {
-      id: '/divisions/edit/$id'
-      path: '/divisions/edit/$id'
-      fullPath: '/divisions/edit/$id'
-      preLoaderRoute: typeof DivisionsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/complaints/edit/$id': {
-      id: '/complaints/edit/$id'
-      path: '/complaints/edit/$id'
-      fullPath: '/complaints/edit/$id'
-      preLoaderRoute: typeof ComplaintsEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/committee/edit/$id': {
-      id: '/committee/edit/$id'
-      path: '/committee/edit/$id'
-      fullPath: '/committee/edit/$id'
-      preLoaderRoute: typeof CommitteeEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cashbook/edit/$id': {
-      id: '/cashbook/edit/$id'
-      path: '/cashbook/edit/$id'
-      fullPath: '/cashbook/edit/$id'
-      preLoaderRoute: typeof CashbookEditIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -1802,6 +1897,355 @@ const rootRouteChildren: RootRouteChildren = {
   TrustiesAddIndexRoute: TrustiesAddIndexRoute,
   VendorsAddIndexRoute: VendorsAddIndexRoute,
 }
-export const routeTree = rootRouteImport
+
+export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/",
+        "/addedcommittee/$id",
+        "/cashbook/$id",
+        "/academicyears/",
+        "/addedcommittee/",
+        "/addexam/",
+        "/admissions/",
+        "/allocation/",
+        "/assetcategories/",
+        "/assetmasters/",
+        "/attendence/",
+        "/bank/",
+        "/bankaccounts/",
+        "/calender/",
+        "/card/",
+        "/cashbook/",
+        "/cashiers/",
+        "/committee/",
+        "/committeemeeting/",
+        "/complaints/",
+        "/courses/",
+        "/dashboards/",
+        "/displaytimetable/",
+        "/divisions/",
+        "/events/",
+        "/examcalender/",
+        "/holiday/",
+        "/institutes/",
+        "/inventory/",
+        "/leave/",
+        "/leaveapproval/",
+        "/login/",
+        "/meetings/",
+        "/memo/",
+        "/notice/",
+        "/paperevaluation/",
+        "/peticash/",
+        "/profiles/",
+        "/purchaseorders/",
+        "/requisitions/",
+        "/rooms/",
+        "/scholarships/",
+        "/semester/",
+        "/staff/",
+        "/students/",
+        "/studentsummary/",
+        "/subjecthours/",
+        "/subjects/",
+        "/syllabus/",
+        "/taskmanager/",
+        "/teachers-paper-evaluation/",
+        "/teachertimetable/",
+        "/transfer/",
+        "/trusties/",
+        "/vendors/",
+        "/weeklyholiday/",
+        "/cashbook/edit/$id",
+        "/committee/edit/$id",
+        "/complaints/edit/$id",
+        "/divisions/edit/$id",
+        "/events/edit/$id",
+        "/institutes/edit/$id",
+        "/inventory/edit/$id",
+        "/meetings/edit/$id",
+        "/semester/edit/$id",
+        "/staff/edit/$id",
+        "/students/edit/$id",
+        "/trusties/edit/$id",
+        "/vendors/edit/$id",
+        "/bank/add/",
+        "/cashbook/add/",
+        "/committee/add/",
+        "/complaints/add/",
+        "/divisions/add/",
+        "/events/add/",
+        "/institutes/add/",
+        "/inventory/add/",
+        "/meetings/add/",
+        "/peticash/add/",
+        "/semester/add/",
+        "/staff/add/",
+        "/students/add/",
+        "/trusties/add/",
+        "/vendors/add/"
+      ]
+    },
+    "/": {
+      "filePath": "index.tsx"
+    },
+    "/addedcommittee/$id": {
+      "filePath": "addedcommittee/$id.tsx"
+    },
+    "/cashbook/$id": {
+      "filePath": "cashbook/$id.tsx"
+    },
+    "/academicyears/": {
+      "filePath": "academicyears/index.tsx"
+    },
+    "/addedcommittee/": {
+      "filePath": "addedcommittee/index.tsx"
+    },
+    "/addexam/": {
+      "filePath": "addexam/index.tsx"
+    },
+    "/admissions/": {
+      "filePath": "admissions/index.tsx"
+    },
+    "/allocation/": {
+      "filePath": "allocation/index.tsx"
+    },
+    "/assetcategories/": {
+      "filePath": "assetcategories/index.tsx"
+    },
+    "/assetmasters/": {
+      "filePath": "assetmasters/index.tsx"
+    },
+    "/attendence/": {
+      "filePath": "attendence/index.tsx"
+    },
+    "/bank/": {
+      "filePath": "bank/index.tsx"
+    },
+    "/bankaccounts/": {
+      "filePath": "bankaccounts/index.tsx"
+    },
+    "/calender/": {
+      "filePath": "calender/index.tsx"
+    },
+    "/card/": {
+      "filePath": "card/index.tsx"
+    },
+    "/cashbook/": {
+      "filePath": "cashbook/index.tsx"
+    },
+    "/cashiers/": {
+      "filePath": "cashiers/index.tsx"
+    },
+    "/committee/": {
+      "filePath": "committee/index.tsx"
+    },
+    "/committeemeeting/": {
+      "filePath": "committeemeeting/index.tsx"
+    },
+    "/complaints/": {
+      "filePath": "complaints/index.tsx"
+    },
+    "/courses/": {
+      "filePath": "courses/index.tsx"
+    },
+    "/dashboards/": {
+      "filePath": "dashboards/index.tsx"
+    },
+    "/displaytimetable/": {
+      "filePath": "displaytimetable/index.tsx"
+    },
+    "/divisions/": {
+      "filePath": "divisions/index.tsx"
+    },
+    "/events/": {
+      "filePath": "events/index.tsx"
+    },
+    "/examcalender/": {
+      "filePath": "examcalender/index.tsx"
+    },
+    "/holiday/": {
+      "filePath": "holiday/index.tsx"
+    },
+    "/institutes/": {
+      "filePath": "institutes/index.tsx"
+    },
+    "/inventory/": {
+      "filePath": "inventory/index.tsx"
+    },
+    "/leave/": {
+      "filePath": "leave/index.tsx"
+    },
+    "/leaveapproval/": {
+      "filePath": "leaveapproval/index.tsx"
+    },
+    "/login/": {
+      "filePath": "login/index.tsx"
+    },
+    "/meetings/": {
+      "filePath": "meetings/index.tsx"
+    },
+    "/memo/": {
+      "filePath": "memo/index.tsx"
+    },
+    "/notice/": {
+      "filePath": "notice/index.tsx"
+    },
+    "/paperevaluation/": {
+      "filePath": "paperevaluation/index.tsx"
+    },
+    "/peticash/": {
+      "filePath": "peticash/index.tsx"
+    },
+    "/profiles/": {
+      "filePath": "profiles/index.tsx"
+    },
+    "/purchaseorders/": {
+      "filePath": "purchaseorders/index.tsx"
+    },
+    "/requisitions/": {
+      "filePath": "requisitions/index.tsx"
+    },
+    "/rooms/": {
+      "filePath": "rooms/index.tsx"
+    },
+    "/scholarships/": {
+      "filePath": "scholarships/index.tsx"
+    },
+    "/semester/": {
+      "filePath": "semester/index.tsx"
+    },
+    "/staff/": {
+      "filePath": "staff/index.tsx"
+    },
+    "/students/": {
+      "filePath": "students/index.tsx"
+    },
+    "/studentsummary/": {
+      "filePath": "studentsummary/index.tsx"
+    },
+    "/subjecthours/": {
+      "filePath": "subjecthours/index.tsx"
+    },
+    "/subjects/": {
+      "filePath": "subjects/index.tsx"
+    },
+    "/syllabus/": {
+      "filePath": "syllabus/index.tsx"
+    },
+    "/taskmanager/": {
+      "filePath": "taskmanager/index.tsx"
+    },
+    "/teachers-paper-evaluation/": {
+      "filePath": "teachers-paper-evaluation/index.tsx"
+    },
+    "/teachertimetable/": {
+      "filePath": "teachertimetable/index.tsx"
+    },
+    "/transfer/": {
+      "filePath": "transfer/index.tsx"
+    },
+    "/trusties/": {
+      "filePath": "trusties/index.tsx"
+    },
+    "/vendors/": {
+      "filePath": "vendors/index.tsx"
+    },
+    "/weeklyholiday/": {
+      "filePath": "weeklyholiday/index.tsx"
+    },
+    "/cashbook/edit/$id": {
+      "filePath": "cashbook/edit/$id.tsx"
+    },
+    "/committee/edit/$id": {
+      "filePath": "committee/edit/$id.tsx"
+    },
+    "/complaints/edit/$id": {
+      "filePath": "complaints/edit/$id.tsx"
+    },
+    "/divisions/edit/$id": {
+      "filePath": "divisions/edit/$id.tsx"
+    },
+    "/events/edit/$id": {
+      "filePath": "events/edit/$id.tsx"
+    },
+    "/institutes/edit/$id": {
+      "filePath": "institutes/edit/$id.tsx"
+    },
+    "/inventory/edit/$id": {
+      "filePath": "inventory/edit/$id.tsx"
+    },
+    "/meetings/edit/$id": {
+      "filePath": "meetings/edit/$id.tsx"
+    },
+    "/semester/edit/$id": {
+      "filePath": "semester/edit/$id.tsx"
+    },
+    "/staff/edit/$id": {
+      "filePath": "staff/edit/$id.tsx"
+    },
+    "/students/edit/$id": {
+      "filePath": "students/edit/$id.tsx"
+    },
+    "/trusties/edit/$id": {
+      "filePath": "trusties/edit/$id.tsx"
+    },
+    "/vendors/edit/$id": {
+      "filePath": "vendors/edit/$id.tsx"
+    },
+    "/bank/add/": {
+      "filePath": "bank/add/index.tsx"
+    },
+    "/cashbook/add/": {
+      "filePath": "cashbook/add/index.tsx"
+    },
+    "/committee/add/": {
+      "filePath": "committee/add/index.tsx"
+    },
+    "/complaints/add/": {
+      "filePath": "complaints/add/index.tsx"
+    },
+    "/divisions/add/": {
+      "filePath": "divisions/add/index.tsx"
+    },
+    "/events/add/": {
+      "filePath": "events/add/index.tsx"
+    },
+    "/institutes/add/": {
+      "filePath": "institutes/add/index.tsx"
+    },
+    "/inventory/add/": {
+      "filePath": "inventory/add/index.tsx"
+    },
+    "/meetings/add/": {
+      "filePath": "meetings/add/index.tsx"
+    },
+    "/peticash/add/": {
+      "filePath": "peticash/add/index.tsx"
+    },
+    "/semester/add/": {
+      "filePath": "semester/add/index.tsx"
+    },
+    "/staff/add/": {
+      "filePath": "staff/add/index.tsx"
+    },
+    "/students/add/": {
+      "filePath": "students/add/index.tsx"
+    },
+    "/trusties/add/": {
+      "filePath": "trusties/add/index.tsx"
+    },
+    "/vendors/add/": {
+      "filePath": "vendors/add/index.tsx"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

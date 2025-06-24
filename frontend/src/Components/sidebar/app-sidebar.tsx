@@ -3,6 +3,7 @@ import { useGetData } from "@/Components/HTTP/GET"; // fetch helper
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { NotificationPopover } from "../ui/notification-popover";
 import {
   Sidebar,
   SidebarContent,
@@ -240,36 +241,32 @@ const items = useMemo(() => {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
-      <SidebarContent className="flex flex-col h-full">
-        <div className="flex flex-col space-y-3">
-          <div className="flex flex-col items-start px-4 py-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="flex items-center cursor-pointer">
-                  <img src={background} alt="Logo" className="w-7 h-7" />
-                  <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
-                </div>
-              </DropdownMenuTrigger>
-            </DropdownMenu>
-            <div className="mt-2 w-full">
-              <button
-                onClick={() => setIsCommandMenuOpen(true)}
-                className="flex items-center justify-between w-full h-9 px-4  text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
-                aria-label="Open command menu"
-              >
-                <Search className="w-4 h-4 text-muted-foreground" />
-                <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
-                  <span className="text-xs">CTRL</span>+ K
-                </kbd>
-              </button>
+      <div className="flex flex-col px-4 py-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex items-center cursor-pointer">
+              <img src={background} alt="Logo" className="w-7 h-7" />
+              <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
             </div>
-            <Separator  />
-          </div>
-
-         
-          
+          </DropdownMenuTrigger>
+        </DropdownMenu>
+        <div className="mt-2 flex w-full items-center gap-2">
+          <button
+            onClick={() => setIsCommandMenuOpen(true)}
+            className="flex flex-grow items-center justify-between h-9 px-4 text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
+            aria-label="Open command menu"
+          >
+            <Search className="w-4 h-4 text-muted-foreground" />
+            <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
+              <span className="text-xs">CTRL</span>+ K
+            </kbd>
+          </button>
+          <NotificationPopover />
         </div>
-      
+      </div>
+      <Separator className="my-2" />
+
+      <SidebarContent className="flex flex-col h-full">
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <SidebarGroup>
             <SidebarGroupContent>
