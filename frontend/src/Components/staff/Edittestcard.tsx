@@ -638,7 +638,7 @@ function ProfileForm({ formData }) {
                           <SelectItem value="storekeeper">Store Keeper</SelectItem>
                           <SelectItem value="hod">HOD</SelectItem>
                            <SelectItem value="officesuperintendent">Office SuperIntendent</SelectItem>
-                          
+                           <SelectItem value="examhead">Exam Head</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

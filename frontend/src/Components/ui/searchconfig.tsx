@@ -786,6 +786,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/requisitions",
       icon: Truck,
     },
+    {
+      title: "Student Summary",
+      url: "/studentsummary",
+      icon: FileText,
+    },
    
     {
       title: "Admissions",
@@ -1110,6 +1115,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: FileText,
     },
     {
+      title: "Exam Calender",
+      url: "/examcalender",
+      icon: Calendar,
+    },
+    {
       title: "Paper Evaluation",
       url: "/teachers-paper-evaluation",
       icon: FileText,
@@ -1176,6 +1186,88 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Events",
       url: "/events",
       icon: Calendar,
+    },
+    {
+      title: "Requisitions/Demand",
+      url: "/requisitions",
+      icon: Truck,
+    },
+    {
+      title: "Memo",
+      url: "/memo",
+      icon: FileText,
+    },
+    {
+      title: "Notice",
+      url: "/notice",
+      icon: FileText,
+    },
+   
+  ],
+
+  examhead: [
+    
+    {
+      title: "Dashboard",
+      url: "/dashboards",
+      icon: Home,
+    },
+    {
+      title: "Calender",
+      url: "/calender",
+      icon: Calendar,
+    }, 
+     
+    {
+      title: "Leave Application",
+      url: "/leave",
+      icon: FileText,
+    },
+    {
+      title: "Task Manager",
+      url: "/taskmanager",
+      icon: FileText,
+    },
+    {
+      title: "Complaints",
+      url: "/complaints",
+      icon: MessageCircle,
+    },
+    {
+      title: "Meetings",
+      url: "/meetings",
+      icon: Users,
+    },
+    {
+      title: "Events",
+      url: "/events",
+      icon: Calendar,
+    },
+    {
+      title: "Exam",
+      icon: Calendar,
+      children: [
+        {
+          title: "Add Exam",
+          url: "/addexam",
+          icon: Calendar,
+        },
+        {
+          title: "Exam Calender",
+          url: "/examcalender",
+          icon: Calendar,
+        },
+        {
+          title: "Paper Evaluation ",
+          url: "/paperevaluation",
+          icon: Calendar,
+        },
+        {
+          title: "Student Summary",
+          url: "/studentsummary",
+          icon: FileText,
+        },
+      ]
     },
     {
       title: "Requisitions/Demand",
