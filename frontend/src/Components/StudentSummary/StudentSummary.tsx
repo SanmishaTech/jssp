@@ -4,7 +4,6 @@ import { usePostData } from '@/components/HTTP/POST';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -33,6 +32,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 interface StudentSummaryData {
   id: number;
+  prn: string;
   student_name: string;
   challan_paid: boolean;
   exam_form_filled: boolean;
@@ -41,7 +41,7 @@ interface StudentSummaryData {
   hallticket: boolean;
 }
 
-type StudentSummaryBooleanField = keyof Omit<StudentSummaryData, 'id' | 'student_name'>;
+type StudentSummaryBooleanField = keyof Omit<StudentSummaryData, 'id' | 'prn' | 'student_name'>;
 
 const StudentSummary = () => {
   const [students, setStudents] = useState<StudentSummaryData[]>([]);
@@ -117,9 +117,13 @@ const StudentSummary = () => {
     updateTimers.current[id] = setTimeout(() => {
       if (studentToUpdate) {
         const payload = {
-          id: studentToUpdate.id,
-          field: field,
-          value: checked,
+          student_id: studentToUpdate.id,
+          [field]: checked,
+          challan_paid: studentToUpdate.challan_paid,
+          exam_form_filled: studentToUpdate.exam_form_filled,
+          college_fees_paid: studentToUpdate.college_fees_paid,
+          exam_fees_paid: studentToUpdate.exam_fees_paid,
+          hallticket: studentToUpdate.hallticket,
         };
         mutate(payload, {
           onSettled: () => {
@@ -166,9 +170,13 @@ const StudentSummary = () => {
     );
 
     const payloads = filteredStudents.map(student => ({
-      id: student.id,
-      field: field,
-      value: newCheckedState,
+      student_id: student.id,
+      [field]: newCheckedState,
+      challan_paid: student.challan_paid,
+      exam_form_filled: student.exam_form_filled,
+      college_fees_paid: student.college_fees_paid,
+      exam_fees_paid: student.exam_fees_paid,
+      hallticket: student.hallticket,
     }));
 
     const newTimers: NodeJS.Timeout[] = [];
@@ -269,57 +277,60 @@ const StudentSummary = () => {
     <div className="p-6 max-w-7xl mx-auto">
       <Card className='m-4'>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle>Student Summary</CardTitle>
-              <CardDescription>
-                An overview of student documentation and fee status.
-              </CardDescription>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2 pt-4">
-            <Input
-              placeholder="Filter by student name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
-            <Select value={selectedColumn} onValueChange={v => {
+          <div className="flex flex-col mb-4">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">Student Summary</h1>
+            <p className="text-gray-600 mb-2">An overview of student documentation and fee status.</p>
+            <div className="justify-between flex gap-2 items-center">
+              <div className="flex gap-2 items-center w-full">
+              <Input
+                placeholder="Filter by student name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-full"
+              />
+              </div>
+              <div className="flex gap-2 items-center"> 
+              <Select value={selectedColumn} onValueChange={v => {
                 setSelectedColumn(v);
                 if (v === 'none') setSelectedFilterValue('');
-            }}>
+              }}>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by column" />
+                  <SelectValue placeholder="Filter by column" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {columnOptions.map(option => (
-                        <SelectItem key={option.key} value={option.key}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
+                  <SelectItem value="none">None</SelectItem>
+                  {columnOptions.map(option => (
+                    <SelectItem key={option.key} value={option.key}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
-            </Select>
-            <Select value={selectedFilterValue} onValueChange={setSelectedFilterValue} disabled={!selectedColumn || selectedColumn === 'none'}>
+              </Select>
+              <Select value={selectedFilterValue} onValueChange={setSelectedFilterValue} disabled={!selectedColumn || selectedColumn === 'none'}>
                 <SelectTrigger className="w-[120px]">
-                    <SelectValue placeholder="Value" />
+                  <SelectValue placeholder="Value" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="true">Yes</SelectItem>
-                    <SelectItem value="false">No</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
                 </SelectContent>
-            </Select>
-            <Button onClick={handleDownloadPdf} disabled={isDownloading}>
+              </Select>
+              <Button onClick={handleDownloadPdf} disabled={isDownloading}>
                 {isDownloading ? 'Downloading...' : 'Download PDF'}
-            </Button>
+              </Button>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2 items-center mb-4 justify-end">
           </div>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead className="text-center">PRN</TableHead>
+                <TableHead className="text-center">Student Name</TableHead>
                 <TableHead>
                   <div className="flex items-center justify-center space-x-2">
                     <Checkbox
@@ -386,7 +397,8 @@ const StudentSummary = () => {
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <TableRow key={index}>
-                    <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                    <TableCell className="text-center"><Skeleton className="h-5 w-24" /></TableCell>
+                    <TableCell className="text-center"><Skeleton className="h-5 w-24" /></TableCell>
                     <TableCell className="text-center"><Skeleton className="h-5 w-5 mx-auto" /></TableCell>
                     <TableCell className="text-center"><Skeleton className="h-5 w-5 mx-auto" /></TableCell>
                     <TableCell className="text-center"><Skeleton className="h-5 w-5 mx-auto" /></TableCell>
@@ -397,6 +409,7 @@ const StudentSummary = () => {
               ) : filteredStudents.length > 0 ? (
                 filteredStudents.map(student => (
                   <TableRow key={student.id}>
+                    <TableCell className="text-center">{student.prn}</TableCell>
                     <TableCell className="font-medium">{student.student_name || 'N/A'}</TableCell>
                     <TableCell className="text-center">
                       <Checkbox
@@ -437,7 +450,7 @@ const StudentSummary = () => {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">No student data available.</TableCell>
+                  <TableCell colSpan={7} className="text-center">No student data available.</TableCell>
                 </TableRow>
               )}
             </TableBody>

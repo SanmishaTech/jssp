@@ -18,6 +18,7 @@ class StudentSummaryResource extends JsonResource
             'id' => $this->id,
             'student_id' => $this->student_id,
             'student_name' => optional($this->whenLoaded('student', $this->student))->student_name,
+            'prn' => optional($this->whenLoaded('student', $this->student))->prn,
             'challan_paid' => (bool) $this->challan_paid,
             'exam_form_filled' => (bool) $this->exam_form_filled,
             'college_fees_paid' => (bool) $this->college_fees_paid,
