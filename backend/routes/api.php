@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\PeticashController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Api\AdmissionController;
 use App\Http\Controllers\Api\CommitteeController;
 use App\Http\Controllers\Api\ComplaintController;
@@ -52,6 +53,7 @@ use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\PurchaseOrderController;
 use App\Http\Controllers\Api\StaffEducationController;
+use App\Http\Controllers\Api\StudentSummaryController;
 use App\Http\Controllers\Api\CommitteeMeetingController;
 use App\Http\Controllers\Api\TeacherTimetableController;
 use App\Http\Controllers\Api\ProductCategoriesController;
@@ -59,7 +61,6 @@ use App\Http\Controllers\Api\NoticeController; // Added this line
 use App\Http\Controllers\Api\SyllabusController; // Added this line
 use App\Http\Controllers\Api\DashboardController; // Added for dashboard
 use App\Http\Controllers\Api\PaperEvaluationController; // Added this line
-use App\Http\Controllers\Api\StudentSummaryController;
 
 Route::post('/login', [UserController::class, 'login']);
 
@@ -231,7 +232,11 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::resource('staffPapers', StaffPaperController::class);
    Route::get('/all_staffPapers', [StaffPaperController::class, 'allStaffPapers'])->name("staffPapers.all");
 
-   
+
+   // Notification routes
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
 });
 
 Route::get('/file/{document}', [EventController::class, 'displayDocuments'])->name("client.displayDocuments");

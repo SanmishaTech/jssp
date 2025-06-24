@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect, RefObject } from "react";
 import { Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import axios, { AxiosResponse } from "axios";
 
 const useOnClickOutside = (
   ref: RefObject<HTMLElement>,
@@ -28,10 +30,13 @@ const useOnClickOutside = (
 
 export type Notification = {
   id: string;
-  title: string;
-  description: string;
-  timestamp: Date;
-  read: boolean;
+  data: {
+    title: string;
+    description: string;
+  };
+  created_at: string;
+  read_at: string | null;
+  link: string | null;
 };
 
 interface NotificationItemProps {
@@ -61,20 +66,20 @@ const NotificationItem = ({
   >
     <div className="flex justify-between items-start">
       <div className="flex items-center gap-2">
-        {!notification.read && (
+        {!notification.read_at && (
           <span className={`h-1 w-1 rounded-full ${dotColor}`} />
         )}
         <h4 className={`text-sm font-medium ${textColor}`}>
-          {notification.title}
+          {notification.data.title}
         </h4>
       </div>
 
       <span className={`text-xs opacity-80 ${textColor}`}>
-        {notification.timestamp.toLocaleDateString()}
+        {new Date(notification.created_at).toLocaleDateString()}
       </span>
     </div>
     <p className={`text-xs opacity-70 mt-1 ${textColor}`}>
-      {notification.description}
+      {notification.data.description}
     </p>
   </motion.div>
 );
@@ -109,8 +114,6 @@ const NotificationList = ({
 );
 
 interface NotificationPopoverProps {
-  notifications?: Notification[];
-  onNotificationsChange?: (notifications: Notification[]) => void;
   buttonClassName?: string;
   popoverClassName?: string;
   textColor?: string;
@@ -120,9 +123,7 @@ interface NotificationPopoverProps {
 }
 
 export const NotificationPopover = ({
-  notifications: initialNotifications = dummyNotifications,
-  onNotificationsChange,
-  buttonClassName = "w-10 h-10 rounded-xl bg-[#11111198] hover:bg-[#111111d1] shadow-[0_0_20px_rgba(0,0,0,0.2)]",
+  buttonClassName = "w-10 h-10 rounded-xl bg-transparent hover:bg-transparent",
   popoverClassName = "bg-[#11111198] backdrop-blur-sm",
   textColor = "text-white",
   hoverBgColor = "hover:bg-[#ffffff37]",
@@ -130,32 +131,41 @@ export const NotificationPopover = ({
   headerBorderColor = "border-gray-200/50",
 }: NotificationPopoverProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] =
-    useState<Notification[]>(initialNotifications);
-
   const popoverRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  const { data: notifications = [] } = useQuery<Notification[]>({
+    queryKey: ['notifications'],
+    queryFn: () => 
+      axios.get('http://localhost:8000/api/notifications', { withCredentials: true })
+        .then((res: AxiosResponse<Notification[]>) => res.data),
+  });
+
+  const markAsReadMutation = useMutation({
+    mutationFn: (id: string) => 
+      axios.patch(`http://localhost:8000/api/notifications/${id}/read`, {}, { withCredentials: true }),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      const notification = notifications.find(n => n.id === id);
+      if (notification?.link) {
+        window.location.href = notification.link;
+      }
+    },
+  });
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: () => 
+      axios.post('http://localhost:8000/api/notifications/mark-all-as-read', {}, { withCredentials: true }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
   useOnClickOutside(popoverRef, () => setIsOpen(false));
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   const toggleOpen = () => setIsOpen(!isOpen);
-
-  const markAllAsRead = () => {
-    const updatedNotifications = notifications.map((n) => ({
-      ...n,
-      read: true,
-    }));
-    setNotifications(updatedNotifications);
-    onNotificationsChange?.(updatedNotifications);
-  };
-
-  const markAsRead = (id: string) => {
-    const updatedNotifications = notifications.map((n) =>
-      n.id === id ? { ...n, read: true } : n
-    );
-    setNotifications(updatedNotifications);
-    onNotificationsChange?.(updatedNotifications);
-  };
 
   return (
     <div ref={popoverRef} className={`relative ${textColor}`}>
@@ -189,9 +199,10 @@ export const NotificationPopover = ({
             >
               <h3 className="text-sm font-medium">Notifications</h3>
               <Button
-                onClick={markAllAsRead}
+                onClick={() => markAllAsReadMutation.mutate()}
                 variant="ghost"
                 size="sm"
+                disabled={markAllAsReadMutation.isPending}
                 className={`text-xs ${hoverBgColor} hover:text-white`}
               >
                 Mark all as read
@@ -200,7 +211,7 @@ export const NotificationPopover = ({
 
             <NotificationList
               notifications={notifications}
-              onMarkAsRead={markAsRead}
+              onMarkAsRead={(id) => markAsReadMutation.mutate(id)}
               textColor={textColor}
               hoverBgColor={hoverBgColor}
               dividerColor={dividerColor}
@@ -211,27 +222,3 @@ export const NotificationPopover = ({
     </div>
   );
 };
-
-const dummyNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "New Message",
-    description: "You have received a new message from John Doe",
-    timestamp: new Date(),
-    read: false,
-  },
-  {
-    id: "2",
-    title: "System Update",
-    description: "System maintenance scheduled for tomorrow",
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    read: false,
-  },
-  {
-    id: "3",
-    title: "Reminder",
-    description: "Meeting with team at 2 PM",
-    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    read: true,
-  },
-];

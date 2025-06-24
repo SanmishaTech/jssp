@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\Requisition;
 use App\Models\User;
 use App\Http\Resources\RequisitionResource;
+use App\Models\Notification;
 
 class RequisitionController extends BaseController
 {   
@@ -169,6 +170,13 @@ class RequisitionController extends BaseController
         $requisition->requested_by = Auth::id(); // Set the current user as requester
         $requisition->status = 'pending'; // Default status
         $requisition->save();
+
+        Notification::sendToAdmins(
+            'New Requisition Submitted',
+            'A new requisition has been submitted by ' . Auth::user()->name . '.',
+            '/requisitions/' . $requisition->id, // Note: You may need to adjust this link to match your frontend routes
+            Auth::user()
+        );
         
         return $this->sendResponse([ "Requisition" => new RequisitionResource($requisition)], "Requisition request submitted successfully");
     }

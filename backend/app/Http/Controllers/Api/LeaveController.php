@@ -12,6 +12,7 @@ use App\Http\Resources\LeaveResource;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Notification;
 
 class LeaveController extends BaseController
 {
@@ -208,6 +209,15 @@ class LeaveController extends BaseController
         $leave->approved_by = $request->input('approved_by');
         $leave->approved_at = now();
         $leave->save();
+
+        if ($leave->status === 'approved') {
+            Notification::sendToAdmins(
+                'Leave Application Approved',
+                'A leave application for ' . $leave->staff->user->name . ' has been approved.',
+                '/leaves/' . $leave->id, // Note: You may need to adjust this link to match your frontend routes
+                Auth::user()
+            );
+        }
 
         return $this->sendResponse(["Leave" => new LeaveResource($leave)], "Leave application updated successfully");
     }

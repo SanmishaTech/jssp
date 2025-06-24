@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ComplaintResource;
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Notification;
 
 class ComplaintController extends BaseController
 {
@@ -71,6 +72,13 @@ class ComplaintController extends BaseController
          $complaint->nature_of_complaint = $request->input('nature_of_complaint');
          $complaint->description = $request->input('description');
          $complaint->save();
+
+        Notification::sendToRoles(['superadmin', 'viceprincipal'],
+            'New Complaint Submitted',
+            'A new complaint has been submitted by ' . (Auth::user()->staff->name ?? Auth::user()->name) . ' (' . Auth::user()->roles->pluck('name')->implode(', ') . ').',
+            '/complaints', // Note: You may need to adjust this link to match your frontend routes
+            Auth::user()
+        );
         
         return $this->sendResponse([ "Complaint" => new ComplaintResource( $complaint)], "Complaint stored successfully");
     }

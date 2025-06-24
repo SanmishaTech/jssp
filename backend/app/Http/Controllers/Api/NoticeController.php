@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Notice;
 use App\Http\Resources\NoticeResource;
 use App\Models\NoticeRead;
+use App\Models\Notification;
 
 class NoticeController extends Controller
 {
@@ -94,6 +95,44 @@ class NoticeController extends Controller
             'recipient_institute_id' => $role === 'superadmin' ? $request->recipient_institute_id : null,
             'message' => $request->message,
         ]);
+
+        // Decide notification recipients based on sender role and selected targets
+        if ($role === 'superadmin') {
+            // Notify admins & viceprincipals of the recipient institute
+            Notification::sendToInstituteRoles(
+                $request->recipient_institute_id,
+                ['admin', 'viceprincipal'],
+                'New Notice from Superadmin',
+                'A new notice has been sent to your institute.',
+                '/notices',
+                Auth::user()
+            );
+        } elseif ($role === 'admin') {
+            // Admin: if recipient_role provided, notify users of that role in their institute
+            if ($request->recipient_role) {
+                Notification::sendToInstituteRoles(
+                    $staff->institute_id,
+                    [$request->recipient_role],
+                    'New Notice from Admin',
+                    'You have received a new notice.',
+                    '/notices',
+                    Auth::user()
+                );
+            }
+            // If specific staff selected
+            if ($request->recipient_staff_id) {
+                $toUser = \App\Models\Staff::find($request->recipient_staff_id)->user;
+                if ($toUser) {
+                    Notification::sendToUser(
+                        $toUser,
+                        'New Notice from Admin',
+                        'You have received a new notice.',
+                        '/notices',
+                        Auth::user()
+                    );
+                }
+            }
+        }
 
         return response()->json([
             'status' => true,
