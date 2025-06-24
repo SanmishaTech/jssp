@@ -75,6 +75,48 @@ class MemoController extends BaseController
          $memo->memo_subject = $request->input('memo_subject');
         $memo->memo_description = $request->input('memo_description');
          $memo->save();
+
+        // === Notification Logic ===
+        $user = Auth::user();
+        $role = $user->getRoleNames()->first();
+
+        if ($role === 'superadmin') {
+            // Notify admins & viceprincipals of the institute the memo was created for
+            \App\Models\Notification::sendToInstituteRoles(
+                $memo->institute_id,
+                ['admin', 'viceprincipal'],
+                'New Memo from Superadmin',
+                'A new memo has been issued to your institute.',
+                '/memo',
+                $user
+            );
+        } elseif (in_array($role, ['admin', 'viceprincipal'])) {
+            // If specific staff is targeted
+            if ($request->filled('staff_id')) {
+                $staffModel = \App\Models\Staff::find($request->input('staff_id'));
+                if ($staffModel && $staffModel->user) {
+                    \App\Models\Notification::sendToUser(
+                        $staffModel->user,
+                        'New Memo',
+                        'You have received a new memo.',
+                        '/memo',
+                        $user
+                    );
+                }
+            }
+            // If admin/viceprincipal creates a memo without specifying staff, assume it is for a role-wide announcement (e.g., teaching staff)
+            if ($request->filled('recipient_role')) {
+                \App\Models\Notification::sendToInstituteRoles(
+                    $memo->institute_id,
+                    [$request->input('recipient_role')],
+                    'New Memo',
+                    'A new memo has been issued for your role.',
+                    '/memo',
+                    $user
+                );
+            }
+        }
+        // === End Notification Logic ===
         
         return $this->sendResponse([ "Memo" => new MemoResource($memo)], "Memo stored successfully");
     }

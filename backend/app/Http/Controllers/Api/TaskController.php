@@ -9,6 +9,8 @@ use App\Http\Resources\TaskResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Notification;
+use App\Models\Staff;
 
 class TaskController extends BaseController
 {
@@ -129,6 +131,20 @@ class TaskController extends BaseController
         
         // Load relationships
         $task->load(['assignedTo', 'creator']);
+
+        // Notify the assignee if one was set
+        if ($task->assigned_to) {
+            $assignee = Staff::with('user')->find($task->assigned_to);
+            if ($assignee && $assignee->user) {
+                Notification::sendToUser(
+                    $assignee->user,
+                    'New Task Assigned',
+                    "You have been assigned a new task: {$task->title}",
+                    "/tasks",
+                    Auth::user()
+                );
+            }
+        }
         
         return $this->sendResponse(
             ['task' => new TaskResource($task)],
@@ -164,6 +180,7 @@ class TaskController extends BaseController
     public function update(Request $request, string $id): JsonResponse
     {
         $task = Task::find($id);
+        $previousAssignedId = $task ? $task->assigned_to : null;
         
         if (!$task) {
             return $this->sendError('Task not found', ['error' => 'Task not found'], 404);
@@ -217,6 +234,20 @@ class TaskController extends BaseController
         
         // Load relationships
         $task->load(['assignedTo', 'creator.user']);
+
+        // If the assignee changed, notify the new assignee
+        if ($task->assigned_to && $task->assigned_to != $previousAssignedId) {
+            $assignee = Staff::with('user')->find($task->assigned_to);
+            if ($assignee && $assignee->user) {
+                Notification::sendToUser(
+                    $assignee->user,
+                    'Task Reassigned',
+                    "A task has been assigned to you: {$task->title}",
+                    "/tasks",
+                    Auth::user()
+                );
+            }
+        }
         
         return $this->sendResponse(
             ['task' => new TaskResource($task)],
@@ -230,6 +261,7 @@ class TaskController extends BaseController
     public function updateStatus(Request $request, string $id): JsonResponse
     {
         $task = Task::find($id);
+        $previousAssignedId = $task ? $task->assigned_to : null;
         
         if (!$task) {
             return $this->sendError('Task not found', ['error' => 'Task not found'], 404);
@@ -268,6 +300,7 @@ class TaskController extends BaseController
     public function destroy(string $id): JsonResponse
     {
         $task = Task::find($id);
+        $previousAssignedId = $task ? $task->assigned_to : null;
         
         if (!$task) {
             return $this->sendError('Task not found', ['error' => 'Task not found'], 404);

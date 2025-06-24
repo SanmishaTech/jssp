@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\MeetingResource;
 use App\Http\Controllers\Api\BaseController;
 use Illuminate\Database\QueryException;
+use App\Models\Notification;
+use App\Models\Staff;
 
 class MeetingController extends BaseController
 {
@@ -81,6 +83,19 @@ class MeetingController extends BaseController
         // Reload relations
         $meeting->load('staff');
 
+        // Notify invited staff
+        foreach ($meeting->staff as $staff) {
+            if ($staff->user) {
+                Notification::sendToUser(
+                    $staff->user,
+                    'New Meeting Scheduled',
+                    "You are invited to a meeting at {$meeting->venue} on {$meeting->date} at {$meeting->time}.",
+                    '/meetings',
+                    Auth::user()
+                );
+            }
+        }
+
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting stored successfully");
     }
 
@@ -132,9 +147,30 @@ class MeetingController extends BaseController
             throw $e;
         }
        
+        // Determine previous and new staff IDs
+        $previousStaffIds = $meeting->staff->pluck('id')->toArray();
+
         // Sync staff members
         $meeting->staff()->sync($validated['staff_ids']);
         $meeting->load('staff');
+
+        $newStaffIds = $validated['staff_ids'];
+        $addedStaffIds = array_diff($newStaffIds, $previousStaffIds);
+
+        if (!empty($addedStaffIds)) {
+            $addedStaff = Staff::with('user')->whereIn('id', $addedStaffIds)->get();
+            foreach ($addedStaff as $staff) {
+                if ($staff->user) {
+                    Notification::sendToUser(
+                        $staff->user,
+                        'Meeting Invitation',
+                        "You have been added to a meeting at {$meeting->venue} on {$meeting->date} at {$meeting->time}.",
+                        '/meetings',
+                        Auth::user()
+                    );
+                }
+            }
+        }
 
         return $this->sendResponse([ "Meeting" => new MeetingResource($meeting)], "Meeting updated successfully");
 

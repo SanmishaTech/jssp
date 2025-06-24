@@ -7,6 +7,8 @@ use App\Http\Resources\PaperEvaluationResource;
 use App\Models\PaperEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\Notification;
+use App\Models\Staff;
 use Illuminate\Support\Facades\Auth;
 
 class PaperEvaluationController extends Controller
@@ -84,6 +86,19 @@ class PaperEvaluationController extends Controller
 
         $paperEvaluation = PaperEvaluation::create($validatedData);
         $paperEvaluation->load(['examCalendar', 'subject', 'staff']);
+
+        // Notify assigned staff
+        if ($paperEvaluation->staff && $paperEvaluation->staff->user) {
+            $subjectName = $paperEvaluation->subject?->name ?? 'subject';
+            Notification::sendToUser(
+                $paperEvaluation->staff->user,
+                'Paper Evaluation Assignment',
+                "You have been assigned to evaluate papers for {$subjectName} (Total: {$paperEvaluation->total_papers}).",
+                '/teachers-paper-evaluation',
+                Auth::user()
+            );
+        }
+
         return new PaperEvaluationResource($paperEvaluation);
     }
 
@@ -122,8 +137,26 @@ class PaperEvaluationController extends Controller
             $validatedData['status'] = 'assigned';
         }
 
+        $previousStaffId = $paperEvaluation->staff_id;
+
         $paperEvaluation->update($validatedData);
         $paperEvaluation->load(['examCalendar', 'subject', 'staff']);
+
+        // If staff changed, notify new staff
+        if ($paperEvaluation->staff_id && $paperEvaluation->staff_id != $previousStaffId) {
+            $newStaff = Staff::with('user')->find($paperEvaluation->staff_id);
+            if ($newStaff && $newStaff->user) {
+                $subjectName = $paperEvaluation->subject?->name ?? 'subject';
+                Notification::sendToUser(
+                    $newStaff->user,
+                    'Paper Evaluation Assignment Updated',
+                    "You have been assigned to evaluate papers for {$subjectName} (Total: {$paperEvaluation->total_papers}).",
+                    '/teachers-paper-evaluation',
+                    Auth::user()
+                );
+            }
+        }
+
         return new PaperEvaluationResource($paperEvaluation);
     }
 
