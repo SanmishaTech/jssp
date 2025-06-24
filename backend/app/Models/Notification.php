@@ -17,6 +17,7 @@ class Notification extends Model
         'type',
         'data',
         'link',
+        'institute_id',
         'read_at',
     ];
 
@@ -28,6 +29,11 @@ class Notification extends Model
     public function from()
     {
         return $this->belongsTo(User::class, 'from_id');
+    }
+
+    public function institute()
+    {
+        return $this->belongsTo(Institute::class);
     }
 
     public function to()
@@ -73,6 +79,7 @@ class Notification extends Model
                     'description' => $description,
                 ],
                 'link' => $link,
+                'institute_id' => optional($user->staff)->institute_id,
             ]);
         }
         Log::info('Finished sending notifications.');
@@ -120,6 +127,7 @@ class Notification extends Model
                     'description' => $description,
                 ],
                 'link' => $link,
+                'institute_id' => optional($user->staff)->institute_id,
             ]);
         }
     }
@@ -143,6 +151,7 @@ class Notification extends Model
                 'description' => $description,
             ],
             'link' => $link,
+                'institute_id' => optional($toUser->staff)->institute_id,
         ]);
     }
 }

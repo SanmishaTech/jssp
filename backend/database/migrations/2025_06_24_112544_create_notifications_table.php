@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('from_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('to_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('institute_id')->nullable()->constrained('institutes')->onDelete('set null');
             $table->string('type');
             $table->text('data');
             $table->string('link')->nullable();
