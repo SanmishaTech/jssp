@@ -30,7 +30,6 @@ use App\Http\Controllers\Api\PeticashController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SemesterController;
 use App\Http\Controllers\Api\TransferController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Api\AdmissionController;
 use App\Http\Controllers\Api\CommitteeController;
 use App\Http\Controllers\Api\ComplaintController;
@@ -49,6 +48,8 @@ use App\Http\Controllers\Api\BankAccountController;
 use App\Http\Controllers\Api\RequisitionController;
 use App\Http\Controllers\Api\ScholarshipController;
 use App\Http\Controllers\Api\AcademicYearController;
+use App\Http\Controllers\Api\ExamCalendarController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SubjectHoursController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\PurchaseOrderController;
@@ -233,11 +234,15 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::get('/all_staffPapers', [StaffPaperController::class, 'allStaffPapers'])->name("staffPapers.all");
 
 
-   // Notification routes
-Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+
 });
+
+   // Notification routes – protected so Auth::user() is available
+   Route::middleware('auth:sanctum')->group(function () {
+       Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+       Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+       Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.read_all');
+   });
 
 Route::get('/file/{document}', [EventController::class, 'displayDocuments'])->name("client.displayDocuments");
 Route::get('/staff-file/{document}', [StaffController::class, 'displayDocuments'])->name("client.displayStaffDocuments");

@@ -137,13 +137,23 @@ export const NotificationPopover = ({
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: () => 
-      axios.get('http://localhost:8000/api/notifications', { withCredentials: true })
+      axios.get('/api/notifications', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` ?? ''
+        }
+      })
         .then((res: AxiosResponse<Notification[]>) => res.data),
   });
 
   const markAsReadMutation = useMutation({
     mutationFn: (id: string) => 
-      axios.patch(`http://localhost:8000/api/notifications/${id}/read`, {}, { withCredentials: true }),
+      axios.patch(`/api/notifications/${id}/read`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` ?? ''
+        }
+      }),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       const notification = notifications.find(n => n.id === id);
@@ -155,7 +165,12 @@ export const NotificationPopover = ({
 
   const markAllAsReadMutation = useMutation({
     mutationFn: () => 
-      axios.post('http://localhost:8000/api/notifications/mark-all-as-read', {}, { withCredentials: true }),
+      axios.post('/api/notifications/mark-all-as-read', {}, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` ?? ''
+        }
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },

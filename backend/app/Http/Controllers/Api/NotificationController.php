@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\BaseController;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\Api\BaseController;
+ 
 class NotificationController extends BaseController
 {
     public function index()
