@@ -64,6 +64,7 @@ import { Route as AllocationIndexImport } from './routes/allocation/index'
 import { Route as AdmissionsIndexImport } from './routes/admissions/index'
 import { Route as AddexamIndexImport } from './routes/addexam/index'
 import { Route as AddedcommitteeIndexImport } from './routes/addedcommittee/index'
+import { Route as ActivityIndexImport } from './routes/activity/index'
 import { Route as AcademicyearsIndexImport } from './routes/academicyears/index'
 import { Route as CashbookIdImport } from './routes/cashbook/$id'
 import { Route as AddedcommitteeIdImport } from './routes/addedcommittee/$id'
@@ -417,6 +418,12 @@ const AddedcommitteeIndexRoute = AddedcommitteeIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ActivityIndexRoute = ActivityIndexImport.update({
+  id: '/activity/',
+  path: '/activity/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AcademicyearsIndexRoute = AcademicyearsIndexImport.update({
   id: '/academicyears/',
   path: '/academicyears/',
@@ -633,6 +640,13 @@ declare module '@tanstack/react-router' {
       path: '/academicyears'
       fullPath: '/academicyears'
       preLoaderRoute: typeof AcademicyearsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/activity/': {
+      id: '/activity/'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof ActivityIndexImport
       parentRoute: typeof rootRoute
     }
     '/addedcommittee/': {
@@ -1205,6 +1219,7 @@ export interface FileRoutesByFullPath {
   '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
+  '/activity': typeof ActivityIndexRoute
   '/addedcommittee': typeof AddedcommitteeIndexRoute
   '/addexam': typeof AddexamIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
@@ -1292,6 +1307,7 @@ export interface FileRoutesByTo {
   '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears': typeof AcademicyearsIndexRoute
+  '/activity': typeof ActivityIndexRoute
   '/addedcommittee': typeof AddedcommitteeIndexRoute
   '/addexam': typeof AddexamIndexRoute
   '/admissions': typeof AdmissionsIndexRoute
@@ -1380,6 +1396,7 @@ export interface FileRoutesById {
   '/addedcommittee/$id': typeof AddedcommitteeIdRoute
   '/cashbook/$id': typeof CashbookIdRoute
   '/academicyears/': typeof AcademicyearsIndexRoute
+  '/activity/': typeof ActivityIndexRoute
   '/addedcommittee/': typeof AddedcommitteeIndexRoute
   '/addexam/': typeof AddexamIndexRoute
   '/admissions/': typeof AdmissionsIndexRoute
@@ -1469,6 +1486,7 @@ export interface FileRouteTypes {
     | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears'
+    | '/activity'
     | '/addedcommittee'
     | '/addexam'
     | '/admissions'
@@ -1555,6 +1573,7 @@ export interface FileRouteTypes {
     | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears'
+    | '/activity'
     | '/addedcommittee'
     | '/addexam'
     | '/admissions'
@@ -1641,6 +1660,7 @@ export interface FileRouteTypes {
     | '/addedcommittee/$id'
     | '/cashbook/$id'
     | '/academicyears/'
+    | '/activity/'
     | '/addedcommittee/'
     | '/addexam/'
     | '/admissions/'
@@ -1729,6 +1749,7 @@ export interface RootRouteChildren {
   AddedcommitteeIdRoute: typeof AddedcommitteeIdRoute
   CashbookIdRoute: typeof CashbookIdRoute
   AcademicyearsIndexRoute: typeof AcademicyearsIndexRoute
+  ActivityIndexRoute: typeof ActivityIndexRoute
   AddedcommitteeIndexRoute: typeof AddedcommitteeIndexRoute
   AddexamIndexRoute: typeof AddexamIndexRoute
   AdmissionsIndexRoute: typeof AdmissionsIndexRoute
@@ -1816,6 +1837,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddedcommitteeIdRoute: AddedcommitteeIdRoute,
   CashbookIdRoute: CashbookIdRoute,
   AcademicyearsIndexRoute: AcademicyearsIndexRoute,
+  ActivityIndexRoute: ActivityIndexRoute,
   AddedcommitteeIndexRoute: AddedcommitteeIndexRoute,
   AddexamIndexRoute: AddexamIndexRoute,
   AdmissionsIndexRoute: AdmissionsIndexRoute,
@@ -1912,6 +1934,7 @@ export const routeTree = rootRoute
         "/addedcommittee/$id",
         "/cashbook/$id",
         "/academicyears/",
+        "/activity/",
         "/addedcommittee/",
         "/addexam/",
         "/admissions/",
@@ -2005,6 +2028,9 @@ export const routeTree = rootRoute
     },
     "/academicyears/": {
       "filePath": "academicyears/index.tsx"
+    },
+    "/activity/": {
+      "filePath": "activity/index.tsx"
     },
     "/addedcommittee/": {
       "filePath": "addedcommittee/index.tsx"

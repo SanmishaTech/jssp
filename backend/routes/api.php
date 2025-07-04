@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
-use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
@@ -62,6 +61,7 @@ use App\Http\Controllers\Api\NoticeController; // Added this line
 use App\Http\Controllers\Api\SyllabusController; // Added this line
 use App\Http\Controllers\Api\DashboardController; // Added for dashboard
 use App\Http\Controllers\Api\PaperEvaluationController; // Added this line
+use App\Http\Controllers\ActivityLogController; // Added for activity logging
 
 Route::post('/login', [UserController::class, 'login']);
 
@@ -80,7 +80,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('staff', StaffController::class);  
    Route::get('/all_staff', [StaffController::class, 'allStaffs'])->name("staffs.all");
 
-   Route::resource('members', MemberController::class);
    Route::resource('superadmin', SuperAdminController::class);
    
    Route::resource('courses', CourseController::class);
@@ -233,7 +232,15 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    Route::resource('staffPapers', StaffPaperController::class);
    Route::get('/all_staffPapers', [StaffPaperController::class, 'allStaffPapers'])->name("staffPapers.all");
 
-
+   // Activity Log routes
+   Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+   Route::get('/activity-logs/stats', [ActivityLogController::class, 'getStats'])->name('activity-logs.stats');
+   Route::get('/activity-logs/subject/{subjectType}/{subjectId}', [ActivityLogController::class, 'getSubjectActivities'])->name('activity-logs.subject');
+   Route::get('/activity-logs/causer/{causerId}', [ActivityLogController::class, 'getCauserActivities'])->name('activity-logs.causer');
+   Route::get('/activity-logs/log/{logName}', [ActivityLogController::class, 'getLogActivities'])->name('activity-logs.log');
+   Route::delete('/activity-logs/clean', [ActivityLogController::class, 'cleanOldActivities'])->name('activity-logs.clean');
+   Route::get('/activity-logs/{activity}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+   Route::delete('/activity-logs/{activity}', [ActivityLogController::class, 'destroy'])->name('activity-logs.destroy');
 
 });
 

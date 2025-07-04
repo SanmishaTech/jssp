@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Services\ActivityLogService;
 
 class StudentController extends BaseController
 {
@@ -70,6 +71,19 @@ class StudentController extends BaseController
         $student->prn = $request->input('prn');
         $student->abcId = $request->input('abcId');
         $student->save();
+        
+        // Log activity - This will be automatically logged by the LogsActivity trait
+        // But we can also add custom logging for additional context
+        ActivityLogService::log(
+            "Student '{$student->student_name}' was created",
+            $student,
+            [
+                'prn' => $student->prn,
+                'division_id' => $student->division_id,
+                'institute_id' => $student->institute_id
+            ],
+            'student_management'
+        );
         
         return $this->sendResponse([new StudentResource($student)], "Student stored successfully");
     }
@@ -129,6 +143,19 @@ class StudentController extends BaseController
         if(!$student){
             return $this->sendError("Student not found", ['error'=> 'Student not found']);
         }
+        
+        // Log activity before deletion
+        ActivityLogService::log(
+            "Student '{$student->student_name}' was deleted",
+            $student,
+            [
+                'prn' => $student->prn,
+                'division_id' => $student->division_id,
+                'student_id' => $student->id
+            ],
+            'student_management'
+        );
+        
          $student->delete();
          return $this->sendResponse([], "Student deleted successfully");
     }
@@ -268,6 +295,14 @@ class StudentController extends BaseController
                     \Log::error('Error creating student: ' . $e->getMessage());
                 }
             }
+            
+            // Log import activity
+            ActivityLogService::logImport(
+                'students',
+                $file->getClientOriginalName(),
+                $importCount,
+                $errors
+            );
             
             $message = "Successfully imported {$importCount} students";
             $response = ['count' => $importCount];
