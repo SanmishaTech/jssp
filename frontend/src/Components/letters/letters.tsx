@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Plus, Trash2 } from "lucide-react";
+import { Send, Plus, Trash2, Download } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "sonner";
@@ -34,6 +34,7 @@ export default function LetterList() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [userRole, setUserRole] = useState<string>("");
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -162,6 +163,28 @@ export default function LetterList() {
     setIsAlertOpen(!isAlertOpen);
   };
 
+  const handleDownloadPdf = async (letterId: string) => {
+    if (!letterId) return;
+    setIsDownloading(true);
+    try {
+      const response = await axios.get(`/api/letters/${letterId}/pdf`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob',
+      });
+      const file = new Blob([response.data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+      toast.success("PDF opened in a new tab.");
+    } catch (error) {
+      console.error("Error opening PDF:", error);
+      toast.error("Failed to open PDF.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const handleCreateNew = () => {
     setViewMode(false);
     setEditingId(null);
@@ -179,6 +202,7 @@ export default function LetterList() {
               {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : 'Create New Letter')}
               {viewMode && (
                 <>
+
                      <button 
                       onClick={() => handleEdit(selectedLetter)}
                       className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
@@ -318,6 +342,17 @@ export default function LetterList() {
                           </p>
                         </div>
                         <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              className="text-blue-500 hover:text-blue-700"
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDownloadPdf(letter.id);
+                              }}
+                              title="Open PDF"
+                              disabled={isDownloading}
+                            >
+                              <Download className="h-5 w-5" />
+                            </button>
                             <button 
                               className="text-red-500 hover:text-red-700" 
                               onClick={(e) => {

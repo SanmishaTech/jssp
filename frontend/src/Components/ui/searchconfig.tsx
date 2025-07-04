@@ -43,6 +43,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       icon: FileText,
     },
     {
+      title: "Letters",
+      url: "/letters",
+      icon: FileText,
+    },
+    {
       title: "Requisitions/Demand",
       url: "/requisitions",
       icon: Truck,
@@ -85,6 +90,11 @@ export const searchconfig: Record<string, MenuItem[]> = {
       title: "Dashboard",
       url: "/dashboards",
       icon: Home,
+    },
+    {
+      title: "Letters",
+      url: "/letters",
+      icon: FileText,
     },
     {
       title: "Notice",

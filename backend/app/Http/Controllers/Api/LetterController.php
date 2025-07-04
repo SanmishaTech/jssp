@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Mpdf\Mpdf;
 
 class LetterController extends BaseController
 {
@@ -39,6 +40,46 @@ class LetterController extends BaseController
                 'total' => $letters->total(),
             ]
         ], 'Letters retrieved successfully');
+    }
+
+    public function pdf($id)
+    {
+        try {
+            $user = Auth::user();
+            $letter = Letter::findOrFail($id);
+
+            if ($user->staff->institute_id !== $letter->institute_id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $data = [
+                'letter' => $letter,
+                'staff' => $user->staff,
+            ];
+
+            $pdf = new Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'tempDir' => storage_path('app/mpdf')
+            ]);
+
+            $pdf->SetAuthor('JSSP');
+            $pdf->SetCreator('JSSP');
+            $pdf->SetTitle('Letter - ' . $letter->letter_title);
+            $pdf->SetSubject('Letter PDF');
+
+            // Use a view for the PDF content
+            $html = view('pdf.letter', $data)->render();
+
+            $pdf->WriteHTML($html);
+
+            // Output the PDF as a download
+            return $pdf->Output('letter_' . $letter->id . '.pdf', 'I');
+
+        } catch (\Exception $e) {
+            // Log the error or handle it as needed
+            return response()->json(['error' => 'Could not generate PDF', 'message' => $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request): JsonResponse
