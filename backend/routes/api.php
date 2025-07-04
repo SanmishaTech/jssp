@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\CashierController;
 use App\Http\Controllers\Api\ClientsController;
@@ -211,6 +212,7 @@ Route::get('/all_assetmasters', [AssetMasterController::class, 'allAssetMaster']
    
 
    Route::resource('memos', MemoController::class);
+   Route::resource('letters', LetterController::class);
    Route::get('/all_memos', [MemoController::class, 'allMemos'])->name("memos.all");
 
    Route::resource('assetcategories', AssetCategoryController::class);

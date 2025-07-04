@@ -37,6 +37,7 @@ import { Route as NoticeIndexImport } from './routes/notice/index'
 import { Route as MemoIndexImport } from './routes/memo/index'
 import { Route as MeetingsIndexImport } from './routes/meetings/index'
 import { Route as LoginIndexImport } from './routes/login/index'
+import { Route as LettersIndexImport } from './routes/letters/index'
 import { Route as LeaveapprovalIndexImport } from './routes/leaveapproval/index'
 import { Route as LeaveIndexImport } from './routes/leave/index'
 import { Route as InventoryIndexImport } from './routes/inventory/index'
@@ -253,6 +254,12 @@ const MeetingsIndexRoute = MeetingsIndexImport.update({
 const LoginIndexRoute = LoginIndexImport.update({
   id: '/login/',
   path: '/login/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LettersIndexRoute = LettersIndexImport.update({
+  id: '/letters/',
+  path: '/letters/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -838,6 +845,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaveapprovalIndexImport
       parentRoute: typeof rootRoute
     }
+    '/letters/': {
+      id: '/letters/'
+      path: '/letters'
+      fullPath: '/letters'
+      preLoaderRoute: typeof LettersIndexImport
+      parentRoute: typeof rootRoute
+    }
     '/login/': {
       id: '/login/'
       path: '/login'
@@ -1247,6 +1261,7 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof InventoryIndexRoute
   '/leave': typeof LeaveIndexRoute
   '/leaveapproval': typeof LeaveapprovalIndexRoute
+  '/letters': typeof LettersIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
@@ -1335,6 +1350,7 @@ export interface FileRoutesByTo {
   '/inventory': typeof InventoryIndexRoute
   '/leave': typeof LeaveIndexRoute
   '/leaveapproval': typeof LeaveapprovalIndexRoute
+  '/letters': typeof LettersIndexRoute
   '/login': typeof LoginIndexRoute
   '/meetings': typeof MeetingsIndexRoute
   '/memo': typeof MemoIndexRoute
@@ -1424,6 +1440,7 @@ export interface FileRoutesById {
   '/inventory/': typeof InventoryIndexRoute
   '/leave/': typeof LeaveIndexRoute
   '/leaveapproval/': typeof LeaveapprovalIndexRoute
+  '/letters/': typeof LettersIndexRoute
   '/login/': typeof LoginIndexRoute
   '/meetings/': typeof MeetingsIndexRoute
   '/memo/': typeof MemoIndexRoute
@@ -1514,6 +1531,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/leave'
     | '/leaveapproval'
+    | '/letters'
     | '/login'
     | '/meetings'
     | '/memo'
@@ -1601,6 +1619,7 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/leave'
     | '/leaveapproval'
+    | '/letters'
     | '/login'
     | '/meetings'
     | '/memo'
@@ -1688,6 +1707,7 @@ export interface FileRouteTypes {
     | '/inventory/'
     | '/leave/'
     | '/leaveapproval/'
+    | '/letters/'
     | '/login/'
     | '/meetings/'
     | '/memo/'
@@ -1777,6 +1797,7 @@ export interface RootRouteChildren {
   InventoryIndexRoute: typeof InventoryIndexRoute
   LeaveIndexRoute: typeof LeaveIndexRoute
   LeaveapprovalIndexRoute: typeof LeaveapprovalIndexRoute
+  LettersIndexRoute: typeof LettersIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   MeetingsIndexRoute: typeof MeetingsIndexRoute
   MemoIndexRoute: typeof MemoIndexRoute
@@ -1865,6 +1886,7 @@ const rootRouteChildren: RootRouteChildren = {
   InventoryIndexRoute: InventoryIndexRoute,
   LeaveIndexRoute: LeaveIndexRoute,
   LeaveapprovalIndexRoute: LeaveapprovalIndexRoute,
+  LettersIndexRoute: LettersIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   MeetingsIndexRoute: MeetingsIndexRoute,
   MemoIndexRoute: MemoIndexRoute,
@@ -1962,6 +1984,7 @@ export const routeTree = rootRoute
         "/inventory/",
         "/leave/",
         "/leaveapproval/",
+        "/letters/",
         "/login/",
         "/meetings/",
         "/memo/",
@@ -2112,6 +2135,9 @@ export const routeTree = rootRoute
     },
     "/leaveapproval/": {
       "filePath": "leaveapproval/index.tsx"
+    },
+    "/letters/": {
+      "filePath": "letters/index.tsx"
     },
     "/login/": {
       "filePath": "login/index.tsx"
