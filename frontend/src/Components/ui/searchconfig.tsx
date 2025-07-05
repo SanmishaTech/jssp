@@ -83,6 +83,12 @@ export const searchconfig: Record<string, MenuItem[]> = {
       url: "/complaints",
       icon: MessageCircle,
     },
+    {
+      title: "Activity Log",
+      url: "/activity",
+      icon: FileText,
+    }
+    
   ],
   
   admin: [

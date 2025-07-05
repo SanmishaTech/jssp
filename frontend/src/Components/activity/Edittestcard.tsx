@@ -72,7 +72,7 @@ const ActivityLog: React.FC = () => {
         setError(null);
         
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:8000/api/activity-logs', {
+        const response = await axios.get('/api/activity-logs', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
