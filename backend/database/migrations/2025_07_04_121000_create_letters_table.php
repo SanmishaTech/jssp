@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('letter_number')->unique();
             $table->string('letter_title');
             $table->longText('letter_description');
+            $table->string('letter_path')->nullable();
+
             $table->timestamps();
         });
     }

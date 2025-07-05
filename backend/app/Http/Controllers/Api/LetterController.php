@@ -84,22 +84,50 @@ class LetterController extends BaseController
 
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $rules = [
             'letter_title' => 'required|string',
-            'letter_description' => 'required|string',
-        ]);
+            'type' => 'required|in:inward,outward'
+        ];
+
+        // Rules based on letter type
+        if ($request->input('type') === 'outward') {
+            $rules['letter_description'] = 'required|string';
+            // No file allowed for outward letters
+        } else {
+            $rules['letter_description'] = 'nullable|string';
+            // For inward letters, file is required
+            $rules['letter_file'] = 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120';
+        }
+
+        $request->validate($rules);
 
         $user = Auth::user();
         $instituteId = $user->staff->institute_id;
 
         $letterNumber = 'LET-' . Str::upper(Str::random(6));
 
-        $letter = Letter::create([
-            'institute_id' => $instituteId,
-            'letter_number' => $letterNumber,
-            'letter_title' => $request->input('letter_title'),
-            'letter_description' => $request->input('letter_description'),
-        ]);
+        $letter = new Letter();
+        $letter->institute_id = $instituteId;
+        $letter->letter_number = $letterNumber;
+        $letter->letter_title = $request->input('letter_title');
+        $letter->type = $request->input('type');
+        $letter->letter_description = $request->input('letter_description', '');
+
+        // Handle file upload
+        if ($request->hasFile('letter_file')) {
+            $file = $request->file('letter_file');
+            $original = $file->getClientOriginalName();
+            $uniqueName = time() . '_' . $original;
+
+            // Ensure directory exists
+            \Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
+
+            $file->storeAs('letter_attachments', $uniqueName, 'public');
+
+            $letter->letter_path = $uniqueName;
+        }
+
+        $letter->save();
 
         return $this->sendResponse(['Letter' => new LetterResource($letter)], 'Letter stored successfully');
     }
@@ -120,12 +148,53 @@ class LetterController extends BaseController
             return $this->sendError('Letter not found', [], 404);
         }
 
-        $request->validate([
+        $rules = [
             'letter_title' => 'required|string',
-            'letter_description' => 'required|string',
-        ]);
+            'type' => 'required|in:inward,outward',
+            'delete_file' => 'nullable|boolean'
+        ];
 
-        $letter->update($request->only(['letter_title', 'letter_description']));
+        // Rules based on letter type
+        if ($request->input('type') === 'outward') {
+            $rules['letter_description'] = 'required|string';
+            // No file allowed for outward letters
+        } else {
+            $rules['letter_description'] = 'nullable|string';
+            $rules['letter_file'] = 'nullable|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120';
+        }
+
+        $request->validate($rules);
+
+        $letter->letter_title = $request->input('letter_title');
+        $letter->type = $request->input('type');
+        $letter->letter_description = $request->input('letter_description', '');
+
+        // Handle delete request for existing file
+        if ($request->boolean('delete_file') && $letter->letter_path) {
+            if (\Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+                \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+            }
+            $letter->letter_path = null;
+        }
+
+        // Handle new file upload
+        if ($request->hasFile('letter_file')) {
+            // Remove old file first
+            if ($letter->letter_path && \Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+                \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+            }
+
+            $file = $request->file('letter_file');
+            $original = $file->getClientOriginalName();
+            $uniqueName = time() . '_' . $original;
+
+            \Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
+            $file->storeAs('letter_attachments', $uniqueName, 'public');
+
+            $letter->letter_path = $uniqueName;
+        }
+
+        $letter->save();
 
         return $this->sendResponse(['Letter' => new LetterResource($letter)], 'Letter updated successfully');
     }
@@ -136,6 +205,12 @@ class LetterController extends BaseController
         if (!$letter) {
             return $this->sendError('Letter not found', [], 404);
         }
+        
+        // Delete associated file if exists
+        if ($letter->letter_path && \Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+            \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+        }
+        
         $letter->delete();
         return $this->sendResponse([], 'Letter deleted successfully');
     }

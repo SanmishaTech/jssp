@@ -13,6 +13,8 @@ class Letter extends Model
         'institute_id',
         'letter_number',
         'letter_title',
+        'type',
         'letter_description',
+        'letter_path',
     ];
 }

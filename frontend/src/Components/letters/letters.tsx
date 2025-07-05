@@ -2,8 +2,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Plus, Trash2, Download } from "lucide-react";
+import { Send, Plus, Trash2, Download, Paperclip, BookOpen, Inbox } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import axios from "axios";
 import { toast } from "sonner";
 import AlertDialogbox from "./AlertBox";
@@ -14,7 +20,10 @@ type Letter = {
   id: string;
   letter_number: string;
   letter_title: string;
+  type: "inward" | "outward";
   letter_description: string;
+  letter_path?: string;
+  letter_url?: string;
   created_at: string;
 };
 
@@ -30,11 +39,14 @@ export default function LetterList() {
   const [deleteId, setDeleteId] = useState<string>("");
   const [viewMode, setViewMode] = useState<boolean>(false);
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null);
+  const [letterType, setLetterType] = useState<"inward" | "outward">("outward");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [userRole, setUserRole] = useState<string>("");
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [deleteFile, setDeleteFile] = useState<boolean>(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -103,31 +115,52 @@ export default function LetterList() {
   };
 
   const handleSend = async () => {
-    if (!title?.trim() || !description?.trim()) {
-      toast.error("Please fill in all required fields");
+    if (!title?.trim()) {
+      toast.error("Please enter a title");
+      return;
+    }
+
+    if (letterType === "outward" && !description?.trim()) {
+      toast.error("Please enter a description for outward letter");
+      return;
+    }
+
+    if (letterType === "inward" && !selectedFile && !editingId) {
+      toast.error("Please attach a file for inward letter");
       return;
     }
 
     setLoading(true);
     try {
-      const payload = {
-        letter_title: title,
-        letter_description: description
-      };
+      const formData = new FormData();
+      formData.append('letter_title', title);
+      formData.append('type', letterType);
+
+      if (letterType === "outward") {
+        formData.append('letter_description', description);
+      }
+      
+      if (selectedFile) {
+        formData.append('letter_file', selectedFile);
+      }
+      
+      if (deleteFile) {
+        formData.append('delete_file', '1');
+      }
 
       if (editingId) {
-        await axios.put(`/api/letters/${editingId}`, payload, {
+        await axios.post(`/api/letters/${editingId}?_method=PUT`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+            "Content-Type": "multipart/form-data"
           }
         });
         toast.success("Letter updated successfully");
       } else {
-        await axios.post(`/api/letters`, payload, {
+        await axios.post(`/api/letters`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
+            "Content-Type": "multipart/form-data"
           }
         });
         toast.success("Letter sent successfully");
@@ -138,6 +171,8 @@ export default function LetterList() {
       setDescription("");
       setEditingId(null);
       setViewMode(false);
+      setSelectedFile(null);
+      setDeleteFile(false);
       fetchLetters();
     } catch (error) {
       console.error("Error sending letter:", error);
@@ -151,7 +186,10 @@ export default function LetterList() {
     setEditingId(letter?.id || '');
     setTitle(letter?.letter_title || '');
     setDescription(letter?.letter_description || '');
+    setLetterType(letter?.type || 'outward');
     setViewMode(false);
+    setSelectedFile(null);
+    setDeleteFile(false);
   };
   
   const handleDelete = (id: string) => {
@@ -191,6 +229,36 @@ export default function LetterList() {
     setSelectedLetter(null);
     setTitle("");
     setDescription("");
+    setLetterType("outward");
+    setSelectedFile(null);
+    setDeleteFile(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 
+                          'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Please select a valid file (PDF, JPG, PNG, DOC, DOCX)');
+        e.target.value = '';
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error('File size must be less than 5MB');
+        e.target.value = '';
+        return;
+      }
+      
+      setSelectedFile(file);
+    }
+  };
+
+  const handleViewFile = (fileUrl: string) => {
+    window.open(fileUrl, '_blank');
   };
 
   return (
@@ -199,7 +267,7 @@ export default function LetterList() {
         <div className="p-6 w-3/4 h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg">
           <div className="flex justify-center items-center p-3 mb-4">
             <h3 className="text-lg font-semibold">
-              {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : 'Create New Letter')}
+                  {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : (letterType === 'inward' ? 'Create Inward Letter' : 'Create Outward Letter'))}
               {viewMode && (
                 <>
 
@@ -246,46 +314,128 @@ export default function LetterList() {
                 <div className="w-full bg-gray-50 min-h-[350px] overflow-auto whitespace-pre-wrap break-words text-sm" 
                      dangerouslySetInnerHTML={{ __html: selectedLetter.letter_description }} />
               </div>
+              
+              {selectedLetter.letter_url && (
+                <div className="space-y-2 mt-4">
+                  <Label>Attached File:</Label>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewFile(selectedLetter.letter_url!)}
+                  >
+                    View Attachment
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             <>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      placeholder="Enter letter title..."
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                  </div>
+                <Tabs value={letterType} onValueChange={(value) => {
+                  setLetterType(value as 'inward' | 'outward');
+                  // Clear file when switching to outward
+                  if (value === 'outward') {
+                    setSelectedFile(null);
+                    setDeleteFile(false);
+                  }
+                }} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="outward" className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      Outward Letter
+                    </TabsTrigger>
+                    <TabsTrigger value="inward" className="flex items-center gap-2">
+                      <Inbox className="h-4 w-4" />
+                      Inward Letter
+                    </TabsTrigger>
+                  </TabsList>
                   
-                  <div className="grid gap-2">
-                    <div className="flex justify-between items-center">
-                      <Label htmlFor="description">Description</Label>
-                      <span className={`text-xs ${(description || '').length > 1350 ? (description || '').length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
-                        {(description || "").length} out of 1500 characters
-                      </span>
-                    </div>
-                    <Editor
-                        className="w-full"
-                        value={description || ''}
-                        onTextChange={(e) => setDescription(e.htmlValue || '')}
-                        style={{ minHeight: "455px", maxHeight: "455px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
+                  <div className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        placeholder="Enter letter title..."
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                       />
-                  </div>
-                  
-                  <div className="flex justify-end pt-4">
-                    <Button onClick={handleSend} disabled={loading}>
-                      {loading ? 'Sending...' : (
-                        <>
-                          <Send className="mr-2 h-4 w-4" />
-                          {editingId ? 'Update Letter' : 'Save Letter'}
-                        </>
+                    </div>
+                    
+                    <TabsContent value="outward" className="space-y-4">
+                      <div className="grid gap-2">
+                        <div className="flex justify-between items-center">
+                          <Label htmlFor="description">Description</Label>
+                          <span className={`text-xs ${(description || '').length > 1350 ? (description || '').length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
+                            {(description || "").length} out of 1500 characters
+                          </span>
+                        </div>
+                        <Editor
+                          className="w-full"
+                          value={description || ''}
+                          onTextChange={(e) => setDescription(e.htmlValue || '')}
+                          style={{ minHeight: "355px", maxHeight: "355px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
+                        />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="inward" className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="file">Attach File (Required)</Label>
+                        <Input
+                          id="file"
+                          name="file"
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                          onChange={handleFileChange}
+                          className="file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                        />
+                        {selectedFile && (
+                          <p className="text-xs text-gray-500">Selected: {selectedFile.name}</p>
+                        )}
+                      </div>
+                      
+                      {editingId && (
+                        <div className="space-y-2">
+                          <Label>Current File:</Label>
+                          <div className="flex items-center gap-2">
+                            {letters.find(l => l.id === editingId)?.letter_url ? (
+                              <>
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  size="sm"
+                                  onClick={() => handleViewFile(letters.find(l => l.id === editingId)!.letter_url!)}
+                                >
+                                  View Current File
+                                </Button>
+                                <Label className="flex items-center gap-1">
+                                  <input
+                                    type="checkbox"
+                                    checked={deleteFile}
+                                    onChange={(e) => setDeleteFile(e.target.checked)}
+                                  />
+                                  <span>Delete current file</span>
+                                </Label>
+                              </>
+                            ) : (
+                              <span className="text-sm text-gray-500">No file attached</span>
+                            )}
+                          </div>
+                        </div>
                       )}
-                    </Button>
+                    </TabsContent>
+                    
+                    <div className="flex justify-end pt-4">
+                      <Button onClick={handleSend} disabled={loading}>
+                        {loading ? 'Sending...' : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" />
+                            {editingId ? 'Update Letter' : 'Save Letter'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </Tabs>
             </>
           )}
         </div>
@@ -336,23 +486,44 @@ export default function LetterList() {
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <p className="font-medium text-[15px]">{(letter.letter_title || '').length > 30 ? `${(letter.letter_title || '').slice(0, 30)}...` : (letter.letter_title || '')}</p>
+                            <div className="flex flex-col items-start gap-0.5">
+                              <span className="text-xs text-gray-500">{letter.type === 'inward' ? 'Inward' : 'Outward'}</span>
+                              <div className="flex items-center gap-1">
+                                <p className="font-medium text-[15px]">{((letter.letter_title || '').length > 30 ? `${(letter.letter_title || '').slice(0, 30)}...` : (letter.letter_title || ''))}</p>
+                                {letter.letter_url && (
+                                  <Paperclip className="h-3 w-3 text-gray-500" title="Has attachment" />
+                                )}
+                              </div>
+                            </div>
                           <p className="text-xs text-gray-400 mt-1">
                             {new Date(letter.created_at).toLocaleDateString()}
                           </p>
                         </div>
                         <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              className="text-blue-500 hover:text-blue-700"
-                              onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDownloadPdf(letter.id);
-                              }}
-                              title="Open PDF"
-                              disabled={isDownloading}
-                            >
-                              <Download className="h-5 w-5" />
-                            </button>
+                            {letter.letter_url ? (
+                              <button
+                                className="text-blue-500 hover:text-blue-700"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleViewFile(letter.letter_url!);
+                                }}
+                                title="View Attachment"
+                              >
+                                <Paperclip className="h-5 w-5" />
+                              </button>
+                            ) : (
+                              <button
+                                className="text-blue-500 hover:text-blue-700"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDownloadPdf(letter.id);
+                                }}
+                                title="Download PDF"
+                                disabled={isDownloading}
+                              >
+                                <Download className="h-5 w-5" />
+                              </button>
+                            )}
                             <button 
                               className="text-red-500 hover:text-red-700" 
                               onClick={(e) => {
