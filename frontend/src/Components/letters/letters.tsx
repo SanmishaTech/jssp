@@ -47,6 +47,7 @@ export default function LetterList() {
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [deleteFile, setDeleteFile] = useState<boolean>(false);
+  const [filterType, setFilterType] = useState<"all" | "inward" | "outward">("all");
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -62,24 +63,37 @@ export default function LetterList() {
     // Don't call fetchLetters here - it will be called by the effect below
   }, [searchTerm]);
   
+  // Add this useEffect after the existing searchTerm useEffect
+  useEffect(() => {
+    // Reset to first page when filter type changes
+    setCurrentPage(1);
+  }, [filterType]);
+  
   // Effect to fetch letters when page or search changes
   useEffect(() => {
     fetchLetters();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, filterType]);
 
   const fetchLetters = async () => {
     setLoadingLetters(true);
     try {
-      // Add search and pagination parameters
+      // Build params object
+      const params: any = {
+        search: searchTerm,
+        page: currentPage
+      };
+      
+      // Add type filter if not "all"
+      if (filterType !== "all") {
+        params.type = filterType;
+      }
+      
       const response = await axios.get(`/api/letters`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
-        params: {
-          search: searchTerm,
-          page: currentPage
-        }
+        params
       });
       if (response.data?.status && response.data?.data) {
         setLetters(response.data.data.Letter || []);
@@ -297,36 +311,110 @@ export default function LetterList() {
           </div>
 
           {viewMode && selectedLetter ? (
-            <div className="space-y-4">
-               <div className="text-xs text-gray-500 text-right pt-2">
-                Created: {new Date(selectedLetter.created_at).toLocaleString()}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="view-title">Title:</Label>
-                <div className="break-words whitespace-pre-wrap text-sm">
-                  {selectedLetter.letter_title}
+            <div className="space-y-6">
+              {/* Header Section */}
+              <div className="border-b pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      {selectedLetter.letter_title}
+                    </h2>
+                    <div className="flex items-center gap-4 mt-2">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        selectedLetter.type === 'inward' 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {selectedLetter.type === 'inward' ? (
+                          <><Inbox className="h-3 w-3 mr-1" /> Inward Letter</>
+                        ) : (
+                          <><BookOpen className="h-3 w-3 mr-1" /> Outward Letter</>
+                        )}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        Letter #{selectedLetter.letter_number}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Created on</p>
+                    <p className="text-sm font-medium">
+                      {new Date(selectedLetter.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(selectedLetter.created_at).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  </div>
                 </div>
               </div>
               
-              <div className="grid gap-2">
-                   <Label htmlFor="view-description">Description</Label>
-                <div className="w-full bg-gray-50 min-h-[350px] overflow-auto whitespace-pre-wrap break-words text-sm" 
-                     dangerouslySetInnerHTML={{ __html: selectedLetter.letter_description }} />
-              </div>
-              
-              {selectedLetter.letter_url && (
-                <div className="space-y-2 mt-4">
-                  <Label>Attached File:</Label>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleViewFile(selectedLetter.letter_url!)}
-                  >
-                    View Attachment
-                  </Button>
+              {/* Content Section */}
+              {selectedLetter.type === 'outward' ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Send className="h-4 w-4 text-gray-400" />
+                    <h3 className="text-lg font-semibold text-gray-700">Letter Content</h3>
+                  </div>
+                  <div className="bg-white border rounded-lg p-6 shadow-sm">
+                    <div className="text-gray-700 leading-relaxed" 
+                         style={{ fontSize: '0.95rem', lineHeight: '1.7' }}
+                         dangerouslySetInnerHTML={{ __html: selectedLetter.letter_description }} />
+                  </div>
                 </div>
+              ) : (
+                selectedLetter.letter_url && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Paperclip className="h-4 w-4 text-gray-400" />
+                      <h3 className="text-lg font-semibold text-gray-700">Attached Document</h3>
+                    </div>
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-3 bg-blue-100 rounded-lg">
+                            <Paperclip className="h-6 w-6 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-800">Letter Attachment</p>
+                            <p className="text-sm text-gray-500">Click to view the attached document</p>
+                          </div>
+                        </div>
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => handleViewFile(selectedLetter.letter_url!)}
+                          className="flex items-center gap-2"
+                        >
+                          <BookOpen className="h-4 w-4" />
+                          View Document
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )
               )}
+              
+              {/* Footer Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                {selectedLetter.type === 'outward' && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDownloadPdf(selectedLetter.id)}
+                    disabled={isDownloading}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
             <>
@@ -469,6 +557,30 @@ export default function LetterList() {
                   className="w-full"
                 />
               </div>
+              
+              {/* Filter Buttons */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => setFilterType("all")}
+                  className={`flex-1 px-2 py-1 text-xs rounded ${filterType === "all" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setFilterType("outward")}
+                  className={`flex-1 px-2 py-1 text-xs rounded flex items-center justify-center gap-1 ${filterType === "outward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                >
+                  <BookOpen className="h-3 w-3" />
+                  Outward
+                </button>
+                <button
+                  onClick={() => setFilterType("inward")}
+                  className={`flex-1 px-2 py-1 text-xs rounded flex items-center justify-center gap-1 ${filterType === "inward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                >
+                  <Inbox className="h-3 w-3" />
+                  Inward
+                </button>
+              </div>
               <div className="mt-3 space-y-2">
                 {loadingLetters ? (
                   <p className="text-center text-sm text-gray-500">Loading letters...</p>
@@ -490,9 +602,7 @@ export default function LetterList() {
                               <span className="text-xs text-gray-500">{letter.type === 'inward' ? 'Inward' : 'Outward'}</span>
                               <div className="flex items-center gap-1">
                                 <p className="font-medium text-[15px]">{((letter.letter_title || '').length > 30 ? `${(letter.letter_title || '').slice(0, 30)}...` : (letter.letter_title || ''))}</p>
-                                {letter.letter_url && (
-                                  <Paperclip className="h-3 w-3 text-gray-500" title="Has attachment" />
-                                )}
+                                
                               </div>
                             </div>
                           <p className="text-xs text-gray-400 mt-1">

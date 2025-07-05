@@ -8,6 +8,7 @@ use App\Models\Letter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
 
@@ -20,6 +21,19 @@ class LetterController extends BaseController
 
         $query = Letter::where('institute_id', $instituteId);
 
+        // Optionally filter by current staff member if needed (default: show all institute letters)
+        if ($request->boolean('mine')) {
+            $query->where('staff_id', $user->staff->id);
+        }
+
+        // Add type filter
+        if ($type = $request->query('type')) {
+            if (in_array($type, ['inward', 'outward'])) {
+                $query->where('type', $type);
+            }
+        }
+
+        // Existing search logic
         if ($search = $request->query('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('letter_title', 'like', "%{$search}%")
@@ -104,10 +118,12 @@ class LetterController extends BaseController
         $user = Auth::user();
         $instituteId = $user->staff->institute_id;
 
+        $staffId = $user->staff->id;
         $letterNumber = 'LET-' . Str::upper(Str::random(6));
 
         $letter = new Letter();
         $letter->institute_id = $instituteId;
+        $letter->staff_id = $staffId;
         $letter->letter_number = $letterNumber;
         $letter->letter_title = $request->input('letter_title');
         $letter->type = $request->input('type');
@@ -120,7 +136,7 @@ class LetterController extends BaseController
             $uniqueName = time() . '_' . $original;
 
             // Ensure directory exists
-            \Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
+            Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
 
             $file->storeAs('letter_attachments', $uniqueName, 'public');
 
@@ -171,8 +187,8 @@ class LetterController extends BaseController
 
         // Handle delete request for existing file
         if ($request->boolean('delete_file') && $letter->letter_path) {
-            if (\Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
-                \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+            if (Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+                Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
             }
             $letter->letter_path = null;
         }
@@ -180,15 +196,15 @@ class LetterController extends BaseController
         // Handle new file upload
         if ($request->hasFile('letter_file')) {
             // Remove old file first
-            if ($letter->letter_path && \Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
-                \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+            if ($letter->letter_path && Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+                Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
             }
 
             $file = $request->file('letter_file');
             $original = $file->getClientOriginalName();
             $uniqueName = time() . '_' . $original;
 
-            \Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
+            Storage::disk('public')->makeDirectory('letter_attachments', 0755, true, true);
             $file->storeAs('letter_attachments', $uniqueName, 'public');
 
             $letter->letter_path = $uniqueName;
@@ -207,8 +223,8 @@ class LetterController extends BaseController
         }
         
         // Delete associated file if exists
-        if ($letter->letter_path && \Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
-            \Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
+        if ($letter->letter_path && Storage::disk('public')->exists('letter_attachments/' . $letter->letter_path)) {
+            Storage::disk('public')->delete('letter_attachments/' . $letter->letter_path);
         }
         
         $letter->delete();
