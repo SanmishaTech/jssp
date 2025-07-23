@@ -14,6 +14,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import AlertDialogbox from "./AlertBox";
 import { Editor } from "primereact/editor";
+import LanguageSelectionDialog from "./LanguageSelectionDialog";
 
 // Letter data type
 type Letter = {
@@ -48,6 +49,8 @@ export default function LetterList() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [deleteFile, setDeleteFile] = useState<boolean>(false);
   const [filterType, setFilterType] = useState<"all" | "inward" | "outward">("all");
+  const [isLanguageDialogOpen, setIsLanguageDialogOpen] = useState<boolean>(false);
+  const [pendingDownloadId, setPendingDownloadId] = useState<string | null>(null);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -215,13 +218,23 @@ export default function LetterList() {
     setIsAlertOpen(!isAlertOpen);
   };
 
-  const handleDownloadPdf = async (letterId: string) => {
+  const handleDownloadPdf = (letterId: string) => {
     if (!letterId) return;
+    setPendingDownloadId(letterId);
+    setIsLanguageDialogOpen(true);
+  };
+
+  const handleLanguageSelection = async (language: 'english' | 'marathi') => {
+    if (!pendingDownloadId) return;
+    
     setIsDownloading(true);
     try {
-      const response = await axios.get(`/api/letters/${letterId}/pdf`, {
+      const response = await axios.get(`/api/letters/${pendingDownloadId}/pdf`, {
         headers: {
           Authorization: `Bearer ${token}`,
+        },
+        params: {
+          language: language
         },
         responseType: 'blob',
       });
@@ -234,6 +247,15 @@ export default function LetterList() {
       toast.error("Failed to open PDF.");
     } finally {
       setIsDownloading(false);
+      setIsLanguageDialogOpen(false);
+      setPendingDownloadId(null);
+    }
+  };
+
+  const handleLanguageDialogClose = () => {
+    if (!isDownloading) {
+      setIsLanguageDialogOpen(false);
+      setPendingDownloadId(null);
     }
   };
 
@@ -693,6 +715,14 @@ export default function LetterList() {
         onOpen={toggleAlert}
         fetchData={fetchLetters}
         backdrop="blur"
+      />
+      
+      {/* Language Selection Dialog for PDF Download */}
+      <LanguageSelectionDialog
+        isOpen={isLanguageDialogOpen}
+        onClose={handleLanguageDialogClose}
+        onConfirm={handleLanguageSelection}
+        isDownloading={isDownloading}
       />
     </>
   );

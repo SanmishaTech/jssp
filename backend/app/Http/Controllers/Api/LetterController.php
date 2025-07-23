@@ -8,6 +8,7 @@ use App\Models\Letter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mpdf\Mpdf;
@@ -56,7 +57,7 @@ class LetterController extends BaseController
         ], 'Letters retrieved successfully');
     }
 
-    public function pdf($id)
+    public function pdf($id, Request $request)
     {
         try {
             $user = Auth::user();
@@ -66,9 +67,48 @@ class LetterController extends BaseController
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
+            // Get language from request parameter
+            $language = $request->query('language', 'english');
+            
+            // Debug: Log user role and language
+            $userRole = $user->getRoleNames()->first();
+            Log::info('PDF Generation Debug', [
+                'user_role' => $userRole,
+                'language' => $language,
+                'user_id' => $user->id
+            ]);
+            
+            // Determine letterhead image path based on role and language
+            $letterheadImage = null;
+            if ($user->hasRole('superadmin')) {
+                // Superadmin uses poi letterheads
+                if ($language === 'marathi') {
+                    $letterheadImage = public_path('images/poiM.png');
+                } else {
+                    $letterheadImage = public_path('images/poiE.png');
+                }
+            } elseif ($user->hasRole('admin')) {
+                // Admin uses goveli letterheads
+                if ($language === 'marathi') {
+                    $letterheadImage = public_path('images/goveliM.png');
+                } else {
+                    $letterheadImage = public_path('images/goveliE.png');
+                }
+            }
+            
+            // Debug: Log letterhead path and file existence
+            if ($letterheadImage) {
+                Log::info('Letterhead Debug', [
+                    'letterhead_path' => $letterheadImage,
+                    'file_exists' => file_exists($letterheadImage)
+                ]);
+            }
+
             $data = [
                 'letter' => $letter,
                 'staff' => $user->staff,
+                'letterheadImage' => $letterheadImage,
+                'language' => $language,
             ];
 
             $pdf = new Mpdf([

@@ -5,7 +5,7 @@
     <title>Letter</title>
     <style>
         @page {
-            margin: 25mm;
+            margin: 0;
         }
 
         body {
@@ -13,11 +13,17 @@
             font-size: 12pt;
             line-height: 1.5;
             color: #333333;
+            margin: 0;
+            padding: 0;
         }
 
         .letterhead {
+            width: 100%;
+            height: 60mm;
             text-align: center;
-            margin-bottom: 10mm;
+            margin: 0;
+            padding: 0;
+            display: block;
         }
 
         .letterhead .logo {
@@ -34,6 +40,20 @@
             margin: 5px 0 0;
             font-style: italic;
             text-decoration: underline;
+        }
+
+        .letterhead-image {
+            width: 100%;
+            height: 60mm;
+            object-fit: cover;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        .content-container {
+            padding: 15mm 25mm;
+            padding-top: 10mm; /* Space after letterhead */
         }
         
         .metadata {
@@ -69,47 +89,65 @@
             margin-bottom: 15mm;
         }
 
-
         .footer {
             position: fixed;
-            bottom: -20mm;
-            left: 0;
-            right: 0;
+            bottom: 10mm;
+            left: 25mm;
+            right: 25mm;
             text-align: center;
             font-size: 10pt;
             color: #888888;
             border-top: 1px solid #cccccc;
             padding-top: 5px;
         }
+
+        /* Ensure content doesn't overlap with footer */
+        .content-container {
+            margin-bottom: 20mm;
+        }
     </style>
 </head>
 <body>
+    <!-- Letterhead Section -->
+    <div class="letterhead">
+        @if(isset($letterheadImage) && file_exists($letterheadImage))
+            @php
+                $imageData = base64_encode(file_get_contents($letterheadImage));
+                $imageMimeType = mime_content_type($letterheadImage);
+                $base64Image = 'data:' . $imageMimeType . ';base64,' . $imageData;
+            @endphp
+            <img src="{{ $base64Image }}" alt="Letterhead" class="letterhead-image">
+        @else
+            <div style="padding-top: 20mm;">
+                <p class="logo">Jevandeep Shaishnik Santha POI's</p>
+                <p class="institute-name">{{ $staff->institute?->institute_name ?? 'N/A' }}</p>
+            </div>
+        @endif
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-container">
+        <div class="metadata">
+            <table>
+                <tr>
+                    <td><span class="label">Ref No:</span> {{ $letter->letter_number ?? 'N/A' }}</td>
+                    <td class="date"><span class="label">Date:</span> {{ date('F j, Y') }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="letter-title">
+            <span>{{ $letter->letter_title }}</span>
+        </div>
+
+        <div class="letter-body">
+            {!! $letter->letter_description !!}
+        </div>
+    </div>
+
+    <!-- Footer Section -->
     <div class="footer">
         Jevandeep Shaishnik Santha POI's | {{ $staff->institute?->institute_name ?? 'N/A' }}
     </div>
-
-    <div class="letterhead">
-        <p class="logo">Jevandeep Shaishnik Santha POI's</p>
-        <p class="institute-name">{{ $staff->institute?->institute_name ?? 'N/A' }}</p>
-    </div>
-
-    <div class="metadata">
-        <table>
-            <tr>
-                <td><span class="label">Ref No:</span> {{ $letter->letter_number ?? 'N/A' }}</td>
-                <td class="date"><span class="label">Date:</span> {{ date('F j, Y') }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="letter-title">
-        <span>{{ $letter->letter_title }}</span>
-    </div>
-
-    <div class="letter-body">
-        {!! $letter->letter_description !!}
-    </div>
-
-
 </body>
 </html>
