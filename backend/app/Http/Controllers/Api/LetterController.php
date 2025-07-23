@@ -159,7 +159,30 @@ class LetterController extends BaseController
         $instituteId = $user->staff->institute_id;
 
         $staffId = $user->staff->id;
-        $letterNumber = 'LET-' . Str::upper(Str::random(6));
+        
+        // Generate sequential letter number with JSSP-G-I0001 format (initials)
+        $letterTypeInitial = $request->input('type') === 'inward' ? 'I' : 'O';
+        
+        // Get the next sequential number for this institute and type
+        $lastLetter = Letter::where('institute_id', $instituteId)
+            ->where('type', $request->input('type'))
+            ->where('letter_number', 'like', "JSSP-G-{$letterTypeInitial}%")
+            ->orderBy('id', 'desc')
+            ->first();
+        
+        $nextNumber = 1;
+        if ($lastLetter && $lastLetter->letter_number) {
+            // Extract the number part from the last letter number (last 4 digits)
+            $numberPart = substr($lastLetter->letter_number, -4);
+            if (is_numeric($numberPart)) {
+                $lastNumber = intval($numberPart);
+                $nextNumber = $lastNumber + 1;
+            }
+        }
+        
+        // Format as 4-digit number with leading zeros
+        $formattedNumber = str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+        $letterNumber = "JSSP-G-{$letterTypeInitial}{$formattedNumber}";
 
         $letter = new Letter();
         $letter->institute_id = $instituteId;
