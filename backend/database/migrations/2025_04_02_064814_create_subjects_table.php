@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('semester_id');
             $table->foreign('institute_id')->references('id')->on('institutes')->onDelete('cascade');
             // admission fields
+            $table->string('subject_code')->nullable();
             $table->string('subject_name')->nullable();
             $table->timestamps();
         });

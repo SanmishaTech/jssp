@@ -28,7 +28,8 @@ class SubjectController extends BaseController
           if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('subject_name', 'like', '%' . $searchTerm . '%');
+                $query->where('subject_name', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('subject_code', 'like', '%' . $searchTerm . '%');
             });
         }
 
@@ -68,6 +69,7 @@ class SubjectController extends BaseController
         $subject->institute_id = Auth::user()->staff->institute_id;  
         $subject->course_id = $request->input('course_id');
         $subject->semester_id = $request->input('semester_id');
+        $subject->subject_code = $request->input('subject_code');
         $subject->subject_name = $request->input('subject_name');
         $subject->save();
 
@@ -131,6 +133,7 @@ class SubjectController extends BaseController
         $subject->institute_id = Auth::user()->staff->institute_id;
         $subject->course_id = $request->input('course_id');
         $subject->semester_id = $request->input('semester_id');
+        $subject->subject_code = $request->input('subject_code');
         $subject->subject_name = $request->input('subject_name');
         $subject->save();
        

@@ -584,7 +584,7 @@ const TeacherTimetable: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [staffMembers, setStaffMembers] = useState<{id: string; name: string}[]>([]);
-  const [subjects, setSubjects] = useState<{id: string; name: string}[]>([]);
+  const [subjects, setSubjects] = useState<{id: string; name: string; code?: string}[]>([]);
   const [divisions, setDivisions] = useState<{id: string; name: string}[]>([]);
   const [timetableId, setTimetableId] = useState<number | null>(null);
   const [holidays, setHolidays] = useState<Array<{id: number; institute_id: number; from_date: string; to_date: string; title: string; description: string}>>([]);
@@ -897,6 +897,7 @@ const TeacherTimetable: React.FC = () => {
           setSubjects(response.data.data.Subject.map((subject: any) => ({
             id: subject.id.toString(),
             name: subject.subject_name,
+            code: subject.subject_code,
           })));
         }
         setLoading(false);
@@ -1460,13 +1461,13 @@ const TeacherTimetable: React.FC = () => {
                         division_id={slotData.division_id}
                         subject_id={slotData.subject_id}
                         time_slot={timeSlots[slotIndex].time}
-                        subjectName={subject?.name}
+                        subjectName={subject ? `${subject.name}${subject.code ? ' (' + subject.code + ')' : ''}` : undefined}
                         divisionName={division?.name}
                         onEditClick={handleEditClick}
                       >
                         {subject ? (
                           <div>
-                            <div className="font-medium">{subject.name}</div>
+                            <div className="font-medium">{subject.name}{subject.code ? ` (${subject.code})` : ''}</div>
                             <div className="text-xs text-gray-500">
                               {division ? division.name : 'No Division'}
                             </div>
@@ -1508,13 +1509,16 @@ const TeacherTimetable: React.FC = () => {
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a subject">
-                      {slotDetails.subject && subjects.find(s => s.id === slotDetails.subject)?.name}
+                      {slotDetails.subject && (() => {
+                        const s = subjects.find(s => s.id === slotDetails.subject);
+                        return s ? `${s.name}${s.code ? ' (' + s.code + ')' : ''}` : '';
+                      })()}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {subjects.map((subject) => (
                       <SelectItem key={subject.id} value={subject.id}>
-                        {subject.name}
+                        {`${subject.name}${subject.code ? ' (' + subject.code + ')' : ''}`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -1577,7 +1581,10 @@ const TeacherTimetable: React.FC = () => {
               <span className="text-right font-medium">Subject:</span>
               <div className="col-span-3">
                 {slotDetails.subject ? 
-                  subjects.find(s => s.id === slotDetails.subject)?.name || 'Select a subject' : 
+                  (() => {
+                    const s = subjects.find(s => s.id === slotDetails.subject);
+                    return s ? `${s.name}${s.code ? ' (' + s.code + ')' : ''}` : 'Select a subject';
+                  })() : 
                   'Not selected'}
               </div>
             </div>

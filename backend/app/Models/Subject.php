@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subject extends Model
 {
-    protected $fillable = ['institute_id', 'subject_name'];
+    protected $fillable = ['institute_id', 'subject_code', 'subject_name'];
     
     public function subSubjects()
     {

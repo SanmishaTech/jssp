@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { X } from "lucide-react";
 
 const profileFormSchema = z.object({
+  subject_code: z.string().trim().nonempty("Subject Code is Required"),
   subject_name: z.string().trim().nonempty("Subject Name is Required"),
   course_id: z.string().nonempty("Course is Required"),
   semester_id: z.string().nonempty("Semester is Required"),
@@ -74,6 +75,7 @@ export default function EditSubjectDialog({
   const [subjectData, setSubjectData] = useState<any>(null);
 
   const defaultValues: Partial<ProfileFormValues> = {
+    subject_code: "",
     subject_name: "",
     course_id: "",
     semester_id: "",
@@ -190,6 +192,7 @@ export default function EditSubjectDialog({
       
       // Format data for the form
       const formattedData = {
+        subject_code: subjectData.subject_code || "",
         subject_name: subjectData.subject_name,
         course_id: subjectData.course_id ? subjectData.course_id.toString() : "",
         semester_id: subjectData.semester_id ? subjectData.semester_id.toString() : "",
@@ -261,8 +264,25 @@ export default function EditSubjectDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-6"
                 >
-                  {/* Fields in 3-column layout */}
-                  <div className="grid grid-cols-3 gap-4">
+                  {/* Fields in 4-column layout */}
+                  <div className="grid grid-cols-4 gap-4">
+                    {/* Subject Code */}
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Subject Code <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        {...form.register("subject_code")}
+                        className="w-full rounded-md border border-gray-300 p-2"
+                        placeholder="Enter subject code"
+                      />
+                      {form.formState.errors.subject_code && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {form.formState.errors.subject_code.message}
+                        </p>
+                      )}
+                    </div>
+
                     {/* Subject Name */}
                     <div>
                       <label className="block text-sm font-medium mb-1">

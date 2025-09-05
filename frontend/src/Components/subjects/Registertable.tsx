@@ -7,6 +7,8 @@ import EditSubjectDialog from "./EditSubjectDialog";
 
 interface Subject {
   id: string;
+  subject_code: string;
+  subject_name: string;
   medium_title: string;
   medium_code: string;
   organization: string;
@@ -180,7 +182,8 @@ export default function Dashboardholiday() {
         title: "Subject",
         description: "Manage Subject and view their details.",
         headers: [
-          { label: "Subject Name", key: "one" },
+          { label: "Subject Code", key: "one" },
+          { label: "Subject Name", key: "two" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -269,7 +272,9 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   const mappedTableData = data.map((item) => ({
     id: item.id,
-    one: item.subject_name || "Unknown",
+    one: item.subject_code || "Unknown",
+    two: item.subject_name || "Unknown",
+    three: "", // Placeholder for any additional field
     delete: "/subjects/" + item.id,
   }));
 

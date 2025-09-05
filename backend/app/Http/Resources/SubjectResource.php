@@ -19,6 +19,7 @@ class SubjectResource extends JsonResource
             'institute_id' => $this->institute_id,
             'course_id' => $this->course_id,
             'semester_id' => $this->semester_id,
+            'subject_code' => $this->subject_code,
             'subject_name' => $this->subject_name,
             'medium_code' => $this->course,
             'semester' => $this->semester,
