@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.6.0",
-    "@types/react-calendar": "^3.9.0",
-    "react-calendar": "^5.1.0"
-  }
-}
