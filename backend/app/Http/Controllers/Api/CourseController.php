@@ -110,7 +110,11 @@ class CourseController extends BaseController
 
     public function allCourses(): JsonResponse
     {
-        $course = Course::all();
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+
+        // Filter courses based on the institute_id.
+        $course = Course::where('institute_id', $instituteId)->get();
 
         return $this->sendResponse(["Course"=>CourseResource::collection($course),
         ], "Courses retrived successfully");

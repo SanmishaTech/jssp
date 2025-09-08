@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherTimetableController extends Controller
 {
@@ -310,22 +311,50 @@ class TeacherTimetableController extends Controller
     }
     
     /**
-     * Get all teaching staff (staff with role 'teachingstaff')
+     * Get staff for timetable selector.
+     *
+     * Default: all staff belonging to the authenticated user's institute.
+     * Optional filters:
+     *  - role=roleName (single role)
+     *  - roles=role1,role2 (comma-separated list of roles)
      */
-    public function getTeachingStaff()
+    public function getTeachingStaff(Request $request)
     {
-        // Get all users with the 'teachingstaff' role using Spatie's role system
-        $userIds = DB::table('model_has_roles')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->where('roles.name', 'teachingstaff')
-            ->where('model_has_roles.model_type', 'App\\Models\\User')
-            ->pluck('model_has_roles.model_id');
-            
-        // Find staff associated with these users
-        $teachingStaff = Staff::whereIn('user_id', $userIds)
+        // Institute of the authenticated user (if user has a staff record). If none, do not restrict by institute.
+        $instituteId = Auth::user()?->staff?->institute_id;
+
+        $query = Staff::query()
             ->with('user')
-            ->get();
-        
-        return response()->json($teachingStaff);
+            ->when($instituteId, function ($q) use ($instituteId) {
+                $q->where('institute_id', $instituteId);
+            });
+
+        // Optional role filtering via Spatie roles on the related user
+        $rolesParam = $request->query('roles');
+        $roleParam = $request->query('role');
+
+        if ($rolesParam || $roleParam) {
+            $roles = $rolesParam ? array_filter(array_map('trim', explode(',', $rolesParam))) : [$roleParam];
+            $query->whereHas('user.roles', function ($qr) use ($roles) {
+                $qr->whereIn('name', $roles);
+            });
+        }
+
+        // Fetch staff for this institute
+        $staff = $query->get();
+
+        // Fallback: if no staff found and we filtered by institute, try without institute filter
+        if ($staff->isEmpty() && $instituteId) {
+            $staff = Staff::with('user')
+                ->when($rolesParam || $roleParam, function ($q) use ($rolesParam, $roleParam) {
+                    $roles = $rolesParam ? array_filter(array_map('trim', explode(',', $rolesParam))) : [$roleParam];
+                    $q->whereHas('user.roles', function ($qr) use ($roles) {
+                        $qr->whereIn('name', $roles);
+                    });
+                })
+                ->get();
+        }
+
+        return response()->json($staff);
     }
 }

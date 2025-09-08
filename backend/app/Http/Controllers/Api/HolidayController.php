@@ -169,7 +169,11 @@ class HolidayController extends BaseController
 
     public function allHoliday(): JsonResponse
     {
-        $holiday = Holiday::all();
+        // Get the institute ID from the logged-in user's staff details.
+        $instituteId = Auth::user()->staff->institute_id;
+
+        // Filter holidays based on the institute_id.
+        $holiday = Holiday::where('institute_id', $instituteId)->get();
 
         return $this->sendResponse(["Holiday"=>HolidayResource::collection($holiday),
         ], "Holiday retrived successfully");
