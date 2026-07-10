@@ -35,16 +35,18 @@ export const Route = createRootRoute({
                 },
               }}
             />
-            <div className={shouldShowSidebar ? "flex pt-2" : "flex"}>
-              {shouldShowSidebar && (
-                <div className="text-white">
-                  <Layout />
+            <div className={shouldShowSidebar ? "flex pt-2 w-full h-screen" : "flex w-full h-screen"}>
+              {shouldShowSidebar ? (
+                <Layout>
+                  <div className="rounded-2xl w-full h-full">
+                    <Outlet />
+                  </div>
+                </Layout>
+              ) : (
+                <div className="rounded-2xl w-full h-full">
+                  <Outlet />
                 </div>
               )}
-              <div className="rounded-2xl w-full">
-                <Outlet />
-                {/* <TanStackRouterDevtools /> */}
-              </div>
             </div>
           </>
         </ErrorProvider>

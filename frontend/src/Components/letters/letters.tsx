@@ -299,8 +299,8 @@ export default function LetterList() {
 
   return (
     <>
-      <div className="flex h-screen overflow-auto mt-5 ">
-        <div className="p-6 w-3/4 h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg">
+      <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen overflow-auto mt-5 gap-4 px-4 lg:px-5 pb-10">
+        <div className="p-4 lg:p-6 w-full lg:w-3/4 bg-accent/60 rounded-lg shadow-lg flex-shrink-0">
           <div className="flex justify-center items-center p-3 mb-4">
             <h3 className="text-lg font-semibold">
                   {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : (letterType === 'inward' ? 'Create Inward Letter' : 'Create Outward Letter'))}
@@ -550,7 +550,7 @@ export default function LetterList() {
           )}
         </div>
         {/* Right Sidebar */}
-        <div className="p-3 w-1/4 bg-white">
+        <div className="p-3 w-full lg:w-1/4 bg-white rounded-lg shadow-lg mb-8 lg:mb-0 flex-shrink-0">
           <div className="space-y-4">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between">

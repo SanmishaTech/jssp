@@ -88,60 +88,60 @@ export function AppSidebar({ role }: AppSidebarProps) {
     });
   }, [committeesRaw, role, loggedStaffId]);
   // Base items from static config
-const baseItems = useMemo(() => searchconfig[role as keyof typeof searchconfig] || [], [role]);
+  const baseItems = useMemo(() => searchconfig[role as keyof typeof searchconfig] || [], [role]);
 
-// Inject dynamic "Added Committees" dropdown at root level
-const items = useMemo(() => {
-  if (!committees.length) return baseItems;
+  // Inject dynamic "Added Committees" dropdown at root level
+  const items = useMemo(() => {
+    if (!committees.length) return baseItems;
 
-  // Deep-clone base items so we don't mutate state memo value
-  const newItems: MenuItem[] = baseItems.map((it) => ({ ...it, children: it.children ? it.children.map(c => ({ ...c })) : undefined }));
+    // Deep-clone base items so we don't mutate state memo value
+    const newItems: MenuItem[] = baseItems.map((it) => ({ ...it, children: it.children ? it.children.map(c => ({ ...c })) : undefined }));
 
-  // Remove any existing "Created Committees" to avoid duplicates
-  const existingIdx = newItems.findIndex((it) => it.title === "Created Committees");
-  if (existingIdx !== -1) newItems.splice(existingIdx, 1);
+    // Remove any existing "Created Committees" to avoid duplicates
+    const existingIdx = newItems.findIndex((it) => it.title === "Created Committees");
+    if (existingIdx !== -1) newItems.splice(existingIdx, 1);
 
-  // Build dropdown with committees + meetings link
-  const committeeMenuItems: MenuItem[] = [
-    ...committees.map((c) => ({
-      title: c.commitee_name,
-      url: `/addedcommittee/${c.id}`,
+    // Build dropdown with committees + meetings link
+    const committeeMenuItems: MenuItem[] = [
+      ...committees.map((c) => ({
+        title: c.commitee_name,
+        url: `/addedcommittee/${c.id}`,
+        icon: UserCheck,
+      })),
+      {
+        title: "Committee Meetings",
+        url: "/committeemeeting",
+        icon: CalendarClock,
+      },
+    ];
+
+    const addedDropdown: MenuItem = {
+      title: "Created Committees",
       icon: UserCheck,
-    })),
-    {
-      title: "Committee Meetings",
-      url: "/committeemeeting",
-      icon: CalendarClock,
-    },
-  ];
+      children: committeeMenuItems,
+    };
 
-  const addedDropdown: MenuItem = {
-    title: "Created Committees",
-    icon: UserCheck,
-    children: committeeMenuItems,
-  };
+    // Insert at root top if Staff Management is not present
+    if (!newItems.find(item => item.title === 'Staff Management')) {
+      newItems.unshift(addedDropdown);
+    } else {
+      // Insert right after Staff Management
+      const staffMgmtIdx = newItems.findIndex(item => item.title === 'Staff Management');
+      newItems.splice(staffMgmtIdx + 1, 0, addedDropdown);
+    }
 
-  // Insert at root top if Staff Management is not present
-  if (!newItems.find(item => item.title === 'Staff Management')) {
-    newItems.unshift(addedDropdown);
-  } else {
-    // Insert right after Staff Management
-    const staffMgmtIdx = newItems.findIndex(item => item.title === 'Staff Management');
-    newItems.splice(staffMgmtIdx + 1, 0, addedDropdown);
-  }
-
-  return newItems;
-}, [baseItems, committees]);
+    return newItems;
+  }, [baseItems, committees]);
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
   // Get user data from localStorage
   const [userData, setUserData] = useState<UserData>({
-    userName: "User Name", 
+    userName: "User Name",
     userEmail: "user@example.com",
     userAvatar: null
   });
-  
+
   // Load user data from localStorage on component mount
   useEffect(() => {
     const userStr = localStorage.getItem("user");
@@ -183,15 +183,15 @@ const items = useMemo(() => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
-  
+
   const navigate = useNavigate();
-  
+
   // Handle click outside to close profile dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
         profileDropdownOpen &&
-        profileDropdownRef.current && 
+        profileDropdownRef.current &&
         !profileDropdownRef.current.contains(event.target as Node) &&
         profileTriggerRef.current &&
         !profileTriggerRef.current.contains(event.target as Node)
@@ -199,7 +199,7 @@ const items = useMemo(() => {
         setProfileDropdownOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -209,7 +209,7 @@ const items = useMemo(() => {
   useEffect(() => {
     items.forEach(item => {
       if (item.children) {
-        const hasActiveChild = item.children.some(child => 
+        const hasActiveChild = item.children.some(child =>
           pathMatches(currentPath, child.url)
         );
         if (hasActiveChild) {
@@ -241,23 +241,23 @@ const items = useMemo(() => {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
-      <div className="flex flex-col px-4 py-2">
+      <div className="flex flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0 px-4 py-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center cursor-pointer">
-              <img src={background} alt="Logo" className="w-7 h-7" />
-              <span className="ml-2 hidden md:inline">JEEVANDEEP</span>
+            <div className="flex items-center cursor-pointer group-data-[collapsible=icon]:justify-center">
+              <img src={background} alt="Logo" className="w-7 h-7 flex-shrink-0" />
+              <span className="ml-2 hidden md:inline group-data-[collapsible=icon]:hidden font-bold">JEEVANDEEP</span>
             </div>
           </DropdownMenuTrigger>
         </DropdownMenu>
-        <div className="mt-2 flex w-full items-center gap-2">
+        <div className="mt-2 flex w-full items-center gap-2 group-data-[collapsible=icon]:hidden">
           <button
             onClick={() => setIsCommandMenuOpen(true)}
             className="flex flex-grow items-center justify-between h-9 px-4 text-sm border border-transparent rounded-lg bg-transparent hover:bg-accent focus:outline-none focus:ring-1 focus:ring-primary"
             aria-label="Open command menu"
           >
-            <Search className="w-4 h-4 text-muted-foreground" />
-            <kbd className="hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 md:flex">
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+            <kbd className="flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
               <span className="text-xs">CTRL</span>+ K
             </kbd>
           </button>
@@ -283,9 +283,8 @@ const items = useMemo(() => {
                             {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
                             <span>{item.title}</span>
                             <svg
-                              className={`ml-auto transition-transform duration-200 text-gray-500 dark:text-blue-200 ${
-                                openDropdowns[item.title] ? 'rotate-90' : ''
-                              }`}
+                              className={`ml-auto transition-transform duration-200 text-gray-500 dark:text-blue-200 ${openDropdowns[item.title] ? 'rotate-90' : ''
+                                }`}
                               width="20"
                               height="20"
                               viewBox="0 0 20 20"
@@ -314,7 +313,7 @@ const items = useMemo(() => {
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild>
                         <a href={item.url} className={`flex items-center ${item.url && pathMatches(currentPath, item.url) ? "bg-blue-100 text-blue-600" : ""}`}>
-                            {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
+                          {item.icon && React.createElement(item.icon, { className: "mr-2 text-gray-600 dark:text-blue-300" })}
                           <span>{item.title}</span>
                         </a>
                       </SidebarMenuButton>
@@ -326,7 +325,7 @@ const items = useMemo(() => {
           </SidebarGroup>
         </div>
         <div className="border-t border-border bg-sidebar dark:bg-slate-800 p-2 sticky bottom-0 mt-auto z-10">
-          <div 
+          <div
             ref={profileTriggerRef}
             className="flex items-center gap-3 cursor-pointer hover:bg-accent/20 rounded-md p-1"
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -346,14 +345,14 @@ const items = useMemo(() => {
               )}
               <span className="absolute right-0 bottom-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background"></span>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden group-data-[collapsible=icon]:hidden">
               <div className="font-medium truncate">{userData.userName}</div>
               <div className="text-xs text-muted-foreground truncate">
                 {userData.userEmail}
               </div>
             </div>
             <div
-              className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent/50"
+              className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-accent/50 group-data-[collapsible=icon]:hidden"
             >
               <svg
                 className="h-4 w-4 text-muted-foreground"
@@ -374,9 +373,13 @@ const items = useMemo(() => {
       {profileDropdownOpen && (
         <div
           ref={profileDropdownRef}
-          className="fixed left-[calc(var(--sidebar-width)_+_8px)] bottom-16 w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none z-50 animate-in fade-in-0 zoom-in-95"
+          className="fixed bottom-[4.5rem] left-4 w-56 md:bottom-2 md:left-[calc(var(--sidebar-width)_+_12px)] rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none z-50 animate-in fade-in-0 zoom-in-95"
           style={{ transform: 'translateX(0)' }}
         >
+          {/* Mobile Bubble Arrow pointing down towards the profile bar */}
+          <div className="absolute -bottom-[6px] left-8 w-3 h-3 bg-popover border-r border-b border-border rotate-45 md:hidden" />
+          {/* Desktop Bubble Arrow pointing left towards the profile bar */}
+          <div className="absolute -left-[6px] bottom-6 w-3 h-3 bg-popover border-l border-b border-border rotate-45 hidden md:block" />
           <div className="font-normal px-2 py-1.5 text-sm">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium">{userData.userName}</p>
@@ -384,7 +387,7 @@ const items = useMemo(() => {
             </div>
           </div>
           <div className="h-px bg-muted my-1" />
-          {(role === 'viceprincipal' || role === 'teachingstaff' || role === 'cashier' || role === 'backoffice' || role === 'accountant' || role === 'admission' || role === 'admin' || role === 'nonteachingstaff') && (
+          {role !== 'superadmin' && (
             <button
               onClick={handleUpdateProfile}
               className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground w-full text-left"
