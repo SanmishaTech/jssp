@@ -144,19 +144,28 @@ export function AppSidebar({ role }: AppSidebarProps) {
 
   // Load user data from localStorage on component mount
   useEffect(() => {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        setUserData({
-          userName: user.name || "User Name",
-          userEmail: user.email || "user@example.com",
-          userAvatar: null // Set avatar if available in your user object
-        });
-      } catch (error) {
-        console.error("Error parsing user data from localStorage:", error);
+    const loadUserData = () => {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          setUserData({
+            userName: user.name || "User Name",
+            userEmail: user.email || "user@example.com",
+            userAvatar: null // Set avatar if available in your user object
+          });
+        } catch (error) {
+          console.error("Error parsing user data from localStorage:", error);
+        }
       }
-    }
+    };
+
+    loadUserData();
+    window.addEventListener('profileUpdated', loadUserData);
+
+    return () => {
+      window.removeEventListener('profileUpdated', loadUserData);
+    };
   }, []);
 
   // Manage open state for items with dropdown children
