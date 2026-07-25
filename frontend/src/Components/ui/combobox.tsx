@@ -53,13 +53,15 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between", className)}
+          className={cn("w-full h-auto min-h-10 py-2 justify-between text-left font-normal", className)}
           disabled={disabled}
         >
-          {selectedValue
-            ? options.find((option) => option.value === selectedValue)?.label || placeholder
-            : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="whitespace-normal break-words flex-1 pr-2">
+            {selectedValue
+              ? options.find((option) => option.value === selectedValue)?.label || placeholder
+              : placeholder}
+          </span>
+          <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">

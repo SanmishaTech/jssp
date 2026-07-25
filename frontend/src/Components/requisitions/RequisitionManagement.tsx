@@ -854,31 +854,19 @@ export default function RequisitionManagement() {
           </h2>
           
           {/* Admin filter tabs (shown only in approval view) */}
-          <div className="mb-6">
-            <div className="inline-flex rounded-md shadow-sm">
-              <Button
-                variant={adminSubTab === "all" ? "default" : "outline"}
-                className={`rounded-l-md ${adminSubTab === "all" ? "" : "bg-white"}`}
-                onClick={() => setAdminSubTab("all")}
-              >
-                <Clock className="h-4 w-4 mr-2" /> Pending
-              </Button>
-              <Button
-                variant={adminSubTab === "approved" ? "default" : "outline"}
-                className={adminSubTab === "approved" ? "" : "bg-white"}
-                onClick={() => setAdminSubTab("approved")}
-              >
-                <CheckCircle className="h-4 w-4 mr-2" /> Approved
-              </Button>
-              <Button
-                variant={adminSubTab === "rejected" ? "default" : "outline"}
-                className={`rounded-r-md ${adminSubTab === "rejected" ? "" : "bg-white"}`}
-                onClick={() => setAdminSubTab("rejected")}
-              >
-                <XCircle className="h-4 w-4 mr-2" /> Rejected
-              </Button>
-            </div>
-          </div>
+          <Tabs value={adminSubTab} onValueChange={(val) => setAdminSubTab(val)} className="w-full mb-6">
+            <TabsList className="grid w-full grid-cols-3 max-w-[400px]">
+              <TabsTrigger value="all" className="flex items-center gap-2">
+                <Clock className="h-4 w-4" /> Pending
+              </TabsTrigger>
+              <TabsTrigger value="approved" className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" /> Approved
+              </TabsTrigger>
+              <TabsTrigger value="rejected" className="flex items-center gap-2">
+                <XCircle className="h-4 w-4" /> Rejected
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
           
           {/* Requisition Approval List Card */}
           <Card>

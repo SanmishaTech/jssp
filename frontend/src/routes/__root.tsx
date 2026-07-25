@@ -35,7 +35,7 @@ export const Route = createRootRoute({
                 },
               }}
             />
-            <div className={shouldShowSidebar ? "flex pt-2 w-full h-screen" : "flex w-full h-screen"}>
+            <div className={shouldShowSidebar ? "flex pt-2 w-full h-screen overflow-hidden" : "flex w-full h-screen overflow-hidden"}>
               {shouldShowSidebar ? (
                 <Layout>
                   <div className="rounded-2xl w-full h-full">

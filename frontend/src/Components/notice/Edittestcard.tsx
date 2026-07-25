@@ -176,7 +176,7 @@ const NoticeChat: React.FC = () => {
   })();
 
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row bg-white">
+    <div className="h-full w-full flex flex-col md:flex-row bg-white">
       {/* Sidebar for admin role selection */}
       {role === 'admin' && (
         <aside className="w-full md:w-72 border-r p-4 space-y-4 bg-gray-50">
@@ -224,28 +224,93 @@ const NoticeChat: React.FC = () => {
       {/* Main chat area */}
       <section className="flex-1 flex flex-col">
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-100">
-          {noticesLoading && <p>Loading...</p>}
-          {!noticesLoading && noticeItems.length === 0 && <p className="text-center text-gray-500">No messages yet</p>}
-          {noticeItems.map((notice) => (
-            <div
-              key={notice.id}
-              className={`mx-auto w-full max-w-xl bg-white border rounded p-3 shadow cursor-pointer hover:bg-gray-50`}
-              onClick={() => {
-                if (role === 'admin' || role === 'superadmin') {
-                  setSelectedNotice(notice);
-                }
-              }}
-            >
-              {/* Sender role */}
-              <p className="text-xs font-semibold text-blue-600 mb-1">
-                {notice.sender_role ? `From: ${notice.sender_role}` : 'From: Unknown'}
-              </p>
-              <p className="font-medium break-words whitespace-pre-wrap">{notice.message}</p>
-              {/* Timestamp */}
-              <p className="text-xs text-gray-500 text-right mt-1">{new Date(notice.created_at).toLocaleString()}</p>
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+          {noticesLoading && (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-          ))}
+          )}
+          {!noticesLoading && noticeItems.length === 0 && (
+            <div className="flex flex-col justify-center items-center h-full text-slate-400 space-y-2">
+              <p className="text-lg font-medium">No notices yet</p>
+              <p className="text-sm">Active announcements will appear here.</p>
+            </div>
+          )}
+          {!noticesLoading && (
+            <div className="mx-auto w-full max-w-2xl space-y-4">
+              {noticeItems.map((notice) => {
+                const isSentByMe = role === 'superadmin' 
+                  ? notice.sender_role === 'superadmin'
+                  : notice.sender_staff_id === staffId;
+
+                return (
+                  <div
+                    key={notice.id}
+                    className="group relative bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex gap-4"
+                    onClick={() => {
+                      if (role === 'admin' || role === 'superadmin') {
+                        setSelectedNotice(notice);
+                      }
+                    }}
+                  >
+                    {/* Notice Icon indicator */}
+                    <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 text-blue-600 group-hover:scale-105 transition-transform">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Notice Content */}
+                    <div className="flex-grow space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        {/* Sender Badge */}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          isSentByMe 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-slate-100 text-slate-800'
+                        }`}>
+                          {notice.sender_role === 'superadmin' ? 'Super Admin' : notice.sender_role === 'admin' ? 'Admin' : notice.sender_role || 'Staff'}
+                          {isSentByMe && ' (You)'}
+                        </span>
+
+                        {/* Timestamp */}
+                        <span className="text-xs text-slate-400 font-medium">
+                          {new Date(notice.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                        </span>
+                      </div>
+
+                      {/* Message body */}
+                      <p className="text-slate-700 text-sm leading-relaxed break-words whitespace-pre-wrap font-normal">
+                        {notice.message}
+                      </p>
+
+                      {/* Seen by indicator for admins */}
+                      {(role === 'admin' || role === 'superadmin') && (
+                        <div className="flex items-center gap-1.5 pt-1 text-[11px] text-slate-400 font-medium hover:text-blue-600 transition-colors">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          <span>{notice.seen_by?.length || 0} seen</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
         {/* Input */}
         {(role === 'admin' || role === 'superadmin') ? (
