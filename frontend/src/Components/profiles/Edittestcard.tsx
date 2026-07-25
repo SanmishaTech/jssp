@@ -569,63 +569,7 @@ function ProfileForm({ formData }) {
       // Handle deleting medical image if requested
       formData.append('delete_medical_image', deleteMedicalImage.toString());
       
-      // Append each selected paper to the FormData
-      console.log('Selected papers to upload:', selectedPapers);
-      if (selectedPapers.length > 0) {
-        selectedPapers.forEach((paper, index) => {
-          console.log(`Adding paper ${index}:`, paper.name, paper.type, paper.size);
-          formData.append(`papers[${index}]`, paper);
-        });
-      } else {
-        console.log('No papers to upload');
-      }
-      
-      // Send the list of paper IDs to delete
-      if (deletedPaperIds.length > 0) {
-        console.log('Deleted paper IDs:', deletedPaperIds);
-        formData.append('deleted_paper_ids', JSON.stringify(deletedPaperIds));
-      }
-      
-      // Append each selected education certificate to the FormData
-      if (selectedDocuments && selectedDocuments.length > 0) {
-        selectedDocuments.forEach((document, index) => {
-          formData.append(`certificates[${index}]`, document);
-        });
-        
-        // Send the list of certificate IDs to delete
-        if (deletedDocumentIds.length > 0) {
-          formData.append('deleted_certificate_ids', JSON.stringify(deletedDocumentIds));
-        }
-      }
 
-      // Append education data as JSON
-      if (data.education && data.education.length > 0) {
-        // First clean up any empty fields in the education data
-        const cleanEducation = data.education
-          .map(edu => ({
-            ...edu,
-            // Ensure all values are properly formatted for the backend
-            passing_year: edu.passing_year ? edu.passing_year.toString() : '',
-            percentage: edu.percentage ? edu.percentage.toString() : '',
-          }))
-          .filter(edu => 
-            edu.qualification || 
-            edu.college_name || 
-            edu.board_university || 
-            edu.passing_year || 
-            edu.percentage
-          );
-        
-        console.log('Submitting education data:', cleanEducation);
-        
-        // Make sure to stringify the entire array, not each individual item
-        formData.append('education', JSON.stringify(cleanEducation));
-        
-        // Log the FormData to make sure it's correct (this will show [object Object] but it confirms the entry exists)
-        console.log('FormData education entry exists:', formData.has('education'));
-      } else {
-        console.log('No education data to submit');
-      }
 
       // Log the FormData entries for debugging
       console.log('FormData entries:');
@@ -648,6 +592,21 @@ function ProfileForm({ formData }) {
 
       console.log('Server response:', response.data);
       toast.success("Profile Updated Successfully");
+      
+      // Update local storage user data and notify sidebar
+      try {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const userObj = JSON.parse(userStr);
+          userObj.name = data.staff_name;
+          userObj.email = data.email;
+          localStorage.setItem('user', JSON.stringify(userObj));
+          window.dispatchEvent(new Event('profileUpdated'));
+        }
+      } catch (e) {
+        console.error('Error updating local user data:', e);
+      }
+
       // Navigate to memberdashboard after successful update
       navigate({ to: "/dashboards" });
     } catch (error: any) {
@@ -1179,6 +1138,7 @@ function ProfileForm({ formData }) {
                 onAddDocuments={handleAddDocuments}
                 onRemoveDocument={handleRemoveDocument}
                 onRemoveNewDocument={handleRemoveNewDocument}
+                staffId={localStorage.getItem("staff_id")}
               />
             </div>
           </TabsContent>
@@ -1192,6 +1152,7 @@ function ProfileForm({ formData }) {
                 onAddPapers={handleAddPapers}
                 onRemovePaper={handleRemovePaper}
                 onRemoveNewPaper={handleRemoveNewPaper}
+                staffId={localStorage.getItem("staff_id")}
               />
             </div>
           </TabsContent>

@@ -1,4 +1,5 @@
 import { StrictMode } from "react";
+import axios from "axios";
 import ReactDOM from "react-dom/client";
 import store from "./Components/Redux/sessionSlice";
 import { Provider } from "react-redux";
@@ -14,6 +15,26 @@ import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
+
+// Global axios interceptor to handle 401 Unauthorized
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Clear session data
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("role");
+      localStorage.removeItem("staff_id");
+      
+      // Redirect to login if not already there
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Create a client
 const queryClient = new QueryClient({
