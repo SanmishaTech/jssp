@@ -226,13 +226,69 @@ class LeaveController extends BaseController
         $leave->approved_at = now();
         $leave->save();
 
+        $appliedUser = $leave->staff->user;
+        $isAppliedByAdmin = $appliedUser->hasRole('admin');
+
         if ($leave->status === 'approved') {
-            Notification::sendToAdmins(
+            // Notify the member who applied
+            Notification::sendToUser(
+                $appliedUser,
                 'Leave Application Approved',
-                'A leave application for ' . $leave->staff->user->name . ' has been approved.',
-                '/leaves/' . $leave->id, // Note: You may need to adjust this link to match your frontend routes
+                'Your leave application has been approved.',
+                '/leave',
                 Auth::user()
             );
+
+            if ($isAppliedByAdmin) {
+                // Only notify superadmins for admin leave applications
+                Notification::sendToRoles(
+                    ['superadmin'],
+                    'Leave Application Approved',
+                    'A leave application for Admin ' . $appliedUser->name . ' has been approved.',
+                    '/leaveapproval',
+                    Auth::user()
+                );
+            } else {
+                // For normal staff, only notify admins and viceprincipals of this specific institute
+                Notification::sendToInstituteRoles(
+                    $leave->institute_id,
+                    ['admin', 'viceprincipal'],
+                    'Leave Application Approved',
+                    'A leave application for ' . $appliedUser->name . ' has been approved.',
+                    '/leaveapproval',
+                    Auth::user()
+                );
+            }
+        } else if ($leave->status === 'rejected') {
+            // Notify the member who applied
+            Notification::sendToUser(
+                $appliedUser,
+                'Leave Application Rejected',
+                'Your leave application has been rejected.',
+                '/leave',
+                Auth::user()
+            );
+
+            if ($isAppliedByAdmin) {
+                // Only notify superadmins for admin leave applications
+                Notification::sendToRoles(
+                    ['superadmin'],
+                    'Leave Application Rejected',
+                    'A leave application for Admin ' . $appliedUser->name . ' has been rejected.',
+                    '/leaveapproval',
+                    Auth::user()
+                );
+            } else {
+                // For normal staff, only notify admins and viceprincipals of this specific institute
+                Notification::sendToInstituteRoles(
+                    $leave->institute_id,
+                    ['admin', 'viceprincipal'],
+                    'Leave Application Rejected',
+                    'A leave application for ' . $appliedUser->name . ' has been rejected.',
+                    '/leaveapproval',
+                    Auth::user()
+                );
+            }
         }
 
         return $this->sendResponse(["Leave" => new LeaveResource($leave)], "Leave application updated successfully");

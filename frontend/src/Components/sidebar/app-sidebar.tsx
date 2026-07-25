@@ -12,6 +12,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarTrigger,
+  useSidebar,
 } from "../ui/sidebar";
 import { User, LogOut, Search, UserCheck, CalendarClock, ArrowLeftRight } from "lucide-react";
 import { CommandMenu } from "../ui/CommandMenu";
@@ -49,6 +51,9 @@ interface UserData {
 
 
 export function AppSidebar({ role }: AppSidebarProps) {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+  
   const pathMatches = (path: string, url?: string) => {
     if (!url) return false;
     return path === url || path.startsWith(url + "/");
@@ -280,15 +285,39 @@ export function AppSidebar({ role }: AppSidebarProps) {
   return (
     <Sidebar variant="inset" collapsible="icon">
       <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
-      <div className="flex flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0 px-4 py-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <div className="flex items-center cursor-pointer group-data-[collapsible=icon]:justify-center">
-              <img src={background} alt="Logo" className="w-7 h-7 flex-shrink-0" />
-              <span className="ml-2 hidden md:inline group-data-[collapsible=icon]:hidden font-bold">JEEVANDEEP</span>
+      <div className="flex flex-col px-4 py-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
+        <div className="flex items-center justify-between w-full group-data-[collapsible=icon]:justify-center">
+          {isCollapsed ? (
+            /* Collapsed view: Flip Card on Hover */
+            <div className="relative w-7 h-7 [perspective:1000px] group/flip flex items-center justify-center cursor-pointer">
+              <div className="relative w-full h-full transition-transform duration-500 [transform-style:preserve-3d] group-hover/flip:[transform:rotateY(180deg)]">
+                {/* Front: Logo */}
+                <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
+                  <img src={background} alt="Logo" className="w-7 h-7 flex-shrink-0" />
+                </div>
+                {/* Back: Sidebar Trigger */}
+                <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] flex items-center justify-center">
+                  <SidebarTrigger className="h-[26px] w-[26px] text-muted-foreground hover:text-foreground [&_svg]:h-[17px] [&_svg]:w-[17px]" />
+                </div>
+              </div>
             </div>
-          </DropdownMenuTrigger>
-        </DropdownMenu>
+          ) : (
+            /* Expanded view: Logo (left) and Trigger (right) */
+            <>
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center cursor-pointer">
+                      <img src={background} alt="Logo" className="w-7 h-7 flex-shrink-0" />
+                      <span className="ml-2 font-bold">JEEVANDEEP</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                </DropdownMenu>
+              </div>
+              <SidebarTrigger className="h-[26px] w-[26px] text-muted-foreground hover:text-foreground [&_svg]:h-[17px] [&_svg]:w-[17px]" />
+            </>
+          )}
+        </div>
         <div className="mt-2 flex w-full items-center gap-2 group-data-[collapsible=icon]:hidden">
           <button
             onClick={() => setIsCommandMenuOpen(true)}

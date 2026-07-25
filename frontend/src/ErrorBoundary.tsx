@@ -1,7 +1,7 @@
 import React from "react";
 import Globalcomponent from "./Globalcomponent";
 import Layout from "./Components/sidebar/layout";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 import { AppSidebar } from "./Components/sidebar/app-sidebar";
 export default class ErrorBoundary extends React.Component {
@@ -31,7 +31,6 @@ export default class ErrorBoundary extends React.Component {
           <SidebarProvider>
             <AppSidebar role={role} />
             <main className="pt-2 flex-1 overflow-auto">
-              <SidebarTrigger />
               {/* {children} */}
               <Globalcomponent />
             </main>

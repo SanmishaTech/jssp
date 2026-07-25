@@ -214,7 +214,7 @@ export const NotificationPopover = ({
               className="absolute top-3 -left-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#111111]"
               style={{ opacity: 0.6 }}
             />
-            <div className="w-full max-h-[400px] overflow-y-auto rounded-xl">
+            <div className="w-full max-h-[400px] overflow-y-auto rounded-xl [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-white/30 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.2)_transparent]">
             <div
               className={`p-4 border-b ${headerBorderColor} flex justify-between items-center`}
             >
