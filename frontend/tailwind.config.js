@@ -117,5 +117,9 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"),heroui()],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/container-queries"),
+    heroui(),
+  ],
 };

@@ -24,6 +24,14 @@ export const Route = createRootRoute({
       <ErrorBoundary>
         <ErrorProvider>
           <>
+            {shouldShowSidebar ? (
+              <Layout>
+                <Outlet />
+              </Layout>
+            ) : (
+              <Outlet />
+            )}
+            {/* <TanStackRouterDevtools /> */}
             <Toaster 
               position="top-right"
               closeButton
@@ -35,17 +43,6 @@ export const Route = createRootRoute({
                 },
               }}
             />
-            <div className={shouldShowSidebar ? "flex pt-2" : "flex"}>
-              {shouldShowSidebar && (
-                <div className="text-white">
-                  <Layout />
-                </div>
-              )}
-              <div className="rounded-2xl w-full">
-                <Outlet />
-                {/* <TanStackRouterDevtools /> */}
-              </div>
-            </div>
           </>
         </ErrorProvider>
       </ErrorBoundary>

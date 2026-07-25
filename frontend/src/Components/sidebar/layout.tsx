@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar role={role} />
-      <main className="pt-2 flex-1 overflow-auto">
+      <main className="min-w-0 flex-1 overflow-auto pt-2">
         <div className="p-2 flex items-center justify-between">
           <SidebarTrigger />
           <CommandMenu role={role} />
