@@ -70,6 +70,7 @@ Route::post('/login', [UserController::class, 'login']);
 Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], function(){
    
    Route::resource('institutes', InstituteController::class);
+   Route::post('institutes/{id}/sudo-login', [InstituteController::class, 'sudoLogin'])->name('institutes.sudoLogin');
    Route::get('/all_institute', [InstituteController::class, 'allInstitutes'])->name("institutes.all");
    Route::resource('trustees', TrusteeController::class);
 

@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../ui/sidebar";
-import { User, LogOut, Search, UserCheck, CalendarClock } from "lucide-react";
+import { User, LogOut, Search, UserCheck, CalendarClock, ArrowLeftRight } from "lucide-react";
 import { CommandMenu } from "../ui/CommandMenu";
 import {
   AlertDialog,
@@ -247,6 +247,36 @@ export function AppSidebar({ role }: AppSidebarProps) {
     setProfileDropdownOpen(false);
   };
 
+  const handleReturnToSuperadmin = () => {
+    const originalToken = localStorage.getItem("original_token");
+    const originalUser = localStorage.getItem("original_user");
+    const originalRole = localStorage.getItem("original_role");
+    const originalStaffId = localStorage.getItem("original_staff_id");
+
+    if (originalToken && originalUser && originalRole) {
+      localStorage.setItem("token", originalToken);
+      localStorage.setItem("user", originalUser);
+      localStorage.setItem("role", originalRole);
+      if (originalStaffId) {
+        localStorage.setItem("staff_id", originalStaffId);
+      } else {
+        localStorage.removeItem("staff_id");
+      }
+
+      // Clean up backups
+      localStorage.removeItem("original_token");
+      localStorage.removeItem("original_user");
+      localStorage.removeItem("original_role");
+      localStorage.removeItem("original_staff_id");
+
+      toast.success('Returned to Superadmin session');
+      // Redirect back to admin page / dashboards
+      window.location.href = "/dashboards";
+    } else {
+      toast.error('Failed to return to Superadmin');
+    }
+  };
+
   return (
     <Sidebar variant="inset" collapsible="icon">
       <CommandMenu open={isCommandMenuOpen} onOpenChange={setIsCommandMenuOpen} />
@@ -396,6 +426,15 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </div>
           </div>
           <div className="h-px bg-muted my-1" />
+          {localStorage.getItem("original_token") && (
+            <button
+              onClick={handleReturnToSuperadmin}
+              className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors bg-primary/10 text-primary hover:bg-primary/20 w-full text-left font-medium animate-pulse mb-1 border border-primary/20"
+            >
+              <ArrowLeftRight className="mr-2 h-4 w-4 text-primary" />
+              <span>Return to Superadmin</span>
+            </button>
+          )}
           {role !== 'superadmin' && (
             <button
               onClick={handleUpdateProfile}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import Dashboard from "./Dashboardreuse";
 // import AddItem from "./add/TestCard";
 import userAvatar from "@/images/Profile.jpg";
@@ -169,6 +170,64 @@ export default function Dashboardholiday() {
     }
   };
 
+  const handleSudoLogin = async (id: number | string) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `/api/institutes/${id}/sudo-login`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      const responseData = response.data;
+      const userData = responseData.data.User;
+
+      const originalToken = localStorage.getItem("token");
+      const originalUser = localStorage.getItem("user");
+      const originalRole = localStorage.getItem("role");
+      const originalStaffId = localStorage.getItem("staff_id");
+
+      if (originalToken && originalUser && originalRole) {
+        localStorage.setItem("original_token", originalToken);
+        localStorage.setItem("original_user", originalUser);
+        localStorage.setItem("original_role", originalRole);
+        if (originalStaffId) {
+          localStorage.setItem("original_staff_id", originalStaffId);
+        }
+      }
+      
+      // Store the User data
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Store token separately
+      if (responseData.data.token) {
+        localStorage.setItem("token", responseData.data.token);
+      }
+      
+      // Store staff_id separately
+      if (userData.staff_id) {
+        localStorage.setItem("staff_id", userData.staff_id.toString());
+      }
+      
+      // Get user role for navigation
+      const role = userData.role;
+      localStorage.setItem("role", role);
+      
+      toast.success("Successfully logged in as Institute");
+      // Use window.location to force a full reload and state clear
+      window.location.href = "/dashboards";
+    } catch (err) {
+      console.error("Error with sudo login:", err);
+      toast.error("Failed to login as Institute. Please try again.");
+      setLoading(false);
+    }
+  };
+
   // Update the handleSearch function
   const handleSearch = async (query: string) => {
     console.log("Searching for:", query);
@@ -250,6 +309,7 @@ export default function Dashboardholiday() {
         handleNextPage={handleNextPage}
         handlePrevPage={handlePrevPage}
         setCurrentPage={setCurrentPage}
+        onSudoLogin={handleSudoLogin}
       />
     </div>
   );

@@ -115,6 +115,7 @@ export default function Dashboard({
   onSearch,
   onKeyPress,
   searchQuery,
+  onSudoLogin,
 }) {
   console.log("This is inside the dashboard", tableData);
   const navigate = useNavigate();
@@ -369,6 +370,16 @@ export default function Dashboard({
                                           >
                                             Edit
                                           </DropdownItem>
+                                          {localStorage.getItem('role') === 'superadmin' && onSudoLogin && (
+                                            <DropdownItem
+                                              key="sudo-login"
+                                              description="Log in as this institute"
+                                              onPress={() => onSudoLogin(row?.id)}
+                                              startContent={<Avatar className="w-5 h-5 bg-primary text-primary-foreground" size="sm" />}
+                                            >
+                                              Login as Institute
+                                            </DropdownItem>
+                                          )}
                                         </DropdownSection>
                                         <DropdownSection title="Danger zone">
                                           <DropdownItem
