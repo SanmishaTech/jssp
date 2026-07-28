@@ -196,13 +196,49 @@ export default function Dashboard({
     }
   };
 
+  const renderRowActions = (row) => (
+    <Dropdown backdrop="blur" showArrow>
+      <DropdownTrigger>
+        <button
+          className="rounded-full p-1 transition-opacity hover:bg-muted"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Ellipsis className="h-5 w-5 text-muted-foreground" />
+        </button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="Actions" variant="faded" className="w-56">
+        <DropdownSection title="Actions">
+          <DropdownItem
+            key="edit"
+            description="Edit inventory details"
+            onPress={() =>
+              navigate({
+                to: "/inventory/edit/" + row?.id,
+              })
+            }
+            startContent={<EditDocumentIcon className={iconClasses} />}
+          >
+            Edit
+          </DropdownItem>
+          <DropdownItem
+            key="transfer"
+            description="Transfer inventory to another room"
+            onPress={() => handleTransfer(row)}
+            startContent={<Files className={iconClasses} />}
+          >
+            Transfer
+          </DropdownItem>
+        </DropdownSection>
+      </DropdownMenu>
+    </Dropdown>
+  );
+
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background/30">
-      <div className="flex flex-col gap-6 py-6 px-8">
-        {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Breadcrumb className="flex md:flex">
-            <BreadcrumbList className="flex items-center space-x-2">
+    <div className="@container/inventory min-w-0 w-full flex-col bg-background/30">
+      <div className="flex flex-col gap-4 px-4 py-4 @[700px]/inventory:gap-6 @[700px]/inventory:px-6 @[700px]/inventory:py-6">
+        <header className="flex min-w-0 flex-col gap-3">
+          <Breadcrumb className="min-w-0 overflow-x-auto">
+            <BreadcrumbList className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               {breadcrumbs?.map((breadcrumb, index) => (
                 <React.Fragment key={index}>
                   <BreadcrumbItem>
@@ -227,84 +263,82 @@ export default function Dashboard({
           </Breadcrumb>
         </header>
 
-        <main className="grid flex-1 items-start gap-6">
-          <Tabs defaultValue="all" className="w-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">
+        <main className="grid min-w-0 flex-1 items-start gap-4 @[700px]/inventory:gap-6">
+          <Tabs defaultValue="all" className="min-w-0 w-full">
+            <div className="mb-4 flex min-w-0 flex-col gap-4 @[768px]/inventory:mb-6 @[768px]/inventory:flex-row @[768px]/inventory:items-start @[768px]/inventory:justify-between">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold tracking-tight @[700px]/inventory:text-2xl">
                   {tableColumns.title || "inventory Dashboard"}
                 </h1>
-                <p className="text-muted-foreground mt-1">
+                <p className="mt-1 text-sm text-muted-foreground @[700px]/inventory:text-base">
                   {tableColumns.description ||
                     "Manage inventory data efficiently"}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 self-end">
-                <div className="flex items-center gap-3 ml-auto">
-                  <div className="relative flex items-center gap-2">
-                    <div className="relative flex-1 md:w-[200px]">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder={searchPlaceholder}
-                        className="w-full rounded-l-md bg-background pl-10 border-muted focus-visible:ring-primary"
-                        value={localSearchTerm}
-                        onChange={handleSearchInput}
-                        onKeyDown={handleKeyDown}
-                      />
-                      {localSearchTerm && (
-                        <button
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                          onClick={() => {
-                            setLocalSearchTerm("");
-                            onSearch("", roomFilter);
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                    
-                    <div className="relative flex-1 md:w-[200px]">
-                      <ListFilter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder="Filter by room..."
-                        className="w-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                        value={roomFilter}
-                        onChange={handleRoomFilterInput}
-                        onKeyDown={handleRoomFilterKeyDown}
-                      />
-                      {roomFilter && (
-                        <button
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                          onClick={() => {
-                            setRoomFilter("");
-                            onSearch(localSearchTerm, "");
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                    
-                    <Button
-                      color="primary"
-                      variant="solid"
-                      className="h-10 rounded-r-md"
-                      onPress={handleSearchClick}
-                    >
-                      Search
-                    </Button>
+              <div className="flex min-w-0 w-full flex-col gap-3 @[768px]/inventory:w-auto">
+                <div className="flex min-w-0 w-full flex-col gap-2 @[768px]/inventory:flex-row @[768px]/inventory:items-center">
+                  <div className="relative min-w-0 flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder={searchPlaceholder}
+                      className="w-full min-w-0 rounded-md border-muted bg-background pl-10 focus-visible:ring-primary"
+                      value={localSearchTerm}
+                      onChange={handleSearchInput}
+                      onKeyDown={handleKeyDown}
+                    />
+                    {localSearchTerm && (
+                      <button
+                        className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          setLocalSearchTerm("");
+                          onSearch("", roomFilter);
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                   </div>
+
+                  <div className="relative min-w-0 flex-1">
+                    <ListFilter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Filter by room..."
+                      className="w-full min-w-0 border-muted bg-background pl-10 focus-visible:ring-primary"
+                      value={roomFilter}
+                      onChange={handleRoomFilterInput}
+                      onKeyDown={handleRoomFilterKeyDown}
+                    />
+                    {roomFilter && (
+                      <button
+                        className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          setRoomFilter("");
+                          onSearch(localSearchTerm, "");
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    className="h-10 w-full shrink-0 @[768px]/inventory:w-auto"
+                    onPress={handleSearchClick}
+                  >
+                    Search
+                  </Button>
                 </div>
                 <Button
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
                   onPress={() => navigate({ to: "/inventory/add" })}
-                  className="h-9"
+                  className="h-10 w-full shrink-0 @[768px]/inventory:w-auto"
                 >
                   Add New Inventory
                 </Button>
@@ -352,22 +386,22 @@ export default function Dashboard({
 
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
-                  className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
+                  className="min-h-[320px] min-w-0 w-full items-center justify-center rounded-lg border border-border bg-accent/20 shadow-sm @[700px]/inventory:min-h-[500px]"
                   title="No Inventory Available"
                   description="You can add a new inventory to get started."
                   icons={[FileText, FileSymlink, Files]}
                 />
               ) : (
-                <Card className="bg-card border border-border shadow-sm overflow-hidden">
-                  <CardContent className="p-0">
-                    <Table>
+                <Card className="min-w-0 overflow-hidden border border-border bg-card shadow-sm">
+                  <CardContent className="min-w-0 overflow-x-auto p-0">
+                    <Table className="min-w-[720px]">
                       <TableHeader>
                         <TableRow className="bg-muted/40 hover:bg-muted/40">
                           {tableColumns?.headers?.map((header, index) => (
                             <TableHead
                               key={index}
                               className={cn(
-                                "text-xs font-medium text-muted-foreground py-3",
+                                "whitespace-nowrap py-3 text-xs font-medium text-muted-foreground",
                                 header.hiddenOn
                               )}
                             >
@@ -387,85 +421,25 @@ export default function Dashboard({
                       <TableBody>
                         {tableData?.map((row) => (
                           <React.Fragment key={row.id}>
-                            <TableRow 
+                            <TableRow
                               className="cursor-pointer hover:bg-muted/50"
                               onClick={() => {
                                 setSelectedItem(row);
                                 setDetailsDialogOpen(true);
-                              }}>
+                              }}
+                            >
                               {tableColumns?.headers?.map((header, index) => (
                                 <TableCell
                                   key={index}
-                                  className={
+                                  className={cn(
+                                    "max-w-[220px] truncate",
                                     header.hiddenOn ? header.hiddenOn : ""
-                                  }
+                                  )}
                                 >
                                   {header.key === "one" ? (
                                     row.one
                                   ) : header.key === "action" ? (
-                                    <Dropdown backdrop="blur" showArrow>
-                                      <DropdownTrigger>
-                                        <button className="p-1 rounded-full opacity-100 group-hover:opacity-100 transition-opacity hover:bg-muted">
-                                          <Ellipsis className="w-5 h-5 text-muted-foreground" />
-                                        </button>
-                                      </DropdownTrigger>
-                                      <DropdownMenu
-                                        aria-label="Actions"
-                                        variant="faded"
-                                        className="w-56"
-                                      >
-                                        <DropdownSection title="Actions">
-                                          <DropdownItem
-                                            key="edit"
-                                            description="Edit inventory details"
-                                            onPress={() =>
-                                              navigate({
-                                                to:
-                                                  "/inventory/edit/" + row?.id,
-                                              })
-                                            }
-                                            startContent={
-                                              <EditDocumentIcon
-                                                className={iconClasses}
-                                              />
-                                            }
-                                          >
-                                            Edit
-                                          </DropdownItem>
-
-                                          <DropdownItem
-                                            key="transfer"
-                                            description="Transfer inventory to another room"
-                                            onPress={() => handleTransfer(row)}
-                                            startContent={<Files className={iconClasses} />}
-                                          >
-                                            Transfer
-                                          </DropdownItem>
-                                        </DropdownSection>
-                                        {/* <DropdownSection title="Danger zone">
-                                          <DropdownItem
-                                            key="delete"
-                                            className="text-danger"
-                                            color="danger"
-                                            description="This action cannot be undone"
-                                            onPress={() => {
-                                              setEditid(row?.id);
-                                              setToggleopen(true);
-                                            }}
-                                            startContent={
-                                              <DeleteDocumentIcon
-                                                className={cn(
-                                                  iconClasses,
-                                                  "text-danger"
-                                                )}
-                                              />
-                                            }
-                                          >
-                                            Delete
-                                          </DropdownItem>
-                                        </DropdownSection> */}
-                                      </DropdownMenu>
-                                    </Dropdown>
+                                    renderRowActions(row)
                                   ) : header.key === "two" ? (
                                     row.two
                                   ) : header.key === "three" ? (
@@ -477,8 +451,8 @@ export default function Dashboard({
                                   ) : header.key === "six" ? (
                                     row.six
                                   ) : header.key === "seven" ? (
-                                    row.seven && row.seven.length > 51 
-                                      ? `${row.seven.substring(0, 51)}...` 
+                                    row.seven && row.seven.length > 51
+                                      ? `${row.seven.substring(0, 51)}...`
                                       : row.seven
                                   ) : (
                                     row[header.key]
@@ -492,7 +466,7 @@ export default function Dashboard({
                     </Table>
                   </CardContent>
 
-                  <CardFooter className="flex items-center justify-between border-t p-4">
+                  <CardFooter className="flex flex-col gap-3 border-t p-4 @[480px]/inventory:flex-row @[480px]/inventory:items-center @[480px]/inventory:justify-between">
                     <div className="text-xs text-muted-foreground">
                       {tableData && (
                         <>
@@ -502,11 +476,12 @@ export default function Dashboard({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex w-full gap-2 @[480px]/inventory:w-auto">
                       <Button
                         onPress={() => handlePrevPage()}
                         size="sm"
                         variant="flat"
+                        className="flex-1 @[480px]/inventory:flex-none"
                         isDisabled={currentPage <= 1}
                       >
                         Previous
@@ -515,6 +490,7 @@ export default function Dashboard({
                         onPress={() => handleNextPage()}
                         size="sm"
                         variant="flat"
+                        className="flex-1 @[480px]/inventory:flex-none"
                         isDisabled={currentPage >= totalPages}
                       >
                         Next

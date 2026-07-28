@@ -123,7 +123,7 @@ function ProfileForm() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-4 @[640px]/complaints:grid-cols-2 @[1024px]/complaints:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="complaint_date"
@@ -204,15 +204,15 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/complaints:flex-row @[480px]/complaints:justify-end">
           <Button
             onClick={() => window.history.back()}
-            className="self-center"
             type="button"
+            className="w-full @[480px]/complaints:w-auto"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button type="submit" className="w-full @[480px]/complaints:w-auto">
             Add Complaints
           </Button>
         </div>
@@ -223,24 +223,26 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="@container/complaints min-w-0 w-full px-4 py-4 pb-8">
+      <Card className="min-w-0 w-full overflow-hidden bg-light pt-4 shadow-md">
+        <Button
+          onClick={() => window.history.back()}
+          className="mb-4 ml-4 flex gap-2"
+        >
+          <MoveLeft className="h-5 w-5 text-white" />
+          Back
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Complaint Master</CardTitle>
-        <CardDescription>Add Complaint</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm />
-        </div>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Complaint Master</CardTitle>
+          <CardDescription>Add Complaint</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <ProfileForm />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

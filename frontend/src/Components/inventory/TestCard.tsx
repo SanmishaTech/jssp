@@ -264,41 +264,37 @@ function ProfileForm() {
         <div className="space-y-6">
           {/* Institute Information Section */}
           <Card className="max-w-full p-4">
-            <CardHeader className="flex flex-row justify-between items-start">
-              <div>
+            <CardHeader className="flex flex-col gap-4 @[768px]/inventory:flex-row @[768px]/inventory:items-start @[768px]/inventory:justify-between">
+              <div className="min-w-0">
                 <CardTitle>Asset Information</CardTitle>
                 <CardDescription>Provide the details of Asset.</CardDescription>
               </div>
-              <div className="min-w-[300px] mt-1 ml-auto pl-[100px]">
+              <div className="min-w-0 w-full @[768px]/inventory:w-auto">
                 <FormField
                   control={form.control}
                   name="purchase_date"
                   render={({ field }: { field: ControllerRenderProps<ProfileFormValues, "purchase_date"> }) => (
-                    <div className="flex items-center gap-2">
-                      <div className="min-w-[100px]">
-                        <FormLabel className="mb-0 mt-0">
-                          Purchase Date
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                      </div>
-                      <div className="flex-1">
-                        <FormControl>
-                          <Input
-                            type="date"
-                            max={new Date().toISOString().split("T")[0]} // Restrict future dates
-                            className="border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-6"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </div>
-                    </div>
+                    <FormItem>
+                      <FormLabel>
+                        Purchase Date
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          max={new Date().toISOString().split("T")[0]}
+                          className="w-full"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 @[768px]/inventory:grid-cols-2">
                 {isSuperAdmin && (
                   <FormField
                     control={form.control}
@@ -674,15 +670,15 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/inventory:flex-row @[480px]/inventory:justify-end">
           <Button
             onClick={() => window.history.back()}
-            className="self-center"
             type="button"
+            className="w-full @[480px]/inventory:w-auto"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button type="submit" className="w-full @[480px]/inventory:w-auto">
             Add Inventory
           </Button>
         </div>
@@ -693,23 +689,25 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="@container/inventory min-w-0 w-full px-4 py-4 pb-8">
+      <Card className="min-w-0 w-full overflow-hidden bg-light pt-4 shadow-md">
+        <Button
+          onClick={() => window.history.back()}
+          className="mb-4 ml-4 flex gap-2"
+        >
+          <MoveLeft className="h-5 w-5 text-white" />
+          Back
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Inventory Master</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm />
-        </div>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Inventory Master</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <ProfileForm />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

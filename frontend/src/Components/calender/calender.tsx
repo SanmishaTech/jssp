@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './calender.css';
@@ -42,12 +42,17 @@ interface WeeklyHoliday {
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
+/** Matches stacked layout in calender.css @container (max-width: 900px) */
+const STACK_BREAKPOINT_PX = 900;
+
 const CalendarComponent: React.FC<CalendarProps> = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [weeklyHolidays, setWeeklyHolidays] = useState<WeeklyHoliday[]>([]);
   const token = localStorage.getItem("token");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const eventsPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Use Promise.all to fetch all data types and combine them once all requests are complete
@@ -75,6 +80,21 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
     
     fetchAllData();
   }, []);
+
+  // Stacked layout: scroll events panel into view after date tap
+  useEffect(() => {
+    if (selectedEvents.length === 0) return;
+
+    const scrollToEvents = () => {
+      const container = containerRef.current;
+      if (!container || container.offsetWidth > STACK_BREAKPOINT_PX) return;
+      eventsPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(scrollToEvents);
+    });
+  }, [selectedEvents, selectedDate]);
 
   const fetchMeetingsAndEvents = async () => {
     try {
@@ -449,69 +469,71 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
   };
 
   return (
-    <div className="calendar-wrapper">
-      <div className="calendar-container">
-        <Calendar
-          onChange={handleDateChange}
-          value={selectedDate}
-          tileClassName={getTileClassName}
-          tileContent={getTileContent}
-          view="month"
-          showNeighboringMonth={true}
-          minDetail="month"
-          maxDetail="month"
-          formatShortWeekday={(locale, date) => 
-            date.toLocaleDateString(locale, { weekday: 'short' }).slice(0, 3)
-          }
-        />
-      </div>
-      {selectedEvents.length > 0 && (
-        <div className="selected-date-events">
-          <h3>Events for {selectedDate.toLocaleDateString(undefined, { 
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}</h3>
-          
-          {/* Show holidays first */}
-          {selectedEvents.some(e => e.type === 'holiday') && (
-            <div className="holiday-section">
-              <h4>Holidays</h4>
-              {renderEventsList('holiday')}
-            </div>
-          )}
-          
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="flex w-full justify-start space-x-1">
-              <TabsTrigger className="flex-1" value="all">All</TabsTrigger>
-              <TabsTrigger className="flex-1" value="events">Events</TabsTrigger>
-              <TabsTrigger className="flex-1" value="meetings">Meetings</TabsTrigger>
-            </TabsList>
-            <TabsContent value="all">
-              {selectedEvents
-                .filter(event => event.type !== 'holiday')
-                .map((event, index) => (
-                  <div 
-                    key={index} 
-                    className={`event-details ${event.type}-details`}
-                  >
-                    <h4>{event.title}</h4>
-                    {event.time && <p className="event-time">{formatEventTime(event.time)}</p>}
-                    {event.description && <p className="event-description">{event.description}</p>}
-                  </div>
-                ))
-              }
-            </TabsContent>
-            <TabsContent value="events">
-              {renderEventsList('event')}
-            </TabsContent>
-            <TabsContent value="meetings">
-              {renderEventsList('meeting')}
-            </TabsContent>
-          </Tabs>
+    <div ref={containerRef} className="@container/calender min-w-0 w-full max-w-full px-4 pb-4">
+      <div className="calendar-wrapper">
+        <div className="calendar-container">
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDate}
+            tileClassName={getTileClassName}
+            tileContent={getTileContent}
+            view="month"
+            showNeighboringMonth={true}
+            minDetail="month"
+            maxDetail="month"
+            formatShortWeekday={(locale, date) => 
+              date.toLocaleDateString(locale, { weekday: 'short' }).slice(0, 3)
+            }
+          />
         </div>
-      )}
+        {selectedEvents.length > 0 && (
+          <div ref={eventsPanelRef} className="selected-date-events">
+            <h3>Events for {selectedDate.toLocaleDateString(undefined, { 
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}</h3>
+            
+            {/* Show holidays first */}
+            {selectedEvents.some(e => e.type === 'holiday') && (
+              <div className="holiday-section">
+                <h4>Holidays</h4>
+                {renderEventsList('holiday')}
+              </div>
+            )}
+            
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="flex w-full justify-start space-x-1">
+                <TabsTrigger className="flex-1" value="all">All</TabsTrigger>
+                <TabsTrigger className="flex-1" value="events">Events</TabsTrigger>
+                <TabsTrigger className="flex-1" value="meetings">Meetings</TabsTrigger>
+              </TabsList>
+              <TabsContent value="all">
+                {selectedEvents
+                  .filter(event => event.type !== 'holiday')
+                  .map((event, index) => (
+                    <div 
+                      key={index} 
+                      className={`event-details ${event.type}-details`}
+                    >
+                      <h4>{event.title}</h4>
+                      {event.time && <p className="event-time">{formatEventTime(event.time)}</p>}
+                      {event.description && <p className="event-description">{event.description}</p>}
+                    </div>
+                  ))
+                }
+              </TabsContent>
+              <TabsContent value="events">
+                {renderEventsList('event')}
+              </TabsContent>
+              <TabsContent value="meetings">
+                {renderEventsList('meeting')}
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

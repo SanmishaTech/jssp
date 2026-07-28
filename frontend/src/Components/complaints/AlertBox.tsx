@@ -44,7 +44,7 @@ export default function AlertDialogbox({
 
   return (
     <>
-      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose} placement="center">
         <ModalContent>
           {(onClose) => (
             <>

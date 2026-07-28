@@ -118,7 +118,7 @@ function ProfileForm() {
               <CardTitle>Trustee Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 @[768px]/trusties:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="trustee_name"
@@ -195,7 +195,7 @@ function ProfileForm() {
             <CardHeader>
               <CardTitle>Login Information</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="grid grid-cols-1 gap-4 @[768px]/trusties:grid-cols-2">
               <FormField
                 control={form.control}
                 name="email"
@@ -233,11 +233,11 @@ function ProfileForm() {
             </CardContent>
           </Card>
 
-          <div className="flex justify-end w-full gap-3">
-            <Button onClick={() => window.history.back()} type="button">
+          <div className="flex w-full flex-col-reverse gap-3 @[480px]/trusties:flex-row @[480px]/trusties:justify-end">
+            <Button onClick={() => window.history.back()} type="button" className="w-full @[480px]/trusties:w-auto">
               Cancel
             </Button>
-            <Button type="submit">Add Trustee</Button>
+            <Button type="submit" className="w-full @[480px]/trusties:w-auto">Add Trustee</Button>
           </div>
         </div>
       </form>
@@ -247,24 +247,26 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="@container/trusties min-w-0 w-full px-4 py-4 pb-8">
+      <Card className="min-w-0 w-full overflow-hidden bg-light pt-4 shadow-md">
+        <Button
+          onClick={() => window.history.back()}
+          className="mb-4 ml-4 flex gap-2"
+        >
+          <MoveLeft className="h-5 w-5 text-white" />
+          Back
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Trustees Master</CardTitle>
-        <CardDescription>Add Trustees Master</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm />
-        </div>
-      </CardContent>
-    </Card>
+        <CardHeader>
+          <CardTitle>Trustees Master</CardTitle>
+          <CardDescription>Add Trustees Master</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <ProfileForm />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

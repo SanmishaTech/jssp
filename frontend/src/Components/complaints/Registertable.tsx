@@ -228,7 +228,7 @@ export default function Dashboardholiday() {
   });
 
   return (
-    <div className="p-4">
+    <div className="min-w-0 w-full">
       <Dashboard
         breadcrumbs={config.breadcrumbs}
         searchPlaceholder={config.searchPlaceholder}
@@ -254,12 +254,12 @@ export default function Dashboardholiday() {
       {/* Dialog that appears when a row is clicked */}
       {showDialog && selectedComplaint && (
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl">
             <DialogHeader>
               <DialogTitle>Complaint Details</DialogTitle>
             </DialogHeader>
-            <div className="p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4 p-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <p className="font-semibold text-gray-600">Institute Name:</p>
                   <p className="text-lg">{selectedComplaint.institute_name}</p>

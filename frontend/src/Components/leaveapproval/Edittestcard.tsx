@@ -605,7 +605,7 @@ function LeaveApprovalDashboard() {
 
 export default function LeaveApprovalPage() {
   return (
-    <div className="container mx-auto py-10">
+    <div className="min-w-0 w-full px-4 py-6 sm:px-6">
       <LeaveApprovalDashboard />
     </div>
   );

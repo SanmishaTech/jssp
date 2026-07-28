@@ -424,35 +424,35 @@ export default function RequisitionManagement() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Requisition Management</h1>
+    <div className="@container/requisitions min-w-0 w-full p-4">
+      <div className="mb-4 flex min-w-0 items-center justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold @[700px]/requisitions:text-3xl">Requisition Management</h1>
         </div>
       </div>
 
       {/* Display tabs for non-superadmin users */}
       {!isSuperAdmin ? (
-        <Tabs defaultValue="create" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 md:w-auto md:grid-cols-none md:flex">
-            <TabsTrigger value="create" className="flex items-center gap-2">
-              <Send className="h-4 w-4" /> Create/Send
+        <Tabs defaultValue="create" value={activeTab} onValueChange={setActiveTab} className="min-w-0">
+          <TabsList className="mb-4 grid h-auto w-full grid-cols-2 gap-1 @[700px]/requisitions:inline-flex @[700px]/requisitions:w-auto @[700px]/requisitions:grid-cols-none">
+            <TabsTrigger value="create" className="min-w-0 gap-1 px-2 text-xs @[700px]/requisitions:gap-2 @[700px]/requisitions:px-3 @[700px]/requisitions:text-sm">
+              <Send className="h-4 w-4 shrink-0" /> <span className="truncate">Create/Send</span>
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center gap-2">
-              <CalendarClock className="h-4 w-4" /> History
+            <TabsTrigger value="history" className="min-w-0 gap-1 px-2 text-xs @[700px]/requisitions:gap-2 @[700px]/requisitions:px-3 @[700px]/requisitions:text-sm">
+              <CalendarClock className="h-4 w-4 shrink-0" /> <span className="truncate">History</span>
             </TabsTrigger>
             {hasApprovalAccess && (
-              <TabsTrigger value="approval" className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4" /> Approval & Reject
+              <TabsTrigger value="approval" className="col-span-2 min-w-0 gap-1 px-2 text-xs @[700px]/requisitions:col-span-1 @[700px]/requisitions:gap-2 @[700px]/requisitions:px-3 @[700px]/requisitions:text-sm">
+                <ShieldCheck className="h-4 w-4 shrink-0" /> <span className="truncate">Approval & Reject</span>
               </TabsTrigger>
             )}
           </TabsList>
 
           {/* Create/Send Tab */}
-          <TabsContent value="create">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="create" className="mt-0">
+          <div className="grid min-w-0 grid-cols-1 gap-4 @[900px]/requisitions:grid-cols-2">
             {/* Form Card */}
-            <Card>
+            <Card className="min-w-0">
               <CardHeader>
                 <CardTitle>Submit New Requisition</CardTitle>
                 <CardDescription>
@@ -658,7 +658,7 @@ export default function RequisitionManagement() {
             </Card>
 
             {/* Pending Requisitions Card */}
-            <Card>
+            <Card className="min-w-0">
               <CardHeader>
                 <CardTitle>My Pending Requisitions</CardTitle>
                 <CardDescription>
@@ -673,6 +673,7 @@ export default function RequisitionManagement() {
                     You have no pending requisitions
                   </div>
                 ) : (
+                  <div className="min-w-0 overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -693,6 +694,7 @@ export default function RequisitionManagement() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -700,8 +702,8 @@ export default function RequisitionManagement() {
         </TabsContent>
 
         {/* History Tab */}
-        <TabsContent value="history">
-          <Card>
+        <TabsContent value="history" className="mt-0">
+          <Card className="min-w-0">
             <CardHeader>
               <CardTitle>Requisition History</CardTitle>
               <CardDescription>
@@ -716,6 +718,7 @@ export default function RequisitionManagement() {
                   No requisition history found
                 </div>
               ) : (
+                <div className="min-w-0 overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -746,6 +749,7 @@ export default function RequisitionManagement() {
                     ))}
                   </TableBody>
                 </Table>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -753,24 +757,24 @@ export default function RequisitionManagement() {
 
         {/* Admin/SuperAdmin Approval Tab */}
         {hasApprovalAccess && (
-          <TabsContent value="approval">
-            <div className="mb-6">
+          <TabsContent value="approval" className="mt-0">
+            <div className="mb-4">
               <Tabs defaultValue="all" value={adminSubTab} onValueChange={setAdminSubTab}>
-                <TabsList className="mb-4">
-                  <TabsTrigger value="all" className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" /> Pending
+                <TabsList className="mb-0 flex h-auto w-full flex-wrap gap-2 bg-transparent p-0 @[600px]/requisitions:w-auto">
+                  <TabsTrigger value="all" className="flex flex-1 items-center justify-center gap-2 rounded-md border bg-muted px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground @[600px]/requisitions:flex-none">
+                    <Clock className="h-4 w-4 shrink-0" /> Pending
                   </TabsTrigger>
-                  <TabsTrigger value="approved" className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" /> Approved
+                  <TabsTrigger value="approved" className="flex flex-1 items-center justify-center gap-2 rounded-md border bg-muted px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground @[600px]/requisitions:flex-none">
+                    <CheckCircle className="h-4 w-4 shrink-0" /> Approved
                   </TabsTrigger>
-                  <TabsTrigger value="rejected" className="flex items-center gap-2">
-                    <XCircle className="h-4 w-4" /> Rejected
+                  <TabsTrigger value="rejected" className="flex flex-1 items-center justify-center gap-2 rounded-md border bg-muted px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground @[600px]/requisitions:flex-none">
+                    <XCircle className="h-4 w-4 shrink-0" /> Rejected
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
 
-            <Card>
+            <Card className="min-w-0">
               <CardHeader>
                 <CardTitle>
                   {adminSubTab === "all" 
@@ -793,6 +797,7 @@ export default function RequisitionManagement() {
                     No {adminSubTab === "all" ? "pending" : adminSubTab} requisitions found
                   </div>
                 ) : (
+                  <div className="min-w-0 overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -816,7 +821,7 @@ export default function RequisitionManagement() {
                           )}
                           {adminSubTab === "all" && (
                             <TableCell>
-                              <div className="flex space-x-2">
+                              <div className="flex flex-wrap gap-2">
                                 <Button 
                                   variant="outline" 
                                   size="sm" 
@@ -840,6 +845,7 @@ export default function RequisitionManagement() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -848,40 +854,38 @@ export default function RequisitionManagement() {
         </Tabs>
       ) : (
         /* For superadmin, display approval content directly without tabs */
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold mb-4 flex items-center">
-            <ShieldCheck className="h-5 w-5 mr-2" /> Requisition Approvals
+        <div className="min-w-0">
+          <h2 className="mb-4 flex items-center text-xl font-semibold">
+            <ShieldCheck className="mr-2 h-5 w-5 shrink-0" /> Requisition Approvals
           </h2>
-          
+
           {/* Admin filter tabs (shown only in approval view) */}
-          <div className="mb-6">
-            <div className="inline-flex rounded-md shadow-sm">
-              <Button
-                variant={adminSubTab === "all" ? "default" : "outline"}
-                className={`rounded-l-md ${adminSubTab === "all" ? "" : "bg-white"}`}
-                onClick={() => setAdminSubTab("all")}
-              >
-                <Clock className="h-4 w-4 mr-2" /> Pending
-              </Button>
-              <Button
-                variant={adminSubTab === "approved" ? "default" : "outline"}
-                className={adminSubTab === "approved" ? "" : "bg-white"}
-                onClick={() => setAdminSubTab("approved")}
-              >
-                <CheckCircle className="h-4 w-4 mr-2" /> Approved
-              </Button>
-              <Button
-                variant={adminSubTab === "rejected" ? "default" : "outline"}
-                className={`rounded-r-md ${adminSubTab === "rejected" ? "" : "bg-white"}`}
-                onClick={() => setAdminSubTab("rejected")}
-              >
-                <XCircle className="h-4 w-4 mr-2" /> Rejected
-              </Button>
-            </div>
+          <div className="mb-4 flex min-w-0 flex-wrap gap-2">
+            <Button
+              variant={adminSubTab === "all" ? "default" : "outline"}
+              className="flex-1 @[600px]/requisitions:flex-none"
+              onClick={() => setAdminSubTab("all")}
+            >
+              <Clock className="mr-2 h-4 w-4 shrink-0" /> Pending
+            </Button>
+            <Button
+              variant={adminSubTab === "approved" ? "default" : "outline"}
+              className="flex-1 @[600px]/requisitions:flex-none"
+              onClick={() => setAdminSubTab("approved")}
+            >
+              <CheckCircle className="mr-2 h-4 w-4 shrink-0" /> Approved
+            </Button>
+            <Button
+              variant={adminSubTab === "rejected" ? "default" : "outline"}
+              className="flex-1 @[600px]/requisitions:flex-none"
+              onClick={() => setAdminSubTab("rejected")}
+            >
+              <XCircle className="mr-2 h-4 w-4 shrink-0" /> Rejected
+            </Button>
           </div>
-          
+
           {/* Requisition Approval List Card */}
-          <Card>
+          <Card className="min-w-0">
             <CardHeader>
               <CardTitle>Requisition {adminSubTab === "all" ? "Requests" : adminSubTab === "approved" ? "Approvals" : "Rejections"}</CardTitle>
               <CardDescription>
@@ -898,6 +902,7 @@ export default function RequisitionManagement() {
                   No requisitions found in this category.
                 </div>
               ) : (
+                <div className="min-w-0 overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -919,7 +924,7 @@ export default function RequisitionManagement() {
                         <TableCell>{getStatusBadge(req.status)}</TableCell>
                         {adminSubTab === "all" && (
                           <TableCell>
-                            <div className="flex space-x-2">
+                            <div className="flex flex-wrap gap-2">
                               <Button 
                                 variant="outline" 
                                 size="sm" 
@@ -943,6 +948,7 @@ export default function RequisitionManagement() {
                     ))}
                   </TableBody>
                 </Table>
+                </div>
               )}
             </CardContent>
           </Card>

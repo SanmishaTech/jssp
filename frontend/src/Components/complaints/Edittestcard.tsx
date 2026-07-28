@@ -129,7 +129,7 @@ function ProfileForm({ formData }) {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-4 @[640px]/complaints:grid-cols-2 @[1024px]/complaints:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="complaint_date"
@@ -210,16 +210,16 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/complaints:flex-row @[480px]/complaints:justify-end">
           <Button
             onClick={() => navigate({ to: "/complaints" })}
-            className="self-center"
             type="button"
+            className="w-full @[480px]/complaints:w-auto"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
-            Update Courses
+          <Button type="submit" className="w-full @[480px]/complaints:w-auto">
+            Update Complaints
           </Button>
         </div>
       </form>
@@ -251,28 +251,26 @@ export default function SettingsProfilePage() {
     };
   }, [id]);
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="@container/complaints min-w-0 w-full px-4 py-4 pb-8">
+      <Card className="min-w-0 w-full overflow-hidden bg-light pt-4 shadow-md">
+        <Button
+          onClick={() => window.history.back()}
+          className="mb-4 ml-4 flex gap-2"
+        >
+          <MoveLeft className="h-5 w-5 text-white" />
+          Back
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Complaint Master</CardTitle>
-        <CardDescription>Edit/Update the Complaint</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm formData={formData} />
-        </div>
-      </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
-    </Card>
+        <CardHeader>
+          <CardTitle>Complaint Master</CardTitle>
+          <CardDescription>Edit/Update the Complaint</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <ProfileForm formData={formData} />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

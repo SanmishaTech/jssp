@@ -299,22 +299,23 @@ export default function LetterList() {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen overflow-auto mt-5 gap-4 px-4 lg:px-5 pb-10">
-        <div className="p-4 lg:p-6 w-full lg:w-3/4 bg-accent/60 rounded-lg shadow-lg flex-shrink-0">
-          <div className="flex justify-center items-center p-3 mb-4">
-            <h3 className="text-lg font-semibold">
-                  {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : (letterType === 'inward' ? 'Create Inward Letter' : 'Create Outward Letter'))}
+      {/* Outer = container; inner = flex — queries only match descendants */}
+      <div className="@container/letters min-w-0 w-full mt-5 px-4 pb-10 @[1100px]/letters:px-5">
+        <div className="flex min-w-0 w-full flex-col gap-4 @[1100px]/letters:flex-row">
+          <div className="@container min-w-0 w-full overflow-hidden rounded-lg bg-accent/60 p-4 shadow-lg @[700px]/letters:p-6 @[1100px]/letters:w-3/4">
+            <div className="mb-4 flex min-w-0 flex-wrap items-center justify-center gap-2 p-3">
+              <h3 className="text-lg font-semibold text-center">
+                {viewMode ? 'View Letter' : (editingId ? 'Edit Letter' : (letterType === 'inward' ? 'Create Inward Letter' : 'Create Outward Letter'))}
+              </h3>
               {viewMode && (
-                <>
-
-                     <button 
-                      onClick={() => handleEdit(selectedLetter)}
-                      className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
-                    >
-                      Edit
-                    </button>
-                  
-                  <button 
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    onClick={() => handleEdit(selectedLetter)}
+                    className="rounded bg-blue-200 px-2 py-1 text-xs hover:bg-blue-300"
+                  >
+                    Edit
+                  </button>
+                  <button
                     onClick={() => {
                       setViewMode(false);
                       setSelectedLetter(null);
@@ -322,322 +323,323 @@ export default function LetterList() {
                       setTitle("");
                       setDescription("");
                     }}
-                    className="ml-4 px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+                    className="rounded bg-gray-200 px-2 py-1 text-xs hover:bg-gray-300"
                   >
                     Close
                   </button>
-                </>
+                </div>
               )}
-            </h3>
-            
-          </div>
+            </div>
 
-          {viewMode && selectedLetter ? (
-            <div className="space-y-6">
-              {/* Header Section */}
-              <div className="border-b pb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800">
-                      {selectedLetter.letter_title}
-                    </h2>
-                    <div className="flex items-center gap-4 mt-2">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        selectedLetter.type === 'inward' 
-                          ? 'bg-blue-100 text-blue-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {selectedLetter.type === 'inward' ? (
-                          <><Inbox className="h-3 w-3 mr-1" /> Inward Letter</>
-                        ) : (
-                          <><BookOpen className="h-3 w-3 mr-1" /> Outward Letter</>
-                        )}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        Letter #{selectedLetter.letter_number}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Created on</p>
-                    <p className="text-sm font-medium">
-                      {new Date(selectedLetter.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {new Date(selectedLetter.created_at).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Content Section */}
-              {selectedLetter.type === 'outward' ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Send className="h-4 w-4 text-gray-400" />
-                    <h3 className="text-lg font-semibold text-gray-700">Letter Content</h3>
-                  </div>
-                  <div className="bg-white border rounded-lg p-6 shadow-sm">
-                    <div className="text-gray-700 leading-relaxed" 
-                         style={{ fontSize: '0.95rem', lineHeight: '1.7' }}
-                         dangerouslySetInnerHTML={{ __html: selectedLetter.letter_description }} />
-                  </div>
-                </div>
-              ) : (
-                selectedLetter.letter_url && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Paperclip className="h-4 w-4 text-gray-400" />
-                      <h3 className="text-lg font-semibold text-gray-700">Attached Document</h3>
-                    </div>
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-3 bg-blue-100 rounded-lg">
-                            <Paperclip className="h-6 w-6 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800">Letter Attachment</p>
-                            <p className="text-sm text-gray-500">Click to view the attached document</p>
-                          </div>
-                        </div>
-                        <Button 
-                          variant="default" 
-                          size="sm"
-                          onClick={() => handleViewFile(selectedLetter.letter_url!)}
-                          className="flex items-center gap-2"
-                        >
-                          <BookOpen className="h-4 w-4" />
-                          View Document
-                        </Button>
+            {viewMode && selectedLetter ? (
+              <div className="min-w-0 space-y-6">
+                {/* Header Section */}
+                <div className="border-b pb-4">
+                  <div className="flex min-w-0 flex-col gap-3 @sm:flex-row @sm:items-start @sm:justify-between">
+                    <div className="min-w-0 flex-1 overflow-hidden">
+                      <h2 className="break-words text-2xl font-bold text-gray-800">
+                        {selectedLetter.letter_title}
+                      </h2>
+                      <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 @sm:gap-4">
+                        <span className={`inline-flex w-fit shrink-0 items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium ${
+                          selectedLetter.type === 'inward'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {selectedLetter.type === 'inward' ? (
+                            <><Inbox className="mr-1 h-3 w-3" /> Inward Letter</>
+                          ) : (
+                            <><BookOpen className="mr-1 h-3 w-3" /> Outward Letter</>
+                          )}
+                        </span>
+                        <span className="text-sm text-gray-500">
+                          Letter #{selectedLetter.letter_number}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                )
-              )}
-              
-              {/* Footer Actions */}
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                {selectedLetter.type === 'outward' && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDownloadPdf(selectedLetter.id)}
-                    disabled={isDownloading}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </Button>
-                )}
-              </div>
-            </div>
-          ) : (
-            <>
-                <Tabs value={letterType} onValueChange={(value) => {
-                  setLetterType(value as 'inward' | 'outward');
-                  // Clear file when switching to outward
-                  if (value === 'outward') {
-                    setSelectedFile(null);
-                    setDeleteFile(false);
-                  }
-                }} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="outward" className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4" />
-                      Outward Letter
-                    </TabsTrigger>
-                    <TabsTrigger value="inward" className="flex items-center gap-2">
-                      <Inbox className="h-4 w-4" />
-                      Inward Letter
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <div className="space-y-4 mt-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Title</Label>
-                      <Input
-                        id="title"
-                        placeholder="Enter letter title..."
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                      />
+                    <div className="shrink-0 @sm:text-right">
+                      <p className="text-sm text-gray-500">Created on</p>
+                      <p className="text-sm font-medium">
+                        {new Date(selectedLetter.created_at).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(selectedLetter.created_at).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
                     </div>
-                    
-                    <TabsContent value="outward" className="space-y-4">
-                      <div className="grid gap-2">
-                        <div className="flex justify-between items-center">
-                          <Label htmlFor="description">Description</Label>
-                          <span className={`text-xs ${(description || '').length > 1350 ? (description || '').length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
-                            {(description || "").length} out of 1500 characters
-                          </span>
+                  </div>
+                </div>
+
+                {/* Content Section */}
+                {selectedLetter.type === 'outward' ? (
+                  <div className="min-w-0 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Send className="h-4 w-4 shrink-0 text-gray-400" />
+                      <h3 className="text-lg font-semibold text-gray-700">Letter Content</h3>
+                    </div>
+                    <div className="min-w-0 overflow-hidden rounded-lg border bg-white p-4 shadow-sm @sm:p-6">
+                      <div className="break-words text-gray-700 leading-relaxed"
+                           style={{ fontSize: '0.95rem', lineHeight: '1.7' }}
+                           dangerouslySetInnerHTML={{ __html: selectedLetter.letter_description }} />
+                    </div>
+                  </div>
+                ) : (
+                  selectedLetter.letter_url && (
+                    <div className="min-w-0 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Paperclip className="h-4 w-4 shrink-0 text-gray-400" />
+                        <h3 className="text-lg font-semibold text-gray-700">Attached Document</h3>
+                      </div>
+                      <div className="min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 p-4 @sm:p-6">
+                        <div className="flex min-w-0 flex-col gap-3 @sm:flex-row @sm:items-center @sm:justify-between">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <div className="shrink-0 rounded-lg bg-blue-100 p-3">
+                              <Paperclip className="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div className="min-w-0 overflow-hidden">
+                              <p className="font-medium text-gray-800">Letter Attachment</p>
+                              <p className="truncate text-sm text-gray-500">Click to view the attached document</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleViewFile(selectedLetter.letter_url!)}
+                            className="flex w-full shrink-0 items-center justify-center gap-2 @sm:w-auto"
+                          >
+                            <BookOpen className="h-4 w-4" />
+                            View Document
+                          </Button>
                         </div>
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {/* Footer Actions */}
+                <div className="flex min-w-0 flex-wrap justify-end gap-3 border-t pt-4">
+                  {selectedLetter.type === 'outward' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadPdf(selectedLetter.id)}
+                      disabled={isDownloading}
+                      className="max-w-full"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download PDF
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <Tabs value={letterType} onValueChange={(value) => {
+                setLetterType(value as 'inward' | 'outward');
+                if (value === 'outward') {
+                  setSelectedFile(null);
+                  setDeleteFile(false);
+                }
+              }} className="min-w-0 w-full">
+                <TabsList className="grid h-auto w-full grid-cols-2">
+                  <TabsTrigger value="outward" className="min-w-0 gap-1 px-2 text-xs @sm:gap-2 @sm:text-sm">
+                    <BookOpen className="h-4 w-4 shrink-0" />
+                    <span className="truncate">Outward Letter</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="inward" className="min-w-0 gap-1 px-2 text-xs @sm:gap-2 @sm:text-sm">
+                    <Inbox className="h-4 w-4 shrink-0" />
+                    <span className="truncate">Inward Letter</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="mt-4 min-w-0 space-y-4">
+                  <div className="min-w-0 space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      placeholder="Enter letter title..."
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="min-w-0"
+                    />
+                  </div>
+
+                  <TabsContent value="outward" className="min-w-0 space-y-4">
+                    <div className="grid min-w-0 gap-2">
+                      <div className="flex min-w-0 flex-col gap-1 @sm:flex-row @sm:items-center @sm:justify-between">
+                        <Label htmlFor="description">Description</Label>
+                        <span className={`shrink-0 text-xs ${(description || '').length > 1350 ? (description || '').length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
+                          {(description || "").length} out of 1500 characters
+                        </span>
+                      </div>
+                      <div className="min-w-0 w-full max-w-full overflow-hidden [&_.p-editor-container]:max-w-full [&_.p-editor-toolbar]:flex-wrap [&_.p-editor-content]:max-w-full [&_.ql-toolbar]:flex-wrap [&_.ql-container]:max-w-full">
                         <Editor
-                          className="w-full"
+                          className="w-full max-w-full"
                           value={description || ''}
                           onTextChange={(e) => setDescription(e.htmlValue || '')}
                           style={{ minHeight: "355px", maxHeight: "355px", width: "100%", maxWidth: "100%", overflowWrap: "anywhere", wordBreak: "break-word", overflowY: "auto" }}
                         />
                       </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="inward" className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="file">Attach File (Required)</Label>
-                        <Input
-                          id="file"
-                          name="file"
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                          onChange={handleFileChange}
-                          className="file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                        />
-                        {selectedFile && (
-                          <p className="text-xs text-gray-500">Selected: {selectedFile.name}</p>
-                        )}
-                      </div>
-                      
-                      {editingId && (
-                        <div className="space-y-2">
-                          <Label>Current File:</Label>
-                          <div className="flex items-center gap-2">
-                            {letters.find(l => l.id === editingId)?.letter_url ? (
-                              <>
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  size="sm"
-                                  onClick={() => handleViewFile(letters.find(l => l.id === editingId)!.letter_url!)}
-                                >
-                                  View Current File
-                                </Button>
-                                <Label className="flex items-center gap-1">
-                                  <input
-                                    type="checkbox"
-                                    checked={deleteFile}
-                                    onChange={(e) => setDeleteFile(e.target.checked)}
-                                  />
-                                  <span>Delete current file</span>
-                                </Label>
-                              </>
-                            ) : (
-                              <span className="text-sm text-gray-500">No file attached</span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </TabsContent>
-                    
-                    <div className="flex justify-end pt-4">
-                      <Button onClick={handleSend} disabled={loading}>
-                        {loading ? 'Sending...' : (
-                          <>
-                            <Send className="mr-2 h-4 w-4" />
-                            {editingId ? 'Update Letter' : 'Save Letter'}
-                          </>
-                        )}
-                      </Button>
                     </div>
+                  </TabsContent>
+
+                  <TabsContent value="inward" className="min-w-0 space-y-4">
+                    <div className="min-w-0 space-y-2">
+                      <Label htmlFor="file">Attach File (Required)</Label>
+                      <Input
+                        id="file"
+                        name="file"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="min-w-0 max-w-full file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                      />
+                      {selectedFile && (
+                        <p className="truncate text-xs text-gray-500">Selected: {selectedFile.name}</p>
+                      )}
+                    </div>
+
+                    {editingId && (
+                      <div className="min-w-0 space-y-2">
+                        <Label>Current File:</Label>
+                        <div className="flex min-w-0 flex-wrap items-center gap-2">
+                          {letters.find(l => l.id === editingId)?.letter_url ? (
+                            <>
+                              <Button
+                                type="button"
+                                variant="link"
+                                size="sm"
+                                onClick={() => handleViewFile(letters.find(l => l.id === editingId)!.letter_url!)}
+                              >
+                                View Current File
+                              </Button>
+                              <Label className="flex items-center gap-1">
+                                <input
+                                  type="checkbox"
+                                  checked={deleteFile}
+                                  onChange={(e) => setDeleteFile(e.target.checked)}
+                                />
+                                <span>Delete current file</span>
+                              </Label>
+                            </>
+                          ) : (
+                            <span className="text-sm text-gray-500">No file attached</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <div className="flex min-w-0 justify-end pt-4">
+                    <Button
+                      onClick={handleSend}
+                      disabled={loading}
+                      className="w-full max-w-full shrink-0 @sm:w-auto"
+                    >
+                      {loading ? 'Sending...' : (
+                        <>
+                          <Send className="mr-2 h-4 w-4 shrink-0" />
+                          {editingId ? 'Update Letter' : 'Save Letter'}
+                        </>
+                      )}
+                    </Button>
                   </div>
-                </Tabs>
-            </>
-          )}
-        </div>
-        {/* Right Sidebar */}
-        <div className="p-3 w-full lg:w-1/4 bg-white rounded-lg shadow-lg mb-8 lg:mb-0 flex-shrink-0">
-          <div className="space-y-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Recent Letters</h3>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6 relative group"
+                </div>
+              </Tabs>
+            )}
+          </div>
+
+          {/* Right Sidebar — stacks below form when pane < 1100px */}
+          <div className="mb-8 min-w-0 w-full overflow-hidden rounded-lg bg-white p-3 shadow-lg @[1100px]/letters:mb-0 @[1100px]/letters:w-1/4">
+            <div className="space-y-4">
+              <div className="rounded-lg bg-gray-50 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="min-w-0 truncate font-medium">Recent Letters</h3>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative h-6 w-6 shrink-0 group"
                     onClick={handleCreateNew}
                     title="Create new letter"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="absolute bg-black text-white text-xs rounded px-2 py-1 left-0 transform -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="absolute left-0 -translate-x-full rounded bg-black px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       Create new letter
                     </span>
                   </Button>
-              </div>
-              
-              {/* Search Box */}
-              <div className="mt-3 mb-3">
-                <Input
-                  type="text"
-                  placeholder="Search letters..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              {/* Filter Buttons */}
-              <div className="flex gap-2 mb-3">
-                <button
-                  onClick={() => setFilterType("all")}
-                  className={`flex-1 px-2 py-1 text-xs rounded ${filterType === "all" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
-                >
-                  All
-                </button>
-                <button
-                  onClick={() => setFilterType("outward")}
-                  className={`flex-1 px-2 py-1 text-xs rounded flex items-center justify-center gap-1 ${filterType === "outward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
-                >
-                  <BookOpen className="h-3 w-3" />
-                  Outward
-                </button>
-                <button
-                  onClick={() => setFilterType("inward")}
-                  className={`flex-1 px-2 py-1 text-xs rounded flex items-center justify-center gap-1 ${filterType === "inward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
-                >
-                  <Inbox className="h-3 w-3" />
-                  Inward
-                </button>
-              </div>
-              <div className="mt-3 space-y-2">
-                {loadingLetters ? (
-                  <p className="text-center text-sm text-gray-500">Loading letters...</p>
-                ) : letters.length === 0 ? (
-                  <p className="text-center text-sm text-gray-500">No letters found</p>
-                ) : (
-                  letters.map(letter => (
-                    <div 
-                      key={letter.id} 
-                      className="p-2 hover:bg-gray-100 rounded cursor-pointer group"
-                      onClick={() => {
-                        setViewMode(true);
-                        setSelectedLetter(letter);
-                      }}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
+                </div>
+
+                <div className="mb-3 mt-3 min-w-0">
+                  <Input
+                    type="text"
+                    placeholder="Search letters..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full min-w-0"
+                  />
+                </div>
+
+                <div className="mb-3 flex min-w-0 flex-wrap gap-2">
+                  <button
+                    onClick={() => setFilterType("all")}
+                    className={`min-w-0 flex-1 rounded px-2 py-1 text-xs ${filterType === "all" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setFilterType("outward")}
+                    className={`flex min-w-0 flex-1 items-center justify-center gap-1 rounded px-2 py-1 text-xs ${filterType === "outward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                  >
+                    <BookOpen className="h-3 w-3 shrink-0" />
+                    Outward
+                  </button>
+                  <button
+                    onClick={() => setFilterType("inward")}
+                    className={`flex min-w-0 flex-1 items-center justify-center gap-1 rounded px-2 py-1 text-xs ${filterType === "inward" ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+                  >
+                    <Inbox className="h-3 w-3 shrink-0" />
+                    Inward
+                  </button>
+                </div>
+                <div className="mt-3 min-w-0 space-y-2">
+                  {loadingLetters ? (
+                    <p className="text-center text-sm text-gray-500">Loading letters...</p>
+                  ) : letters.length === 0 ? (
+                    <p className="text-center text-sm text-gray-500">No letters found</p>
+                  ) : (
+                    letters.map(letter => (
+                      <div
+                        key={letter.id}
+                        className="group min-w-0 cursor-pointer rounded p-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setViewMode(true);
+                          setSelectedLetter(letter);
+                        }}
+                      >
+                        <div className="flex min-w-0 items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1 overflow-hidden">
                             <div className="flex flex-col items-start gap-0.5">
                               <span className="text-xs text-gray-500">{letter.type === 'inward' ? 'Inward' : 'Outward'}</span>
-                              <div className="flex items-center gap-1">
-                                <p className="font-medium text-[15px]">{((letter.letter_title || '').length > 30 ? `${(letter.letter_title || '').slice(0, 30)}...` : (letter.letter_title || ''))}</p>
-                                
-                              </div>
+                              <p className="truncate font-medium text-[15px]">
+                                {letter.letter_title || ''}
+                              </p>
                             </div>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(letter.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p className="mt-1 text-xs text-gray-400">
+                              {new Date(letter.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="mt-1.5 flex shrink-0 items-center space-x-3 opacity-0 transition-opacity group-hover:opacity-100">
                             {letter.letter_url ? (
                               <button
                                 className="text-blue-500 hover:text-blue-700"
                                 onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleViewFile(letter.letter_url!);
+                                  e.stopPropagation();
+                                  handleViewFile(letter.letter_url!);
                                 }}
                                 title="View Attachment"
                               >
@@ -647,8 +649,8 @@ export default function LetterList() {
                               <button
                                 className="text-blue-500 hover:text-blue-700"
                                 onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDownloadPdf(letter.id);
+                                  e.stopPropagation();
+                                  handleDownloadPdf(letter.id);
                                 }}
                                 title="Download PDF"
                                 disabled={isDownloading}
@@ -656,8 +658,8 @@ export default function LetterList() {
                                 <Download className="h-5 w-5" />
                               </button>
                             )}
-                            <button 
-                              className="text-red-500 hover:text-red-700" 
+                            <button
+                              className="text-red-500 hover:text-red-700"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDelete(letter.id);
@@ -666,42 +668,40 @@ export default function LetterList() {
                             >
                               <Trash2 className="h-5 w-5" />
                             </button>
+                          </div>
                         </div>
                       </div>
+                    ))
+                  )}
+
+                  {!loadingLetters && letters.length > 0 && totalPages > 1 && (
+                    <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={currentPage === 1}
+                        onClick={() => {
+                          setCurrentPage(prev => Math.max(prev - 1, 1));
+                        }}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-xs text-gray-500">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={currentPage === totalPages}
+                        onClick={() => {
+                          setCurrentPage(prev => prev + 1);
+                        }}
+                      >
+                        Next
+                      </Button>
                     </div>
-                  ))
-                )}
-                
-                {/* Pagination controls */}
-                {!loadingLetters && letters.length > 0 && totalPages > 1 && (
-                  <div className="flex justify-between items-center mt-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === 1}
-                      onClick={() => {
-                        setCurrentPage(prev => Math.max(prev - 1, 1));
-                        // fetchLetters() will be called by the useEffect
-                      }}
-                    >
-                      Previous
-                    </Button>
-                    <span className="text-xs text-gray-500">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === totalPages}
-                      onClick={() => {
-                        setCurrentPage(prev => prev + 1);
-                        // fetchLetters() will be called by the useEffect
-                      }}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>

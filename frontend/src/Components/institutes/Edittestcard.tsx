@@ -136,7 +136,7 @@ function ProfileForm({ formData }) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 @[768px]/institutes:grid-cols-2">
                 <FormField
                   className="flex-1"
                   control={form.control}
@@ -174,7 +174,7 @@ function ProfileForm({ formData }) {
                   control={form.control}
                   name="affiliated_university"
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
+                    <FormItem className="@[768px]/institutes:col-span-2">
                       <FormLabel>
                         Affiliated University{" "}
                         <span className="text-red-500">*</span>
@@ -219,7 +219,7 @@ function ProfileForm({ formData }) {
                   )}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 @[768px]/institutes:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="email"
@@ -256,15 +256,15 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/institutes:flex-row @[480px]/institutes:justify-end">
           <Button
             onClick={() => navigate({ to: "/institutes" })}
-            className="self-center"
             type="button"
+            className="w-full @[480px]/institutes:w-auto"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button type="submit" className="w-full @[480px]/institutes:w-auto">
             Update Institutes
           </Button>
         </div>
@@ -297,28 +297,26 @@ export default function SettingsProfilePage() {
     };
   }, [id]);
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="@container/institutes min-w-0 w-full px-4 py-4 pb-8">
+      <Card className="min-w-0 w-full overflow-hidden bg-light pt-4 shadow-md">
+        <Button
+          onClick={() => window.history.back()}
+          className="mb-4 ml-4 flex gap-2"
+        >
+          <MoveLeft className="h-5 w-5 text-white" />
+          Back
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Institute Master</CardTitle>
-        <CardDescription>Edit/Update the Institute</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <ProfileForm formData={formData} />
-        </div>
-      </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
-    </Card>
+        <CardHeader>
+          <CardTitle>Institute Master</CardTitle>
+          <CardDescription>Edit/Update the Institute</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <ProfileForm formData={formData} />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

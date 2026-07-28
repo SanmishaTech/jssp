@@ -1,6 +1,9 @@
 .calendar-wrapper {
   font-family: 'Roboto', sans-serif;
-  width: 70vw;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   height: 85vh;
   margin: 20px auto;
   padding: 0;
@@ -8,20 +11,25 @@
   background-color: #f6f7f8;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 }
 
 .calendar-container {
   flex: 1;
+  min-width: 0;
   height: 100%;
   background: white;
   border-radius: 8px 0 0 8px;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Override react-calendar default styles */
 .react-calendar {
   width: 100% !important;
+  max-width: 100% !important;
   height: 800px !important;
   border: none !important;
   background: white !important;
@@ -41,12 +49,15 @@
   flex: 1;
   display: flex !important;
   flex-direction: column !important;
+  min-width: 0;
 }
 
 .react-calendar__month-view > div {
   flex: 1;
   display: flex !important;
   flex-direction: column !important;
+  min-width: 0;
+  width: 100% !important;
 }
 
 .react-calendar__month-view__days {
@@ -60,6 +71,7 @@
   padding: 0 16px;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .react-calendar__navigation button {
@@ -97,6 +109,7 @@
   color: #3c4043;
   position: relative !important;
   min-height: 90px !important;
+  min-width: 0 !important;
 }
 
 .react-calendar__tile {
@@ -104,6 +117,8 @@
   padding: 8px !important;
   border: 0.5px solid #e8e8e8 !important;
   background: none !important;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .react-calendar__tile:enabled:hover,
@@ -148,6 +163,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .event-title {
@@ -161,6 +178,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 100%;
 }
 
 .meeting-title {
@@ -174,6 +192,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 100%;
 }
 
 .weekly-holiday-title {
@@ -188,6 +207,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 100%;
 }
 
 .holiday-title {
@@ -202,6 +222,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 100%;
 }
 
 .has-holiday {
@@ -270,12 +291,15 @@
 
 .selected-date-events {
   width: 250px;
+  flex-shrink: 0;
   height: 100%;
   padding: 20px;
   background: white;
   border-left: 1px solid #e0e0e0;
   overflow-y: auto;
   border-radius: 0 8px 8px 0;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .selected-date-events h3 {
@@ -377,18 +401,19 @@
   max-width: 100%;
 }
 
-@media (max-width: 768px) {
+/* Stack when content pane narrow (sidebar open) — events below calendar, one page scroll */
+@container calender (max-width: 900px) {
   .calendar-wrapper {
-    width: 90vw;
-    height: 90vh;
+    height: auto;
     margin: 10px auto;
     flex-direction: column;
   }
 
   .calendar-container {
-    height: calc(100% - 250px);
-    min-height: 400px;
+    height: auto;
+    flex: none;
     border-radius: 8px 8px 0 0;
+    overflow-y: visible;
   }
 
   .react-calendar {
@@ -397,13 +422,13 @@
 
   .selected-date-events {
     width: 100%;
-    height: 250px;
+    height: auto;
+    max-height: none;
+    flex-shrink: 0;
     border-left: none;
     border-top: 1px solid #e0e0e0;
     border-radius: 0 0 8px 8px;
-  }
-
-  .react-calendar__month-view__days__day {
-    min-height: 70px !important;
+    overflow-y: visible;
+    scroll-margin-top: 0.75rem;
   }
 }

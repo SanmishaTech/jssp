@@ -176,96 +176,99 @@ const NoticeChat: React.FC = () => {
   })();
 
   return (
-    <div className="h-screen w-full flex flex-col md:flex-row bg-white">
-      {/* Sidebar for admin role selection */}
-      {role === 'admin' && (
-        <aside className="w-full md:w-72 border-r p-4 space-y-4 bg-gray-50">
-          <h2 className="font-semibold text-lg">Send To</h2>
-          <div>
-            <label className="block text-sm mb-1">Role</label>
-            <Combobox
-              options={rolesList.map((r) => ({ value: r, label: r }))}
-              value={selectedRole}
-              onValueChange={(v) => {
-                setSelectedRole(v);
-                setSelectedStaffId('');
-              }}
-              placeholder="Select role"
-            />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Staff</label>
-            <Combobox
-              options={staffOptions
-                .filter((opt) => (selectedRole ? opt.role === selectedRole : true))
-                .map(({ value, label }) => ({ value, label }))}
-              value={selectedStaffId}
-              onValueChange={setSelectedStaffId}
-              placeholder="Select staff (optional)"
-              disabled={!selectedRole && staffOptions.length === 0}
-            />
-          </div>
-        </aside>
-      )}
-
-      {/* Sidebar for superadmin institute selection */}
-      {role === 'superadmin' && (
-        <aside className="w-full md:w-72 border-r p-4 space-y-4 bg-gray-50">
-          <h2 className="font-semibold text-lg">Select Institute</h2>
-          <Combobox
-            options={instituteList.map((inst: any) => ({ value: String(inst.id), label: inst.institute_name ?? inst.name ?? `Institute ${inst.id}` }))}
-            value={selectedInstituteId}
-            onValueChange={setSelectedInstituteId}
-            placeholder="Choose institute"
-          />
-        </aside>
-      )}
-
-      {/* Main chat area */}
-      <section className="flex-1 flex flex-col">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-100">
-          {noticesLoading && <p>Loading...</p>}
-          {!noticesLoading && noticeItems.length === 0 && <p className="text-center text-gray-500">No messages yet</p>}
-          {noticeItems.map((notice) => (
-            <div
-              key={notice.id}
-              className={`mx-auto w-full max-w-xl bg-white border rounded p-3 shadow cursor-pointer hover:bg-gray-50`}
-              onClick={() => {
-                if (role === 'admin' || role === 'superadmin') {
-                  setSelectedNotice(notice);
-                }
-              }}
-            >
-              {/* Sender role */}
-              <p className="text-xs font-semibold text-blue-600 mb-1">
-                {notice.sender_role ? `From: ${notice.sender_role}` : 'From: Unknown'}
-              </p>
-              <p className="font-medium break-words whitespace-pre-wrap">{notice.message}</p>
-              {/* Timestamp */}
-              <p className="text-xs text-gray-500 text-right mt-1">{new Date(notice.created_at).toLocaleString()}</p>
+    // Container on outer; flex on inner — @queries only match descendants, not the @container node itself
+    <div className="@container/notice min-w-0 h-[calc(100svh-4.5rem)] w-full">
+      <div className="flex h-full min-w-0 w-full flex-col bg-white @[900px]/notice:flex-row">
+        {/* Sidebar for admin role selection — stacks above chat when pane < 900px */}
+        {role === 'admin' && (
+          <aside className="w-full shrink-0 border-b p-4 space-y-4 bg-gray-50 @[900px]/notice:w-72 @[900px]/notice:self-stretch @[900px]/notice:border-b-0 @[900px]/notice:border-r">
+            <h2 className="font-semibold text-lg">Send To</h2>
+            <div>
+              <label className="block text-sm mb-1">Role</label>
+              <Combobox
+                options={rolesList.map((r) => ({ value: r, label: r }))}
+                value={selectedRole}
+                onValueChange={(v) => {
+                  setSelectedRole(v);
+                  setSelectedStaffId('');
+                }}
+                placeholder="Select role"
+              />
             </div>
-          ))}
-        </div>
-        {/* Input */}
-        {(role === 'admin' || role === 'superadmin') ? (
-          <div className="p-4 border-t bg-white flex space-x-2">
-            <Input
-              placeholder="Type your message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="flex-1"
-            />
-            <Button onClick={handleSend} disabled={isPending}>
-              Send
-            </Button>
-          </div>
-        ) : (
-          <div className="p-4 border-t bg-white text-sm text-gray-500 text-center">
-            You can view notices here. Only admins can send messages.
-          </div>
+            <div>
+              <label className="block text-sm mb-1">Staff</label>
+              <Combobox
+                options={staffOptions
+                  .filter((opt) => (selectedRole ? opt.role === selectedRole : true))
+                  .map(({ value, label }) => ({ value, label }))}
+                value={selectedStaffId}
+                onValueChange={setSelectedStaffId}
+                placeholder="Select staff (optional)"
+                disabled={!selectedRole && staffOptions.length === 0}
+              />
+            </div>
+          </aside>
         )}
-      </section>
+
+        {/* Sidebar for superadmin institute selection — stacks above chat when pane < 900px */}
+        {role === 'superadmin' && (
+          <aside className="w-full shrink-0 border-b p-4 space-y-4 bg-gray-50 @[900px]/notice:w-72 @[900px]/notice:self-stretch @[900px]/notice:border-b-0 @[900px]/notice:border-r">
+            <h2 className="font-semibold text-lg">Select Institute</h2>
+            <Combobox
+              options={instituteList.map((inst: any) => ({ value: String(inst.id), label: inst.institute_name ?? inst.name ?? `Institute ${inst.id}` }))}
+              value={selectedInstituteId}
+              onValueChange={setSelectedInstituteId}
+              placeholder="Choose institute"
+            />
+          </aside>
+        )}
+
+        {/* Main chat area */}
+        <section className="min-w-0 flex-1 flex flex-col">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-100">
+            {noticesLoading && <p>Loading...</p>}
+            {!noticesLoading && noticeItems.length === 0 && <p className="text-center text-gray-500">No messages yet</p>}
+            {noticeItems.map((notice) => (
+              <div
+                key={notice.id}
+                className="mx-auto w-full max-w-xl min-w-0 bg-white border rounded p-3 shadow cursor-pointer hover:bg-gray-50"
+                onClick={() => {
+                  if (role === 'admin' || role === 'superadmin') {
+                    setSelectedNotice(notice);
+                  }
+                }}
+              >
+                {/* Sender role */}
+                <p className="text-xs font-semibold text-blue-600 mb-1">
+                  {notice.sender_role ? `From: ${notice.sender_role}` : 'From: Unknown'}
+                </p>
+                <p className="font-medium break-words whitespace-pre-wrap">{notice.message}</p>
+                {/* Timestamp */}
+                <p className="text-xs text-gray-500 text-right mt-1">{new Date(notice.created_at).toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
+          {/* Input */}
+          {(role === 'admin' || role === 'superadmin') ? (
+            <div className="p-4 border-t bg-white flex min-w-0 gap-2">
+              <Input
+                placeholder="Type your message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="min-w-0 flex-1"
+              />
+              <Button onClick={handleSend} disabled={isPending} className="shrink-0">
+                Send
+              </Button>
+            </div>
+          ) : (
+            <div className="p-4 border-t bg-white text-sm text-gray-500 text-center">
+              You can view notices here. Only admins can send messages.
+            </div>
+          )}
+        </section>
+      </div>
       {/* Dialog for notice details */}
       {selectedNotice && (
         <AlertDialog open={true} onOpenChange={(open) => !open && setSelectedNotice(null)}>

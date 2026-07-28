@@ -216,7 +216,7 @@ export default function Dashboardholiday() {
   });
 
   return (
-    <div className="p-4">
+    <div className="min-w-0 w-full">
       <Dashboard
         breadcrumbs={config?.breadcrumbs}
         searchPlaceholder={config?.searchPlaceholder}
