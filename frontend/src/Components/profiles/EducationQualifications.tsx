@@ -41,7 +41,7 @@ interface Education {
   certificate_url?: string;
 }
 
-const EducationQualifications = () => {
+const EducationQualifications = ({ staffId, ...props }: any) => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -67,6 +67,7 @@ const EducationQualifications = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: staffId ? { staff_id: staffId } : {},
       });
 
       if (response.data.status && response.data.data?.StaffEducation) {
@@ -139,6 +140,9 @@ const EducationQualifications = () => {
       }
       if (deleteCertificate) {
         fd.append('delete_certificate', '1');
+      }
+      if (staffId) {
+        fd.append('staff_id', staffId.toString());
       }
 
       if (editingId) {

@@ -73,7 +73,7 @@ class NoticeController extends Controller
     {
         $user = Auth::user();
         $role = $user->getRoleNames()->first();
-        if (!in_array($role, ['admin', 'superadmin'])) {
+        if (!in_array($role, ['admin', 'superadmin', 'viceprincipal'])) {
             return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
         }
 
@@ -87,7 +87,7 @@ class NoticeController extends Controller
         $staff = $user->staff;
 
         $notice = Notice::create([
-            'institute_id' => $role === 'admin' ? $staff->institute_id : null,
+            'institute_id' => in_array($role, ['admin', 'viceprincipal']) ? $staff->institute_id : null,
             'sender_staff_id' => $staff->id ?? null,
             'sender_role' => $role,
             'recipient_staff_id' => $request->recipient_staff_id,
@@ -107,7 +107,7 @@ class NoticeController extends Controller
                 '/notices',
                 Auth::user()
             );
-        } elseif ($role === 'admin') {
+        } elseif (in_array($role, ['admin', 'viceprincipal'])) {
             // Admin: if recipient_role provided, notify users of that role in their institute
             if ($request->recipient_role) {
                 Notification::sendToInstituteRoles(
@@ -148,7 +148,7 @@ class NoticeController extends Controller
     {
         $user = Auth::user();
         $role = $user->getRoleNames()->first();
-        if (!in_array($role, ['admin', 'superadmin'])) {
+        if (!in_array($role, ['admin', 'superadmin', 'viceprincipal'])) {
             return response()->json(['status' => false, 'message' => 'Forbidden'], 403);
         }
 

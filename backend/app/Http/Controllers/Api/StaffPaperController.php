@@ -13,8 +13,8 @@ class StaffPaperController extends BaseController
 {
     public function index(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $staffId = Auth::user()->staff->id;
+        // Get the staff ID from request or fallback to logged-in user's staff details.
+        $staffId = $request->input('staff_id') ?? Auth::user()->staff->id;
     
         // Start the query by filtering staff based on the institute_id and paginating the results.
         $paper = StaffPaper::where('staff_id', $staffId)->paginate(9);
@@ -52,7 +52,7 @@ class StaffPaperController extends BaseController
 
         // Create a new paper record
         $paper = new StaffPaper();
-        $paper->staff_id        = Auth::user()->staff->id;  
+        $paper->staff_id        = $request->input('staff_id') ?? Auth::user()->staff->id;  
         $paper->journal_title           = $request->input('journal_title');
         $paper->research_topic    = $request->input('research_topic');
         $paper->publication_identifier= $request->input('publication_identifier');
@@ -69,7 +69,7 @@ class StaffPaperController extends BaseController
             $uniqueName  = time().'_'.$original;
 
             // Ensure dir exists
-            \Storage::disk('public')->makeDirectory('staff_papers', 0755, true, true);
+            \Storage::disk('public')->makeDirectory('staff_papers');
 
             $file->storeAs('staff_papers', $uniqueName, 'public');
 
@@ -117,7 +117,7 @@ class StaffPaperController extends BaseController
             'delete_certificate'=> 'nullable|boolean'
         ]);
 
-        $paper->staff_id        = Auth::user()->staff->id;
+        $paper->staff_id        = $request->input('staff_id') ?? Auth::user()->staff->id;
         $paper->journal_title   = $request->input('journal_title');
         $paper->research_topic    = $request->input('research_topic');
         $paper->publication_identifier= $request->input('publication_identifier');
@@ -146,7 +146,7 @@ class StaffPaperController extends BaseController
             $original   = $file->getClientOriginalName();
             $uniqueName = time().'_'.$original;
 
-            \Storage::disk('public')->makeDirectory('staff_papers', 0755, true, true);
+            \Storage::disk('public')->makeDirectory('staff_papers');
             $file->storeAs('staff_papers', $uniqueName, 'public');
 
             $paper->certificate_path = $uniqueName;
@@ -168,10 +168,10 @@ class StaffPaperController extends BaseController
          return $this->sendResponse([], "StaffPaper deleted successfully");
     }
 
-    public function allStaffPapers(): JsonResponse
+    public function allStaffPapers(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $staffId = Auth::user()->staff->id;
+        // Get the staff ID from request or fallback to logged-in user's staff details.
+        $staffId = $request->input('staff_id') ?? Auth::user()->staff->id;
     
         // Filter staff based on the institute_id.
         $paper = StaffPaper::where('staff_id', $staffId)->get();

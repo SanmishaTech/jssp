@@ -14,8 +14,8 @@ class StaffEducationController extends BaseController
    
     public function index(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $staffId = Auth::user()->staff->id;
+        // Get the staff ID from request or fallback to logged-in user's staff details.
+        $staffId = $request->input('staff_id') ?? Auth::user()->staff->id;
     
         // Start the query by filtering staff based on the institute_id and paginating the results.
         $education = StaffEducation::where('staff_id', $staffId)->paginate(9);
@@ -50,7 +50,7 @@ class StaffEducationController extends BaseController
 
         // Create a new education record
         $education = new StaffEducation();
-        $education->staff_id        = Auth::user()->staff->id;  
+        $education->staff_id        = $request->input('staff_id') ?? Auth::user()->staff->id;  
         $education->qualification   = $request->input('qualification');
         $education->college_name    = $request->input('college_name');
         $education->board_university= $request->input('board_university');
@@ -64,7 +64,7 @@ class StaffEducationController extends BaseController
             $uniqueName  = time().'_'.$original;
 
             // Ensure dir exists
-            \Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
+            \Storage::disk('public')->makeDirectory('staff_education_certificates');
 
             $file->storeAs('staff_education_certificates', $uniqueName, 'public');
 
@@ -109,7 +109,7 @@ class StaffEducationController extends BaseController
             'delete_certificate'=> 'nullable|boolean'
         ]);
 
-        $education->staff_id        = Auth::user()->staff->id;
+        $education->staff_id        = $request->input('staff_id') ?? Auth::user()->staff->id;
         $education->qualification   = $request->input('qualification');
         $education->college_name    = $request->input('college_name');
         $education->board_university= $request->input('board_university');
@@ -135,7 +135,7 @@ class StaffEducationController extends BaseController
             $original   = $file->getClientOriginalName();
             $uniqueName = time().'_'.$original;
 
-            \Storage::disk('public')->makeDirectory('staff_education_certificates', 0755, true, true);
+            \Storage::disk('public')->makeDirectory('staff_education_certificates');
             $file->storeAs('staff_education_certificates', $uniqueName, 'public');
 
             $education->certificate_path = $uniqueName;
@@ -157,10 +157,10 @@ class StaffEducationController extends BaseController
          return $this->sendResponse([], "StaffEducation deleted successfully");
     }
 
-    public function allStaffEducations(): JsonResponse
+    public function allStaffEducations(Request $request): JsonResponse
     {
-        // Get the institute ID from the logged-in user's staff details.
-        $staffId = Auth::user()->staff->id;
+        // Get the staff ID from request or fallback to logged-in user's staff details.
+        $staffId = $request->input('staff_id') ?? Auth::user()->staff->id;
     
         // Filter staff based on the institute_id.
         $education = StaffEducation::where('staff_id', $staffId)->get();

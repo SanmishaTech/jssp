@@ -307,29 +307,15 @@ export default function ResponsiveLabDashboard() {
     return text.length > 20 ? text.slice(0, 20) + "..." : text;
   };
 
-  const formatBadgeLabel = (value?: string | null, fallback = "Unknown") => {
-    if (!value) return fallback;
-    return value
-      .replace(/_/g, " ")
-      .split(/\s+/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  };
-
   return (
-    <div className="flex h-screen min-w-0">
-      {/* Sidebar for larger screens */}
-      {/* <Sidebar className="hidden md:block w-64 shadow-md" /> */}
-
-      {/* Main Content — @container/dashboard so grids react to pane width (sidebar open/closed), not viewport */}
-      <main className="@container/dashboard min-w-0 flex-1 overflow-y-auto p-4 @md/dashboard:p-8 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        <div className="mb-6 flex min-w-0 items-center justify-between gap-2">
-          <h1 className="truncate text-2xl font-bold @md/dashboard:text-3xl">
+    <div className="flex-1 p-4 md:p-8">
+      <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold">
             Welcome, {currentUser.name} 
           </h1>
         </div>
 
-        <div className="grid gap-4 @md/dashboard:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {/* Cards for Teaching Staff and Non-Teaching Staff counts commented out.
               This data is not currently provided by the new /api/dashboard endpoint.
               To re-enable, update DashboardController.php to include these counts 
@@ -386,13 +372,13 @@ export default function ResponsiveLabDashboard() {
 
         </div>
 
-        <div className="mb-3 mt-4 grid gap-4 @md/dashboard:grid-cols-2 @md/dashboard:gap-8 @lg/dashboard:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 mt-4 mb-3">
           {userRole === 'teachingstaff' && supervisionDuties.length > 0 && (
-            <Card className="col-span-full min-w-0 overflow-hidden @lg/dashboard:col-span-4">
+            <Card className="col-span-4">
               <CardHeader>
                 <CardTitle>My Supervision Duties</CardTitle>
               </CardHeader>
-              <CardContent className="overflow-x-auto">
+              <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -425,7 +411,7 @@ export default function ResponsiveLabDashboard() {
             </Card>
           )}
           { (userRole === 'admin' || userRole === 'viceprincipal') && (
-            <Card className="col-span-full min-w-0 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg @lg/dashboard:col-span-4">
+            <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle>Leave Approvals</CardTitle>
                 <Button 
@@ -483,35 +469,35 @@ export default function ResponsiveLabDashboard() {
               </CardContent>
             </Card>
           )}
-          <Card className={`col-span-full min-w-0 overflow-hidden bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg ${(userRole === 'admin' || userRole === 'viceprincipal') ? '@lg/dashboard:col-span-3' : '@lg/dashboard:col-span-4'}`}>
+          <Card className={`col-span-full ${(userRole === 'admin' || userRole === 'viceprincipal') ? 'lg:col-span-3' : 'lg:col-span-7'} bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg`}>
             <CardHeader>
-              <div className="flex min-w-0 items-center justify-between gap-2">
-                <CardTitle className="min-w-0 truncate">Meetings & Events</CardTitle>
-                <p className="shrink-0 text-sm text-muted-foreground">Total: {meetings.length + eventsData.length}</p>
+              <div className="flex justify-between items-center">
+                <CardTitle>Meetings & Events</CardTitle>
+                <p className="text-sm text-muted-foreground">Total: {meetings.length + eventsData.length}</p>
               </div>
               <CardDescription>
                   You have {meetings.length + eventsData.length} combined meetings and events.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="min-w-0">
+            <CardContent>
               <div className="space-y-4">
                 {combinedCalendarItems.slice(0, 5).map((item) => (
                   <div
                     key={`${item.type}-${item.id}`}
-                    className="flex min-w-0 items-start justify-between gap-2"
+                    className="flex items-center justify-between"
                   >
-                    <div className="min-w-0 flex-1 overflow-hidden">
-                      <p className="truncate text-sm font-medium">
+                    <div>
+                      <p className="text-sm font-medium">
                         {item.type === 'meeting' ? item.venue : item.title}
                         <span className="ml-2 text-xs text-muted-foreground">({item.type})</span>
                       </p>
-                      <p className="truncate text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         {getSynopsisPreview(
                           item.type === 'meeting' ? item.synopsis : item.description
                         )}
                       </p>
                     </div>
-                    <div className="shrink-0 text-right">
+                    <div className="text-right">
                       <p className="text-sm font-medium">
                         {new Date(item.date).toLocaleDateString()}
                       </p>
@@ -533,33 +519,33 @@ export default function ResponsiveLabDashboard() {
             </CardContent>
           </Card>
         </div>
-        {/* Tasks and Complaints — 2-col when dashboard pane ≥ md, not viewport */}
-        <div className="mb-4 grid min-w-0 gap-4 @md/dashboard:grid-cols-2">
+        {/* Tasks and Complaints Cards - New Row */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 mb-4"> 
           {/* Tasks Card */}
-          <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40">
+          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-2 bg-accent/40">
             <CardHeader>
-              <div className="flex min-w-0 items-center justify-between gap-2">
-                <CardTitle className="flex min-w-0 items-center truncate"><ClipboardList className="mr-2 h-5 w-5 shrink-0" />Tasks</CardTitle>
-                <p className="shrink-0 text-sm text-muted-foreground">Total: {tasksData.length}</p>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center"><ClipboardList className="h-5 w-5 mr-2" />Tasks</CardTitle>
+                <p className="text-sm text-muted-foreground">Total: {tasksData.length}</p>
               </div>
               <CardDescription>
                 Recent tasks assigned or created.
               </CardDescription>
             </CardHeader>
-            <CardContent className="min-w-0">
-              <div className="min-w-0 space-y-3">
+            <CardContent>
+              <div className="space-y-3">
                 {tasksData.length > 0 ? (
                   tasksData.slice(0, 3).map((task) => (
-                    <div key={task.id} className="mb-3 flex min-w-0 flex-col gap-1.5 border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0 @sm:flex-row @sm:items-start @sm:justify-between @sm:gap-2">
-                      <div className="min-w-0 flex-1 overflow-hidden">
-                        <p className="truncate text-sm font-medium leading-none" title={task.title}>{task.title}</p>
-                        {task.description && <p className="truncate text-xs text-muted-foreground" title={task.description}>{task.description}</p>}
+                    <div key={task.id} className="flex items-start justify-between border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <div>
+                        <p className="text-sm font-medium leading-none">{task.title}</p>
+                        {task.description && <p className="text-xs text-muted-foreground truncate max-w-xs">{task.description}</p>}
                       </div>
-                      <Badge className="w-fit shrink-0 justify-center whitespace-nowrap" variant={(task.status && typeof task.status === 'string' && task.status.toLowerCase() === 'completed') ? 'default' : 'secondary'}>{formatBadgeLabel(task.status)}</Badge>
+                      <Badge variant={(task.status && typeof task.status === 'string' && task.status.toLowerCase() === 'completed') ? 'default' : 'secondary'}>{task.status || 'Unknown'}</Badge>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-sm text-muted-foreground">No tasks found.</p>
+                  <p className="text-sm text-muted-foreground text-center">No tasks found.</p>
                 )}
                 {tasksData.length > 5 && (
                   <div className="mt-4 text-right">
@@ -576,30 +562,30 @@ export default function ResponsiveLabDashboard() {
           </Card>
 
           {/* Complaints Card */}
-          <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40">
+          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-2 bg-accent/40">
             <CardHeader>
-              <div className="flex min-w-0 items-center justify-between gap-2">
-                <CardTitle className="flex min-w-0 items-center truncate"><MessageSquareWarning className="mr-2 h-5 w-5 shrink-0" />Complaints</CardTitle>
-                <p className="shrink-0 text-sm text-muted-foreground">Total: {complaintsData.length}</p>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center"><MessageSquareWarning className="h-5 w-5 mr-2" />Complaints</CardTitle>
+                <p className="text-sm text-muted-foreground">Total: {complaintsData.length}</p>
               </div>
               <CardDescription>
                 Recent complaints lodged.
               </CardDescription>
             </CardHeader>
-            <CardContent className="min-w-0">
-              <div className="min-w-0 space-y-3">
+            <CardContent>
+              <div className="space-y-3">
                 {complaintsData.length > 0 ? (
                   complaintsData.slice(0, 3).map((complaint) => (
-                    <div key={complaint.id} className="mb-3 flex min-w-0 flex-col gap-1.5 border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0 @sm:flex-row @sm:items-start @sm:justify-between @sm:gap-2">
-                      <div className="min-w-0 flex-1 overflow-hidden">
-                        <p className="truncate text-sm font-medium leading-none" title={complaint.complainant_name}>{complaint.complainant_name}</p>
-                        {complaint.description && <p className="truncate text-xs text-muted-foreground" title={complaint.description}>{complaint.description}</p>}
+                    <div key={complaint.id} className="flex items-start justify-between border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <div>
+                        <p className="text-sm font-medium leading-none">{complaint.complainant_name}</p>
+                        {complaint.description && <p className="text-xs text-muted-foreground truncate max-w-xs">{complaint.description}</p>}
                       </div>
-                      <Badge className="w-fit max-w-full shrink-0 justify-center whitespace-nowrap" title={complaint.nature_of_complaint || undefined} variant={(complaint.nature_of_complaint && typeof complaint.nature_of_complaint === 'string' && complaint.nature_of_complaint.toLowerCase() === 'resolved') ? 'default' : 'destructive'}>{formatBadgeLabel(complaint.nature_of_complaint, "N/A")}</Badge>
+                      <Badge variant={(complaint.nature_of_complaint && typeof complaint.nature_of_complaint === 'string' && complaint.nature_of_complaint.toLowerCase() === 'resolved') ? 'default' : 'destructive'}>{complaint.nature_of_complaint || 'N/A'}</Badge>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-sm text-muted-foreground">No complaints found.</p>
+                  <p className="text-sm text-muted-foreground text-center">No complaints found.</p>
                 )}
                 {complaintsData.length > 5 && (
                   <div className="mt-4 text-right">
@@ -616,41 +602,42 @@ export default function ResponsiveLabDashboard() {
           </Card>
         </div>
 
-        {/* Memos and Upcoming Birthdays */}
-        <div className="mb-4 grid min-w-0 gap-4 @lg/dashboard:grid-cols-3">
+        {/* Memos and Upcoming Birthdays Cards - New Row */}
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 mb-4">
           {/* Recent Memos Card */}
-          <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40 @lg/dashboard:col-span-2">
+          <Card className="col-span-full md:col-span-1 lg:col-span-2 xl:col-span-2 bg-accent/40">
             <CardHeader>
-              <div className="flex min-w-0 items-center justify-between gap-2">
-                <CardTitle className="flex min-w-0 items-center truncate"><FileText className="mr-2 h-5 w-5 shrink-0" />Recent Memos</CardTitle>
-                <p className="shrink-0 text-sm text-muted-foreground">Total: {memosData.length}</p>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center"><FileText className="h-5 w-5 mr-2" />Recent Memos</CardTitle>
+                <p className="text-sm text-muted-foreground">Total: {memosData.length}</p>
               </div>
               <CardDescription>
                 Latest internal communications and notices.
               </CardDescription>
             </CardHeader>
-            <CardContent className="min-w-0">
-              <div className="min-w-0 space-y-3">
+            <CardContent>
+              <div className="space-y-3">
                 {memosData.length > 0 ? (
                   memosData.slice(0, 5).map((memo) => (
-                    <div key={memo.id} className="mb-3 flex min-w-0 items-start justify-between border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0">
-                      <div className="min-w-0 flex-1 overflow-hidden">
-                        <p className="truncate text-sm font-medium leading-none" title={memo.memo_subject}>
-                            {memo.memo_subject}
+                    <div key={memo.id} className="flex items-start justify-between border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <div>
+                        <p className="text-sm font-medium leading-none truncate" title={memo.memo_subject}>
+                            {memo.memo_subject.length > 10 ? memo.memo_subject.substring(0, 10) + "..." : memo.memo_subject}
                           </p>
                         {memo.memo_description && (
-                          <p className="mt-1 truncate text-xs text-muted-foreground" title={memo.memo_description}>
-                            {memo.memo_description}
+                          <p className="text-xs text-muted-foreground mt-1 truncate" title={memo.memo_description}>
+                            {memo.memo_description.length > 10 ? memo.memo_description.substring(0, 10) + "..." : memo.memo_description}
                           </p>
                         )}
-                        <p className="pt-1 text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground pt-1">
                           {new Date(memo.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                         </p>
                       </div>
+                      {/* Optionally, add a badge or action here if memos have status or require actions */}
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-sm text-muted-foreground">No recent memos found.</p>
+                  <p className="text-sm text-muted-foreground text-center">No recent memos found.</p>
                 )}
                 {memosData.length > 5 && (
                   <div className="mt-4 text-right">
@@ -667,27 +654,27 @@ export default function ResponsiveLabDashboard() {
           </Card>
 
           {/* Upcoming Birthdays Card */}
-          <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40 @lg/dashboard:col-span-1">
+          <Card className="col-span-full md:col-span-1 lg:col-span-1 xl:col-span-1 bg-accent/40">
             <CardHeader>
-              <CardTitle className="mb-1 flex min-w-0 items-center truncate"><Cake className="mr-2 h-5 w-5 shrink-0" />Upcoming Birthdays</CardTitle>
-              <div className="flex min-w-0 flex-col gap-1 @sm:flex-row @sm:items-baseline @sm:justify-between">
+              <CardTitle className="flex items-center mb-1"><Cake className="h-5 w-5 mr-2" />Upcoming Birthdays</CardTitle>
+              <div className="flex justify-between items-baseline">
                 <CardDescription>
                   Staff birthdays in the next 30 days.
                 </CardDescription>
-                <p className="shrink-0 text-sm text-muted-foreground">Total: {upcomingBirthdaysData.length}</p>
+                <p className="text-sm text-muted-foreground">Total: {upcomingBirthdaysData.length}</p>
               </div>
             </CardHeader>
-            <CardContent className="min-w-0">
-              <div className="min-w-0 space-y-3">
+            <CardContent>
+              <div className="space-y-3">
                 {upcomingBirthdaysData.length > 0 ? (
                   upcomingBirthdaysData.slice(0, 5).map((staff) => (
-                    <div key={staff.id} className="mb-3 flex min-w-0 items-center justify-between gap-2 border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0">
-                      <p className="min-w-0 truncate text-sm font-medium leading-none" title={staff.name}>{staff.name}</p>
-                      <Badge className="shrink-0 whitespace-nowrap" variant="outline">{staff.date_of_birth}</Badge>
+                    <div key={staff.id} className="flex items-center justify-between border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <p className="text-sm font-medium leading-none">{staff.name}</p>
+                      <Badge variant="outline">{staff.date_of_birth}</Badge>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-sm text-muted-foreground">No upcoming birthdays in the next 30 days.</p>
+                  <p className="text-sm text-muted-foreground text-center">No upcoming birthdays in the next 30 days.</p>
                 )}
                 {upcomingBirthdaysData.length > 5 && (
                   <div className="mt-4 text-right">
@@ -705,20 +692,20 @@ export default function ResponsiveLabDashboard() {
         </div>
 
         {/* Today's Timetable and Syllabus Cards - New Row */}
-        <div className="mb-4 grid min-w-0 gap-4">
+        <div className="grid gap-4 lg:grid-cols-1 mb-4">
 
 
           {/* Today's Syllabus Progress Card */}
           {['admin', 'teachingstaff', 'viceprincipal'].includes(userRole) && (
-          <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40">
+          <Card className="col-span-full lg:col-span-1 bg-accent/40">
             <CardHeader>
-              <div className="flex min-w-0 flex-col gap-2 @md:flex-row @md:items-center @md:justify-between">
-                <CardTitle className="flex min-w-0 items-center truncate">
-                  <BookOpenCheck className="mr-2 h-5 w-5 shrink-0" />
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center">
+                  <BookOpenCheck className="h-5 w-5 mr-2" />
                   Overall Syllabus Progress
                 </CardTitle>
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <p className="shrink-0 text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>
                   {/* Staff selector for admin and viceprincipal */}
                   {['admin', 'viceprincipal'].includes(userRole) && (
                     <select
@@ -726,7 +713,7 @@ export default function ResponsiveLabDashboard() {
                       onChange={(e) =>
                         setSelectedStaffId(e.target.value ? Number(e.target.value) : null)
                       }
-                      className="max-w-full rounded border bg-background px-2 py-1 text-sm"
+                      className="text-sm border rounded px-2 py-1 bg-background"
                     >
                       <option value="">Select Staff</option>
                       {staffList.map((staff) => (
@@ -742,32 +729,31 @@ export default function ResponsiveLabDashboard() {
                 Progress for subjects in today's timetable.
               </CardDescription>
             </CardHeader>
-            <CardContent className="min-w-0">
+            <CardContent>
               {todaysSyllabusProgress.length > 0 ? (
-                <div className="max-h-72 space-y-4 overflow-y-auto">
+                <div className="space-y-4 max-h-72 overflow-y-auto">
                   {todaysSyllabusProgress.map((syllabus, index) => (
-                    <div key={index} className="mb-3 border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0">
-                      <div className="mb-1 flex min-w-0 items-start justify-between gap-2">
-                        <p className="min-w-0 flex-1 truncate text-sm font-medium" title={syllabus.subject_name}>{syllabus.subject_name}</p>
-                        <Badge className="shrink-0" variant="secondary">{syllabus.completed_percentage}%</Badge>
+                    <div key={index} className="border-b border-border/50 pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-sm font-medium">{syllabus.subject_name}</p>
+                        <Badge variant="secondary">{syllabus.completed_percentage}%</Badge>
                       </div>
                       {(syllabus.course_name || syllabus.semester_name) && (
-                        <p className="truncate text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           {syllabus.course_name}{syllabus.course_name && syllabus.semester_name ? " - " : ""}{syllabus.semester_name}
                         </p>
                       )}
-                      {syllabus.remarks && <p className="mt-1 truncate text-xs text-muted-foreground" title={syllabus.remarks}><em>Remarks: {syllabus.remarks}</em></p>}
+                      {syllabus.remarks && <p className="text-xs text-muted-foreground mt-1"><em>Remarks: {syllabus.remarks}</em></p>}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-center text-sm text-muted-foreground">No syllabus progress to display for today's subjects.</p>
+                <p className="text-sm text-muted-foreground text-center">No syllabus progress to display for today's subjects.</p>
               )}
             </CardContent>
           </Card>
           )}
         </div>
-      </main>
     </div>
   );
 }

@@ -150,7 +150,7 @@ export function CommandMenu({ role, open, onOpenChange }: CommandMenuProps) {
     <>
       {/* Custom search dialog */}
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="p-0 overflow-hidden max-w-2xl bg-white">
+        <DialogContent className="p-0 overflow-hidden w-[95vw] max-w-[550px] sm:rounded-xl shadow-2xl bg-white">
           <DialogTitle className="sr-only">Search navigation</DialogTitle>
           <DialogDescription className="sr-only">Search for navigation items and pages in the application</DialogDescription>
           <div className="flex items-center border-b px-3">

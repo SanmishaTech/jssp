@@ -205,10 +205,16 @@ export const NotificationPopover = ({
             exit={{ opacity: 0, x: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "absolute top-0 left-full ml-2 w-80 max-h-[400px] overflow-y-auto rounded-xl shadow-lg z-50",
+              "absolute top-0 left-full ml-3 w-80 max-h-[400px] rounded-xl shadow-lg z-50",
               popoverClassName
             )}
           >
+            {/* Arrow pointing left towards the bell */}
+            <div 
+              className="absolute top-3 -left-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#111111]"
+              style={{ opacity: 0.6 }}
+            />
+            <div className="w-full max-h-[400px] overflow-y-auto rounded-xl">
             <div
               className={`p-4 border-b ${headerBorderColor} flex justify-between items-center`}
             >
@@ -231,6 +237,7 @@ export const NotificationPopover = ({
               hoverBgColor={hoverBgColor}
               dividerColor={dividerColor}
             />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

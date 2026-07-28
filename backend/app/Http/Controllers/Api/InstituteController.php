@@ -6,12 +6,12 @@ use App\Models\User;
 use App\Models\Staff;
 use App\Models\Institute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\InstituteResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\StaffResource;
 use App\Http\Requests\InstituteRequest;
@@ -206,6 +206,35 @@ class InstituteController extends BaseController
    
    
 
+
+    public function sudoLogin(string $id): JsonResponse
+    {
+        if (Auth::user()->roles->first()->name !== 'superadmin') {
+            return $this->sendError('Unauthorized', ['error' => 'Only superadmin can perform sudo login.'], 403);
+        }
+
+        $institute = Institute::find($id);
+        
+        if (!$institute || !$institute->user) {
+            return $this->sendError('Institute user not found', ['error' => 'Institute user not found'], 404);
+        }
+
+        $user = $institute->user;
+        
+        // Revoke all existing tokens for the institute user (optional, depending on security requirements)
+        // $user->tokens()->delete();
+        
+        $token = $user->createToken('sudo-login')->plainTextToken;
+        
+        // Include the role for the frontend to know the permissions
+        $role = $user->roles->first() ? $user->roles->first()->name : 'user';
+        $user->role = $role; // attach role dynamically for response
+
+        return $this->sendResponse([
+            'User' => new \App\Http\Resources\UserResource($user),
+            'token' => $token
+        ], 'Sudo login successful');
+    }
 
  public function allInstitutes(): JsonResponse
  {
