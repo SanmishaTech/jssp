@@ -119,8 +119,18 @@ export default function TransferDialog({ isOpen, onOpenChange, item }: TransferD
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop="blur">
-      <ModalContent className="max-w-md w-full">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      backdrop="blur"
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] max-w-md w-full",
+      }}
+    >
+      <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           Transfer Inventory
         </ModalHeader>

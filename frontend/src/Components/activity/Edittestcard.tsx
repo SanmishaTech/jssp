@@ -132,28 +132,33 @@ const ActivityLog: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="activity-log-container">
-        <div className="loading-spinner">Loading activity log...</div>
+      <div className="@container/activity min-w-0 w-full">
+        <div className="activity-log-container">
+          <div className="loading-spinner">Loading activity log...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="activity-log-container">
-        <div className="error-message">
-          <h2>Error</h2>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="retry-button">
-            Retry
-          </button>
+      <div className="@container/activity min-w-0 w-full">
+        <div className="activity-log-container">
+          <div className="error-message">
+            <h2>Error</h2>
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()} className="retry-button">
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="activity-log-container">
+    <div className="@container/activity min-w-0 w-full">
+      <div className="activity-log-container">
       <div className="activity-log-header">
         <h1>Activity Log</h1>
         <div className="activity-log-controls">
@@ -215,6 +220,7 @@ const ActivityLog: React.FC = () => {
         <p className="activity-count">
           Showing {filteredActivities.length} of {activities.length} activities
         </p>
+      </div>
       </div>
     </div>
   );

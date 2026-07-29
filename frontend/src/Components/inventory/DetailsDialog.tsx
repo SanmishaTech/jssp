@@ -33,7 +33,12 @@ export default function DetailsDialog({ isOpen, onOpenChange, item }: DetailsDia
       onOpenChange={onOpenChange}
       backdrop="blur"
       size="lg"
+      placement="center"
       scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh]",
+      }}
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">

@@ -206,7 +206,16 @@ export default function Dashboard({
           <Ellipsis className="h-5 w-5 text-muted-foreground" />
         </button>
       </DropdownTrigger>
-      <DropdownMenu aria-label="Actions" variant="faded" className="w-56">
+      <DropdownMenu
+        aria-label="Actions"
+        variant="faded"
+        className="min-w-[14rem] max-w-[18rem]"
+        itemClasses={{
+          base: "gap-3",
+          title: "whitespace-normal",
+          description: "whitespace-normal break-words text-wrap",
+        }}
+      >
         <DropdownSection title="Actions">
           <DropdownItem
             key="edit"
@@ -222,7 +231,7 @@ export default function Dashboard({
           </DropdownItem>
           <DropdownItem
             key="transfer"
-            description="Transfer inventory to another room"
+            description="Transfer to another room"
             onPress={() => handleTransfer(row)}
             startContent={<Files className={iconClasses} />}
           >

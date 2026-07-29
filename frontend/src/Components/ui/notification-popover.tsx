@@ -61,24 +61,24 @@ const NotificationItem = ({
     animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
     transition={{ duration: 0.3, delay: index * 0.1 }}
     key={notification.id}
-    className={cn(`p-4 ${hoverBgColor} cursor-pointer transition-colors`)}
+    className={cn(`p-4 ${hoverBgColor} cursor-pointer transition-colors min-w-0`)}
     onClick={() => onMarkAsRead(notification.id)}
   >
-    <div className="flex justify-between items-start">
-      <div className="flex items-center gap-2">
+    <div className="flex justify-between items-start gap-2 min-w-0">
+      <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
         {!notification.read_at && (
-          <span className={`h-1 w-1 rounded-full ${dotColor}`} />
+          <span className={`h-1 w-1 rounded-full shrink-0 ${dotColor}`} />
         )}
-        <h4 className={`text-sm font-medium ${textColor}`}>
+        <h4 className={`text-sm font-medium truncate ${textColor}`}>
           {notification.data.title}
         </h4>
       </div>
 
-      <span className={`text-xs opacity-80 ${textColor}`}>
+      <span className={`text-xs opacity-80 shrink-0 whitespace-nowrap ${textColor}`}>
         {new Date(notification.created_at).toLocaleDateString()}
       </span>
     </div>
-    <p className={`text-xs opacity-70 mt-1 ${textColor}`}>
+    <p className={`text-xs opacity-70 mt-1 break-words ${textColor}`}>
       {notification.data.description}
     </p>
   </motion.div>
@@ -200,31 +200,40 @@ export const NotificationPopover = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: -10, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: -6, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "absolute top-0 left-full ml-3 w-80 max-h-[400px] rounded-xl shadow-lg z-50",
+              "z-[100] max-h-[min(400px,70dvh)] rounded-xl shadow-lg overflow-hidden",
+              // Mobile: drop below bell, stay inside viewport
+              "fixed left-3 right-3 top-[4.5rem] w-auto max-w-sm mx-auto",
+              // Desktop sidebar: open to the right of the bell
+              "md:absolute md:inset-auto md:top-0 md:left-full md:right-auto md:mx-0 md:ml-3 md:mt-0 md:w-80 md:max-w-none",
               popoverClassName
             )}
           >
-            {/* Arrow pointing left towards the bell */}
-            <div 
-              className="absolute top-3 -left-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#111111]"
+            {/* Desktop: arrow pointing left towards the bell */}
+            <div
+              className="hidden md:block absolute top-3 -left-[6px] w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#111111]"
               style={{ opacity: 0.6 }}
             />
-            <div className="w-full max-h-[400px] overflow-y-auto rounded-xl">
+            {/* Mobile: arrow pointing up towards the bell */}
             <div
-              className={`p-4 border-b ${headerBorderColor} flex justify-between items-center`}
+              className="md:hidden absolute -top-[6px] right-6 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[6px] border-b-[#111111]"
+              style={{ opacity: 0.6 }}
+            />
+            <div className="w-full max-h-[min(400px,70dvh)] overflow-y-auto rounded-xl">
+            <div
+              className={`p-4 border-b ${headerBorderColor} flex justify-between items-center gap-2 min-w-0`}
             >
-              <h3 className="text-sm font-medium">Notifications</h3>
+              <h3 className="text-sm font-medium shrink-0">Notifications</h3>
               <Button
                 onClick={() => markAllAsReadMutation.mutate()}
                 variant="ghost"
                 size="sm"
                 disabled={markAllAsReadMutation.isPending}
-                className={`text-xs ${hoverBgColor} hover:text-white`}
+                className={`text-xs shrink-0 ${hoverBgColor} hover:text-white`}
               >
                 Mark all as read
               </Button>

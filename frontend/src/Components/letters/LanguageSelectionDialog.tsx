@@ -38,7 +38,7 @@ export default function LanguageSelectionDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-white sm:max-w-[425px]">
+      <DialogContent className="bg-white w-[calc(100%-2rem)] max-w-[425px] rounded-lg">
         <DialogHeader>
           <DialogTitle>Select Letterhead Language</DialogTitle>
           <DialogDescription>
@@ -67,17 +67,19 @@ export default function LanguageSelectionDialog({
           </RadioGroup>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button 
             variant="outline" 
             onClick={handleClose}
             disabled={isDownloading}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleConfirm}
             disabled={isDownloading}
+            className="w-full sm:w-auto"
           >
             {isDownloading ? 'Generating PDF...' : 'Download PDF'}
           </Button>
