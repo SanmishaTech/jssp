@@ -160,7 +160,19 @@ export default function EditAcademicYearDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -178,7 +190,7 @@ export default function EditAcademicYearDialog({
                       control={form.control}
                       name="category_name"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Category Name
                             <span className="text-red-500">*</span>
@@ -199,10 +211,10 @@ export default function EditAcademicYearDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Update Asset Category
               </Button>
             </ModalFooter>

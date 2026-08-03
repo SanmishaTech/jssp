@@ -176,25 +176,25 @@ export default function SettingsProfilePage() {
   }
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
+    <Card className="@container/divisions-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/divisions-form:m-8 @[700px]/divisions-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" /> Back
       </Button>
-      <CardHeader>
+      <CardHeader className="px-4 @[700px]/divisions-form:px-6">
         <CardTitle>Division Master</CardTitle>
         <CardDescription>Add Division</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="min-w-0 px-4 @[700px]/divisions-form:px-6">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-8 pb-[2rem]"
           >
             {/* Row 1: Course Title and Room Title */}
-            <div className="flex gap-4">
+            <div className="grid grid-cols-1 gap-4 @[640px]/divisions-form:grid-cols-2 @[900px]/divisions-form:grid-cols-3">
               {/* Course Title Field */}
               <FormField
                 control={form.control}
@@ -202,7 +202,7 @@ export default function SettingsProfilePage() {
                 render={({ field }) => {
                   const [open, setOpen] = React.useState(false);
                   return (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Course Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -213,21 +213,23 @@ export default function SettingsProfilePage() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={open}
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? courses.find((course) => {
-                                    const courseId =
-                                      course.id != null
-                                        ? course.id.toString()
-                                        : "";
-                                    return courseId === field.value;
-                                  })?.faculty_title || "Select Course..."
-                                : "Select Course..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? courses.find((course) => {
+                                      const courseId =
+                                        course.id != null
+                                          ? course.id.toString()
+                                          : "";
+                                      return courseId === field.value;
+                                    })?.faculty_title || "Select Course..."
+                                  : "Select Course..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search course..." />
                               <CommandList>
@@ -286,7 +288,7 @@ export default function SettingsProfilePage() {
                 render={({ field }) => {
                   const [open, setOpen] = React.useState(false);
                   return (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Room Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -297,19 +299,21 @@ export default function SettingsProfilePage() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={open}
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? rooms.find((room) => {
-                                    const roomId =
-                                      room.id != null ? room.id.toString() : "";
-                                    return roomId === field.value;
-                                  })?.room_name || "Select Room..."
-                                : "Select Room..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? rooms.find((room) => {
+                                      const roomId =
+                                        room.id != null ? room.id.toString() : "";
+                                      return roomId === field.value;
+                                    })?.room_name || "Select Room..."
+                                  : "Select Room..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search room..." />
                               <CommandList>
@@ -365,7 +369,7 @@ export default function SettingsProfilePage() {
                 render={({ field }) => {
                   const [open, setOpen] = React.useState(false);
                   return (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Semester Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -376,21 +380,23 @@ export default function SettingsProfilePage() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={open}
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? semesters.find((semester) => {
-                                    const semesterId =
-                                      semester.id != null
-                                        ? semester.id.toString()
-                                        : "";
-                                    return semesterId === field.value;
-                                  })?.semester || "Select Semester..."
-                                : "Select Semester..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? semesters.find((semester) => {
+                                      const semesterId =
+                                        semester.id != null
+                                          ? semester.id.toString()
+                                          : "";
+                                      return semesterId === field.value;
+                                    })?.semester || "Select Semester..."
+                                  : "Select Semester..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search semester..." />
                               <CommandList>
@@ -461,15 +467,15 @@ export default function SettingsProfilePage() {
             />
 
             {/* Submission Buttons */}
-            <div className="flex justify-end w-full gap-3">
+            <div className="flex w-full flex-col-reverse gap-3 @[480px]/divisions-form:flex-row @[480px]/divisions-form:justify-end">
               <Button
                 onClick={() => window.history.back()}
-                className="self-center"
+                className="w-full @[480px]/divisions-form:w-auto"
                 type="button"
               >
                 Cancel
               </Button>
-              <Button className="self-center mr-8" type="submit">
+              <Button className="w-full @[480px]/divisions-form:w-auto" type="submit">
                 Submit
               </Button>
             </div>

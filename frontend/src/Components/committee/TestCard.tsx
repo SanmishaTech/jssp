@@ -87,13 +87,13 @@ function StaffIdPopover({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="min-w-0 w-full justify-between"
         >
           {selectedOption ? selectedOption.label : "Select Staff..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[12rem] p-0">
         <Command>
           <CommandInput placeholder="Search staff..." className="h-9" />
           <CommandList>
@@ -210,45 +210,45 @@ export default function CommitteeForm() {
   }
 
   return (
-    <div className="mx-auto p-6">
+    <Card className="@container/committee-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
         variant="ghost"
         type="button"
-        className="mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/committee-form:m-8 @[700px]/committee-form:mb-4"
       >
         <ChevronLeft className="w-4 h-4" />
         Back
       </Button>
-      <Card className="bg-accent/40">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">Add Committee</CardTitle>
-          <CardDescription>
-            Enter a committee name and add staff members.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              {/* Committee Name Input */}
-              <FormField
-                control={form.control}
-                name="commitee_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Committee Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter committee name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+      <CardHeader className="px-4 @[700px]/committee-form:px-6">
+        <CardTitle className="text-xl font-semibold">Add Committee</CardTitle>
+        <CardDescription>
+          Enter a committee name and add staff members.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="min-w-0 px-4 @[700px]/committee-form:px-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Committee Name Input */}
+            <FormField
+              control={form.control}
+              name="commitee_name"
+              render={({ field }) => (
+                <FormItem className="min-w-0">
+                  <FormLabel>Committee Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter committee name" className="min-w-0" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              {/* Staff Table */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">Staff Members</h3>
-                <Table>
+            {/* Staff Table */}
+            <div className="mt-6 min-w-0">
+              <h3 className="mb-2 text-lg font-semibold">Staff Members</h3>
+              <div className="min-w-0 overflow-x-auto rounded-md border">
+                <Table className="min-w-[480px]">
                   <TableCaption>
                     Enter details for each staff member.
                   </TableCaption>
@@ -329,18 +329,18 @@ export default function CommitteeForm() {
                   </TableFooter>
                 </Table>
               </div>
+            </div>
 
-              {/* Form Actions */}
-              <div className="flex justify-end space-x-2">
-                <Button onClick={() => window.history.back()} type="button">
-                  Cancel
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+            {/* Form Actions */}
+            <div className="flex w-full flex-col-reverse gap-3 @[480px]/committee-form:flex-row @[480px]/committee-form:justify-end">
+              <Button onClick={() => window.history.back()} type="button" className="w-full @[480px]/committee-form:w-auto">
+                Cancel
+              </Button>
+              <Button type="submit" className="w-full @[480px]/committee-form:w-auto">Submit</Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

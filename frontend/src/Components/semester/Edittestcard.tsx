@@ -154,14 +154,14 @@ function ProfileForm({ formData }) {
               <CardTitle>Semester Information</CardTitle>
             </CardHeader>
             <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 @[640px]/semester-form:grid-cols-2">
 
               {/* Course Combobox Field */}
                  <FormField
                   control={form.control}
                   name="course_id"
                   render={({ field }) => (
-                    <FormItem className="flex flex-col">
+                    <FormItem className="flex min-w-0 flex-col">
                         <FormLabel className="mt-[10px]">
                         Course Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -172,20 +172,22 @@ function ProfileForm({ formData }) {
                               variant="outline"
                               role="combobox"
                               aria-expanded={open}
-                              className="w-[550px] justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? courses.find(
-                                    (course) =>
-                                      course.id.toString() === field.value
-                                  )?.faculty_title ||
-                                  formData.course_name ||
-                                  "Select Course..."
-                                : "Select Course..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? courses.find(
+                                      (course) =>
+                                        course.id.toString() === field.value
+                                    )?.faculty_title ||
+                                    formData.course_name ||
+                                    "Select Course..."
+                                  : "Select Course..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[500px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search course..." />
                               <CommandList>
@@ -254,15 +256,15 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/semester-form:flex-row @[480px]/semester-form:justify-end">
           <Button
             onClick={() => navigate({ to: "/semester" })}
-            className="self-center"
+            className="w-full @[480px]/semester-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/semester-form:w-auto" type="submit">
             Update Semester
           </Button>
         </div>
@@ -296,28 +298,24 @@ export default function SettingsProfilePage() {
   }, [id]);
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/semester-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/semester-form:m-8 @[700px]/semester-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
+      <CardHeader className="px-4 @[700px]/semester-form:px-6">
         <CardTitle>Semester Master</CardTitle>
         <CardDescription>Edit/Update the Semester</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
+      <CardContent className="min-w-0 px-4 @[700px]/semester-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }

@@ -181,7 +181,18 @@ export default function AddSubjectDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -194,9 +205,9 @@ export default function AddSubjectDialog({
                 className="space-y-6"
               >
                 {/* Fields in 4-column layout */}
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 gap-4 min-w-0 sm:grid-cols-2 lg:grid-cols-4">
                   {/* Subject Code */}
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Subject Code <span className="text-red-500">*</span>
                     </label>
@@ -213,7 +224,7 @@ export default function AddSubjectDialog({
                   </div>
 
                   {/* Subject Name */}
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Subject Name <span className="text-red-500">*</span>
                     </label>
@@ -230,7 +241,7 @@ export default function AddSubjectDialog({
                   </div>
 
                   {/* Course Selection */}
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Course <span className="text-red-500">*</span>
                     </label>
@@ -258,7 +269,7 @@ export default function AddSubjectDialog({
                   </div>
 
                   {/* Semester Selection */}
-                  <div>
+                  <div className="min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Semester <span className="text-red-500">*</span>
                     </label>
@@ -292,11 +303,11 @@ export default function AddSubjectDialog({
                   <div className="space-y-3">
                     {/* Display sub-subjects in pairs */}
                     {[...Array(Math.ceil(fields.length / 2))].map((_, rowIndex) => (
-                      <div key={rowIndex} className="grid grid-cols-2 gap-4">
+                      <div key={rowIndex} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {/* First sub-subject in pair */}
                         {fields[rowIndex * 2] && (
-                          <div className="flex items-center space-x-2">
-                            <div className="flex-1">
+                          <div className="flex min-w-0 items-center space-x-2">
+                            <div className="min-w-0 flex-1">
                               <input
                                 {...form.register(
                                   `sub_subjects.${rowIndex * 2}.sub_subject_name`
@@ -328,8 +339,8 @@ export default function AddSubjectDialog({
                         
                         {/* Second sub-subject in pair */}
                         {fields[rowIndex * 2 + 1] && (
-                          <div className="flex items-center space-x-2">
-                            <div className="flex-1">
+                          <div className="flex min-w-0 items-center space-x-2">
+                            <div className="min-w-0 flex-1">
                               <input
                                 {...form.register(
                                   `sub_subjects.${rowIndex * 2 + 1}.sub_subject_name`

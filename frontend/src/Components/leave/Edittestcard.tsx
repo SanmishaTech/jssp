@@ -325,32 +325,32 @@ function LeaveForm() {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 w-full space-y-6">
       
       
-      <Tabs defaultValue="apply" className="space-y-4 w-full">
-        <TabsList className="w-full grid grid-cols-2">
+      <Tabs defaultValue="apply" className="min-w-0 w-full space-y-4">
+        <TabsList className="grid w-full grid-cols-1 @[480px]/leave:grid-cols-2">
           <TabsTrigger value="apply">Apply for Leave</TabsTrigger>
           <TabsTrigger value="history">Leave History</TabsTrigger>
         </TabsList>
         
         <TabsContent value="apply" className="space-y-4">
-          <Card>
+          <Card className="min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle>Leave Application</CardTitle>
               <CardDescription>
                 Submit your leave application with required details
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="min-w-0 space-y-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 gap-6 @[640px]/leave:grid-cols-2 @[900px]/leave:grid-cols-3">
                     <FormField
                       control={form.control}
                       name="from_date"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex min-w-0 flex-col">
                           <FormLabel>From Date</FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
@@ -364,7 +364,7 @@ function LeaveForm() {
                       control={form.control}
                       name="to_date"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex min-w-0 flex-col">
                           <FormLabel>To Date</FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
@@ -377,7 +377,7 @@ function LeaveForm() {
                       control={form.control}
                       name="leave_type"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex min-w-0 flex-col">
                           <FormLabel>Leave Type</FormLabel>
                           <FormControl>
                             <Combobox
@@ -410,7 +410,7 @@ function LeaveForm() {
                     control={form.control}
                     name="reason"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Reason for Leave</FormLabel>
                         <FormControl>
                           <Textarea
@@ -439,14 +439,14 @@ function LeaveForm() {
         </TabsContent>
         
         <TabsContent value="history" className="space-y-4">
-          <Card>
+          <Card className="min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle>Leave History</CardTitle>
               <CardDescription>
                 View your past and current leave applications
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0">
               {isLoadingHistory ? (
                 <div className="flex justify-center py-6">Loading...</div>
               ) : !leaveHistory || !Array.isArray(leaveHistory) || leaveHistory.length === 0 ? (
@@ -472,7 +472,8 @@ function LeaveForm() {
                   >
                     Refresh
                   </Button>
-                  <Table>
+                  <div className="min-w-0 overflow-x-auto">
+                  <Table className="min-w-[640px]">
                     <TableCaption>Your leave applications</TableCaption>
                     <TableHeader>
                       <TableRow>
@@ -509,6 +510,7 @@ function LeaveForm() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 </>
               )}
             </CardContent>
@@ -518,7 +520,7 @@ function LeaveForm() {
       
       {/* Leave Details Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-white sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="mx-auto my-auto max-h-[90dvh] w-full overflow-y-auto border-2 border-border/30 bg-gradient-to-b from-background to-background/95 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] backdrop-blur-sm sm:max-w-[500px] rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
             <DialogDescription>
@@ -528,53 +530,53 @@ function LeaveForm() {
           
           {selectedLeave && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Leave Type:</div>
-                <div className="col-span-3 font-semibold">{selectedLeave.leave_type}</div>
+                <div className="font-semibold sm:col-span-3">{selectedLeave.leave_type}</div>
               </div>
               
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Period:</div>
-                <div className="col-span-3 font-semibold">
+                <div className="font-semibold sm:col-span-3">
                   {formatDate(selectedLeave.from_date)} to {formatDate(selectedLeave.to_date)}
                 </div>
               </div>
               
-              <div className="grid grid-cols-4 items-start gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-start sm:gap-2">
                 <div className="font-medium text-muted-foreground">Reason:</div>
-                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeave.reason}</div>
+                <div className="max-h-[150px] overflow-y-auto whitespace-pre-wrap break-words pr-2 sm:col-span-3">{selectedLeave.reason}</div>
               </div>
               
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Status:</div>
-                <div className="col-span-3">{getStatusBadge(selectedLeave.status)}</div>
+                <div className="sm:col-span-3">{getStatusBadge(selectedLeave.status)}</div>
               </div>
               
-              <div className="grid grid-cols-4 items-start gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-start sm:gap-2">
                 <div className="font-medium text-muted-foreground">Remarks:</div>
-                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeave.remarks || "-"}</div>
+                <div className="max-h-[150px] overflow-y-auto whitespace-pre-wrap break-words pr-2 sm:col-span-3">{selectedLeave.remarks || "-"}</div>
               </div>
               
               {selectedLeave.approved_by && (
                 <>
-                  <div className="grid grid-cols-4 items-center gap-2">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                     <div className="font-medium text-muted-foreground">Approved By:</div>
-                    <div className="col-span-3 font-semibold">{selectedLeave.approved_by}</div>
+                    <div className="font-semibold sm:col-span-3">{selectedLeave.approved_by}</div>
                   </div>
                   
-                  <div className="grid grid-cols-4 items-center gap-2">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                     <div className="font-medium text-muted-foreground">Approved At:</div>
-                    <div className="col-span-3">{formatDateTime(selectedLeave.approved_at)}</div>
+                    <div className="sm:col-span-3">{formatDateTime(selectedLeave.approved_at)}</div>
                   </div>
                 </>
               )}
             </div>
           )}
           
-          <DialogFooter className="border-t pt-4">
+          <DialogFooter className="flex-col-reverse gap-2 border-t pt-4 sm:flex-row">
             <Button 
               onClick={() => setDialogOpen(false)} 
-              className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
+              className="w-full shadow-md transition-all hover:shadow-lg sm:w-auto"
             >
               Close
             </Button>
@@ -587,7 +589,7 @@ function LeaveForm() {
 
 export default function LeaveApplicationPage() {
   return (
-    <div className="container mx-auto py-10">
+    <div className="@container/leave min-w-0 w-full px-4 py-4 @[700px]/leave:px-6 @[700px]/leave:py-6">
       <LeaveForm />
     </div>
   );

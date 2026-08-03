@@ -25,49 +25,49 @@ const ExamDetailDialog: React.FC<ExamDetailDialogProps> = ({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="bg-gray-50 sm:max-w-2xl rounded-lg p-6 shadow-xl">
+      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-lg bg-gray-50 p-4 shadow-xl sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{exam.title}</DialogTitle>
+          <DialogTitle className="text-xl font-bold break-words pr-6">{exam.title}</DialogTitle>
         </DialogHeader>
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 space-y-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center space-x-3">
-              <Calendar className="h-5 w-5 text-gray-500" />
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+              <Calendar className="h-5 w-5 shrink-0 text-gray-500" />
               <span className="font-medium text-gray-600">Date</span>
               <span className="text-gray-800">{new Date(exam.date).toLocaleDateString('en-GB')}</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Tag className="h-5 w-5 text-gray-500" />
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+              <Tag className="h-5 w-5 shrink-0 text-gray-500" />
               <span className="font-medium text-gray-600">Exam Code</span>
-              <span className="text-gray-800">{exam.exam_code}</span>
+              <span className="break-all text-gray-800">{exam.exam_code}</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Tag className="h-5 w-5 text-gray-500" />
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+              <Tag className="h-5 w-5 shrink-0 text-gray-500" />
               <span className="font-medium text-gray-600">Exam Name</span>
-              <span className="text-gray-800">{exam.exam_id_name}</span>
+              <span className="break-words text-gray-800">{exam.exam_id_name}</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Clock className="h-5 w-5 text-gray-500" />
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+              <Clock className="h-5 w-5 shrink-0 text-gray-500" />
               <span className="font-medium text-gray-600">Time</span>
               <span className="text-gray-800">{exam.time}</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <Timer className="h-5 w-5 text-gray-500" />
+            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+              <Timer className="h-5 w-5 shrink-0 text-gray-500" />
               <span className="font-medium text-gray-600">Duration</span>
               <span className="text-gray-800">{exam.duration_minutes} minutes</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mt-4">
-            <div className="flex items-center space-x-3 mb-4">
-                <Users className="h-6 w-6 text-gray-600" />
+        <div className="mt-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+            <div className="mb-4 flex items-center space-x-3">
+                <Users className="h-6 w-6 shrink-0 text-gray-600" />
                 <h4 className="text-lg font-semibold">Assigned Supervisors</h4>
             </div>
             {(assignedStaffIds.length > 0) ? (
                 <div className="flex flex-wrap gap-2">
                     {assignedStaffIds.map((staffId: number) => (
-                        <span key={staffId} className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">
+                        <span key={staffId} className="mr-2 rounded bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                             {getSupervisorName(staffId)}
                         </span>
                     ))}
@@ -77,9 +77,9 @@ const ExamDetailDialog: React.FC<ExamDetailDialogProps> = ({
             )}
         </div>
 
-        <DialogFooter className="pt-6 flex justify-end space-x-3">
+        <DialogFooter className="flex justify-end gap-2 pt-6">
           <DialogClose asChild>
-            <Button variant="outline" onClick={onClose}>Close</Button>
+            <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

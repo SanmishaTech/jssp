@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Send, Plus, Pencil, Trash2 } from "lucide-react";
+import { Send, Plus, Trash2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
@@ -189,15 +189,23 @@ export default function MemoList() {
 
   return (
     <>
-      <div className="flex h-screen overflow-auto mt-5 ">
-        <div className="p-6 w-3/4 h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg">
-          <div className="flex justify-center items-center p-3 mb-4">
-            <h3 className="text-lg font-semibold">
-              {viewMode ? 'View Memo' : ((editingId ? 'Edit Memo' : 'Create New Memo') && (userRole === "admin" || userRole === "viceprincipal") ? (editingId ? 'Edit Memo' : 'Create New Memo') : 'Memo')}
+      <div className="@container/memo min-w-0 w-full mt-5 px-4 pb-10 @[1100px]/memo:px-5">
+        <div className="flex min-w-0 w-full flex-col gap-4 @[1100px]/memo:flex-row">
+          <div className="@container min-w-0 w-full overflow-hidden rounded-lg bg-accent/60 p-4 shadow-lg @[700px]/memo:p-6 @[1100px]/memo:w-3/4">
+            <div className="mb-4 flex min-w-0 flex-wrap items-center justify-center gap-2 p-3">
+              <h3 className="text-center text-lg font-semibold">
+                {viewMode
+                  ? "View Memo"
+                  : userRole === "admin" || userRole === "viceprincipal"
+                    ? editingId
+                      ? "Edit Memo"
+                      : "Create New Memo"
+                    : "Memo"}
+              </h3>
               {viewMode && (
-                <>
+                <div className="flex shrink-0 flex-wrap gap-2">
                   {(userRole === "admin" || userRole === "viceprincipal") && (
-                    <button 
+                    <button
                       onClick={() => {
                         setViewMode(false);
                         setEditingId(selectedMemo.id);
@@ -205,12 +213,12 @@ export default function MemoList() {
                         setSubject(selectedMemo.memo_subject);
                         setDescription(selectedMemo.memo_description);
                       }}
-                      className="ml-4 px-2 py-1 text-xs bg-blue-200 hover:bg-blue-300 rounded"
+                      className="rounded bg-blue-200 px-2 py-1 text-xs hover:bg-blue-300"
                     >
                       Edit
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => {
                       setViewMode(false);
                       setSelectedMemo(null);
@@ -219,36 +227,34 @@ export default function MemoList() {
                       setSubject("");
                       setDescription("");
                     }}
-                    className="ml-4 px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded"
+                    className="rounded bg-gray-200 px-2 py-1 text-xs hover:bg-gray-300"
                   >
                     Close
                   </button>
-                </>
+                </div>
               )}
-            </h3>
-            
-          </div>
+            </div>
 
           {viewMode && selectedMemo ? (
-            <div className="space-y-4">
-               <div className="text-xs text-gray-500 text-right pt-2">
+            <div className="min-w-0 space-y-4">
+               <div className="pt-2 text-right text-xs text-gray-500">
                 Created: {new Date(selectedMemo.created_at).toLocaleString()}
               </div>
                
-              <div className="space-y-2">
-                <Label htmlFor="view-staff">Staff: <span className="font-semibold text-[16px]">  {selectedMemo.staff_name}</span></Label>
+              <div className="min-w-0 space-y-2">
+                <Label htmlFor="view-staff">Staff: <span className="break-words text-[16px] font-semibold">  {selectedMemo.staff_name}</span></Label>
               </div>
               
-              <div className="space-y-2">
+              <div className="min-w-0 space-y-2">
                 <Label htmlFor="view-subject">Subject:</Label>
                 <div className="break-words whitespace-pre-wrap text-sm">
                   {selectedMemo.memo_subject}
                 </div>
               </div>
               
-              <div className="grid gap-2">
+              <div className="grid min-w-0 gap-2">
                    <Label htmlFor="view-description">Description</Label>
-                <div className="w-full bg-gray-50 min-h-[350px] overflow-auto whitespace-pre-wrap break-words text-sm">
+                <div className="min-h-[200px] w-full min-w-0 overflow-auto whitespace-pre-wrap break-words bg-gray-50 text-sm @[700px]/memo:min-h-[350px]">
                   {selectedMemo.memo_description}
                 </div>
               </div>
@@ -256,11 +262,11 @@ export default function MemoList() {
           ) : (
             <>
               {(userRole === "admin" || userRole === "viceprincipal") ? (
-                <div className="space-y-4">
-                  <div className="space-y-2">
+                <div className="min-w-0 space-y-4">
+                  <div className="min-w-0 space-y-2">
                     <Label htmlFor="to-staff">To Staff</Label>
                     <Select value={toStaff} onValueChange={setToStaff}>
-                      <SelectTrigger className="w-full" id="to-staff">
+                      <SelectTrigger className="w-full min-w-0" id="to-staff">
                         <SelectValue placeholder="Select staff member..." />
                       </SelectTrigger>
                       <SelectContent>
@@ -271,18 +277,19 @@ export default function MemoList() {
                     </Select>
                   </div>
                   
-                  <div className="space-y-2">
+                  <div className="min-w-0 space-y-2">
                     <Label htmlFor="subject">Subject</Label>
                     <Input
                       id="subject"
                       placeholder="Enter memo subject..."
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
+                      className="min-w-0"
                     />
                   </div>
                   
-                  <div className="grid gap-2">
-                    <div className="flex justify-between items-center">
+                  <div className="grid min-w-0 gap-2">
+                    <div className="flex min-w-0 flex-col gap-1 @sm:flex-row @sm:items-center @sm:justify-between">
                       <Label htmlFor="description">Description</Label>
                       <span className={`text-xs ${description.length > 1350 ? description.length >= 1500 ? 'text-red-500 font-semibold' : 'text-amber-500' : 'text-gray-500'}`}>
                         {description.length} out of 1500 characters
@@ -297,12 +304,12 @@ export default function MemoList() {
                           setDescription(e.target.value);
                         }
                       }}
-                      className="min-h-[350px]"
+                      className="min-h-[200px] min-w-0 @[700px]/memo:min-h-[350px]"
                     />
                   </div>
                   
                   <div className="flex justify-end pt-4">
-                    <Button onClick={handleSend} disabled={loading}>
+                    <Button onClick={handleSend} disabled={loading} className="w-full @sm:w-auto">
                       {loading ? 'Sending...' : (
                         <>
                           <Send className="mr-2 h-4 w-4" />
@@ -313,37 +320,40 @@ export default function MemoList() {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-[400px]">
-                  <div className="text-center p-6 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-medium text-gray-700 mb-2">View Memo</h3>
+                <div className="flex h-[240px] items-center justify-center @[700px]/memo:h-[400px]">
+                  <div className="rounded-lg bg-gray-50 p-6 text-center">
+                    <h3 className="mb-2 text-lg font-medium text-gray-700">View Memo</h3>
                     <p className="text-gray-500">No Memo is Viewed</p>
                   </div>
                 </div>
               )}
             </>
           )}
-        </div>
-        {/* Right Sidebar */}
-        <div className="p-3 w-1/4 bg-white">
+          </div>
+
+          {/* Right sidebar — stacks below form when pane < 1100px */}
+          <aside className="mb-8 min-w-0 w-full overflow-hidden rounded-lg bg-white p-3 shadow-lg @[1100px]/memo:mb-0 @[1100px]/memo:w-1/4">
           <div className="space-y-4">
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium">Recent Memos</h3>
+            <div className="rounded-lg bg-gray-50 p-4">
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <h3 className="min-w-0 truncate font-medium">Recent Memos</h3>
                 {(userRole === "admin" || userRole === "viceprincipal") && (
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="h-6 w-6 relative group"
+                    className="relative h-6 w-6 shrink-0 group"
                     onClick={() => {
                       setEditingId(null);
                       setToStaff("");
                       setSubject("");
                       setDescription("");
+                      setViewMode(false);
+                      setSelectedMemo(null);
                     }}
                     title="Create new memo"
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="absolute bg-black text-white text-xs rounded px-2 py-1 left-0 transform -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="absolute left-0 -translate-x-full rounded bg-black px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       Create new memo
                     </span>
                   </Button>
@@ -351,16 +361,16 @@ export default function MemoList() {
               </div>
               
               {/* Search Box */}
-              <div className="mt-3 mb-3">
+              <div className="mb-3 mt-3 min-w-0">
                 <Input
                   type="text"
                   placeholder="Search memos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full"
+                  className="w-full min-w-0"
                 />
               </div>
-              <div className="mt-3 space-y-2">
+              <div className="mt-3 min-w-0 space-y-2">
                 {loadingMemos ? (
                   <p className="text-center text-sm text-gray-500">Loading memos...</p>
                 ) : memos.length === 0 ? (
@@ -369,26 +379,26 @@ export default function MemoList() {
                   memos.map(memo => (
                     <div 
                       key={memo.id} 
-                      className="p-2 hover:bg-gray-100 rounded cursor-pointer group"
+                      className="group min-w-0 cursor-pointer rounded p-2 hover:bg-gray-100"
                       onClick={() => {
                         setViewMode(true);
                         setSelectedMemo(memo);
                       }}
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-medium text-[15px]">{memo.staff_name}</p>
-                          <p className="text-xs text-gray-500">{memo.memo_subject.length > 11 ? `${memo.memo_subject.slice(0, 11)}...` : memo.memo_subject}</p>
-                          <p className="text-xs text-gray-500">{memo.memo_description.length > 11 ? `${memo.memo_description.slice(0, 11)}...` : memo.memo_description}</p>
-                          {/* <p className="text-xs text-gray-400 mt-1">
-                            {moment(memo.created_at).format('MMM DD, YYYY')}
-                          </p> */}
+                      <div className="flex min-w-0 items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1 overflow-hidden">
+                          <p className="truncate font-medium text-[15px]">{memo.staff_name}</p>
+                          <p className="truncate text-xs text-gray-500">{memo.memo_subject}</p>
+                          <p className="truncate text-xs text-gray-500">{memo.memo_description}</p>
                         </div>
-                        <div className="flex space-x-3 items-center mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="mt-1.5 flex shrink-0 items-center space-x-3 opacity-100 transition-opacity @[1100px]/memo:opacity-0 @[1100px]/memo:group-hover:opacity-100">
                           {(userRole === "admin" || userRole === "viceprincipal") && (
                             <button 
                               className="text-red-500 hover:text-red-700" 
-                              onClick={() => handleDelete(memo.id)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(memo.id);
+                              }}
                               title="Delete memo"
                             >
                               <Trash2 className="h-5 w-5" />
@@ -402,14 +412,13 @@ export default function MemoList() {
                 
                 {/* Pagination controls */}
                 {!loadingMemos && memos.length > 0 && totalPages > 1 && (
-                  <div className="flex justify-between items-center mt-4">
+                  <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-2">
                     <Button
                       variant="outline"
                       size="sm"
                       disabled={currentPage === 1}
                       onClick={() => {
                         setCurrentPage(prev => Math.max(prev - 1, 1));
-                        // fetchMemos() will be called by the useEffect
                       }}
                     >
                       Previous
@@ -423,7 +432,6 @@ export default function MemoList() {
                       disabled={currentPage === totalPages}
                       onClick={() => {
                         setCurrentPage(prev => prev + 1);
-                        // fetchMemos() will be called by the useEffect
                       }}
                     >
                       Next
@@ -433,6 +441,7 @@ export default function MemoList() {
               </div>
             </div>
           </div>
+          </aside>
         </div>
       </div>
       

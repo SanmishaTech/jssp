@@ -221,13 +221,13 @@ function ProfileForm({ formData }: { formData: FormValues }) {
               <CardDescription>Update division details</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-4">
+              <div className="grid grid-cols-1 gap-4 @[640px]/divisions-form:grid-cols-2 @[900px]/divisions-form:grid-cols-3">
                 {/* Course Title Field */}
                 <FormField
                   control={form.control}
                   name="course_id"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Course Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -237,18 +237,20 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                             <Button
                               variant="outline"
                               role="combobox"
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? courses.find(
-                                    (course) =>
-                                      course.id.toString() === field.value
-                                  )?.faculty_title || "Select Course..."
-                                : "Select Course..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? courses.find(
+                                      (course) =>
+                                        course.id.toString() === field.value
+                                    )?.faculty_title || "Select Course..."
+                                  : "Select Course..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search course..." />
                               <CommandList>
@@ -295,7 +297,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                   control={form.control}
                   name="room_id"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Room Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -305,17 +307,19 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                             <Button
                               variant="outline"
                               role="combobox"
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? rooms.find(
-                                    (room) => room.id.toString() === field.value
-                                  )?.room_name || "Select Room..."
-                                : "Select Room..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? rooms.find(
+                                      (room) => room.id.toString() === field.value
+                                    )?.room_name || "Select Room..."
+                                  : "Select Room..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search room..." />
                               <CommandList>
@@ -361,7 +365,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                   control={form.control}
                   name="semester_id"
                   render={({ field }) => (
-                    <FormItem className="flex-1">
+                    <FormItem className="min-w-0 flex-1">
                       <FormLabel className="mt-[10px]">
                         Semester Title <span className="text-red-500">*</span>
                       </FormLabel>
@@ -371,18 +375,20 @@ function ProfileForm({ formData }: { formData: FormValues }) {
                             <Button
                               variant="outline"
                               role="combobox"
-                              className="w-full justify-between"
+                              className="w-full min-w-0 justify-between"
                             >
-                              {field.value
-                                ? semesters.find(
-                                    (semester) =>
-                                      semester.id.toString() === field.value
-                                  )?.semester || "Select Semester..."
-                                : "Select Semester..."}
-                              <ChevronsUpDown className="opacity-50" />
+                              <span className="truncate">
+                                {field.value
+                                  ? semesters.find(
+                                      (semester) =>
+                                        semester.id.toString() === field.value
+                                    )?.semester || "Select Semester..."
+                                  : "Select Semester..."}
+                              </span>
+                              <ChevronsUpDown className="shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[300px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search semester..." />
                               <CommandList>
@@ -447,15 +453,15 @@ function ProfileForm({ formData }: { formData: FormValues }) {
           </Card>
         </div>
 
-        <div className="flex justify-end w-full gap-3">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/divisions-form:flex-row @[480px]/divisions-form:justify-end">
           <Button
             onClick={() => navigate({ to: "/divisions" })}
-            className="self-center"
+            className="w-full @[480px]/divisions-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/divisions-form:w-auto" type="submit">
             Update Division
           </Button>
         </div>
@@ -517,8 +523,8 @@ export default function SettingsProfilePage() {
 
   if (isLoading) {
     return (
-      <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
-        <CardContent className="flex items-center justify-center min-h-[200px]">
+      <Card className="@container/divisions-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
+        <CardContent className="flex min-h-[200px] items-center justify-center">
           <div>Loading division data...</div>
         </CardContent>
       </Card>
@@ -526,21 +532,21 @@ export default function SettingsProfilePage() {
   }
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
+    <Card className="@container/divisions-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/divisions-form:m-8 @[700px]/divisions-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
+      <CardHeader className="px-4 @[700px]/divisions-form:px-6">
         <CardTitle>Division Master</CardTitle>
         <CardDescription>Edit/Update the Division</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+      <CardContent className="min-w-0 px-4 @[700px]/divisions-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>

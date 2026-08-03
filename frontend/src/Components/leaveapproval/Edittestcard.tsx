@@ -293,7 +293,8 @@ function LeaveApprovalDashboard() {
     }
     
     return (
-      <Table>
+      <div className="min-w-0 overflow-x-auto">
+      <Table className="min-w-[640px]">
         <TableCaption>
           {activeTab === "pending" && "Pending leave applications"}
           {activeTab === "approved" && "Approved leave applications"}
@@ -381,56 +382,57 @@ function LeaveApprovalDashboard() {
           ))}
         </TableBody>
       </Table>
+      </div>
     );
   };
   
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 w-full space-y-6">
        
       
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 w-full">
-        <TabsList className="w-full grid grid-cols-3">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="min-w-0 w-full space-y-4">
+        <TabsList className="grid w-full grid-cols-1 @[480px]/leaveapproval:grid-cols-3">
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="approved">Approved</TabsTrigger>
           <TabsTrigger value="rejected">Rejected</TabsTrigger>
         </TabsList>
         <TabsContent value="pending" className="space-y-4">
-          <Card>
+          <Card className="min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle>Pending Leave Applications</CardTitle>
               <CardDescription>
                 Review and manage leave applications awaiting approval
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0">
               {renderLeaveList(pendingLeaves, true)}
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="approved" className="space-y-4">
-          <Card>
+          <Card className="min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle>Approved Leave Applications</CardTitle>
               <CardDescription>
                 View previously approved leave applications
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0">
               {renderLeaveList(approvedLeaves)}
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="rejected" className="space-y-4">
-          <Card>
+          <Card className="min-w-0 overflow-hidden">
             <CardHeader>
               <CardTitle>Rejected Leave Applications</CardTitle>
               <CardDescription>
                 View previously rejected leave applications
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0">
               {renderLeaveList(rejectedLeaves)}
             </CardContent>
           </Card>
@@ -439,7 +441,7 @@ function LeaveApprovalDashboard() {
       
       {/* Approval/Rejection Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-white shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="mx-auto my-auto max-h-[90dvh] w-full overflow-y-auto border-2 border-border/30 bg-gradient-to-b from-background to-background/95 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] backdrop-blur-sm rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">
               {actionType === "approve" ? "Approve Leave" : "Reject Leave"}
@@ -451,24 +453,24 @@ function LeaveApprovalDashboard() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right font-medium text-muted-foreground" htmlFor="remarks">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-4 sm:items-start sm:gap-4">
+              <Label className="font-medium text-muted-foreground sm:text-right" htmlFor="remarks">
                 Remarks
               </Label>
               <Textarea
                 id="remarks"
-                className="col-span-3 border-2 shadow-sm focus:shadow-md transition-shadow"
+                className="min-w-0 border-2 shadow-sm transition-shadow focus:shadow-md sm:col-span-3"
                 placeholder="Enter your remarks"
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
               />
             </div>
           </div>
-          <DialogFooter className="border-t pt-4">
+          <DialogFooter className="flex-col-reverse gap-2 border-t pt-4 sm:flex-row">
             <Button
               variant="outline"
               onClick={() => setIsDialogOpen(false)}
-              className="shadow-md hover:shadow-lg transition-all"
+              className="w-full shadow-md transition-all hover:shadow-lg sm:w-auto"
             >
               Cancel
             </Button>
@@ -477,8 +479,8 @@ function LeaveApprovalDashboard() {
               disabled={isSubmitting || leaveUpdateMutation.isPending}
               className={
                 actionType === "approve"
-                  ? "bg-green-500 hover:bg-green-600 shadow-md hover:shadow-lg transition-all"
-                  : "shadow-md hover:shadow-lg transition-all"
+                  ? "w-full bg-green-500 shadow-md transition-all hover:bg-green-600 hover:shadow-lg sm:w-auto"
+                  : "w-full shadow-md transition-all hover:shadow-lg sm:w-auto"
               }
               variant={actionType === "reject" ? "destructive" : "default"}
             >
@@ -494,7 +496,7 @@ function LeaveApprovalDashboard() {
       
       {/* Leave Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="bg-white sm:max-w-[500px] shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] bg-gradient-to-b from-background to-background/95 border-2 border-border/30 backdrop-blur-sm rounded-xl">
+        <DialogContent className="mx-auto my-auto max-h-[90dvh] w-full overflow-y-auto border-2 border-border/30 bg-gradient-to-b from-background to-background/95 shadow-[0_15px_30px_-5px_rgba(0,0,0,0.3)] backdrop-blur-sm sm:max-w-[500px] rounded-xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="text-xl font-bold">Leave Application Details</DialogTitle>
             <DialogDescription>
@@ -504,26 +506,26 @@ function LeaveApprovalDashboard() {
           
           {selectedLeaveDetails && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Staff Name:</div>
-                <div className="col-span-3 font-semibold">{selectedLeaveDetails.staff_name || "Staff"}</div>
+                <div className="font-semibold sm:col-span-3">{selectedLeaveDetails.staff_name || "Staff"}</div>
               </div>
               
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Leave Period:</div>
-                <div className="col-span-3 font-semibold">
+                <div className="font-semibold sm:col-span-3">
                   {formatDate(selectedLeaveDetails.from_date)} to {formatDate(selectedLeaveDetails.to_date)}
                 </div>
               </div>
               
-              <div className="grid grid-cols-4 items-start gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-start sm:gap-2">
                 <div className="font-medium text-muted-foreground">Reason:</div>
-                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeaveDetails.reason}</div>
+                <div className="max-h-[150px] overflow-y-auto whitespace-pre-wrap break-words pr-2 sm:col-span-3">{selectedLeaveDetails.reason}</div>
               </div>
               
-              <div className="grid grid-cols-4 items-center gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                 <div className="font-medium text-muted-foreground">Status:</div>
-                <div className="col-span-3">
+                <div className="sm:col-span-3">
                   {selectedLeaveDetails.status === "approved" && (
                     <Badge className="bg-green-500 shadow-sm">Approved</Badge>
                   )}
@@ -536,27 +538,27 @@ function LeaveApprovalDashboard() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-4 items-start gap-2">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-start sm:gap-2">
                 <div className="font-medium text-muted-foreground">Remarks:</div>
-                <div className="col-span-3 whitespace-pre-wrap break-words max-h-[150px] overflow-y-auto pr-2">{selectedLeaveDetails.remarks || "-"}</div>
+                <div className="max-h-[150px] overflow-y-auto whitespace-pre-wrap break-words pr-2 sm:col-span-3">{selectedLeaveDetails.remarks || "-"}</div>
               </div>
               
               {selectedLeaveDetails.status !== "pending" && (
                 <>
-                  <div className="grid grid-cols-4 items-center gap-2">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                     <div className="font-medium text-muted-foreground">Approved By:</div>
-                    <div className="col-span-3 font-semibold">{selectedLeaveDetails.approved_by || "-"}</div>
+                    <div className="font-semibold sm:col-span-3">{selectedLeaveDetails.approved_by || "-"}</div>
                   </div>
                   
-                  <div className="grid grid-cols-4 items-center gap-2">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-2">
                     <div className="font-medium text-muted-foreground">Approved At:</div>
-                    <div className="col-span-3">{formatDateTime(selectedLeaveDetails.approved_at)}</div>
+                    <div className="sm:col-span-3">{formatDateTime(selectedLeaveDetails.approved_at)}</div>
                   </div>
                 </>
               )}
               
               {selectedLeaveDetails.status === "pending" && (
-                <div className="flex justify-end space-x-2 pt-4">
+                <div className="flex flex-col-reverse gap-2 pt-4 @[480px]/leaveapproval:flex-row @[480px]/leaveapproval:justify-end">
                   <Button
                     variant="outline"
                     onClick={() => {
@@ -566,7 +568,7 @@ function LeaveApprovalDashboard() {
                         handleAction(selectedLeaveDetails, "approve");
                       }, 100);
                     }}
-                    className="bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all"
+                    className="w-full bg-green-500 text-white shadow-md transition-all hover:bg-green-600 hover:shadow-lg @[480px]/leaveapproval:w-auto"
                   >
                     Approve
                   </Button>
@@ -579,7 +581,7 @@ function LeaveApprovalDashboard() {
                         handleAction(selectedLeaveDetails, "reject");
                       }, 100);
                     }}
-                    className="shadow-md hover:shadow-lg transition-all"
+                    className="w-full shadow-md transition-all hover:shadow-lg @[480px]/leaveapproval:w-auto"
                   >
                     Reject
                   </Button>
@@ -588,11 +590,11 @@ function LeaveApprovalDashboard() {
             </div>
           )}
           
-          <DialogFooter className="border-t pt-4">
+          <DialogFooter className="flex-col-reverse gap-2 border-t pt-4 sm:flex-row">
             <Button 
               onClick={() => setIsDetailsDialogOpen(false)} 
               variant="outline"
-              className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all"
+              className="w-full shadow-md transition-all hover:shadow-lg sm:w-auto"
             >
               Close
             </Button>
@@ -605,7 +607,7 @@ function LeaveApprovalDashboard() {
 
 export default function LeaveApprovalPage() {
   return (
-    <div className="min-w-0 w-full px-4 py-6 sm:px-6">
+    <div className="@container/leaveapproval min-w-0 w-full px-4 py-4 @[700px]/leaveapproval:px-6 @[700px]/leaveapproval:py-6">
       <LeaveApprovalDashboard />
     </div>
   );

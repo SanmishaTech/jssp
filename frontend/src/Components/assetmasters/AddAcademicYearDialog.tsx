@@ -187,7 +187,19 @@ export default function AddAcademicYearDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -212,12 +224,12 @@ export default function AddAcademicYearDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <FormField
                       control={form.control}
                       name="asset_type"
                       render={({ field }: AssetTypeFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Asset Type
                             <span className="text-red-500">*</span>
@@ -233,7 +245,7 @@ export default function AddAcademicYearDialog({
                       control={form.control}
                       name="asset_category_ids"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Asset Categories
                             <span className="text-red-500">*</span>
@@ -261,7 +273,7 @@ export default function AddAcademicYearDialog({
                       control={form.control}
                       name="unit"
                       render={({ field }: AssetTypeFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Unit
                             <span className="text-red-500">*</span>
@@ -283,10 +295,10 @@ export default function AddAcademicYearDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Add Asset Master
               </Button>
             </ModalFooter>

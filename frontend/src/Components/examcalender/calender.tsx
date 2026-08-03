@@ -510,99 +510,120 @@ const CalendarComponent: React.FC<CalendarProps> = () => {
 
 
   return (
-    <div className="calendar-wrapper">
-      <div className="calendar-container">
-        <Calendar
-          onChange={handleDateChange}
-          value={selectedDate}
-          tileClassName={getTileClassName}
-          tileContent={getTileContent}
-          view="month"
-          showNeighboringMonth={true}
-          minDetail="month"
-          maxDetail="month"
-          formatShortWeekday={(locale, date) => 
-            date.toLocaleDateString(locale, { weekday: 'short' }).slice(0, 3)
-          }
-        />
-      </div>
-      {/* Details container, always visible */}
-      <div className="selected-date-events">
-        <h3>Details for {selectedDate.toLocaleDateString(undefined, {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })}</h3>
-
-        {/* Show holidays first */}
-        {selectedExams.some(e => e.type === 'holiday') && (
-          <div className="holiday-section">
-            <h4>Holidays</h4>
-            {renderExamsList('holiday')}
-          </div>
-        )}
-
-        <Button variant="secondary" size="sm" className="mb-2 flex items-center gap-2 w-full" onClick={() => setIsAddExamDialogOpen(true)}>
-          <PlusCircle className="h-4 w-4" />
-          Add Exam
-        </Button>
-        <AddExamDialog
-          open={isAddExamDialogOpen}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              setExamToEdit(undefined); // Reset on close
+    <div className="exam-cal @container/examcalender min-w-0 w-full max-w-full px-4 pb-4">
+      <div className="exam-cal-wrapper">
+        <div className="exam-cal-main">
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDate}
+            tileClassName={getTileClassName}
+            tileContent={getTileContent}
+            view="month"
+            showNeighboringMonth={true}
+            minDetail="month"
+            maxDetail="month"
+            formatShortWeekday={(locale, date) =>
+              date.toLocaleDateString(locale, { weekday: 'short' }).slice(0, 3)
             }
-            setIsAddExamDialogOpen(isOpen);
-          }}
-          allExams={allExams}
-          allSubjects={allSubjects}
-          allStaff={allStaff}
-          fetchData={refreshCalendar}
-          examToEdit={examToEdit}
-          selectedDate={selectedDate}
-        />
-        <h4 className="mt-4 mb-2 font-semibold">Exam List</h4>
-        {selectedExams.filter(exam => exam.type !== 'holiday').length > 0 ? (
-          <TooltipProvider>
-            {selectedExams.filter(exam => exam.type !== 'holiday').map((exam, index) => (
-              <div
-                key={index}
-                className={`event-details ${exam.type}-details flex justify-between items-center`}
-              >
-                <div className="flex-grow cursor-pointer" onClick={() => openDetailsDialog(exam)}>
-                  <h4>{exam.title}</h4>
-                  {exam.time && <p className="exam-time">{formatExamTime(exam.time)}</p>}
-                  {exam.description && <p className="exam-description">{exam.description}</p>}
-                </div>
-                <div className="flex items-center">
+          />
+        </div>
+        <div className="exam-cal-sidebar">
+          <h3 className="break-words">
+            Details for{' '}
+            {selectedDate.toLocaleDateString(undefined, {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </h3>
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(exam.id)}>
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Delete Exam</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-            ))}
-          </TooltipProvider>
-        ) : (
-          <p className="text-muted-foreground text-sm">No exams scheduled for this day.</p>
-        )}
-        {/* Details Exam Dialog using separate component */}
-        {detailsExam && (
-          <ExamDetailDialog
-          exam={detailsExam}
-          onClose={() => setDetailsExam(null)}
-          allStaff={allStaff}
-        />
-        )}
+          {selectedExams.some((e) => e.type === 'holiday') && (
+            <div className="holiday-section">
+              <h4>Holidays</h4>
+              {renderExamsList('holiday')}
+            </div>
+          )}
+
+          <Button
+            variant="secondary"
+            size="sm"
+            className="mb-2 flex w-full items-center gap-2"
+            onClick={() => setIsAddExamDialogOpen(true)}
+          >
+            <PlusCircle className="h-4 w-4" />
+            Add Exam
+          </Button>
+          <AddExamDialog
+            open={isAddExamDialogOpen}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                setExamToEdit(undefined);
+              }
+              setIsAddExamDialogOpen(isOpen);
+            }}
+            allExams={allExams}
+            allSubjects={allSubjects}
+            allStaff={allStaff}
+            fetchData={refreshCalendar}
+            examToEdit={examToEdit}
+            selectedDate={selectedDate}
+          />
+          <h4 className="mt-4 mb-2 font-semibold">Exam List</h4>
+          {selectedExams.filter((exam) => exam.type !== 'holiday').length > 0 ? (
+            <TooltipProvider>
+              {selectedExams
+                .filter((exam) => exam.type !== 'holiday')
+                .map((exam, index) => (
+                  <div
+                    key={index}
+                    className={`event-details ${exam.type}-details flex min-w-0 items-center justify-between gap-2`}
+                  >
+                    <div
+                      className="min-w-0 flex-grow cursor-pointer overflow-hidden"
+                      onClick={() => openDetailsDialog(exam)}
+                    >
+                      <h4 className="truncate">{exam.title}</h4>
+                      {exam.time && (
+                        <p className="exam-time">{formatExamTime(exam.time)}</p>
+                      )}
+                      {exam.description && (
+                        <p className="exam-description truncate">{exam.description}</p>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 items-center">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(exam.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Delete Exam</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </div>
+                ))}
+            </TooltipProvider>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No exams scheduled for this day.
+            </p>
+          )}
+          {detailsExam && (
+            <ExamDetailDialog
+              exam={detailsExam}
+              onClose={() => setDetailsExam(null)}
+              allStaff={allStaff}
+            />
+          )}
+        </div>
       </div>
       <AlertDialogbox
         isOpen={isAlertOpen}

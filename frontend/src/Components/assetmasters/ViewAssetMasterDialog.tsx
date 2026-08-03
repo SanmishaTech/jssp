@@ -125,7 +125,19 @@ export default function ViewAssetMasterDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -139,21 +151,21 @@ export default function ViewAssetMasterDialog({
                 </div>
               ) : assetMaster ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Asset Number</p>
                       <p className="font-semibold">{assetMaster.asset_identity_number || "N/A"}</p>
                     </div>
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Asset Type</p>
                       <p className="font-semibold">{assetMaster.asset_type || "N/A"}</p>
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Service Required</p>
                       <p className="font-semibold">{formatServiceRequired(assetMaster.service_required)}</p>
                     </div>
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                     <p className="text-sm font-medium text-muted-foreground">Unit</p>
                     <p className="font-semibold">{assetMaster.unit || "N/A"}</p>
                   </div>
@@ -176,13 +188,13 @@ export default function ViewAssetMasterDialog({
                     )}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                    <div className="space-y-1">
+                  <div className="grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Created At</p>
                       <p className="text-sm">{formatDate(assetMaster.created_at)}</p>
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="min-w-0 space-y-1">
                       <p className="text-sm font-medium text-muted-foreground">Last Updated</p>
                       <p className="text-sm">{formatDate(assetMaster.updated_at)}</p>
                     </div>
@@ -193,7 +205,7 @@ export default function ViewAssetMasterDialog({
               )}
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" variant="light" onPress={onClose}>
+              <Button color="primary" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Close
               </Button>
             </ModalFooter>

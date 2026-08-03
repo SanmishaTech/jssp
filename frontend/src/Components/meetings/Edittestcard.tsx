@@ -141,12 +141,12 @@ function ProfileForm({ formData }) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="mb-3 grid grid-cols-1 gap-3 @[640px]/meetings-form:grid-cols-2 @[900px]/meetings-form:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="staff_ids"
                   render={({ field }) => (
-                    <FormItem className="col-span-3">
+                    <FormItem className="col-span-full min-w-0">
                       <FormLabel>
                         Staff Members <span className="text-red-500">*</span>
                       </FormLabel>
@@ -235,15 +235,15 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/meetings-form:flex-row @[480px]/meetings-form:justify-end">
           <Button
             onClick={() => navigate({ to: "/meetings" })}
-            className="self-center"
+            className="w-full @[480px]/meetings-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/meetings-form:w-auto" type="submit">
             Update Meetings
           </Button>
         </div>
@@ -280,24 +280,20 @@ export default function SettingsProfilePage() {
     };
   }, [id]);
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/meetings-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/meetings-form:m-8 @[700px]/meetings-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardContent>
-        <div className="space-y-6 ">
+      <CardContent className="min-w-0 px-4 @[700px]/meetings-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>
-      {/* <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Deploy</Button>
-      </CardFooter> */}
     </Card>
   );
 }

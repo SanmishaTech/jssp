@@ -74,13 +74,13 @@ function StaffIdPopover({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="min-w-0 w-full justify-between"
         >
           {selectedOption ? selectedOption.label : "Select Staff..."}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[12rem] p-0">
         <Command>
           <CommandInput placeholder="Search staff..." className="h-9" />
           <CommandList>
@@ -239,20 +239,20 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-8">
-        <Card className="max-w-full p-4">
+        <Card className="min-w-0 w-full p-4">
           <CardHeader>
             <CardTitle>Edit Committee</CardTitle>
             <CardDescription>Edit/Update the Committee details</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-w-0">
             <FormField
               control={form.control}
               name="commitee_name"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="min-w-0">
                   <FormLabel>Committee Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter committee name" {...field} />
+                    <Input placeholder="Enter committee name" className="min-w-0" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -260,9 +260,10 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
             />
 
             {/* Staff Members Table */}
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2">Staff Members</h3>
-              <Table>
+            <div className="mt-6 min-w-0">
+              <h3 className="mb-2 text-lg font-semibold">Staff Members</h3>
+              <div className="min-w-0 overflow-x-auto rounded-md border">
+                <Table className="min-w-[480px]">
                 <TableCaption>
                   Enter details for each staff member.
                 </TableCaption>
@@ -342,14 +343,15 @@ function ProfileForm({ formData }: { formData: Partial<ProfileFormValues> }) {
                   </TableRow>
                 </TableFooter>
               </Table>
+              </div>
             </div>
           </CardContent>
         </Card>
-        <div className="flex justify-end w-full gap-3">
-          <Button onClick={() => navigate({ to: "/committee" })} type="button">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/committee-form:flex-row @[480px]/committee-form:justify-end">
+          <Button onClick={() => navigate({ to: "/committee" })} type="button" className="w-full @[480px]/committee-form:w-auto">
             Cancel
           </Button>
-          <Button type="submit">Update Committee</Button>
+          <Button type="submit" className="w-full @[480px]/committee-form:w-auto">Update Committee</Button>
         </div>
       </form>
     </Form>
@@ -386,20 +388,20 @@ export default function EditCommitteePage() {
   }, [id]);
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
+    <Card className="@container/committee-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/committee-form:m-8 @[700px]/committee-form:mb-4"
       >
         <MoveLeft className="w-5" />
         Back
       </Button>
-      <CardHeader>
+      <CardHeader className="px-4 @[700px]/committee-form:px-6">
         <CardTitle>Edit Committee</CardTitle>
         <CardDescription>Edit/Update the Committee</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+      <CardContent className="min-w-0 px-4 @[700px]/committee-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>

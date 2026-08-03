@@ -248,7 +248,7 @@ export default function ExamManagement() {
   };
 
   return (
-    <div className="p-4">
+    <div className="min-w-0 w-full">
       <Dashboard {...dashboardProps} />
       <AddRoomDialog
         isOpen={isAddDialogOpen}

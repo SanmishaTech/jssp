@@ -159,14 +159,14 @@ export default function CommitteeMeetings() {
 
   return (
     <>
-    <Card className="w-full">
-      <CardHeader>
+    <Card className="@container/committee-meetings min-w-0 w-full">
+      <CardHeader className="px-4 @[700px]/committee-meetings:px-6">
         <CardTitle>Committee Meetings</CardTitle>
         <CardDescription>Create meetings and view history</CardDescription>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="create" className="w-full">
-        <TabsList className="grid w-full max-w-sm mx-auto grid-cols-2 mb-4">
+      <CardContent className="min-w-0 px-4 @[700px]/committee-meetings:px-6">
+        <Tabs defaultValue="create" className="min-w-0 w-full">
+        <TabsList className="mb-4 grid w-full max-w-sm grid-cols-1 mx-auto @[480px]/committee-meetings:grid-cols-2">
               <TabsTrigger value="create">Create Meeting</TabsTrigger>
               <TabsTrigger value="history">Meeting History</TabsTrigger>
             </TabsList>
@@ -175,12 +175,12 @@ export default function CommitteeMeetings() {
           <TabsContent value="create">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 @[640px]/committee-meetings:grid-cols-2 @[900px]/committee-meetings:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="committee_id"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Committee <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -205,7 +205,7 @@ export default function CommitteeMeetings() {
                     control={form.control}
                     name="venue"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Venue <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input placeholder="Venue" {...field} />
@@ -219,7 +219,7 @@ export default function CommitteeMeetings() {
                     control={form.control}
                     name="date"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Date <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input type="date" {...field} />
@@ -233,7 +233,7 @@ export default function CommitteeMeetings() {
                     control={form.control}
                     name="time"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Time <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input type="time" {...field} />
@@ -249,7 +249,7 @@ export default function CommitteeMeetings() {
                     control={form.control}
                     name="synopsis"
                     render={({ field }) => (
-                      <FormItem className="col-span-3">
+                      <FormItem className="col-span-1 min-w-0 @[640px]/committee-meetings:col-span-2 @[900px]/committee-meetings:col-span-3">
                         <FormLabel>Synopsis</FormLabel>
                         <FormControl>
                           <Editor
@@ -264,9 +264,9 @@ export default function CommitteeMeetings() {
                     )}
                   />
                 </div>
-                <div className="flex justify-end gap-4">
-                  <Button type="reset" variant="secondary" onClick={() => form.reset()}>Clear</Button>
-                  <Button type="submit" disabled={createMeetingMutation.isPending}>Create Meeting</Button>
+                <div className="flex flex-col-reverse gap-3 @[480px]/committee-meetings:flex-row @[480px]/committee-meetings:justify-end">
+                  <Button type="reset" variant="secondary" onClick={() => form.reset()} className="w-full @[480px]/committee-meetings:w-auto">Clear</Button>
+                  <Button type="submit" disabled={createMeetingMutation.isPending} className="w-full @[480px]/committee-meetings:w-auto">Create Meeting</Button>
                 </div>
               </form>
             </Form>
@@ -290,8 +290,8 @@ export default function CommitteeMeetings() {
             </div>
             {meetingsQuery.isLoading && <p>Loading meetings…</p>}
             {meetingsQuery.data && (
-              <div className="rounded-md border">
-                <Table>
+              <div className="min-w-0 overflow-x-auto rounded-md border">
+                <Table className="min-w-[640px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Date & Time</TableHead>

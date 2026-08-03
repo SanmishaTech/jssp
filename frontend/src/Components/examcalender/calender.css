@@ -1,59 +1,155 @@
-.calendar-wrapper {
+/* Scoped to .exam-cal — avoids clashing with /calender shared class names */
+
+.exam-cal {
   font-family: 'Roboto', sans-serif;
-  width: 70vw;
-  height: 85vh;
-  margin: 20px auto;
-  padding: 0;
+  box-sizing: border-box;
+}
+
+.exam-cal-wrapper {
+  box-sizing: border-box;
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0;
   background-color: #f6f7f8;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.calendar-container {
-  flex: 1;
-  height: 100%;
+.exam-cal-main {
+  min-width: 0;
+  width: 100%;
   background: white;
-  border-radius: 8px 0 0 8px;
   display: flex;
   flex-direction: column;
 }
 
-/* Override react-calendar default styles */
-.react-calendar {
+.exam-cal-sidebar {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding: 20px;
+  background: white;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Wide pane: side-by-side */
+@container examcalender (min-width: 901px) {
+  .exam-cal-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 85vh;
+    overflow-x: hidden;
+  }
+
+  .exam-cal-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .exam-cal-sidebar {
+    width: 250px;
+    flex: 0 0 250px;
+    height: 100%;
+    overflow-y: auto;
+    border-top: none;
+    border-left: 1px solid #e0e0e0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .exam-cal .react-calendar {
+    height: 800px !important;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .exam-cal .react-calendar__month-view__days {
+    min-height: 700px !important;
+  }
+
+  .exam-cal .react-calendar__month-view__days__day {
+    min-height: 90px !important;
+  }
+}
+
+/* Narrow pane: stack calendar then list, full width */
+@container examcalender (max-width: 900px) {
+  .exam-cal-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .exam-cal-main {
+    flex: 0 0 auto;
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .exam-cal-sidebar {
+    flex: 0 0 auto;
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 0 0 8px 8px;
+  }
+
+  .exam-cal .react-calendar {
+    height: auto !important;
+    min-height: 420px !important;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .exam-cal .react-calendar__month-view__days {
+    min-height: 360px !important;
+  }
+
+  .exam-cal .react-calendar__month-view__days__day {
+    min-height: 64px !important;
+  }
+}
+
+/* react-calendar overrides — scoped */
+.exam-cal .react-calendar {
   width: 100% !important;
-  height: 800px !important;
+  max-width: 100% !important;
+  min-height: 420px !important;
   border: none !important;
   background: white !important;
   font-family: 'Roboto', sans-serif !important;
   display: flex !important;
   flex-direction: column !important;
-  border-radius: 8px 0 0 8px;
 }
 
-.react-calendar__viewContainer {
+.exam-cal .react-calendar__viewContainer {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.react-calendar__month-view {
+.exam-cal .react-calendar__month-view {
   flex: 1;
   display: flex !important;
   flex-direction: column !important;
 }
 
-.react-calendar__month-view > div {
+.exam-cal .react-calendar__month-view > div {
   flex: 1;
   display: flex !important;
   flex-direction: column !important;
 }
 
-.react-calendar__month-view__days {
-  min-height: 700px !important;
-}
-
-.react-calendar__navigation {
+.exam-cal .react-calendar__navigation {
   height: 64px !important;
   margin-bottom: 0 !important;
   background-color: #f1f3f4;
@@ -62,7 +158,7 @@
   align-items: center;
 }
 
-.react-calendar__navigation button {
+.exam-cal .react-calendar__navigation button {
   font-size: 22px !important;
   color: #3c4043 !important;
   min-width: 48px !important;
@@ -72,18 +168,18 @@
   margin: 0 4px !important;
 }
 
-.react-calendar__navigation button:enabled:hover,
-.react-calendar__navigation button:enabled:focus {
+.exam-cal .react-calendar__navigation button:enabled:hover,
+.exam-cal .react-calendar__navigation button:enabled:focus {
   background-color: #e8eaed !important;
 }
 
-.react-calendar__month-view__weekdays {
+.exam-cal .react-calendar__month-view__weekdays {
   background-color: #ffffff;
   border-bottom: 0.5px solid #e8e8e8;
   padding: 0 8px;
 }
 
-.react-calendar__month-view__weekdays__weekday {
+.exam-cal .react-calendar__month-view__weekdays__weekday {
   font-size: 11px !important;
   font-weight: 500 !important;
   color: #70757a !important;
@@ -92,31 +188,30 @@
   border-bottom: 0.5px solid #e8e8e8;
 }
 
-.react-calendar__month-view__days__day {
+.exam-cal .react-calendar__month-view__days__day {
   font-size: 12px !important;
   color: #3c4043;
   position: relative !important;
-  min-height: 90px !important;
 }
 
-.react-calendar__tile {
+.exam-cal .react-calendar__tile {
   position: relative !important;
   padding: 8px !important;
   border: 0.5px solid #e8e8e8 !important;
   background: none !important;
 }
 
-.react-calendar__tile:enabled:hover,
-.react-calendar__tile:enabled:focus {
+.exam-cal .react-calendar__tile:enabled:hover,
+.exam-cal .react-calendar__tile:enabled:focus {
   background-color: #f8f9fa !important;
 }
 
-.react-calendar__tile--now {
+.exam-cal .react-calendar__tile--now {
   background: #fff !important;
   border: 1px solid #1a73e8 !important;
 }
 
-.react-calendar__tile--now abbr {
+.exam-cal .react-calendar__tile--now abbr {
   background-color: #1a73e8;
   color: white;
   border-radius: 50%;
@@ -131,7 +226,7 @@
   justify-content: center;
 }
 
-.react-calendar__tile abbr {
+.exam-cal .react-calendar__tile abbr {
   position: absolute !important;
   top: 8px !important;
   left: 8px !important;
@@ -140,7 +235,12 @@
   z-index: 1 !important;
 }
 
-.event-indicator {
+.exam-cal .react-calendar__month-view__days__day--neighboringMonth {
+  color: #bababa !important;
+  background-color: #fafafa !important;
+}
+
+.exam-cal .exam-indicator {
   position: absolute !important;
   top: 32px !important;
   left: 8px !important;
@@ -150,7 +250,7 @@
   gap: 2px;
 }
 
-.event-title {
+.exam-cal .exam-title {
   font-size: 11px;
   padding: 2px 6px;
   margin: 1px 0;
@@ -163,20 +263,7 @@
   cursor: pointer;
 }
 
-.meeting-title {
-  font-size: 11px;
-  padding: 2px 6px;
-  margin: 1px 0;
-  border-radius: 3px;
-  background-color: #7986cb;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-
-.weekly-holiday-title {
+.exam-cal .holiday-title {
   font-size: 11px;
   padding: 2px 6px;
   margin: 1px 0;
@@ -190,25 +277,24 @@
   cursor: pointer;
 }
 
-.holiday-title {
-  font-size: 11px;
-  padding: 2px 6px;
-  margin: 1px 0;
-  border-radius: 3px;
-  background-color: #e53935;
-  color: white;
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-
-.has-holiday {
+.exam-cal .has-holiday {
   background-color: #ffebee !important;
 }
 
-.holiday-indicator {
+.exam-cal .has-exam {
+  background-color: #ffebee !important;
+}
+
+.exam-cal .has-weekly-holiday {
+  background-color: #ef9a9a !important;
+}
+
+.exam-cal .holiday-tile {
+  border: 2px solid #ff9e9e !important;
+  background: white !important;
+}
+
+.exam-cal .holiday-indicator {
   position: absolute;
   top: 7px;
   right: 7px;
@@ -216,9 +302,8 @@
   height: 18px;
   color: #fff;
   background: linear-gradient(145deg, #e53935, #c62828);
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.3), 
-              -1px -1px 2px rgba(255,255,255,0.2);
-  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), -1px -1px 2px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
   font-size: 12px;
   font-weight: bold;
   display: flex;
@@ -228,57 +313,19 @@
   z-index: 2;
 }
 
-.more-events {
+.exam-cal .more-exams {
   background-color: #dadce0;
   color: #3c4043;
   font-size: 10px;
   text-align: center;
 }
 
-.event-time {
+.exam-cal .exam-time {
   font-weight: 500;
   margin-right: 4px;
 }
 
-.has-event {
-  background-color: #ffebee !important;
-}
-
-.has-meeting {
-  background-color: #e8eaf6 !important;
-}
-
-.has-weekly-holiday {
-  background-color: #ef9a9a !important;
-}
-
-.has-event-and-meeting {
-  background: linear-gradient(135deg, #ffebee 50%, #e8eaf6 50%) !important;
-}
-
-.holiday-tile {
-  border: 2px solid #ff9e9e !important;
-  background: white !important;
-}
-
-.holiday-indicator {
-  display: inline-block !important;
-  margin-left: 4px !important;
-  color: #fff !important;
-  font-size: 12px !important;
-}
-
-.selected-date-events {
-  width: 250px;
-  height: 100%;
-  padding: 20px;
-  background: white;
-  border-left: 1px solid #e0e0e0;
-  overflow-y: auto;
-  border-radius: 0 8px 8px 0;
-}
-
-.selected-date-events h3 {
+.exam-cal-sidebar h3 {
   color: #3c4043;
   font-size: 16px;
   margin: 0 0 16px 0;
@@ -287,35 +334,7 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
-/* Tabs styling */
-.selected-date-events [role="tablist"] {
-  background-color: #f1f3f4;
-  padding: 4px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.selected-date-events [role="tab"] {
-  font-size: 13px;
-  color: #5f6368;
-  transition: all 0.2s;
-}
-
-.selected-date-events [role="tab"][data-state="active"] {
-  background-color: white;
-  color: #1a73e8;
-  font-weight: 500;
-}
-
-.selected-date-events [role="tabpanel"] {
-  padding: 8px 0;
-}
-
-.text-muted-foreground {
-  color: #5f6368;
-}
-
-.event-details {
+.exam-cal .event-details {
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 8px;
@@ -324,86 +343,51 @@
   cursor: pointer;
 }
 
-.event-details:hover {
+.exam-cal .event-details:hover {
   background-color: #f1f3f4;
 }
 
-.event-details h4 {
+.exam-cal .event-details h4 {
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 500;
   color: #3c4043;
 }
 
-.event-details p {
+.exam-cal .event-details p {
   margin: 4px 0;
   font-size: 13px;
   color: #5f6368;
 }
 
-.event-details.event-details {
+.exam-cal .event-details.exam-details {
   border-left: 4px solid #dc3545;
 }
 
-.event-details.meeting-details {
-  border-left: 4px solid #7986cb;
-}
-
-.event-details.weekly-holiday-details {
+.exam-cal .event-details.holiday-details {
   border-left: 4px solid #e53935;
 }
 
-.react-calendar__month-view__days__day--neighboringMonth {
-  color: #bababa !important;
-  background-color: #fafafa !important;
+.exam-cal .event-details.weekly-holiday-details {
+  border-left: 4px solid #e53935;
 }
 
-.holiday-section {
+.exam-cal .holiday-section {
   margin-bottom: 1rem;
   padding: 1rem;
   background-color: #ffebee;
   border-radius: 8px;
 }
 
-.holiday-section h4 {
+.exam-cal .holiday-section h4 {
   color: #c62828;
   margin-bottom: 0.5rem;
 }
 
-.holiday-section .event-description {
+.exam-cal .holiday-section .event-description,
+.exam-cal .exam-description {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
-}
-
-@media (max-width: 768px) {
-  .calendar-wrapper {
-    width: 90vw;
-    height: 90vh;
-    margin: 10px auto;
-    flex-direction: column;
-  }
-
-  .calendar-container {
-    height: calc(100% - 250px);
-    min-height: 400px;
-    border-radius: 8px 8px 0 0;
-  }
-
-  .react-calendar {
-    border-radius: 8px 8px 0 0;
-  }
-
-  .selected-date-events {
-    width: 100%;
-    height: 250px;
-    border-left: none;
-    border-top: 1px solid #e0e0e0;
-    border-radius: 0 0 8px 8px;
-  }
-
-  .react-calendar__month-view__days__day {
-    min-height: 70px !important;
-  }
 }

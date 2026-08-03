@@ -41,7 +41,19 @@ export default function AlertDialogbox({
 
   return (
     <>
-      <Modal size="lg" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+      <Modal
+        size="lg"
+        backdrop={backdrop}
+        isOpen={isOpen}
+        onClose={onClose}
+        placement="center"
+        scrollBehavior="inside"
+        classNames={{
+          wrapper: "items-center justify-center p-4",
+          base: "mx-auto my-auto max-h-[90dvh] w-full",
+          footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+        }}
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -53,10 +65,10 @@ export default function AlertDialogbox({
                 selected item.
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                   Close
                 </Button>
-                <Button color="primary" onPress={DeleteApi}>
+                <Button color="primary" onPress={DeleteApi} className="w-full sm:w-auto">
                   Confirm
                 </Button>
               </ModalFooter>

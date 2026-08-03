@@ -102,7 +102,19 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
   if (!meeting) return null;
 
   return (
-    <Modal backdrop="blur" size="2xl" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      backdrop="blur"
+      size="2xl"
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {() => (
           <>
@@ -116,7 +128,7 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
                     control={form.control}
                     name="venue"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Venue <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input placeholder="Venue" {...field} />
@@ -126,12 +138,12 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
                     )}
                   />
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="date"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>Date <span className="text-red-500">*</span></FormLabel>
                           <FormControl>
                             <Input type="date" {...field} />
@@ -145,7 +157,7 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
                       control={form.control}
                       name="time"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>Time <span className="text-red-500">*</span></FormLabel>
                           <FormControl>
                             <Input type="time" {...field} />
@@ -160,11 +172,11 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
                     control={form.control}
                     name="synopsis"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>Synopsis</FormLabel>
                         <FormControl>
                           <Editor
-                            className="w-full"
+                            className="w-full max-w-full"
                             value={field.value || ""}
                             onTextChange={(e) => field.onChange(e.htmlValue)}
                             style={{ minHeight: 200, maxHeight: 300 }}
@@ -178,13 +190,14 @@ export default function EditMeetingDialog({ meeting, isOpen, onClose }: Props) {
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button variant="bordered" onPress={onClose} className="mr-2">
+              <Button variant="bordered" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
               <Button
                 color="primary"
                 onPress={form.handleSubmit(onSubmit) as any}
                 isDisabled={updateMeetingMutation.isPending}
+                className="w-full sm:w-auto"
               >
                 Save Changes
               </Button>

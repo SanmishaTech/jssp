@@ -80,6 +80,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import Edititem from "./Edittestcard";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
@@ -250,153 +251,111 @@ export function Dashboard({
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col ">
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:px-6">
+    <div className="@container/events min-w-0 w-full flex-col bg-background/30">
+      <div className="flex flex-col gap-4 px-4 py-4 @[700px]/events:gap-6 @[700px]/events:px-6 @[700px]/events:py-6">
         {/* Header */}
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                 <Breadcrumb className="flex md:flex">
-                   <BreadcrumbList className="flex items-center space-x-2">
-                     {breadcrumbs?.map((breadcrumb, index) => (
-                       <React.Fragment key={index}>
-                         <BreadcrumbItem>
-                           {breadcrumb.href ? (
-                             <BreadcrumbLink asChild>
-                               <Link
-                                 to={breadcrumb.href}
-                                 className="text-muted-foreground hover:text-foreground transition-colors"
-                               >
-                                 {breadcrumb.label}
-                               </Link>
-                             </BreadcrumbLink>
-                           ) : (
-                             <BreadcrumbPage className="text-muted-foreground">
-                               {breadcrumb.label}
-                             </BreadcrumbPage>
-                           )}
-                         </BreadcrumbItem>
-                       </React.Fragment>
-                     ))}
-                   </BreadcrumbList>
-                 </Breadcrumb>
-               </header>
- 
-        {/* Main Content */}
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <Tabs defaultValue="all">
-            <div className="flex items-center">
-              <TabsList className="bg-accent/60">
-                {tableColumns?.tabs?.map((tab) => (
-                  <TabsTrigger key={tab.value} value={tab.value}>
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <div className="ml-auto flex items-center gap-2 hidden">
-                <div className="flex flex-1 items-center space-x-2">
-                  <div className="relative w-full flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder={searchPlaceholder}
-                        value={searchInput}
-                        onChange={handleSearchInputChange}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleSearchClick();
-                          }
-                        }}
-                        className="w-full rounded-lg bg-background pl-8"
-                      />
-                      {searchInput && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                          onClick={handleClearSearch}
+        <header className="flex min-w-0 flex-col gap-3">
+          <Breadcrumb className="min-w-0 overflow-x-auto">
+            <BreadcrumbList className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+              {breadcrumbs?.map((breadcrumb, index) => (
+                <React.Fragment key={index}>
+                  <BreadcrumbItem>
+                    {breadcrumb.href ? (
+                      <BreadcrumbLink asChild>
+                        <Link
+                          to={breadcrumb.href}
+                          className="text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
+                          {breadcrumb.label}
+                        </Link>
+                      </BreadcrumbLink>
+                    ) : (
+                      <BreadcrumbPage className="text-muted-foreground">
+                        {breadcrumb.label}
+                      </BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                </React.Fragment>
+              ))}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </header>
+
+        {/* Main Content */}
+        <main className="grid min-w-0 flex-1 items-start gap-4 @[700px]/events:gap-6">
+          <Tabs defaultValue="all" className="min-w-0 w-full">
+            <div className="mb-4 flex min-w-0 flex-col gap-4 @[900px]/events:mb-6 @[900px]/events:flex-row @[900px]/events:items-start @[900px]/events:justify-between">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold tracking-tight @[700px]/events:text-2xl">
+                  {tableColumns.title || "Events"}
+                </h1>
+                <p className="mt-1 text-sm text-muted-foreground @[700px]/events:text-base">
+                  {tableColumns.description || "Manage event data efficiently"}
+                </p>
+              </div>
+              <div className="flex min-w-0 w-full flex-col gap-2 @[640px]/events:flex-row @[640px]/events:flex-wrap @[640px]/events:items-center @[900px]/events:w-auto @[900px]/events:justify-end">
+                <div className="relative min-w-0 w-full flex-1 @[640px]/events:min-w-[14rem] @[900px]/events:w-auto @[900px]/events:max-w-[18rem]">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={searchPlaceholder}
+                    value={searchInput}
+                    onChange={handleSearchInputChange}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearchClick();
+                      }
+                    }}
+                    className="w-full min-w-0 rounded-lg bg-background pl-8"
+                  />
+                  {searchInput && (
                     <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={handleSearchClick}
-                      className="h-9"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
+                      onClick={handleClearSearch}
                     >
-                      Search
+                      <X className="h-4 w-4" />
                     </Button>
-                  </div>
+                  )}
                 </div>
-                <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={handleSearchClick}
+                  className="h-10 w-full shrink-0 @[640px]/events:w-auto"
+                >
+                  Search
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-10 w-full shrink-0 gap-1 @[640px]/events:w-auto"
+                  onClick={onAddProduct}
+                >
                   <PlusCircle className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Event
-                  </span>
+                  Add Event
                 </Button>
               </div>
             </div>
-            <TabsContent value="all">
-              <Card className="bg-accent/40">
-                <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
-                  <div>
-                    <CardTitle>{tableColumns.title}</CardTitle>
-                    <CardDescription>{tableColumns.description}</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2 w-full md:w-auto">
-                    <div className="relative flex-1 md:w-64">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder={searchPlaceholder}
-                        value={searchInput}
-                        onChange={handleSearchInputChange}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            handleSearchClick();
-                          }
-                        }}
-                        className="w-full rounded-lg bg-background pl-8"
-                      />
-                      {searchInput && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                          onClick={handleClearSearch}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={handleSearchClick}
-                      className="h-9"
-                    >
-                      Search
-                    </Button>
-                    <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
-                      <PlusCircle className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Add Event</span>
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Table>
+            <TabsContent value="all" className="mt-0">
+              <Card className="min-w-0 overflow-hidden border border-border bg-accent/40 shadow-sm">
+                <CardContent className="min-w-0 overflow-x-auto p-0 pt-4">
+                  <Table className="min-w-[640px]">
                     <TableHeader>
                       <TableRow>
                         {tableColumns?.headers?.map((header, index) => (
                           <TableHead
                             key={index}
-                            className={header.hiddenOn ? header.hiddenOn : ""}
+                            className={cn(
+                              "whitespace-nowrap",
+                              header.hiddenOn ? header.hiddenOn : ""
+                            )}
                           >
                             {header.label}
                           </TableHead>
                         ))}
-                          <TableHead className="text-xs font-medium text-muted-foreground py-3">
-                                                    PDF
-                                                  </TableHead>
+                        <TableHead className="whitespace-nowrap py-3 text-xs font-medium text-muted-foreground">
+                          PDF
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -404,7 +363,6 @@ export function Dashboard({
                         <React.Fragment key={row.id}>
                           <TableRow
                             onClick={(e) => {
-                              // Don't open dialog if clicking on dropdown menu
                               if (e.target.closest("[data-dropdown-trigger]")) {
                                 return;
                               }
@@ -415,9 +373,10 @@ export function Dashboard({
                             {tableColumns?.headers?.map((header, index) => (
                               <TableCell
                                 key={index}
-                                className={
+                                className={cn(
+                                  "max-w-[220px] truncate",
                                   header.hiddenOn ? header.hiddenOn : ""
-                                }
+                                )}
                               >
                                 {header.key === "one" ? (
                                   row.one
@@ -437,7 +396,7 @@ export function Dashboard({
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
                                       align="center"
-                                      className="w-full flex-col items-center flex justify-center"
+                                      className="flex w-full flex-col items-center justify-center"
                                     >
                                       <DropdownMenuLabel>
                                         Actions
@@ -454,7 +413,6 @@ export function Dashboard({
                                         Edit
                                       </Button>
                                       <DropdownMenuSeparator />
-                                      {/* <AlertDialogbox url={row?.delete} /> */}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : header.key === "two" ? (
@@ -470,25 +428,29 @@ export function Dashboard({
                                 ) : (
                                   row[header.key]
                                 )}
-                                  
                               </TableCell>
-                              
                             ))}
-                             <TableCell>
-                                                                <button
-                                                                  onClick={(e) => { e.stopPropagation(); handleDownloadPdf(row.id); }}
-                                                                  style={{ border: 'none', background: 'transparent' }}
-                                                                >
-                                                                <FileText/>
-                                                                </button>
-                                                              </TableCell>
+                            <TableCell>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDownloadPdf(row.id);
+                                }}
+                                style={{
+                                  border: "none",
+                                  background: "transparent",
+                                }}
+                              >
+                                <FileText />
+                              </button>
+                            </TableCell>
                           </TableRow>
                         </React.Fragment>
                       ))}
                     </TableBody>
                   </Table>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col gap-2 border-t p-4 @[480px]/events:flex-row @[480px]/events:items-center @[480px]/events:justify-between">
                   <div className="text-xs text-muted-foreground">
                     Showing <strong>{tableColumns.pagination.from}</strong>-
                     <strong>{tableColumns.pagination.to}</strong> of{" "}
@@ -504,7 +466,7 @@ export function Dashboard({
 
       {/* Event details dialog */}
       <Dialog open={eventDialogOpen} onOpenChange={setEventDialogOpen}>
-        <DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-white">
+        <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[800px] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle>Event Details</DialogTitle>
             <DialogDescription>
@@ -513,38 +475,38 @@ export function Dashboard({
           </DialogHeader>
 
           {selectedEvent && (
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               {/* Event details section */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <h4 className="font-semibold text-sm">Venue</h4>
-                  <p>{selectedEvent.venue}</p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="min-w-0 space-y-1">
+                  <h4 className="text-sm font-semibold">Venue</h4>
+                  <p className="break-words">{selectedEvent.venue}</p>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="font-semibold text-sm">Date & Time</h4>
-                  <p>
+                <div className="min-w-0 space-y-1">
+                  <h4 className="text-sm font-semibold">Date & Time</h4>
+                  <p className="break-words">
                     {selectedEvent.date} - {selectedEvent.time}
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <h4 className="font-semibold text-sm">Synopsis</h4>
-                {/* Render synopsis as HTML so formatting inserted via rich-text editor is preserved */}
+              <div className="min-w-0 space-y-1">
+                <h4 className="text-sm font-semibold">Synopsis</h4>
                 <div
-                  className="text-sm max-w-none break-all whitespace-pre-wrap"
-                  style={{ overflowWrap: 'anywhere' }}
-                  dangerouslySetInnerHTML={{ __html: selectedEvent.synopsis || "" }}
+                  className="max-w-none break-all whitespace-pre-wrap text-sm"
+                  style={{ overflowWrap: "anywhere" }}
+                  dangerouslySetInnerHTML={{
+                    __html: selectedEvent.synopsis || "",
+                  }}
                 />
               </div>
 
-              {/* Image gallery section */}
               {eventImages && eventImages.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="font-semibold">Event Images</h4>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {eventImages.map((image, index) => (
-                      <div key={image.id} className="relative group">
+                      <div key={image.id} className="group relative min-w-0">
                         <a
                           href={`/api/file/${image.image_path}`}
                           target="_blank"
@@ -553,17 +515,17 @@ export function Dashboard({
                           <img
                             src={`/api/file/${image.image_path}`}
                             alt={`Event image ${index + 1}`}
-                            className="h-40 w-full object-cover rounded-md hover:opacity-90 transition-opacity"
+                            className="h-40 w-full rounded-md object-cover transition-opacity hover:opacity-90"
                             onError={(e) => {
                               console.error(
                                 "Image failed to load:",
-                                image.image_path,
+                                image.image_path
                               );
                               e.currentTarget.src = "/placeholder-image.jpg";
                             }}
                           />
-                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span className="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                            <span className="rounded bg-black bg-opacity-70 px-2 py-1 text-xs text-white">
                               View Full Size
                             </span>
                           </div>
@@ -576,8 +538,12 @@ export function Dashboard({
             </div>
           )}
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEventDialogOpen(false)}>
+          <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              onClick={() => setEventDialogOpen(false)}
+            >
               Close
             </Button>
           </DialogFooter>

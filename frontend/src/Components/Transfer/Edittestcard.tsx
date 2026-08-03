@@ -133,225 +133,269 @@ export default function Edittestcard() {
   };
 
   return (
-    <div className="p-4 md:p-6">
-      <Tabs defaultValue="pending" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pending">Pending Transfers</TabsTrigger>
-          <TabsTrigger value="history">Transfer History</TabsTrigger>
-        </TabsList>
-        <TabsContent value="pending">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pending Transfers</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                     <TableHead>Inventory Name</TableHead>
-                    <TableHead>Quantity</TableHead>
-                   
-                    <TableHead>To Institute</TableHead>
-                    <TableHead>To Room</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Requested At</TableHead>
-                    <TableHead>Info</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pending.length > 0 ? (
-                    pending.map((t) => (
-                      <TableRow key={t.id}>
-                         <TableCell>{t.asset_master_name}</TableCell>
-                        <TableCell>{t.quantity}</TableCell>
-                         <TableCell>{t.to_institute_id || "N/A"}</TableCell>
-                        <TableCell>{t.to_room_id || "N/A"}</TableCell>
-                        <TableCell>{getStatusBadge(t.status)}</TableCell>
-                        <TableCell>
-                          {new Date(t.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <TooltipProvider delayDuration={200}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleViewInventory(t.inventory_id)}
-                                >
-                                  <Info className="w-4 h-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>View Details</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleAction(t.id, "approve")}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleAction(t.id, "reject")}
-                          >
-                            Reject
-                          </Button>
+    <div className="@container/transfer min-w-0 w-full bg-background/30">
+      <div className="flex flex-col gap-4 px-4 py-4 @[700px]/transfer:gap-6 @[700px]/transfer:px-6 @[700px]/transfer:py-6">
+        <div className="min-w-0">
+          <h1 className="text-xl font-bold tracking-tight @[700px]/transfer:text-2xl">
+            Transfers
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground @[700px]/transfer:text-base">
+            Review pending transfer requests and history
+          </p>
+        </div>
+
+        <Tabs defaultValue="pending" className="min-w-0 w-full">
+          <TabsList className="grid h-auto w-full grid-cols-1 gap-1 @[480px]/transfer:grid-cols-2">
+            <TabsTrigger value="pending" className="w-full">
+              Pending Transfers
+            </TabsTrigger>
+            <TabsTrigger value="history" className="w-full">
+              Transfer History
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pending" className="mt-4">
+            <Card className="min-w-0 overflow-hidden border border-border bg-card shadow-sm">
+              <CardHeader className="px-4 @[700px]/transfer:px-6">
+                <CardTitle className="text-lg @[700px]/transfer:text-xl">
+                  Pending Transfers
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="min-w-0 overflow-x-auto p-0">
+                <Table className="min-w-[720px]">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                      <TableHead className="whitespace-nowrap">
+                        Inventory Name
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">Quantity</TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        To Institute
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">To Room</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        Requested At
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">Info</TableHead>
+                      <TableHead className="whitespace-nowrap text-right">
+                        Action
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pending.length > 0 ? (
+                      pending.map((t) => (
+                        <TableRow key={t.id}>
+                          <TableCell className="max-w-[180px] truncate">
+                            {t.asset_master_name}
+                          </TableCell>
+                          <TableCell>{t.quantity}</TableCell>
+                          <TableCell className="max-w-[140px] truncate">
+                            {t.to_institute_id || "N/A"}
+                          </TableCell>
+                          <TableCell>{t.to_room_id || "N/A"}</TableCell>
+                          <TableCell>{getStatusBadge(t.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {new Date(t.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <TooltipProvider delayDuration={200}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      handleViewInventory(t.inventory_id)
+                                    }
+                                  >
+                                    <Info className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>View Details</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="inline-flex flex-wrap justify-end gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleAction(t.id, "approve")}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleAction(t.id, "reject")}
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={8} className="text-center">
+                          No pending transfers.
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={11} className="text-center">
-                        No pending transfers.
-                      </TableCell>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-4">
+            <Card className="min-w-0 overflow-hidden border border-border bg-card shadow-sm">
+              <CardHeader className="px-4 @[700px]/transfer:px-6">
+                <CardTitle className="text-lg @[700px]/transfer:text-xl">
+                  Transfer History
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="min-w-0 overflow-x-auto p-0">
+                <Table className="min-w-[800px]">
+                  <TableHeader>
+                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                      <TableHead className="whitespace-nowrap">ID</TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        Inventory ID
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">Quantity</TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        From Institute
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        From Room
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">
+                        To Institute
+                      </TableHead>
+                      <TableHead className="whitespace-nowrap">To Room</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                      <TableHead className="whitespace-nowrap">Date</TableHead>
+                      <TableHead className="whitespace-nowrap">Info</TableHead>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>Transfer History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Inventory ID</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>From Institute</TableHead>
-                    <TableHead>From Room</TableHead>
-                    <TableHead>To Institute</TableHead>
-                    <TableHead>To Room</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Info</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {history.length > 0 ? (
-                    history.map((t) => (
-                      <TableRow key={t.id}>
-                        <TableCell className="font-medium">{t.id}</TableCell>
-                        <TableCell>{t.inventory_id}</TableCell>
-                        <TableCell>{t.quantity}</TableCell>
-                        <TableCell>{t.from_institute_id || "N/A"}</TableCell>
-                        <TableCell>{t.from_room_id || "N/A"}</TableCell>
-                        <TableCell>{t.to_institute_id || "N/A"}</TableCell>
-                        <TableCell>{t.to_room_id || "N/A"}</TableCell>
-                        <TableCell>{getStatusBadge(t.status)}</TableCell>
-                        <TableCell>
-                          {
-                            t.approved_at
+                  </TableHeader>
+                  <TableBody>
+                    {history.length > 0 ? (
+                      history.map((t) => (
+                        <TableRow key={t.id}>
+                          <TableCell className="font-medium">{t.id}</TableCell>
+                          <TableCell>{t.inventory_id}</TableCell>
+                          <TableCell>{t.quantity}</TableCell>
+                          <TableCell>{t.from_institute_id || "N/A"}</TableCell>
+                          <TableCell>{t.from_room_id || "N/A"}</TableCell>
+                          <TableCell>{t.to_institute_id || "N/A"}</TableCell>
+                          <TableCell>{t.to_room_id || "N/A"}</TableCell>
+                          <TableCell>{getStatusBadge(t.status)}</TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {t.approved_at
                               ? new Date(t.approved_at).toLocaleDateString()
-                              : new Date(t.created_at).toLocaleDateString()
-                          }
-                        </TableCell>
-                        <TableCell>
-                          <TooltipProvider delayDuration={200}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleViewInventory(t.inventory_id)}
-                                >
-                                  <Info className="w-4 h-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>View Details</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                              : new Date(t.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <TooltipProvider delayDuration={200}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      handleViewInventory(t.inventory_id)
+                                    }
+                                  >
+                                    <Info className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>View Details</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={10} className="text-center">
+                          No transfer history.
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={10} className="text-center">
-                        No transfer history.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                    )}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
-      {/* Inventory Details Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-white max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Inventory Details</DialogTitle>
-            <DialogDescription>
-              Detailed information about the selected inventory item.
-            </DialogDescription>
-          </DialogHeader>
-          <Separator className="my-4" />
-          {loadingInventory ? (
-            <div className="py-6 text-center">Loading...</div>
-          ) : inventoryDetails ? (
-            <div className="max-h-96 overflow-y-auto">
-              <div className="grid grid-cols-3 gap-x-4 gap-y-3 items-center">
-                {Object.entries(inventoryDetails).map(([key, value]) => {
-                const formatValue = (val: any): string => {
-                  if (Array.isArray(val)) {
-                    return val
-                      .map((v) =>
-                        typeof v === "object" && v !== null
-                          ? (v.label ?? "")
-                          : String(v)
-                      )
-                      .filter((s) => s.length > 0)
-                      .join(", ");
-                  }
-                  if (typeof val === "object" && val !== null) {
-                    if (val.label) return String(val.label);
-                    return "";
-                  }
-                  return String(val);
-                };
+        {/* Inventory Details Dialog */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-2xl overflow-y-auto bg-white">
+            <DialogHeader>
+              <DialogTitle>Inventory Details</DialogTitle>
+              <DialogDescription>
+                Detailed information about the selected inventory item.
+              </DialogDescription>
+            </DialogHeader>
+            <Separator className="my-4" />
+            {loadingInventory ? (
+              <div className="py-6 text-center">Loading...</div>
+            ) : inventoryDetails ? (
+              <div className="max-h-[min(24rem,50dvh)] overflow-y-auto">
+                <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[minmax(7rem,1fr)_2fr] sm:items-start">
+                  {Object.entries(inventoryDetails).map(([key, value]) => {
+                    const formatValue = (val: any): string => {
+                      if (Array.isArray(val)) {
+                        return val
+                          .map((v) =>
+                            typeof v === "object" && v !== null
+                              ? (v.label ?? "")
+                              : String(v)
+                          )
+                          .filter((s) => s.length > 0)
+                          .join(", ");
+                      }
+                      if (typeof val === "object" && val !== null) {
+                        if (val.label) return String(val.label);
+                        return "";
+                      }
+                      return String(val);
+                    };
 
-                const formatKey = (k: string): string =>
-                  k
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c) => c.toUpperCase());
+                    const formatKey = (k: string): string =>
+                      k
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase());
 
-                const formatted = formatValue(value);
-                if (!formatted) return null;
+                    const formatted = formatValue(value);
+                    if (!formatted) return null;
 
-                return (
-                  <React.Fragment key={key}>
-                    <span className="col-span-1 font-semibold text-gray-500 text-right">
-                      {formatKey(key)}
-                    </span>
-                    <span className="col-span-2 text-gray-800 whitespace-pre-wrap">
-                      {formatted}
-                    </span>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          </div>
-          ) : (
-            <div className="py-6 text-center">No details available.</div>
-          )}
-        </DialogContent>
-      </Dialog>
+                    return (
+                      <React.Fragment key={key}>
+                        <span className="min-w-0 text-left text-sm font-semibold text-gray-500 sm:text-right">
+                          {formatKey(key)}
+                        </span>
+                        <span className="min-w-0 break-words whitespace-pre-wrap text-gray-800">
+                          {formatted}
+                        </span>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="py-6 text-center">No details available.</div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

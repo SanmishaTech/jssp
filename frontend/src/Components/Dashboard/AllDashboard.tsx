@@ -381,9 +381,10 @@ export default function ResponsiveLabDashboard() {
 
         </div>
 
-        <div className="mb-3 mt-4 grid gap-4 @md/dashboard:grid-cols-2 @md/dashboard:gap-8 @lg/dashboard:grid-cols-4">
+        {/* Leave / Meetings stack — always full pane width (no orphan col-span-3 gap) */}
+        <div className="mb-3 mt-4 grid min-w-0 gap-4">
           {userRole === 'teachingstaff' && supervisionDuties.length > 0 && (
-            <Card className="col-span-full min-w-0 overflow-hidden @lg/dashboard:col-span-4">
+            <Card className="col-span-full min-w-0 overflow-hidden">
               <CardHeader>
                 <CardTitle>My Supervision Duties</CardTitle>
               </CardHeader>
@@ -420,7 +421,7 @@ export default function ResponsiveLabDashboard() {
             </Card>
           )}
           { (userRole === 'admin' || userRole === 'viceprincipal') && (
-            <Card className="col-span-full min-w-0 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg @lg/dashboard:col-span-4">
+            <Card className="col-span-full min-w-0 overflow-x-auto bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle>Leave Approvals</CardTitle>
                 <Button 
@@ -478,7 +479,7 @@ export default function ResponsiveLabDashboard() {
               </CardContent>
             </Card>
           )}
-          <Card className={`col-span-full min-w-0 overflow-hidden bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg ${(userRole === 'admin' || userRole === 'viceprincipal') ? '@lg/dashboard:col-span-3' : '@lg/dashboard:col-span-4'}`}>
+          <Card className="col-span-full min-w-0 overflow-hidden bg-accent/40 transition-shadow duration-200 ease-in-out hover:shadow-lg">
             <CardHeader>
               <div className="flex min-w-0 items-center justify-between gap-2">
                 <CardTitle className="min-w-0 truncate">Meetings & Events</CardTitle>
@@ -706,13 +707,18 @@ export default function ResponsiveLabDashboard() {
           {/* Today's Syllabus Progress Card */}
           {['admin', 'teachingstaff', 'viceprincipal'].includes(userRole) && (
           <Card className="@container col-span-full min-w-0 overflow-hidden bg-accent/40">
-            <CardHeader>
-              <div className="flex min-w-0 flex-col gap-2 @md:flex-row @md:items-center @md:justify-between">
-                <CardTitle className="flex min-w-0 items-center truncate">
-                  <BookOpenCheck className="mr-2 h-5 w-5 shrink-0" />
-                  Overall Syllabus Progress
-                </CardTitle>
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <CardHeader className="min-w-0 space-y-3">
+              <div className="flex min-w-0 flex-col gap-3 @[560px]:flex-row @[560px]:items-start @[560px]:justify-between">
+                <div className="min-w-0 flex-1">
+                  <CardTitle className="flex min-w-0 items-center truncate">
+                    <BookOpenCheck className="mr-2 h-5 w-5 shrink-0" />
+                    Overall Syllabus Progress
+                  </CardTitle>
+                  <CardDescription className="mt-1.5">
+                    Progress for subjects in today's timetable.
+                  </CardDescription>
+                </div>
+                <div className="flex min-w-0 w-full flex-col gap-2 @[400px]:flex-row @[400px]:flex-wrap @[400px]:items-center @[560px]:w-auto @[560px]:justify-end">
                   <p className="shrink-0 text-sm text-muted-foreground">Subjects: {todaysSyllabusProgress.length}</p>
                   {/* Staff selector for admin and viceprincipal */}
                   {['admin', 'viceprincipal'].includes(userRole) && (
@@ -721,7 +727,7 @@ export default function ResponsiveLabDashboard() {
                       onChange={(e) =>
                         setSelectedStaffId(e.target.value ? Number(e.target.value) : null)
                       }
-                      className="max-w-full rounded border bg-background px-2 py-1 text-sm"
+                      className="min-w-0 w-full max-w-full rounded border bg-background px-2 py-1.5 text-sm @[400px]:w-auto @[400px]:min-w-[10rem] @[400px]:max-w-[16rem]"
                     >
                       <option value="">Select Staff</option>
                       {staffList.map((staff) => (
@@ -733,18 +739,15 @@ export default function ResponsiveLabDashboard() {
                   )}
                 </div>
               </div>
-              <CardDescription>
-                Progress for subjects in today's timetable.
-              </CardDescription>
             </CardHeader>
             <CardContent className="min-w-0">
               {todaysSyllabusProgress.length > 0 ? (
                 <div className="max-h-72 space-y-4 overflow-y-auto">
                   {todaysSyllabusProgress.map((syllabus, index) => (
                     <div key={index} className="mb-3 border-b border-border/50 pb-3 last:mb-0 last:border-b-0 last:pb-0">
-                      <div className="mb-1 flex min-w-0 items-start justify-between gap-2">
+                      <div className="mb-1 flex min-w-0 flex-col gap-1.5 @[360px]:flex-row @[360px]:items-start @[360px]:justify-between @[360px]:gap-2">
                         <p className="min-w-0 flex-1 truncate text-sm font-medium" title={syllabus.subject_name}>{syllabus.subject_name}</p>
-                        <Badge className="shrink-0" variant="secondary">{syllabus.completed_percentage}%</Badge>
+                        <Badge className="w-fit shrink-0 whitespace-nowrap" variant="secondary">{syllabus.completed_percentage}%</Badge>
                       </div>
                       {(syllabus.course_name || syllabus.semester_name) && (
                         <p className="truncate text-xs text-muted-foreground">
@@ -752,6 +755,12 @@ export default function ResponsiveLabDashboard() {
                         </p>
                       )}
                       {syllabus.remarks && <p className="mt-1 truncate text-xs text-muted-foreground" title={syllabus.remarks}><em>Remarks: {syllabus.remarks}</em></p>}
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                          className="h-full rounded-full bg-primary transition-[width]"
+                          style={{ width: `${Math.min(100, Math.max(0, Number(syllabus.completed_percentage) || 0))}%` }}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>

@@ -122,12 +122,12 @@ function ProfileForm() {
         {" "}
         <div className="space-y-6">
           {/* Room Information Section */}
-          <Card className="max-w-full p-4 ">
+          <Card className="max-w-full p-4 @[700px]/vendors-form:p-6">
             <CardHeader>
               <CardTitle>Vendor Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 gap-3 mb-3 @[640px]/vendors-form:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="vendor_name"
@@ -165,7 +165,7 @@ function ProfileForm() {
               <Separator className="my-4" />
               {/* Contact Information */}
               <CardTitle className="pt-4 mb-4">Contact Information</CardTitle>
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 gap-3 mb-3 @[640px]/vendors-form:grid-cols-2">
               <FormField
                   control={form.control}
                   name="contact_name"
@@ -257,7 +257,7 @@ function ProfileForm() {
                     </FormItem>
                   )}
                 />
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 gap-3 mb-3 @[640px]/vendors-form:grid-cols-2">
               
                 <FormField
                   control={form.control}
@@ -325,7 +325,7 @@ function ProfileForm() {
               <Separator className="my-4" />
               {/* Tax Information */}
               <CardTitle className="pt-4 mb-4">Tax Information</CardTitle>
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 gap-3 mb-3 @[640px]/vendors-form:grid-cols-2">
               <FormField
                 control={form.control}
                 name="gst_number"
@@ -375,7 +375,7 @@ function ProfileForm() {
               <Separator className="my-4" />
               {/* Bank Information */}
               <CardTitle className="pt-4 mb-4">Bank Information</CardTitle>
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="grid grid-cols-1 gap-3 mb-3 @[640px]/vendors-form:grid-cols-2 @[900px]/vendors-form:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="bank_name"
@@ -470,15 +470,15 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-3 @[480px]/vendors-form:flex-row @[480px]/vendors-form:justify-end">
           <Button
             onClick={() => window.history.back()}
-            className="self-center"
+            className="w-full @[480px]/vendors-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/vendors-form:w-auto" type="submit">
             Add Vendor
           </Button>
         </div>
@@ -489,21 +489,21 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/vendors-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/vendors-form:m-8 @[700px]/vendors-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
+      <CardHeader className="px-4 @[700px]/vendors-form:px-6">
         <CardTitle>Vendor Master</CardTitle>
         <CardDescription>Add Vendor</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
+      <CardContent className="min-w-0 px-4 @[700px]/vendors-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm />
         </div>
       </CardContent>

@@ -104,8 +104,18 @@ export default function RoomInventoryDialog({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpen} backdrop={backdrop}>
-      <ModalContent className="sm:max-w-[600px]">
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpen}
+      backdrop={backdrop}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full sm:max-w-[600px]",
+      }}
+    >
+      <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">Inventory for {roomName}</h2>

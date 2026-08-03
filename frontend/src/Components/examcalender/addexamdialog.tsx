@@ -139,7 +139,7 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white sm:max-w-lg rounded-lg p-6 shadow-xl">
+      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-lg bg-white p-4 shadow-xl sm:p-6">
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit Exam' : 'Add Exam'}</DialogTitle>
         </DialogHeader>
@@ -172,7 +172,7 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
                         <FormItem>
                         <FormLabel>Exam</FormLabel>
                         <FormControl>
-                            <select {...field} className="border rounded-md p-2 w-full">
+                            <select {...field} className="w-full rounded-md border p-2">
                                 <option value={0} disabled>Select Exam</option>
                                 {allExams.map((ex) => (
                                     <option key={ex.id} value={ex.id}>{ex.exam_title}</option>
@@ -213,7 +213,7 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
                         <FormItem>
                         <FormLabel>Subject</FormLabel>
                         <FormControl>
-                            <select {...field} className="border rounded-md p-2 w-full">
+                            <select {...field} className="w-full rounded-md border p-2">
                                 <option value={0} disabled>Select Subject</option>
                                 {allSubjects.map((sub) => (
                                     <option key={sub.id} value={sub.id}>{sub.subject_name}</option>
@@ -283,11 +283,11 @@ const AddExamDialog: React.FC<AddExamDialogProps> = ({ open, onOpenChange, allEx
                         <FormMessage />
                         </FormItem>
                 )}/>
-                <DialogFooter className="pt-2">
+                <DialogFooter className="gap-2 pt-2 sm:gap-2">
                     <DialogClose asChild>
-                        <Button type="button" variant="outline">Cancel</Button>
+                        <Button type="button" variant="outline" className="w-full sm:w-auto">Cancel</Button>
                     </DialogClose>
-                    <Button type="submit">{isEditMode ? 'Update' : 'Save'}</Button>
+                    <Button type="submit" className="w-full sm:w-auto">{isEditMode ? 'Update' : 'Save'}</Button>
                 </DialogFooter>
             </form>
         </Form>

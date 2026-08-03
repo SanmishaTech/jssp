@@ -134,15 +134,15 @@ export default function TransferDialog({ isOpen, onOpenChange, item }: TransferD
         <ModalHeader className="flex flex-col gap-1">
           Transfer Inventory
         </ModalHeader>
-        <ModalBody className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+        <ModalBody className="min-w-0 space-y-4">
+          <p className="break-words text-sm text-muted-foreground">
             Item: <span className="font-medium">{item.one}</span> (Room {item.two})
             <br />
             Quantity: <span className="font-medium">{item.five || "NA"}</span>
           </p>
           {/* Transfer target selection */}
-          <div className="flex items-center gap-4 mb-2">
-            <label className="flex items-center gap-1 text-sm cursor-pointer">
+          <div className="mb-2 flex flex-wrap items-center gap-3 sm:gap-4">
+            <label className="flex cursor-pointer items-center gap-1 text-sm">
               <input
                 type="radio"
                 name="targetType"
@@ -153,7 +153,7 @@ export default function TransferDialog({ isOpen, onOpenChange, item }: TransferD
               />
               Room
             </label>
-            <label className="flex items-center gap-1 text-sm cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-1 text-sm">
               <input
                 type="radio"
                 name="targetType"
@@ -204,11 +204,21 @@ export default function TransferDialog({ isOpen, onOpenChange, item }: TransferD
           {error && <p className="text-danger text-sm">{error}</p>}
           {success && <p className="text-success text-sm">{success}</p>}
         </ModalBody>
-        <ModalFooter>
-          <Button variant="flat" onPress={() => onOpenChange(false)} disabled={loading}>
+        <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:gap-2">
+          <Button
+            variant="flat"
+            onPress={() => onOpenChange(false)}
+            disabled={loading}
+            className="w-full sm:w-auto"
+          >
             Cancel
           </Button>
-          <Button color="primary" onPress={handleSubmit} disabled={loading}>
+          <Button
+            color="primary"
+            onPress={handleSubmit}
+            disabled={loading}
+            className="w-full sm:w-auto"
+          >
             {loading ? <Spinner size="sm" /> : "Transfer"}
           </Button>
         </ModalFooter>

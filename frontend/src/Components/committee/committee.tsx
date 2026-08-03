@@ -40,17 +40,17 @@ export default function Committee() {
 
   return (
     <>
-      <div className="container mx-auto p-4 md:p-6 lg:p-8">
-        <div className="bg-white dark:bg-slate-800 shadow-lg rounded-lg p-8 w-full max-w-4xl mx-auto border border-gray-200 dark:border-slate-700">
+      <div className="@container/committee-detail min-w-0 w-full px-4 py-4 @[700px]/committee-detail:px-6 @[700px]/committee-detail:py-6">
+        <div className="mx-auto min-w-0 w-full max-w-4xl rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800 @[700px]/committee-detail:p-8">
           {/* Committee Details */}
-          <div className="flex items-center mb-6">
-            <div className="flex-shrink-0 h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+          <div className="mb-6 flex min-w-0 flex-col gap-4 @[480px]/committee-detail:flex-row @[480px]/committee-detail:items-center">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-100">
               <span className="text-2xl font-bold text-blue-600 dark:text-blue-300">
                 {committee.commitee_name?.charAt(0) || "C"}
               </span>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            <div className="min-w-0">
+              <h1 className="mb-1 truncate text-xl font-bold text-gray-900 dark:text-white @[700px]/committee-detail:text-2xl">
                 {committee.commitee_name}
               </h1>
               <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -59,16 +59,16 @@ export default function Committee() {
             </div>
           </div>
 
-          <Tabs defaultValue="members" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-6">
+          <Tabs defaultValue="members" className="min-w-0 w-full">
+            <TabsList className="mb-6 grid w-full max-w-md grid-cols-1 mx-auto @[480px]/committee-detail:grid-cols-2">
               <TabsTrigger value="members">Committee Members</TabsTrigger>
               <TabsTrigger value="meetings">Meeting History</TabsTrigger>
             </TabsList>
 
             {/* Committee Members Tab */}
             <TabsContent value="members">
-              <div className="rounded-md border overflow-hidden">
-                <Table>
+              <div className="min-w-0 overflow-x-auto rounded-md border">
+                <Table className="min-w-[480px]">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Staff Name</TableHead>
@@ -98,8 +98,8 @@ export default function Committee() {
             {/* Meeting History Tab */}
             <TabsContent value="meetings">
               {meetingsQuery.isLoading ? (
-                <div className="rounded-md border">
-                  <Table>
+                <div className="min-w-0 overflow-x-auto rounded-md border">
+                  <Table className="min-w-[640px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-[180px]">Date & Time</TableHead>
@@ -123,8 +123,8 @@ export default function Committee() {
                   <p>Failed to load meetings.</p>
                 </div>
               ) : meetings.length > 0 ? (
-                <div className="rounded-md border">
-                  <Table>
+                <div className="min-w-0 overflow-x-auto rounded-md border">
+                  <Table className="min-w-[640px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-[180px]">Date & Time</TableHead>

@@ -27,12 +27,12 @@ interface Props {
 }
 
 const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: React.ReactNode }) => (
-  <div className="flex items-start">
-    <dt className="flex items-center text-sm font-medium text-gray-500 w-28">
+  <div className="flex min-w-0 flex-col gap-1 @[480px]/meeting-detail:flex-row @[480px]/meeting-detail:items-start">
+    <dt className="flex w-full shrink-0 items-center text-sm font-medium text-gray-500 @[480px]/meeting-detail:w-28">
       {icon}
       <span className="ml-2">{label}</span>
     </dt>
-    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 ml-4">{value}</dd>
+    <dd className="min-w-0 break-words text-sm text-gray-900 @[480px]/meeting-detail:ml-4">{value}</dd>
   </div>
 );
 
@@ -43,17 +43,29 @@ export default function MeetingDetailsDialog({ isOpen, onClose, meeting }: Props
   const formattedTime = meeting.time ? format(new Date(`1970-01-01T${meeting.time}`), "h:mm a") : 'N/A';
 
   return (
-    <Modal backdrop="blur" size="2xl" isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
+    <Modal
+      backdrop="blur"
+      size="2xl"
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
+      <ModalContent className="@container/meeting-detail">
         {() => (
           <>
-            <ModalHeader className="flex items-center gap-2 border-b pb-4">
-                <div className="bg-primary/10 p-2 rounded-full">
+            <ModalHeader className="flex min-w-0 items-center gap-2 border-b pb-4">
+                <div className="shrink-0 rounded-full bg-primary/10 p-2">
                     <Info className="h-5 w-5 text-primary" />
                 </div>
-                <div>
+                <div className="min-w-0">
                     <h2 className="text-lg font-semibold">Meeting Details</h2>
-                    <p className="text-sm text-gray-500">
+                    <p className="truncate text-sm text-gray-500">
                         {meeting.venue} • {formattedDate}
                     </p>
                 </div>
@@ -85,7 +97,7 @@ export default function MeetingDetailsDialog({ isOpen, onClose, meeting }: Props
               </div>
             </ModalBody>
             <ModalFooter className="border-t pt-4">
-              <Button variant="bordered" onPress={onClose}>
+              <Button variant="bordered" onPress={onClose} className="w-full sm:w-auto">
                 Close
               </Button>
             </ModalFooter>

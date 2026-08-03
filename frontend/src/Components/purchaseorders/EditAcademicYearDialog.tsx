@@ -302,7 +302,19 @@ export default function EditAcademicYearDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -321,7 +333,7 @@ export default function EditAcademicYearDialog({
                       control={form.control}
                       name="vendor_id"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Vendor
                           </FormLabel>
@@ -348,12 +360,12 @@ export default function EditAcademicYearDialog({
                     />
                     
                     {/* Asset Type and Asset Categories Side by Side */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="asset_master_id"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="min-w-0">
                             <FormLabel>
                               Asset Type
                               <span className="text-red-500">*</span>
@@ -383,7 +395,7 @@ export default function EditAcademicYearDialog({
                         control={form.control}
                         name="asset_category_ids"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="min-w-0">
                             <FormLabel>
                               Asset Categories
                               <span className="text-red-500">*</span>
@@ -410,12 +422,12 @@ export default function EditAcademicYearDialog({
                     </div>
                     
                     {/* Quantity and Price Side by Side */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="quantity"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="min-w-0">
                             <FormLabel>Quantity <span className="text-red-500">*</span></FormLabel>
                             <FormControl>
                               <Input placeholder="Enter Quantity..." {...field} />
@@ -428,7 +440,7 @@ export default function EditAcademicYearDialog({
                      control={form.control}
                      name="price"
                      render={({ field }) => (
-                       <FormItem>
+                          <FormItem className="min-w-0">
                          <FormLabel>Price</FormLabel>
                          <FormControl>
                            <div className="relative">
@@ -458,7 +470,7 @@ export default function EditAcademicYearDialog({
                                           render={({ field }) => {
                                             const maxLength = 255;
                                             return (
-                                              <FormItem>
+                                              <FormItem className="min-w-0">
                                                 <FormLabel>Description</FormLabel>
                                                 <FormControl>
                                                   <div className="relative">
@@ -483,10 +495,10 @@ export default function EditAcademicYearDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Update Purchase Order
               </Button>
             </ModalFooter>
