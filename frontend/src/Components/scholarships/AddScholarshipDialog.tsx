@@ -215,7 +215,7 @@ export default function AddScholarshipDialog({
 
   // Simplified FormItem component
   const FormItem = ({ children }: { children: React.ReactNode }) => (
-    <div className="mb-4">{children}</div>
+                   <div className="mb-4 min-w-0">{children}</div>
   );
 
   // Simplified FormLabel component
@@ -242,7 +242,19 @@ export default function AddScholarshipDialog({
   Input.displayName = "Input";
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -252,11 +264,11 @@ export default function AddScholarshipDialog({
             <ModalBody>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <h1 className="text-center font-bold hover:cursor-default ">Scholarship Details</h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                  
                   
                   {/* Academic Year selection field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Academic Year
                       <span className="text-red-500">*</span>
@@ -285,7 +297,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                    {/* Course selection field */}
-                   <div className="mb-4">
+                   <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Course Title
                       <span className="text-red-500">*</span>
@@ -314,7 +326,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* Students Applied field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Students Applied for Scholarship
                       <span className="text-red-500">*</span>
@@ -334,7 +346,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* Approved from University field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Approved from University
                       <span className="text-red-500">*</span>
@@ -359,10 +371,10 @@ export default function AddScholarshipDialog({
 
                   <h1 className="text-center font-bold hover:cursor-default">Installments Details</h1>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
                   {/* First Installment Date field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       First Installment Date
                       <span className="text-red-500">*</span>
@@ -383,7 +395,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* First Installment Student field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       First Installment Student
                       <span className="text-red-500">*</span>
@@ -403,7 +415,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* First Installment Amount field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       First Installment Amount
                       <span className="text-red-500">*</span>
@@ -423,11 +435,11 @@ export default function AddScholarshipDialog({
                   </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
 
                   {/* Second Installment Date field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Second Installment Date
                       <span className="text-red-500">*</span>
@@ -449,7 +461,7 @@ export default function AddScholarshipDialog({
 
 
                     {/* Second Installment Student field */}
-                    <div className="mb-4">
+                    <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Second Installment Amount
                       <span className="text-red-500">*</span>
@@ -469,7 +481,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* Second Installment Amount field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Second Installment Amount
                       <span className="text-red-500">*</span>
@@ -488,7 +500,7 @@ export default function AddScholarshipDialog({
                     )}
                   </div>
                   {/* Third Installment Date field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Third Installment Date
                       <span className="text-red-500">*</span>
@@ -510,7 +522,7 @@ export default function AddScholarshipDialog({
 
 
                     {/* Third Installment Student field */}
-                    <div className="mb-4">
+                    <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Third Installment Student
                       <span className="text-red-500">*</span>
@@ -530,7 +542,7 @@ export default function AddScholarshipDialog({
                   </div>
 
                   {/* Third Installment Amount field */}
-                  <div className="mb-4">
+                  <div className="mb-4 min-w-0">
                     <label className="block text-sm font-medium mb-1">
                       Third Installment Amount
                       <span className="text-red-500">*</span>
@@ -552,10 +564,10 @@ export default function AddScholarshipDialog({
               </form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Add Scholarship
               </Button>
             </ModalFooter>

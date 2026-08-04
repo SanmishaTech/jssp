@@ -211,8 +211,8 @@ const TaskForm: React.FC<TaskFormProps> = ({
           </div>
         </div>
         
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2">
+        <div className="grid grid-cols-1 gap-4 min-w-0 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="min-w-0 space-y-2">
             <Label htmlFor="due_date">Due Date</Label>
             <Input
               id="due_date"
@@ -238,7 +238,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="min-w-0 space-y-2">
             <Label htmlFor="assigned_to">Assign To</Label>
               <Select 
                 name="assigned_to" 
@@ -278,7 +278,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="min-w-0 space-y-2">
               <Label htmlFor="priority">Priority</Label>
               <Select 
                 name="priority" 
@@ -350,18 +350,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
       
       <Separator className="my-4" />
       
-      <div className="flex justify-end space-x-3">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-3 sm:gap-0">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="gap-2"
+          className="w-full gap-2 sm:w-auto"
         >
           Cancel
         </Button>
         <Button
           type="submit"
-          className="gap-2"
+          className="w-full gap-2 sm:w-auto"
           disabled={isSubmitting}
           onClick={(e) => {
             // Handle button click directly

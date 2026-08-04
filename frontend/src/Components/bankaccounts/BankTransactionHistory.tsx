@@ -199,16 +199,16 @@ export default function BankTransactionHistory({
   const { totalCredit, totalDebit, netAmount } = calculateTotals();
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center py-4 mb-4">
-        <h3 className="text-lg font-semibold">Transaction History for {bankAccountName}</h3>
-        <div className="flex gap-2">
+    <div className="@container/banktx min-w-0 w-full">
+      <div className="mb-4 flex min-w-0 flex-col gap-3 py-4 @[640px]/banktx:flex-row @[640px]/banktx:items-center @[640px]/banktx:justify-between">
+        <h3 className="text-lg font-semibold shrink-0">Transaction History for {bankAccountName}</h3>
+        <div className="flex min-w-0 flex-col gap-2 @[640px]/banktx:flex-row @[640px]/banktx:flex-wrap @[640px]/banktx:items-center">
           <Dropdown>
             <DropdownTrigger>
               <Button
                 variant="flat"
                 size="sm"
-                className="flex items-center gap-1 mt-1 h-9.5"
+                className="flex h-9.5 w-full items-center gap-1 @[640px]/banktx:mt-1 @[640px]/banktx:w-auto"
                 endContent={<ChevronDown size={16} />}
               >
                 <Filter size={16} />
@@ -241,20 +241,20 @@ export default function BankTransactionHistory({
             </DropdownMenu>
           </Dropdown>
 
-          <div className="flex items-center">
+          <div className="flex min-w-0 w-full items-center @[640px]/banktx:w-auto">
             <Input
               type="date"
               value={dateFilter}
               onChange={handleDateFilterChange}
               placeholder="Filter by date"
-              className="max-w-[180px]"
+              className="min-w-0 w-full max-w-full @[640px]/banktx:max-w-[180px]"
               startContent={<Calendar size={16} />}
             />
           </div>
 
           {(typeFilter !== "all" || dateFilter) && (
             <Button
-              className="mt-1 h-9.5 bg-blue-600 text-white hover:bg-blue-600"
+              className="h-9.5 w-full bg-blue-600 text-white hover:bg-blue-600 @[640px]/banktx:mt-1 @[640px]/banktx:w-auto"
               variant="flat"
               size="sm"
               onClick={resetFilters}
@@ -267,7 +267,7 @@ export default function BankTransactionHistory({
       
       {/* Transaction Summary Card */}
       {transactions.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="mb-6 grid min-w-0 grid-cols-1 gap-4 @[480px]/banktx:grid-cols-2">
           <div className="bg-success/10 p-4 rounded-md shadow-sm">
             <h4 className="text-sm font-medium text-success mb-1">Total Credits</h4>
             <p className="text-xl font-bold text-success">₹{totalCredit.toFixed(2)}</p>
@@ -287,7 +287,8 @@ export default function BankTransactionHistory({
         <div className="p-8 text-center text-danger">{error}</div>
       ) : sortedTransactions.length > 0 ? (
         <>
-          <Table aria-label="Transaction History Table" className="bg-white rounded-lg shadow-lg shadow-gray-200">
+          <div className="min-w-0 overflow-x-auto">
+          <Table aria-label="Transaction History Table" className="min-w-[640px] bg-white rounded-lg shadow-lg shadow-gray-200">
             <TableHeader>
               <TableColumn onClick={() => handleSort('description')} className="cursor-pointer">DESCRIPTION{sortConfig.key==='description'?(sortConfig.direction==='asc'?' ▲':' ▼'):''}</TableColumn>
               <TableColumn onClick={() => handleSort('type')} className="cursor-pointer">TYPE{sortConfig.key==='type'?(sortConfig.direction==='asc'?' ▲':' ▼'):''}</TableColumn>
@@ -328,6 +329,7 @@ export default function BankTransactionHistory({
               ))}
             </TableBody>
           </Table>
+          </div>
           <div className="flex justify-center p-4">
             <Pagination
               total={totalPages}

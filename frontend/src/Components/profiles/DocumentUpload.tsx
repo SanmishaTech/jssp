@@ -150,14 +150,14 @@ export default function DocumentUpload({
               <h4 className="text-sm font-medium text-gray-700">Existing Documents</h4>
               <div className="grid grid-cols-1 gap-2">
                 {existingDocuments.map((doc) => (
-                  <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                    <div className="flex items-center space-x-2">
+                  <div key={doc.id} className="flex min-w-0 items-center justify-between gap-2 p-3 bg-gray-50 rounded-md">
+                    <div className="flex min-w-0 flex-1 items-center space-x-2">
                       {getFileIcon(doc.document_path || doc.name || "")}
                       <a 
                         href={`/api/staff-file/${doc.document_path || doc.name}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer truncate max-w-xs"
+                        className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                       >
                         {doc.document_path || doc.name || `Document ${doc.id}`}
                       </a>
@@ -181,10 +181,10 @@ export default function DocumentUpload({
               <h4 className="text-sm font-medium text-gray-700">New Documents</h4>
               <div className="grid grid-cols-1 gap-2">
                 {selectedDocuments.map((file, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                    <div className="flex items-center space-x-2">
+                  <div key={index} className="flex min-w-0 items-center justify-between gap-2 p-3 bg-gray-50 rounded-md">
+                    <div className="flex min-w-0 flex-1 items-center space-x-2">
                       {getFileIcon(file.name)}
-                      <span className="text-sm text-gray-700 truncate max-w-xs">
+                      <span className="min-w-0 flex-1 truncate text-sm text-gray-700">
                         {file.name}
                       </span>
                     </div>
@@ -201,7 +201,7 @@ export default function DocumentUpload({
             </div>
           )}
           
-          <div className="text-sm text-gray-500 flex items-center justify-between">
+          <div className="text-sm text-gray-500 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span>{existingDocuments.length + selectedDocuments.length} of 10 documents</span>
             {existingDocuments.length + selectedDocuments.length > 0 && (
               <Button 

@@ -236,7 +236,7 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                 </span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-white sm:max-w-[425px]">
+            <DialogContent className="mx-auto max-h-[90dvh] w-[calc(100vw-2rem)] overflow-y-auto bg-white sm:max-w-[550px]">
               <DialogHeader>
                 <DialogTitle>{editingId ? 'Edit Paper' : 'Add New Paper'}</DialogTitle>
                 <DialogDescription>
@@ -246,8 +246,8 @@ const PaperUpload = ({ staffId, ...props }: any) => {
               </DialogHeader>
               <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="journal_title" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="journal_title" className="sm:col-span-1 sm:text-right">
                       Journal Title <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -257,11 +257,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       value={formData.journal_title}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="research_topic" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="research_topic" className="sm:col-span-1 sm:text-right">
                       Research Paper Title
                     </Label>
                     <Input
@@ -270,11 +270,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="e.g., Machine Learning"
                       value={formData.research_topic}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="publication_identifier" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="publication_identifier" className="sm:col-span-1 sm:text-right">
                       ISSN / ISBN
                     </Label>
                     <Input
@@ -283,11 +283,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="ISSN / ISBN"
                       value={formData.publication_identifier}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="volume" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="volume" className="sm:col-span-1 sm:text-right">
                       Volume
                     </Label>
                     <Input
@@ -297,11 +297,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="e.g., 42"
                       value={formData.volume}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="issue" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="issue" className="sm:col-span-1 sm:text-right">
                       Issue
                     </Label>
                     <Input
@@ -311,11 +311,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="e.g., 3"
                       value={formData.issue}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="year_of_publication" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="year_of_publication" className="sm:col-span-1 sm:text-right">
                       Year of Publication <span className="text-red-500">*</span>
                     </Label>
                      <Input
@@ -327,11 +327,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                                         value={formData.year_of_publication}
                                         onChange={handleChange}
                                         required
-                                        className="col-span-3"
+                                        className="min-w-0 sm:col-span-3"
                                       />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="peer_reviewed" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="peer_reviewed" className="sm:col-span-1 sm:text-right">
                       Peer Reviewed
                     </Label>
                     <Input
@@ -340,11 +340,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="Enter Peer Reviewed"
                       value={formData.peer_reviewed}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="coauthor" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="coauthor" className="sm:col-span-1 sm:text-right">
                       Coauthor
                     </Label>
                     <Input
@@ -353,11 +353,11 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       placeholder="e.g., John Doe"
                       value={formData.coauthor}
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="certificate" className="text-right">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="certificate" className="sm:col-span-1 sm:text-right">
                       Certificate
                     </Label>
                     <Input
@@ -366,13 +366,13 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                       type="file"
                       accept="application/pdf"
                       onChange={handleChange}
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
                   {editingId && (
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Current</Label>
-                      <div className="col-span-3 flex items-center gap-2">
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                      <Label className="sm:col-span-1 sm:text-right">Current</Label>
+                      <div className="flex min-w-0 items-center gap-2 sm:col-span-3">
                         {papers.find((e) => e.id === editingId)?.certificate_url ? (
                           <>
                             <Button
@@ -398,8 +398,8 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                     </div>
                   )}
                 </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
+                <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                  <Button type="submit" className="w-full sm:w-auto">Save changes</Button>
                 </DialogFooter>
               </form>
             </DialogContent>

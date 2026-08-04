@@ -121,8 +121,8 @@ export default function BankForm() {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between">
+    <Card className="min-w-0 w-full max-w-2xl mx-auto shadow-sm">
+      <CardHeader className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-xl font-semibold">
           {id ? "Edit Bank" : "Bank"}
         </h3>

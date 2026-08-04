@@ -84,20 +84,27 @@ export default function TransactionHistoryDialog({
     <Modal 
       isOpen={isOpen} 
       onClose={onClose}
-      className="max-w-[900px] mx-auto"
+      size="4xl"
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full max-w-[900px]",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
     >
       <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              <div className="flex justify-between items-center">
-                <h2>Bank Account Transactions</h2>
-                <span className="text-sm px-3 py-1 rounded-full bg-primary-100 text-primary-800">
+              <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+                <h2 className="text-lg font-semibold">Bank Account Transactions</h2>
+                <span className="w-fit shrink-0 text-sm px-3 py-1 rounded-full bg-primary-100 text-primary-800">
                   {bankAccount.bank_name}
                 </span>
               </div>
             </ModalHeader>
-            <ModalBody>
+            <ModalBody className="min-w-0">
               <BankTransactionHistory 
                 key={refreshKey}
                 bankAccountId={bankAccount.id} 
@@ -109,8 +116,7 @@ export default function TransactionHistoryDialog({
               </div>
             </ModalBody>
             <ModalFooter className="flex justify-end">
-               
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Close
               </Button>
             </ModalFooter>

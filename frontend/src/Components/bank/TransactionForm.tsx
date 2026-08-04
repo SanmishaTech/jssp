@@ -234,21 +234,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto bg-white shadow-2xl rounded-xl border border-gray-200">
+    <Card className="min-w-0 w-full max-w-lg mx-auto bg-white shadow-2xl rounded-xl border border-gray-200">
       <CardHeader className="pb-0 flex justify-center">
         <h3 className="text-lg font-semibold">Record New Transaction</h3>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardBody className="gap-6 flex flex-col">
-          <div className="w-full">
+          <div className="min-w-0 w-full">
             <label className="block text-sm font-medium mb-1">Bank Account</label>
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="bordered" className="w-full justify-between">
+                <Button variant="bordered" className="min-w-0 w-full justify-between">
                   {banks.find(b => b.id === selectedAccountId)?.bank_name || "Select Bank Account"}
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu className="min-w-[15rem]">
+              <DropdownMenu className="min-w-0 w-full max-w-[calc(100vw-2rem)] sm:max-w-[15rem]">
                 {banks.map(bank => (
                   <DropdownItem key={bank.id} onPress={() => setSelectedAccountId(prev => prev === bank.id ? null : bank.id)}>
                     {bank.bank_name}
@@ -257,12 +257,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               </DropdownMenu>
             </Dropdown>
           </div>
-          <div className="w-full">
+          <div className="min-w-0 w-full">
             <label className="block text-sm font-medium mb-1">Transaction Type</label>
             <RadioGroup
               value={formData.type}
               onValueChange={handleTypeChange}
-              className="flex flex-row items-center gap-9"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-9"
             >
               <label className="flex items-center gap-3 text-base text-red-500">
                 <RadioGroupItem value="debit" className="h-4 w-4 border-red-500 text-red-500" />
@@ -274,15 +274,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               </label>
             </RadioGroup>
           </div>
-          <div className="w-full">
+          <div className="min-w-0 w-full">
             <label htmlFor="payment_method" className="block text-sm font-medium mb-1">Mode of Payment</label>
             <Dropdown>
               <DropdownTrigger>
-                <Button variant="bordered" className="w-full justify-between">
+                <Button variant="bordered" className="min-w-0 w-full justify-between">
                   {formData.payment_method === "cash" ? "Cash" : formData.payment_method.toUpperCase()}
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu className="min-w-[27rem]">
+              <DropdownMenu className="min-w-0 w-full max-w-[calc(100vw-2rem)] sm:max-w-none">
                 <DropdownItem key="cash" onPress={() => handlePaymentMethodChange("cash")}>Cash</DropdownItem>
                 <DropdownItem key="upi" onPress={() => handlePaymentMethodChange("upi")}>UPI</DropdownItem>
                 <DropdownItem key="cheque" onPress={() => handlePaymentMethodChange("cheque")}>Cheque</DropdownItem>
@@ -291,7 +291,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           {formData.payment_method === "cash" ? (
-            <div className="grid grid-cols-2 gap-4 w-full">
+            <div className="grid min-w-0 w-full grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 placeholder="Enter amount (₹)"
                 type="number"
@@ -317,7 +317,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               />
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4 w-full">
+            <div className="grid min-w-0 w-full grid-cols-1 gap-4 sm:grid-cols-2">
               <Input
                 placeholder="Payer Full Name"
                 name="payer_name"
@@ -362,7 +362,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             </div>
           )}
 
-          <div className="w-full">
+          <div className="min-w-0 w-full">
             <Input
               placeholder="Transaction date"
               type="date"

@@ -139,7 +139,18 @@ export default function EditBankAccountDialog({
   };
 
   return (
-    <Modal size="2xl" isOpen={isOpen} onClose={handleClose}>
+    <Modal
+      size="2xl"
+      isOpen={isOpen}
+      onClose={handleClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -152,12 +163,12 @@ export default function EditBankAccountDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Account Holder Name
                             <span className="text-red-500">*</span>
@@ -173,7 +184,7 @@ export default function EditBankAccountDialog({
                       control={form.control}
                       name="bank_name"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Bank Name
                             <span className="text-red-500">*</span>
@@ -189,7 +200,7 @@ export default function EditBankAccountDialog({
                       control={form.control}
                       name="account_number"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Account Number
                             <span className="text-red-500">*</span>
@@ -205,7 +216,7 @@ export default function EditBankAccountDialog({
                       control={form.control}
                       name="ifsc_code"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             IFSC Code
                             <span className="text-red-500">*</span>
@@ -222,7 +233,7 @@ export default function EditBankAccountDialog({
                     control={form.control}
                     name="address"
                     render={({ field }: FormFieldProps) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>
                           Branch Address
                           <span className="text-red-500">*</span>
@@ -238,7 +249,7 @@ export default function EditBankAccountDialog({
                     control={form.control}
                     name="branch"
                     render={({ field }: FormFieldProps) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>
                           Branch
                           <span className="text-red-500">*</span>
@@ -250,12 +261,12 @@ export default function EditBankAccountDialog({
                       </FormItem>
                     )}
                   />
-                 <div className="grid grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField
     control={form.control}
     name="email"
     render={({ field }: FormFieldProps) => (
-      <FormItem>
+      <FormItem className="min-w-0">
         <FormLabel>
           Contact Email <span className="text-red-500">*</span>
         </FormLabel>
@@ -270,7 +281,7 @@ export default function EditBankAccountDialog({
     control={form.control}
     name="phone"
     render={({ field }: FormFieldProps) => (
-      <FormItem>
+      <FormItem className="min-w-0">
         <FormLabel>
         Contact Phone <span className="text-red-500">*</span>
         </FormLabel>
@@ -286,10 +297,10 @@ export default function EditBankAccountDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={handleClose}>
+              <Button color="danger" variant="light" onPress={handleClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Update Admission
               </Button>
             </ModalFooter>

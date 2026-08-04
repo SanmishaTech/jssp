@@ -129,10 +129,10 @@ export default function PeticashDashboard() {
     parseFloat(peticash.total_amount) - parseFloat(peticash.total_spend || "0");
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="@container/bank min-w-0 w-full flex flex-col gap-4 px-4 py-4 @[700px]/bank:gap-6 @[700px]/bank:px-6 @[700px]/bank:py-6">
+      <div className="grid min-w-0 grid-cols-1 gap-4 @[700px]/bank:grid-cols-2">
         {/* Total Fund Card */}
-        <Card className="bg-card shadow-sm">
+        <Card className="min-w-0 bg-card shadow-sm">
           <CardBody className="flex items-center gap-4 p-4">
             <div className="p-3 rounded-full bg-primary/10">
               <CreditCard className="h-6 w-6 text-primary" />
@@ -147,7 +147,7 @@ export default function PeticashDashboard() {
         </Card>
 
         {/* Spent Amount Card */}
-        <Card className="bg-card shadow-sm">
+        <Card className="min-w-0 bg-card shadow-sm">
           <CardBody className="flex items-center gap-4 p-4">
             <div className="p-3 rounded-full bg-danger/10">
               <ArrowDownCircle className="h-6 w-6 text-danger" />
@@ -203,7 +203,7 @@ export default function PeticashDashboard() {
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
         aria-label="Bank Tabs"
-        className="w-full flex flex-col items-center"
+        className="min-w-0 w-full flex flex-col items-center"
         classNames={{
           tabList: "justify-center w-full max-w-md mb-[-50px]",
           tab: "px-3 py-1 text-xs",
@@ -212,8 +212,8 @@ export default function PeticashDashboard() {
         size="sm"
       >
         <Tab key="overview" title="Add Transaction">
-          <div className="mt-2">
-            <div className="flex justify-center gap-8 text-sm text-muted-foreground mb-3">
+          <div className="mt-2 min-w-0 w-full">
+            <div className="mb-3 flex flex-col gap-2 text-sm text-muted-foreground @[640px]/bank:flex-row @[640px]/bank:justify-center @[640px]/bank:gap-8">
               <div>
                 <span>Created: </span>
                 <span className="font-medium">
@@ -227,7 +227,7 @@ export default function PeticashDashboard() {
                 </span>
               </div>
             </div>
-            <div className="flex justify-center">
+            <div className="flex min-w-0 w-full justify-center">
               <TransactionForm
                 peticashId={peticash.id}
                 currentBalance={availableBalance}
@@ -237,8 +237,8 @@ export default function PeticashDashboard() {
           </div>
         </Tab>
         <Tab key="history" title="Transaction History">
-          <div className="mt-2">
-            <div className="flex justify-center gap-8 text-sm text-muted-foreground mb-3">
+          <div className="mt-2 min-w-0 w-full">
+            <div className="mb-3 flex flex-col gap-2 text-sm text-muted-foreground @[640px]/bank:flex-row @[640px]/bank:justify-center @[640px]/bank:gap-8">
               <div>
                 <span>Created: </span>
                 <span className="font-medium">

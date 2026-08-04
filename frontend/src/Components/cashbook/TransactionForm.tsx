@@ -204,7 +204,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-lg shadow-sm">
+    <Card className="min-w-0 w-full max-w-lg shadow-sm">
       <CardHeader className="pb-0">
         <h3 className="text-lg font-semibold">Record New Transaction</h3>
       </CardHeader>

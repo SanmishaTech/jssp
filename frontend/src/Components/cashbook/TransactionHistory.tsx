@@ -149,16 +149,16 @@ export default function TransactionHistory({
   };
 
   return (
-    <Card className="w-full shadow-sm">
-      <CardHeader className="flex justify-between items-center py-4">
-        <h3 className="text-lg font-semibold">Transaction History</h3>
-        <div className="flex gap-2">
+    <Card className="min-w-0 w-full shadow-sm">
+      <CardHeader className="flex min-w-0 flex-col gap-3 py-4 @[640px]/cashbook:flex-row @[640px]/cashbook:items-center @[640px]/cashbook:justify-between">
+        <h3 className="text-lg font-semibold shrink-0">Transaction History</h3>
+        <div className="flex min-w-0 flex-col gap-2 @[640px]/cashbook:flex-row @[640px]/cashbook:flex-wrap @[640px]/cashbook:items-center">
           <Dropdown>
             <DropdownTrigger>
               <Button
                 variant="flat"
                 size="sm"
-                className="flex items-center gap-1 mt-1 h-9.5"
+                className="flex h-9.5 w-full items-center gap-1 @[640px]/cashbook:mt-1 @[640px]/cashbook:w-auto"
                 endContent={<ChevronDown size={16} />}
               >
                 <Filter size={16} />
@@ -191,20 +191,20 @@ export default function TransactionHistory({
             </DropdownMenu>
           </Dropdown>
 
-          <div className="flex items-center">
+          <div className="flex min-w-0 w-full items-center @[640px]/cashbook:w-auto">
             <Input
               type="date"
               value={dateFilter}
               onChange={handleDateFilterChange}
               placeholder="Filter by date"
-              className="max-w-[180px]"
+              className="min-w-0 w-full max-w-full @[640px]/cashbook:max-w-[180px]"
               startContent={<Calendar size={16} />}
             />
           </div>
 
           {(typeFilter !== "all" || dateFilter) && (
             <Button
-              className="mt-1 h-9.5 bg-blue-600 text-white hover:bg-blue-600"
+              className="h-9.5 w-full bg-blue-600 text-white hover:bg-blue-600 @[640px]/cashbook:mt-1 @[640px]/cashbook:w-auto"
               variant="flat"
               size="sm"
               onClick={resetFilters}
@@ -214,7 +214,7 @@ export default function TransactionHistory({
           )}
         </div>
       </CardHeader>
-      <CardBody className="p-0">
+      <CardBody className="min-w-0 overflow-x-auto p-0">
         {loading ? (
           <div className="flex justify-center items-center p-8">
             <Spinner label="Loading transactions..." />
@@ -223,7 +223,7 @@ export default function TransactionHistory({
           <div className="p-8 text-center text-danger">{error}</div>
         ) : transactions.length > 0 ? (
           <>
-            <Table aria-label="Transaction History Table">
+            <Table aria-label="Transaction History Table" className="min-w-[640px]">
               <TableHeader>
                 <TableColumn>DESCRIPTION</TableColumn>
                 <TableColumn>TYPE</TableColumn>
@@ -279,7 +279,19 @@ export default function TransactionHistory({
       
       {/* Transaction Details Modal */}
       {selectedTransaction && (
-        <Modal size="lg" backdrop="blur" isOpen={isModalOpen} onClose={closeModal}>
+        <Modal
+          size="lg"
+          backdrop="blur"
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          placement="center"
+          scrollBehavior="inside"
+          classNames={{
+            wrapper: "items-center justify-center p-4",
+            base: "mx-auto my-auto max-h-[90dvh]",
+            footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+          }}
+        >
           <ModalContent className={cn(
             selectedTransaction.type === 'credit'
               ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-lg text-white'
@@ -319,7 +331,7 @@ export default function TransactionHistory({
               <ModalFooter className="justify-center">
                 <Button 
                   onPress={closeModal}
-                  className="bg-white/20 hover:bg-white/30 text-white"
+                  className="w-full bg-white/20 hover:bg-white/30 text-white sm:w-auto"
                 >
                   Close
                 </Button>

@@ -176,13 +176,12 @@ export default function Dashboard({
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background/30">
-      <div className="flex flex-col gap-6 py-6 px-8">
+    <div className="@container/profileslist min-w-0 w-full flex-col bg-background/30">
+      <div className="flex flex-col gap-4 px-4 py-4 @[700px]/profileslist:gap-6 @[700px]/profileslist:px-6 @[700px]/profileslist:py-6">
         {/* Header */}
-
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Breadcrumb className="flex md:flex">
-            <BreadcrumbList className="flex items-center space-x-2">
+        <header className="flex min-w-0 flex-col gap-3">
+          <Breadcrumb className="min-w-0 overflow-x-auto">
+            <BreadcrumbList className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               {breadcrumbs?.map((breadcrumb, index) => (
                 <React.Fragment key={index}>
                   <BreadcrumbItem>
@@ -207,59 +206,57 @@ export default function Dashboard({
           </Breadcrumb>
         </header>
 
-        <main className="grid flex-1 items-start gap-6">
-          <Tabs defaultValue="all" className="w-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">
+        <main className="grid min-w-0 flex-1 items-start gap-4 @[700px]/profileslist:gap-6">
+          <Tabs defaultValue="all" className="min-w-0 w-full">
+            <div className="mb-4 flex min-w-0 flex-col gap-4 @[900px]/profileslist:mb-6 @[900px]/profileslist:flex-row @[900px]/profileslist:items-start @[900px]/profileslist:justify-between">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold tracking-tight @[700px]/profileslist:text-2xl">
                   {tableColumns.title || "staff Dashboard"}
                 </h1>
-                <p className="text-muted-foreground mt-1">
+                <p className="mt-1 text-sm text-muted-foreground @[700px]/profileslist:text-base">
                   {tableColumns.description || "Manage staff data efficiently"}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 self-end">
-                <div className="flex items-center gap-3 ml-auto">
-                  <div className="relative flex items-center gap-2">
-                    <div className="relative flex-1 md:w-[300px]">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder={searchPlaceholder}
-                        className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                        value={localSearchTerm}
-                        onChange={handleSearchInput}
-                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
-                      />
-                      {localSearchTerm && (
-                        <button
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                          onClick={() => {
-                            setLocalSearchTerm("");
-                            onSearch("");
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                    <Button
-                      color="primary"
-                      variant="solid"
-                      className="h-10 rounded-r-full"
-                      onPress={handleSearchClick}
-                    >
-                      Search
-                    </Button>
+              <div className="flex min-w-0 w-full flex-col gap-2 @[640px]/profileslist:flex-row @[640px]/profileslist:flex-wrap @[640px]/profileslist:items-center @[900px]/profileslist:w-auto @[900px]/profileslist:justify-end">
+                <div className="relative min-w-0 flex w-full flex-1 flex-col gap-2 @[640px]/profileslist:min-w-[14rem] @[640px]/profileslist:flex-row @[640px]/profileslist:items-center @[900px]/profileslist:w-auto @[900px]/profileslist:max-w-[18rem]">
+                  <div className="relative min-w-0 flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder={searchPlaceholder}
+                      className="w-full min-w-0 rounded-l-full border-muted bg-background pl-10 focus-visible:ring-primary @[640px]/profileslist:rounded-md"
+                      value={localSearchTerm}
+                      onChange={handleSearchInput}
+                      onKeyDown={handleKeyDown}
+                    />
+                    {localSearchTerm && (
+                      <button
+                        className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          setLocalSearchTerm("");
+                          onSearch("");
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                   </div>
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    className="h-10 w-full shrink-0 rounded-r-full @[640px]/profileslist:w-auto @[640px]/profileslist:rounded-md"
+                    onPress={handleSearchClick}
+                  >
+                    Search
+                  </Button>
                 </div>
                 <Button
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
                   onPress={() => navigate({ to: "/staff/add" })}
-                  className="h-9"
+                  className="h-10 w-full shrink-0 @[640px]/profileslist:w-auto"
                 >
                   Add New Staff
                 </Button>
@@ -293,16 +290,16 @@ export default function Dashboard({
 
               {!tableData || tableData.length <= 0 ? (
                 <EmptyState
-                  className="bg-accent/20 border border-border rounded-lg shadow-sm min-w-full min-h-[500px] justify-center items-center"
+                  className="min-h-[320px] min-w-0 w-full items-center justify-center rounded-lg border border-border bg-accent/20 shadow-sm @[700px]/profileslist:min-h-[500px]"
                   title="No staff Available"
                   description="You can add a new staff to get started."
                   icons={[FileText, FileSymlink, Files]}
                   typeofschema={typeofschema}
                 />
               ) : (
-                <Card className="bg-card border border-border shadow-sm overflow-hidden">
-                  <CardContent className="p-0">
-                    <Table>
+                <Card className="min-w-0 overflow-hidden border border-border bg-card shadow-sm">
+                  <CardContent className="min-w-0 overflow-x-auto p-0">
+                    <Table className="min-w-[640px]">
                       <TableHeader>
                         <TableRow className="bg-muted/40 hover:bg-muted/40">
                           {tableColumns?.headers?.map((header, index) => (
@@ -415,7 +412,7 @@ export default function Dashboard({
                     </Table>
                   </CardContent>
 
-                  <CardFooter className="flex items-center justify-between border-t p-4">
+                  <CardFooter className="flex flex-col gap-3 border-t p-4 @[480px]/profileslist:flex-row @[480px]/profileslist:items-center @[480px]/profileslist:justify-between">
                     <div className="text-xs text-muted-foreground">
                       {tableData && (
                         <>
@@ -425,12 +422,13 @@ export default function Dashboard({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex w-full items-center gap-2 @[480px]/profileslist:w-auto">
                       <Button
                         onPress={() => handlePrevPage()}
                         size="sm"
                         variant="flat"
                         isDisabled={currentPage <= 1}
+                        className="flex-1 @[480px]/profileslist:flex-none"
                       >
                         Previous
                       </Button>
@@ -439,6 +437,7 @@ export default function Dashboard({
                         size="sm"
                         variant="flat"
                         isDisabled={currentPage >= totalPages}
+                        className="flex-1 @[480px]/profileslist:flex-none"
                       >
                         Next
                       </Button>

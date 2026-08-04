@@ -219,7 +219,7 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                 </span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-white sm:max-w-[550px] rounded-lg shadow-lg">
+            <DialogContent className="mx-auto max-h-[90dvh] w-[calc(100vw-2rem)] overflow-y-auto rounded-lg bg-white shadow-lg sm:max-w-[550px]">
               <DialogHeader>
                 <DialogTitle>{editingId ? 'Edit Qualification' : 'Add New Qualification'}</DialogTitle>
                 <DialogDescription>
@@ -229,8 +229,8 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
               </DialogHeader>
               <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="qualification" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="qualification" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       Qualification
                     </Label>
                     <Input
@@ -240,11 +240,11 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       value={formData.qualification}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="college_name" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="college_name" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       College Name
                     </Label>
                     <Input
@@ -254,11 +254,11 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       value={formData.college_name}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="board_university" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="board_university" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       Board/University
                     </Label>
                     <Input
@@ -268,11 +268,11 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       value={formData.board_university}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="passing_year" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="passing_year" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       Passing Year
                     </Label>
                     <Input
@@ -285,11 +285,11 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       value={formData.passing_year}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="percentage" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="percentage" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       Percentage
                     </Label>
                     <Input
@@ -303,11 +303,11 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       value={formData.percentage}
                       onChange={handleChange}
                       required
-                      className="col-span-3"
+                      className="min-w-0 sm:col-span-3"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="certificate" className="text-right text-sm font-medium">
+                  <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                    <Label htmlFor="certificate" className="text-sm font-medium sm:col-span-1 sm:text-right">
                       Certificate
                     </Label>
                     <Input
@@ -316,13 +316,13 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                       type="file"
                       accept="application/pdf"
                       onChange={handleChange}
-                      className="col-span-3 file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                      className="min-w-0 sm:col-span-3 file:mr-4 file:rounded-md file:border-0 file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                     />
                   </div>
                   {editingId && (
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label className="text-right">Current</Label>
-                      <div className="col-span-3 flex items-center gap-2">
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
+                      <Label className="sm:col-span-1 sm:text-right">Current</Label>
+                      <div className="flex min-w-0 items-center gap-2 sm:col-span-3">
                         {educations.find((e) => e.id === editingId)?.certificate_url ? (
                           <>
                             <Button
@@ -348,8 +348,8 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                     </div>
                   )}
                 </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
+                <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                  <Button type="submit" className="w-full sm:w-auto">Save changes</Button>
                 </DialogFooter>
               </form>
             </DialogContent>

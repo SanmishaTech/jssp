@@ -145,7 +145,19 @@ export default function EditAdmissionDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -158,12 +170,12 @@ export default function EditAdmissionDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="total_valuation"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Total Admissions
                             <span className="text-red-500">*</span>
@@ -182,7 +194,7 @@ export default function EditAdmissionDialog({
                       control={form.control}
                       name="university_upload"
                       render={({ field }: FormFieldProps) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             University Upload
                             <span className="text-red-500">*</span>
@@ -202,7 +214,7 @@ export default function EditAdmissionDialog({
                     control={form.control}
                     name="received_prn"
                     render={({ field }: FormFieldProps) => (
-                      <FormItem>
+                      <FormItem className="min-w-0">
                         <FormLabel>
                           Reveived PRN
                           <span className="text-red-500">*</span>
@@ -218,10 +230,10 @@ export default function EditAdmissionDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Update Admission
               </Button>
             </ModalFooter>

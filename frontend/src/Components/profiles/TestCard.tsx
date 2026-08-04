@@ -168,11 +168,11 @@ function ProfileForm() {
           {/* Staff Information Card */}
           <Card className="w-full">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col gap-4 @[700px]/profiles-form:flex-row @[700px]/profiles-form:items-center @[700px]/profiles-form:justify-between">
+                <div className="min-w-0">
                   <CardTitle>Staff Information</CardTitle>
                 </div>
-                <div className="flex space-x-4 flex-row-reverse">
+                <div className="flex min-w-0 flex-col gap-2 @[700px]/profiles-form:flex-row @[700px]/profiles-form:flex-row-reverse">
                   <FormField
                     control={form.control}
                     name="is_teaching"
@@ -212,7 +212,7 @@ function ProfileForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-4 space-y-3">
+              <div className="grid min-w-0 grid-cols-1 gap-4 space-y-3 @[640px]/profiles-form:grid-cols-2 @[1100px]/profiles-form:grid-cols-4 [&>*]:min-w-0">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -331,12 +331,12 @@ function ProfileForm() {
 
                 <div className="space-y-2 mt-4">
                   {selectedImages.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                    <div key={index} className="flex min-w-0 items-center justify-between gap-2 p-2 bg-gray-50 rounded-md">
                       <a 
                         href={previewUrls[index]} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                       >
                         {file.name}
                       </a>
@@ -394,15 +394,15 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-2 px-4 @[480px]/profiles-form:flex-row @[480px]/profiles-form:justify-end @[480px]/profiles-form:gap-3">
           <Button
             onClick={() => window.history.back()}
-            className="self-center"
+            className="w-full @[480px]/profiles-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/profiles-form:mr-8 @[480px]/profiles-form:w-auto" type="submit">
             Add Staff
           </Button>
         </div>
@@ -413,21 +413,21 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/profiles-form min-w-0 w-full overflow-auto bg-light pt-4 shadow-md">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/profiles-form:m-8 @[700px]/profiles-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
-        <CardTitle>Staff Master</CardTitle>
+      <CardHeader className="px-4 @[700px]/profiles-form:px-6">
+        <CardTitle className="text-xl @[700px]/profiles-form:text-2xl">Staff Master</CardTitle>
         <CardDescription>Add Staff Master</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3 ">
+      <CardContent className="min-w-0 px-4 @[700px]/profiles-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm />
         </div>
       </CardContent>

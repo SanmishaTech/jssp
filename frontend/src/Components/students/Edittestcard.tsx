@@ -223,7 +223,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 pb-[2rem]"
       >
-        <div className=" grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 @[640px]/students-form:grid-cols-2 @[900px]/students-form:grid-cols-3">
           <FormField
             control={form.control}
             name="student_name"
@@ -357,7 +357,7 @@ function ProfileForm({ formData }: { formData: FormValues }) {
         {selectedDivision && (
           <div className="mt-4 p-4 border rounded-md bg-gray-50">
             <h3 className="text-lg font-medium mb-2">Division Details</h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 @[640px]/students-form:grid-cols-2">
               <div>
                 <p className="text-sm font-medium text-gray-500">Division Name</p>
                 <p>{selectedDivision.division}</p>
@@ -414,15 +414,15 @@ function ProfileForm({ formData }: { formData: FormValues }) {
           </div>
         )}
 
-        <div className="flex justify-end w-full gap-3">
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end w-full">
           <Button
             onClick={() => navigate({ to: "/students" })}
-            className="self-center"
+            className="w-full sm:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full sm:w-auto" type="submit">
             Update Student
           </Button>
         </div>
@@ -482,7 +482,7 @@ export default function SettingsProfilePage() {
 
   if (isLoading) {
     return (
-      <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
+      <Card className="@container/students-form min-w-0 w-full overflow-auto bg-light shadow-md pt-2 @[700px]/students-form:pt-4">
         <CardContent className="flex items-center justify-center min-h-[200px]">
           <div>Loading student data...</div>
         </CardContent>
@@ -491,10 +491,10 @@ export default function SettingsProfilePage() {
   }
 
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4">
+    <Card className="@container/students-form min-w-0 w-full overflow-auto bg-light shadow-md pt-2 @[700px]/students-form:pt-4">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="ml-4 mt-4 mb-2 flex gap-2 @[700px]/students-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back

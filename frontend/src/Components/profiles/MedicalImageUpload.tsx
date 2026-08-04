@@ -106,14 +106,14 @@ export default function MedicalImageUpload({
       {existingMedicalImage && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-gray-700">Current Medical Image</h4>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center space-x-2">
-              <Image className="w-4 h-4 text-blue-500" />
+          <div className="flex min-w-0 items-center justify-between gap-2 p-3 bg-gray-50 rounded-md">
+            <div className="flex min-w-0 flex-1 items-center space-x-2">
+              <Image className="w-4 h-4 shrink-0 text-blue-500" />
               <a 
                 href={`/api/staff-file/${existingMedicalImage.image_path}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
               >
                 {existingMedicalImage.image_path || `Medical Image`}
               </a>
@@ -133,11 +133,11 @@ export default function MedicalImageUpload({
       {selectedImage && !existingMedicalImage && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium text-gray-700">New Medical Image</h4>
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center space-x-2">
-              <Image className="w-4 h-4 text-blue-500" />
-              <div className="flex flex-col">
-                <span className="text-sm text-gray-700 truncate max-w-xs">
+          <div className="flex min-w-0 items-center justify-between gap-2 p-3 bg-gray-50 rounded-md">
+            <div className="flex min-w-0 flex-1 items-center space-x-2">
+              <Image className="w-4 h-4 shrink-0 text-blue-500" />
+              <div className="min-w-0 flex-1">
+                <span className="block truncate text-sm text-gray-700">
                   {selectedImage.name}
                 </span>
                 {previewUrl && (

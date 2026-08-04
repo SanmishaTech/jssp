@@ -120,7 +120,19 @@ export default function AddScholarshipDialog({
   };
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -133,12 +145,12 @@ export default function AddScholarshipDialog({
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-4"
                 >
-                  <div className=" grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="student_name"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Student Name <span className="text-red-500">*</span>
                           </FormLabel>
@@ -153,7 +165,7 @@ export default function AddScholarshipDialog({
                       control={form.control}
                       name="prn"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             PRN <span className="text-red-500">*</span>
                           </FormLabel>
@@ -168,7 +180,7 @@ export default function AddScholarshipDialog({
                       control={form.control}
                       name="abcId"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             ABC ID <span className="text-red-500">*</span>
                           </FormLabel>
@@ -186,7 +198,7 @@ export default function AddScholarshipDialog({
                       render={({ field }) => {
                         const [open, setOpen] = React.useState(false);
                         return (
-                          <FormItem className="">
+                          <FormItem className="min-w-0">
                             <FormLabel className="">
                               Division <span className="text-red-500">*</span>
                             </FormLabel>
@@ -266,7 +278,7 @@ export default function AddScholarshipDialog({
                       render={({ field }) => {
                         const [open, setOpen] = React.useState(false);
                         return (
-                          <FormItem className="flex-1">
+                          <FormItem className="min-w-0 flex-1">
                             <FormLabel className="mt-[0px]">
                               Subject <span className="text-red-500">*</span>
                             </FormLabel>
@@ -343,10 +355,10 @@ export default function AddScholarshipDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit}>
+              <Button color="primary" onPress={handleSubmit} className="w-full sm:w-auto">
                 Add Scholarship
               </Button>
             </ModalFooter>

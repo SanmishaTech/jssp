@@ -297,21 +297,21 @@ const TaskManager: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">Task Manager</h1>
-          <p className="text-gray-600">Create, assign, and track tasks</p>
+    <div className="min-w-0 px-4 py-4 @[700px]:px-6 @[700px]:py-6">
+      <div className="mb-6 flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="mb-1 text-xl font-bold text-gray-800 sm:text-2xl">Task Manager</h1>
+          <p className="text-sm text-gray-600 sm:text-base">Create, assign, and track tasks</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex w-full gap-2 sm:w-auto">
           <Button
             onClick={() => {
               setShowForm(true);
               setIsEditing(false);
               setCurrentTask(null);
             }}
-            className="gap-1"
+            className="w-full gap-1 sm:w-auto"
           >
             <Plus className="h-4 w-4" /> Create Task
           </Button>
@@ -334,14 +334,14 @@ const TaskManager: React.FC = () => {
             </div>
             
             {/* Filters */}
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center space-x-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:gap-4">
+              <div className="flex min-w-0 w-full flex-col gap-1 sm:w-auto">
                 <Label className="whitespace-nowrap">Status:</Label>
                 <Select 
                   value={filterStatus} 
                   onValueChange={(value) => setFilterStatus(value)}
                 >
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full min-w-0 sm:w-[150px]">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -353,13 +353,13 @@ const TaskManager: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex min-w-0 w-full flex-col gap-1 sm:w-auto">
                 <Label className="whitespace-nowrap">Priority:</Label>
                 <Select 
                   value={filterPriority} 
                   onValueChange={(value) => setFilterPriority(value)}
                 >
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full min-w-0 sm:w-[150px]">
                     <SelectValue placeholder="Priority" />
                   </SelectTrigger>
                   <SelectContent>
@@ -371,13 +371,13 @@ const TaskManager: React.FC = () => {
                 </Select>
               </div>
               {isAdmin && (
-                <div className="flex items-center space-x-2">
+                <div className="flex min-w-0 w-full flex-col gap-1 sm:w-auto">
                   <Label className="whitespace-nowrap">Assignee:</Label>
                   <Select 
                     value={filterAssignee?.toString() || 'all'} 
                     onValueChange={(value) => setFilterAssignee(value === 'all' ? null : Number(value))}
                   >
-                    <SelectTrigger className="w-[150px]">
+                    <SelectTrigger className="w-full min-w-0 sm:w-[150px]">
                       <SelectValue placeholder="Assignee" />
                     </SelectTrigger>
                     <SelectContent>
@@ -395,7 +395,7 @@ const TaskManager: React.FC = () => {
                 variant="outline"
                 onClick={resetFilters}
                 size="sm"
-                className="h-10"
+                className="h-10 w-full sm:w-auto"
               >
                 Reset Filters
               </Button>
@@ -488,7 +488,7 @@ const TaskManager: React.FC = () => {
           setShowForm(open);
         }}
       >
-        <DialogContent className="sm:max-w-[600px] bg-white">
+        <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[600px] overflow-y-auto bg-white">
           <DialogHeader>
             <DialogTitle>{isEditing ? 'Edit Task' : 'Create New Task'}</DialogTitle>
           </DialogHeader>
@@ -510,7 +510,7 @@ const TaskManager: React.FC = () => {
           else setShowDetails(true);
         }}
       >
-        <DialogContent className="sm:max-w-[600px] bg-white">
+        <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[600px] overflow-y-auto bg-white">
           {currentTask && (
             <TaskDetails
               task={currentTask}

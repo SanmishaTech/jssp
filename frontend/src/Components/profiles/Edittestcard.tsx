@@ -649,11 +649,11 @@ function ProfileForm({ formData }) {
           onValueChange={(val:string)=>setActiveTab(val)}
           className="w-full"
         >
-          <TabsList className="grid grid-cols-4 h-auto w-full">
-            <TabsTrigger className="px-4 py-2" value="profile">Staff Profile</TabsTrigger>
-            <TabsTrigger className="px-4 py-2" value="education">Education</TabsTrigger>
-            <TabsTrigger className="px-4 py-2" value="papers">Papers</TabsTrigger>
-            <TabsTrigger className="px-4 py-2" value="medical">Medical History</TabsTrigger>
+          <TabsList className="grid h-auto w-full grid-cols-2 gap-1 @[640px]/profiles:grid-cols-4">
+            <TabsTrigger className="whitespace-normal px-2 py-2 text-xs @[640px]/profiles:px-4 @[640px]/profiles:text-sm" value="profile">Staff Profile</TabsTrigger>
+            <TabsTrigger className="whitespace-normal px-2 py-2 text-xs @[640px]/profiles:px-4 @[640px]/profiles:text-sm" value="education">Education</TabsTrigger>
+            <TabsTrigger className="whitespace-normal px-2 py-2 text-xs @[640px]/profiles:px-4 @[640px]/profiles:text-sm" value="papers">Papers</TabsTrigger>
+            <TabsTrigger className="whitespace-normal px-2 py-2 text-xs @[640px]/profiles:px-4 @[640px]/profiles:text-sm" value="medical">Medical History</TabsTrigger>
           </TabsList>
           
           <TabsContent value="profile" className="mt-4">
@@ -661,21 +661,21 @@ function ProfileForm({ formData }) {
               {/* Personal Information Card */}
               <Card className="w-full">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
+                  <div className="flex flex-col gap-2 @[700px]/profiles:flex-row @[700px]/profiles:items-start @[700px]/profiles:justify-between">
+                    <div className="min-w-0">
                       <CardTitle>Profile Information</CardTitle>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <label className="text-sm font-medium">Employee Code:</label>
                           <span className="text-muted-foreground">{form.getValues("employee_code") || "N/A"}</span>
                       </div>
                     </div>
-                    <div>Staff Role: {formData?.role ? formData.role.charAt(0).toUpperCase() + formData.role.slice(1) : "N/A"}</div>
+                    <div className="shrink-0 text-sm @[700px]/profiles:text-base">Staff Role: {formData?.role ? formData.role.charAt(0).toUpperCase() + formData.role.slice(1) : "N/A"}</div>
                    
                   </div>
                 </CardHeader>
                 
                 <CardContent>
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-4 space-y-3">
+                  <div className="grid min-w-0 grid-cols-1 gap-4 space-y-3 @[640px]/profiles:grid-cols-2 @[1100px]/profiles:grid-cols-4 [&>*]:min-w-0">
                     {/* Form fields for personal information */}
                     <FormField
                       control={form.control}
@@ -933,7 +933,7 @@ function ProfileForm({ formData }) {
                   />
                   
                   {/* Academic Information */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4 p-4 bg-gray-50 rounded-md">
+                  <div className="mt-4 grid grid-cols-1 gap-4 rounded-md bg-gray-50 p-4 @[640px]/profiles:grid-cols-2 @[1100px]/profiles:grid-cols-4">
                     <div>
                       <h4 className="text-sm font-medium text-gray-500">Academic Year</h4>
                       <p className="text-sm">
@@ -965,13 +965,13 @@ function ProfileForm({ formData }) {
               {/* Payment Information Card */}
               <Card className="w-full ">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-4 @[700px]/profiles:flex-row @[700px]/profiles:items-center @[700px]/profiles:justify-between">
                     <CardTitle>Bank Information</CardTitle>
                     <FormField
                       control={form.control}
                       name="mode_of_payment"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                        <FormItem className="flex min-w-0 flex-col gap-2 space-y-0 @[700px]/profiles:flex-row @[700px]/profiles:items-center @[700px]/profiles:space-x-3">
                           <FormLabel className="font-medium">Mode of Payment:</FormLabel>
                           <FormControl>
                             <div className="flex space-x-4">
@@ -1006,7 +1006,7 @@ function ProfileForm({ formData }) {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-3 mb-3">
+                  <div className="mb-3 grid min-w-0 grid-cols-1 gap-3 @[640px]/profiles:grid-cols-2 @[1100px]/profiles:grid-cols-4 [&>*]:min-w-0">
                     <FormField
                       control={form.control}
                       name="bank_name"
@@ -1205,16 +1205,16 @@ function ProfileForm({ formData }) {
         </Tabs>
         
         {activeTab !== 'education' && activeTab !== 'papers' && (
-          <div className="flex justify-end w-full gap-3">
+          <div className="flex w-full flex-col-reverse gap-2 px-4 @[480px]/profiles:flex-row @[480px]/profiles:justify-end @[480px]/profiles:gap-3">
             <Button
               onClick={() => navigate({ to: "/dashboards" })}
-              className="self-center"
+              className="w-full @[480px]/profiles:w-auto"
               type="button"
             >
               Cancel
             </Button>
             <Button 
-              className="self-center mr-8" 
+              className="w-full @[480px]/profiles:mr-8 @[480px]/profiles:w-auto" 
               type="button"
               onClick={() => {
                 // Get current form values
@@ -1278,23 +1278,23 @@ export default function SettingsProfilePage() {
   }, [staff_id, token]);
 
   return (
-    <div className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 p-4">
+    <div className="@container/profiles min-w-0 w-full overflow-auto bg-light px-4 py-4 shadow-md @[700px]/profiles:px-6 @[700px]/profiles:pt-4">
       <Button
         onClick={() => window.history.back()}
-        className="flex gap-2 mb-6"
+        className="mb-4 flex gap-2 @[700px]/profiles:mb-6"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
       
-      <div className="flex justify-between mb-4">
-        <div>
-          <h2 className="text-2xl font-bold">Profile</h2>
+      <div className="mb-4 flex flex-col gap-2 @[700px]/profiles:flex-row @[700px]/profiles:items-start @[700px]/profiles:justify-between">
+        <div className="min-w-0">
+          <h2 className="text-xl font-bold @[700px]/profiles:text-2xl">Profile</h2>
           <p className="text-sm text-muted-foreground">Edit/Update the Profile</p>
         </div>
       </div>
       
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <ProfileForm formData={formData} />
       </div>
     </div>

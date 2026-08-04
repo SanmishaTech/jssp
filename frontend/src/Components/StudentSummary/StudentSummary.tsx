@@ -262,7 +262,8 @@ const StudentSummary = () => {
 
   if (error) {
     return (
-      <Card className="m-4">
+      <div className="@container/studentsummary min-w-0 px-4 py-4 max-w-7xl mx-auto @[700px]/studentsummary:px-6 @[700px]/studentsummary:py-6">
+        <Card className="mx-0 my-0 @[700px]/studentsummary:mx-4">
         <CardHeader>
           <CardTitle>Error</CardTitle>
         </CardHeader>
@@ -270,63 +271,73 @@ const StudentSummary = () => {
           <p className="text-red-600">Failed to load student data: {error.message}</p>
         </CardContent>
       </Card>
+      </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <Card className='m-4'>
+    <div className="@container/studentsummary min-w-0 px-4 py-4 max-w-7xl mx-auto @[700px]/studentsummary:px-6 @[700px]/studentsummary:py-6">
+      <Card className="mx-0 my-0 @[700px]/studentsummary:mx-4">
         <CardHeader>
-          <div className="flex flex-col mb-4">
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Student Summary</h1>
-            <p className="text-gray-600 mb-2">An overview of student documentation and fee status.</p>
-            <div className="justify-between flex gap-2 items-center">
-              <div className="flex gap-2 items-center w-full">
+          <div className="flex min-w-0 flex-col mb-4">
+            <h1 className="text-xl font-bold text-gray-800 mb-2 @[700px]/studentsummary:text-2xl">Student Summary</h1>
+            <p className="text-gray-600 mb-2 text-sm @[700px]/studentsummary:text-base">An overview of student documentation and fee status.</p>
+            <div className="flex min-w-0 flex-col gap-3 @[900px]/studentsummary:flex-row @[900px]/studentsummary:items-center @[900px]/studentsummary:gap-3">
               <Input
                 placeholder="Filter by student name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-full"
+                className="min-w-0 w-full @[900px]/studentsummary:flex-1"
               />
-              </div>
-              <div className="flex gap-2 items-center"> 
-              <Select value={selectedColumn} onValueChange={v => {
-                setSelectedColumn(v);
-                if (v === 'none') setSelectedFilterValue('');
-              }}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by column" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {columnOptions.map(option => (
-                    <SelectItem key={option.key} value={option.key}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={selectedFilterValue} onValueChange={setSelectedFilterValue} disabled={!selectedColumn || selectedColumn === 'none'}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="Value" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleDownloadPdf} disabled={isDownloading}>
-                {isDownloading ? 'Downloading...' : 'Download PDF'}
-              </Button>
+              <div className="flex w-full flex-col gap-2 @[640px]/studentsummary:flex-row @[640px]/studentsummary:items-center @[900px]/studentsummary:w-auto @[900px]/studentsummary:shrink-0 @[900px]/studentsummary:flex-nowrap">
+                <Select
+                  value={selectedColumn}
+                  onValueChange={(v) => {
+                    setSelectedColumn(v);
+                    if (v === "none") setSelectedFilterValue("");
+                  }}
+                >
+                  <SelectTrigger className="w-full shrink-0 @[640px]/studentsummary:w-[180px]">
+                    <SelectValue placeholder="Filter by column" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {columnOptions.map((option) => (
+                      <SelectItem key={option.key} value={option.key}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={selectedFilterValue}
+                  onValueChange={setSelectedFilterValue}
+                  disabled={!selectedColumn || selectedColumn === "none"}
+                >
+                  <SelectTrigger className="w-full shrink-0 @[640px]/studentsummary:w-[120px]">
+                    <SelectValue placeholder="Value" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={handleDownloadPdf}
+                  disabled={isDownloading}
+                  className="w-full shrink-0 @[640px]/studentsummary:w-auto"
+                >
+                  {isDownloading ? "Downloading..." : "Download PDF"}
+                </Button>
               </div>
             </div>
           </div>
           <div className="flex gap-2 items-center mb-4 justify-end">
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="min-w-0 overflow-x-auto">
+          <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">PRN</TableHead>
@@ -410,7 +421,7 @@ const StudentSummary = () => {
                 filteredStudents.map(student => (
                   <TableRow key={student.id}>
                     <TableCell className="text-center">{student.prn}</TableCell>
-                    <TableCell className="font-medium">{student.student_name || 'N/A'}</TableCell>
+                    <TableCell className="font-medium max-w-[200px] truncate">{student.student_name || 'N/A'}</TableCell>
                     <TableCell className="text-center">
                       <Checkbox
                         checked={student.challan_paid || false}

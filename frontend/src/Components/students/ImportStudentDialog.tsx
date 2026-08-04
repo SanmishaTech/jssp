@@ -156,6 +156,13 @@ export default function ImportStudentDialog({
       backdrop={backdrop}
       isOpen={isOpen}
       onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
     >
       <ModalContent>
         {(onClose) => (
@@ -252,11 +259,12 @@ export default function ImportStudentDialog({
             <ModalFooter>
               {importStatus === "error" || importStatus === "partial" ? (
                 <>
-                  <Button color="primary" variant="light" onPress={onClose}>
+                  <Button color="primary" variant="light" onPress={onClose} className="w-full sm:w-auto">
                     Cancel
                   </Button>
                   <Button
                     color="danger"
+                    className="w-full sm:w-auto"
                     onPress={() => {
                       onClose();
                       // If there was a partial success, refresh the data
@@ -270,7 +278,7 @@ export default function ImportStudentDialog({
                 </>
               ) : (
                 <>
-                  <Button color="danger" variant="light" onPress={onClose}>
+                  <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                     Cancel
                   </Button>
                   <Button
@@ -278,6 +286,7 @@ export default function ImportStudentDialog({
                     onPress={handleImport}
                     isLoading={isUploading}
                     isDisabled={isUploading}
+                    className="w-full sm:w-auto"
                   >
                     Import
                   </Button>

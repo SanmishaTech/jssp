@@ -105,7 +105,19 @@ export default function AddCashierDialog({
   }
 
   return (
-    <Modal size="2xl" backdrop={backdrop} isOpen={isOpen} onClose={onClose}>
+    <Modal
+      size="2xl"
+      backdrop={backdrop}
+      isOpen={isOpen}
+      onClose={onClose}
+      placement="center"
+      scrollBehavior="inside"
+      classNames={{
+        wrapper: "items-center justify-center p-4",
+        base: "mx-auto my-auto max-h-[90dvh] w-full",
+        footer: "flex flex-col-reverse gap-2 sm:flex-row sm:gap-2",
+      }}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -113,12 +125,12 @@ export default function AddCashierDialog({
             <ModalBody>
               <Form {...form}>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
                       control={control}
                       name="cheque"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Cheque <span className="text-red-500">*</span>
                           </FormLabel>
@@ -138,7 +150,7 @@ export default function AddCashierDialog({
                       control={control}
                       name="cash"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             Cash <span className="text-red-500">*</span>
                           </FormLabel>
@@ -158,7 +170,7 @@ export default function AddCashierDialog({
                       control={control}
                       name="upi"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>
                             UPI <span className="text-red-500">*</span>
                           </FormLabel>
@@ -178,7 +190,7 @@ export default function AddCashierDialog({
                       control={control}
                       name="total_fees"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="min-w-0">
                           <FormLabel>Total Fees</FormLabel>
                           <FormControl>
                             <Input type="number" {...field} disabled />
@@ -192,10 +204,10 @@ export default function AddCashierDialog({
               </Form>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" variant="light" onPress={onClose} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button color="primary" onPress={handleSubmit(onSubmit)}>
+              <Button color="primary" onPress={handleSubmit(onSubmit)} className="w-full sm:w-auto">
                 Add Cash
               </Button>
             </ModalFooter>
