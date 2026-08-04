@@ -199,8 +199,8 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
     }
   };
 
-  const handleViewCertificate = (fileUrl: string) => {
-    window.open(fileUrl, '_blank');
+  const handleViewCertificate = (certificatePath: string) => {
+    window.open(`/api/staff-file/${encodeURIComponent(certificatePath)}`, '_blank');
   };
 
   return (
@@ -323,12 +323,12 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
                       <Label className="sm:col-span-1 sm:text-right">Current</Label>
                       <div className="flex min-w-0 items-center gap-2 sm:col-span-3">
-                        {educations.find((e) => e.id === editingId)?.certificate_url ? (
+                        {educations.find((e) => e.id === editingId)?.certificate_path ? (
                           <>
                             <Button
                               type="button"
                               variant="link"
-                              onClick={() => handleViewCertificate(educations.find((e) => e.id === editingId)!.certificate_url!)}
+                              onClick={() => handleViewCertificate(educations.find((e) => e.id === editingId)!.certificate_path!)}
                             >
                               View
                             </Button>
@@ -376,8 +376,8 @@ const EducationQualifications = ({ staffId, ...props }: any) => {
                 <TableCell>{edu.passing_year}</TableCell>
                 <TableCell>{edu.percentage}</TableCell>
                 <TableCell>
-                  {edu.certificate_url ? (
-                    <Button variant="link" size="sm" onClick={() => handleViewCertificate(edu.certificate_url!)}>
+                  {edu.certificate_path ? (
+                    <Button variant="link" size="sm" onClick={() => handleViewCertificate(edu.certificate_path!)}>
                       View
                     </Button>
                   ) : (

@@ -216,8 +216,8 @@ const PaperUpload = ({ staffId, ...props }: any) => {
     }
   };
 
-  const handleViewCertificate = (fileUrl: string) => {
-    window.open(fileUrl, '_blank');
+  const handleViewCertificate = (certificatePath: string) => {
+    window.open(`/api/staff-file/${encodeURIComponent(certificatePath)}`, '_blank');
   };
 
   return (
@@ -373,12 +373,12 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                     <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:items-center sm:gap-4">
                       <Label className="sm:col-span-1 sm:text-right">Current</Label>
                       <div className="flex min-w-0 items-center gap-2 sm:col-span-3">
-                        {papers.find((e) => e.id === editingId)?.certificate_url ? (
+                        {papers.find((e) => e.id === editingId)?.certificate_path ? (
                           <>
                             <Button
                               type="button"
                               variant="link"
-                              onClick={() => handleViewCertificate(papers.find((e) => e.id === editingId)!.certificate_url!)}
+                              onClick={() => handleViewCertificate(papers.find((e) => e.id === editingId)!.certificate_path!)}
                             >
                               View
                             </Button>
@@ -432,8 +432,8 @@ const PaperUpload = ({ staffId, ...props }: any) => {
                 <TableCell>{paper.peer_reviewed}</TableCell>
                 <TableCell>{paper.coauthor}</TableCell>
                  <TableCell>
-                  {paper.certificate_url ? (
-                    <Button variant="link" size="sm" onClick={() => handleViewCertificate(paper.certificate_url!)}>
+                  {paper.certificate_path ? (
+                    <Button variant="link" size="sm" onClick={() => handleViewCertificate(paper.certificate_path!)}>
                       View
                     </Button>
                   ) : (

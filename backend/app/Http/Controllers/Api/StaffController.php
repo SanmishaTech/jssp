@@ -385,49 +385,40 @@ public function index(Request $request): JsonResponse
     }
 
     public function displayDocuments(string $document){
-        // Generate the full path to the file in the public storage
-        $path = storage_path('app/public/staff_images/'.$document);
-        
-        // Log for debugging
-        Log::info('Document requested: ' . $document);
-        Log::info('Path being checked: ' . $path);
-        Log::info('File exists: ' . (file_exists($path) ? 'Yes' : 'No'));
+        $document = basename($document);
 
-        // Check if the file exists
-        if (!file_exists($path)) {
-            // Try medical images path
-            $medicalImagePath = storage_path('app/public/staff_medical_images/'.$document);
-            Log::info('Trying medical image path: ' . $medicalImagePath);
-            Log::info('File exists at medical image path: ' . (file_exists($medicalImagePath) ? 'Yes' : 'No'));
-            
-            if (file_exists($medicalImagePath)) {
-                $path = $medicalImagePath;
-            } else {
-                // Try alternate path for events
-                $alternatePath = storage_path('app/public/events/'.$document);
-                Log::info('Trying alternate path: ' . $alternatePath);
-                Log::info('File exists at alternate path: ' . (file_exists($alternatePath) ? 'Yes' : 'No'));
-                
-                if (file_exists($alternatePath)) {
-                    $path = $alternatePath;
-                } else {
-                    return response()->json([
-                        'status' => false,
-                        'message' => "Document not found",
-                        'errors' => ['error'=>['Document not found.']]
-                    ], 404);
-                }
+        $directories = [
+            'staff_images',
+            'staff_medical_images',
+            'staff_education_certificates',
+            'staff_papers',
+            'events',
+        ];
+
+        $path = null;
+        foreach ($directories as $directory) {
+            $candidate = storage_path('app/public/'.$directory.'/'.$document);
+            Log::info('Document requested: '.$document.' trying: '.$candidate);
+            if (file_exists($candidate)) {
+                $path = $candidate;
+                break;
             }
         }
 
-        // Get the file content and MIME type
+        if (!$path) {
+            return response()->json([
+                'status' => false,
+                'message' => "Document not found",
+                'errors' => ['error'=>['Document not found.']]
+            ], 404);
+        }
+
         $fileContent = File::get($path);
         $mimeType = File::mimeType($path);
 
-        // Create the response for the file download
         $response = Response::make($fileContent, 200);
         $response->header("Content-Type", $mimeType);
-        $response->header('Content-Disposition', 'inline; filename="' . $document . '"'); // Set to inline for viewing
+        $response->header('Content-Disposition', 'inline; filename="' . $document . '"');
         return $response;
     }
 
