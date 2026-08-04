@@ -517,7 +517,7 @@ function ProfileForm({ formData }) {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-5 space-y-3">
+              <div className="grid min-w-0 grid-cols-1 gap-4 space-y-3 @[640px]/staff-form:grid-cols-2 @[1100px]/staff-form:grid-cols-5 [&>*]:min-w-0">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -711,7 +711,7 @@ function ProfileForm({ formData }) {
                
                 {isTeachingStaff && (
                   
-                  <div className="flex gap-2">
+                  <div className="col-span-full grid min-w-0 grid-cols-1 gap-4 @[640px]/staff-form:grid-cols-2 @[1100px]/staff-form:grid-cols-3 [&>*]:min-w-0">
                     
                     
                     <FormField
@@ -848,19 +848,19 @@ function ProfileForm({ formData }) {
                     <h4 className="text-sm font-medium text-gray-700">Existing Images</h4>
                     {existingImages.map((img) => {
                        return (
-                      <div key={img.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                      <div key={img.id} className="flex min-w-0 items-center justify-between gap-2 rounded-md bg-gray-50 p-2">
                         <a 
                           href={`/api/staff-file/${img.image_path}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                          className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                         >
                           {img.image_path || `Image ${img.id}`}
                         </a>
                         <button
                           type="button"
                           onClick={() => removeExistingImage(img.id)}
-                          className="text-red-500 hover:text-red-700"
+                          className="shrink-0 text-red-500 hover:text-red-700"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -875,19 +875,19 @@ function ProfileForm({ formData }) {
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium text-gray-700">New Images</h4>
                     {selectedImages.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                      <div key={index} className="flex min-w-0 items-center justify-between gap-2 rounded-md bg-gray-50 p-2">
                         <a 
                           href={previewUrls[index]} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                          className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                         >
                           {file.name}
                         </a>
                         <button
                           type="button"
                           onClick={() => removeNewImage(index)}
-                          className="text-red-500 hover:text-red-700"
+                          className="shrink-0 text-red-500 hover:text-red-700"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -905,7 +905,7 @@ function ProfileForm({ formData }) {
               <CardTitle>Staff Login Details</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="mb-3 grid min-w-0 grid-cols-1 gap-3 @[640px]/staff-form:grid-cols-2 [&>*]:min-w-0">
                 <FormField
                   control={form.control}
                   name="email"
@@ -940,15 +940,15 @@ function ProfileForm({ formData }) {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-2 px-4 @[480px]/staff-form:flex-row @[480px]/staff-form:justify-end @[480px]/staff-form:gap-3">
           <Button
             onClick={() => navigate({ to: "/staff" })}
-            className="self-center"
+            className="w-full @[480px]/staff-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/staff-form:mr-8 @[480px]/staff-form:w-auto" type="submit">
             Update Staff
           </Button>
         </div>
@@ -980,28 +980,28 @@ export default function SettingsProfilePage() {
     };
   }, [id]);
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/staff-form min-w-0 w-full overflow-auto bg-light px-2 pt-4 shadow-md @[700px]/staff-form:px-0">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/staff-form:m-8 @[700px]/staff-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
-        <div className="flex justify-between">
-          <CardTitle>Staff Master</CardTitle>
+      <CardHeader className="min-w-0 px-4 @[700px]/staff-form:px-6">
+        <div className="flex min-w-0 flex-col gap-2 @[700px]/staff-form:flex-row @[700px]/staff-form:items-start @[700px]/staff-form:justify-between">
+          <CardTitle className="text-xl @[700px]/staff-form:text-2xl">Staff Master</CardTitle>
           {formData?.institute_name && (
-            <span className="text-muted-foreground">
+            <span className="shrink-0 text-sm text-muted-foreground @[700px]/staff-form:text-base">
               {formData.institute_name}
             </span>
           )}
         </div>
         <CardDescription>Edit/Update the Staff</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
+      <CardContent className="min-w-0 px-2 @[700px]/staff-form:px-6">
+        <div className="min-w-0 space-y-6">
           <ProfileForm formData={formData} />
         </div>
       </CardContent>

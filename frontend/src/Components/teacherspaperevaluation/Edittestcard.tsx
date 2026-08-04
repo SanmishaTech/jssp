@@ -389,8 +389,8 @@ function PaperEvaluationForm() {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4">
-        <Card>
+      <div className="@container/tpe min-w-0 w-full px-4 py-4 @[700px]/tpe:px-6">
+        <Card className="min-w-0 overflow-hidden">
           <CardHeader>
             <Skeleton className="h-6 w-1/2" />
             <Skeleton className="h-4 w-3/4" />
@@ -404,23 +404,31 @@ function PaperEvaluationForm() {
   }
 
   if (error) {
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
+    return <div className="@container/tpe min-w-0 w-full px-4 py-4 text-red-500 @[700px]/tpe:px-6">{error}</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div>
-              <CardTitle>Paper Evaluations</CardTitle>
-              <CardDescription>List of all paper evaluations {userRole === 'admin' ? 'for Admin' : (filteredEvaluations.length > 0 && filteredEvaluations[0].staff ? `for ${filteredEvaluations[0].staff.name}` : '')}.</CardDescription>
+    <div className="@container/tpe min-w-0 w-full px-4 py-4 @[700px]/tpe:px-6">
+      <Card className="min-w-0 overflow-hidden">
+        <CardHeader className="min-w-0 space-y-4">
+          <div className="flex min-w-0 flex-col gap-4 @[900px]/tpe:flex-row @[900px]/tpe:items-start @[900px]/tpe:justify-between">
+            <div className="min-w-0">
+              <CardTitle className="text-xl @[700px]/tpe:text-2xl">Paper Evaluations</CardTitle>
+              <CardDescription className="mt-1">
+                List of all paper evaluations{" "}
+                {userRole === 'admin'
+                  ? 'for Admin'
+                  : (filteredEvaluations.length > 0 && filteredEvaluations[0].staff
+                    ? `for ${filteredEvaluations[0].staff.name}`
+                    : '')}
+                .
+              </CardDescription>
             </div>
-            <div className="flex gap-4 items-center">
+            <div className="flex min-w-0 w-full flex-col gap-2 @[640px]/tpe:flex-row @[640px]/tpe:flex-wrap @[640px]/tpe:items-center @[900px]/tpe:w-auto @[900px]/tpe:justify-end">
               {(userRole === 'admin' || userRole === 'vice-principal') && (
-                <div className="w-1/4 min-w-[200px]">
+                <div className="min-w-0 w-full @[640px]/tpe:w-[200px] @[640px]/tpe:shrink-0">
                   <Select value={selectedStaffId} onValueChange={setSelectedStaffId}>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Filter by Staff" />
                     </SelectTrigger>
                     <SelectContent>
@@ -434,9 +442,9 @@ function PaperEvaluationForm() {
                   </Select>
                 </div>
               )}
-              <div className="w-1/4 min-w-[200px]">
+              <div className="min-w-0 w-full @[640px]/tpe:w-[200px] @[640px]/tpe:shrink-0">
                 <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Filter by Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -447,8 +455,9 @@ function PaperEvaluationForm() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-1/4 min-w-[200px]">
+              <div className="min-w-0 w-full @[640px]/tpe:min-w-[12rem] @[640px]/tpe:flex-1 @[900px]/tpe:max-w-[16rem] @[900px]/tpe:flex-none">
                 <Input
+                  className="w-full min-w-0"
                   placeholder="Search by Subject"
                   value={searchSubject}
                   onChange={(e) => setSearchSubject(e.target.value)}
@@ -457,8 +466,8 @@ function PaperEvaluationForm() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <Table>
+        <CardContent className="min-w-0 overflow-x-auto p-0 @[700px]/tpe:p-6 @[700px]/tpe:pt-0">
+          <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Exam</TableHead>
@@ -476,16 +485,16 @@ function PaperEvaluationForm() {
               {filteredEvaluations.length > 0 ? (
                 filteredEvaluations.map((evaluation: PaperEvaluation) => (
                   <TableRow key={evaluation.id}>
-                    <TableCell>{evaluation.exam_calendar?.exam_name || 'N/A'}</TableCell>
-                    <TableCell>{evaluation.subject?.subject_name || 'N/A'}</TableCell>
-                    <TableCell>{format(new Date(evaluation.due_date), 'yyyy-MM-dd')}</TableCell>
+                    <TableCell className="max-w-[12rem] truncate">{evaluation.exam_calendar?.exam_name || 'N/A'}</TableCell>
+                    <TableCell className="max-w-[10rem] truncate">{evaluation.subject?.subject_name || 'N/A'}</TableCell>
+                    <TableCell className="whitespace-nowrap">{format(new Date(evaluation.due_date), 'yyyy-MM-dd')}</TableCell>
                     <TableCell>{evaluation.total_papers}</TableCell>
                     <TableCell>{evaluation.completed_papers}</TableCell>
                     <TableCell>{evaluation.total_papers - evaluation.completed_papers}</TableCell>
                     <TableCell>
                       <GaugeChart value={evaluation.completed_papers} total={evaluation.total_papers} />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="whitespace-nowrap">
                       {evaluation.status === 'assigned' ? 'Assigned' : 
                        evaluation.status === 'in_progress' ? 'In Progress' : 
                        evaluation.status === 'completed' ? 'Completed' : evaluation.status}
@@ -493,19 +502,19 @@ function PaperEvaluationForm() {
                     <TableCell>
                       <Dialog open={editingEvaluation?.id === evaluation.id} onOpenChange={() => handleEditClick(evaluation)}>
                         <DialogTrigger asChild>
-                          <Edit className="cursor-pointer h-5 w-5" onClick={() => handleEditClick(evaluation)} />
+                          <Edit className="h-5 w-5 shrink-0 cursor-pointer" onClick={() => handleEditClick(evaluation)} />
                         </DialogTrigger>
                         {editingEvaluation?.id === evaluation.id && (
-                          <DialogContent className="bg-white">
+                          <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-lg overflow-y-auto bg-white sm:w-full">
                             <DialogHeader>
                               <DialogTitle>Update Completed Papers</DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4">
                               <div>
-                                <label className="block text-sm font-medium mb-1">Total Papers : {editingEvaluation.total_papers}</label>
+                                <label className="mb-1 block text-sm font-medium">Total Papers : {editingEvaluation.total_papers}</label>
                               </div>
                               <div>
-                                <label className="block text-sm font-medium mb-1">Completed Papers</label>
+                                <label className="mb-1 block text-sm font-medium">Completed Papers</label>
                                 <Input 
                                   value={completedPapersInput} 
                                   onChange={(e) => {
@@ -519,9 +528,9 @@ function PaperEvaluationForm() {
                                   max={editingEvaluation.total_papers}
                                 />
                               </div>
-                              <div className="flex justify-end space-x-2">
-                                <Button variant="outline" onClick={handleCloseDialog}>Cancel</Button>
-                                <Button onClick={handleUpdateCompletedPapers}>Update</Button>
+                              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:space-x-2 sm:gap-0">
+                                <Button variant="outline" className="w-full sm:w-auto" onClick={handleCloseDialog}>Cancel</Button>
+                                <Button className="w-full sm:w-auto" onClick={handleUpdateCompletedPapers}>Update</Button>
                               </div>
                             </div>
                           </DialogContent>
@@ -532,7 +541,7 @@ function PaperEvaluationForm() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center">
+                  <TableCell colSpan={9} className="text-center">
                     No paper evaluations found.
                   </TableCell>
                 </TableRow>

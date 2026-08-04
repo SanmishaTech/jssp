@@ -48,9 +48,9 @@ class StaffResource extends JsonResource
             'mobile' => $this->mobile,
             'email' => $this->email,
             'academic_years_id' => $this->academic_years_id,
-            'course_id' => $this->course_id ? json_decode($this->course_id, true) : [],
-            'semester_id' => $this->semester_id ? json_decode($this->semester_id, true) : [],
-            'subject_id' => $this->subject_id ? json_decode($this->subject_id, true) : [],
+            'course_id' => $this->course_id ?? [],
+            'semester_id' => $this->semester_id ?? [],
+            'subject_id' => $this->subject_id ?? [],
             'password' => $this->password,
             'images' => $this->images->map(function($image) {
                 return [

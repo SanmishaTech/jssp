@@ -210,13 +210,12 @@ export default function Dashboard({
   
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background/30">
-      <div className="flex flex-col gap-6 py-6 px-8">
+    <div className="@container/stafflist min-w-0 w-full flex-col bg-background/30">
+      <div className="flex flex-col gap-4 px-4 py-4 @[700px]/stafflist:gap-6 @[700px]/stafflist:px-6 @[700px]/stafflist:py-6">
         {/* Header */}
-
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Breadcrumb className="flex md:flex">
-            <BreadcrumbList className="flex items-center space-x-2">
+        <header className="flex min-w-0 flex-col gap-3">
+          <Breadcrumb className="min-w-0 overflow-x-auto">
+            <BreadcrumbList className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               {breadcrumbs?.map((breadcrumb, index) => (
                 <React.Fragment key={index}>
                   <BreadcrumbItem>
@@ -241,59 +240,57 @@ export default function Dashboard({
           </Breadcrumb>
         </header>
 
-        <main className="grid flex-1 items-start gap-6">
-          <Tabs defaultValue="all" className="w-full">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">
+        <main className="grid min-w-0 flex-1 items-start gap-4 @[700px]/stafflist:gap-6">
+          <Tabs defaultValue="all" className="min-w-0 w-full">
+            <div className="mb-4 flex min-w-0 flex-col gap-4 @[900px]/stafflist:mb-6 @[900px]/stafflist:flex-row @[900px]/stafflist:items-start @[900px]/stafflist:justify-between">
+              <div className="min-w-0">
+                <h1 className="text-xl font-bold tracking-tight @[700px]/stafflist:text-2xl">
                   {tableColumns.title || "staff Dashboard"}
                 </h1>
-                <p className="text-muted-foreground mt-1">
+                <p className="mt-1 text-sm text-muted-foreground @[700px]/stafflist:text-base">
                   {tableColumns.description || "Manage staff data efficiently"}
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 self-end">
-                <div className="flex items-center gap-3 ml-auto">
-                  <div className="relative flex items-center gap-2">
-                    <div className="relative flex-1 md:w-[300px]">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        type="search"
-                        placeholder={searchPlaceholder}
-                        className="w-full rounded-l-full bg-background pl-10 border-muted focus-visible:ring-primary"
-                        value={localSearchTerm}
-                        onChange={handleSearchInput}
-                        onKeyDown={handleKeyDown} // Replace onKeyPress with onKeyDown
-                      />
-                      {localSearchTerm && (
-                        <button
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
-                          onClick={() => {
-                            setLocalSearchTerm("");
-                            onSearch("");
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
-                      )}
-                    </div>
-                    <Button
-                      color="primary"
-                      variant="solid"
-                      className="h-10 rounded-r-full"
-                      onPress={handleSearchClick}
-                    >
-                      Search
-                    </Button>
+              <div className="flex min-w-0 w-full max-w-full flex-col gap-2 @[640px]/stafflist:flex-row @[640px]/stafflist:flex-wrap @[640px]/stafflist:items-center @[900px]/stafflist:w-auto @[900px]/stafflist:justify-end">
+                <div className="relative flex min-w-0 w-full max-w-full flex-col gap-2 @[640px]/stafflist:min-w-[14rem] @[640px]/stafflist:flex-1 @[640px]/stafflist:flex-row @[640px]/stafflist:items-center @[900px]/stafflist:max-w-[18rem] @[900px]/stafflist:flex-none">
+                  <div className="relative min-w-0 w-full @[640px]/stafflist:flex-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder={searchPlaceholder}
+                      className="w-full min-w-0 rounded-md border-muted bg-background pl-10 focus-visible:ring-primary @[640px]/stafflist:rounded-l-full @[640px]/stafflist:rounded-r-none"
+                      value={localSearchTerm}
+                      onChange={handleSearchInput}
+                      onKeyDown={handleKeyDown}
+                    />
+                    {localSearchTerm && (
+                      <button
+                        className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => {
+                          setLocalSearchTerm("");
+                          onSearch("");
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                   </div>
+                  <Button
+                    color="primary"
+                    variant="solid"
+                    className="h-10 w-full max-w-full shrink-0 rounded-md @[640px]/stafflist:w-auto @[640px]/stafflist:rounded-l-none @[640px]/stafflist:rounded-r-full"
+                    onPress={handleSearchClick}
+                  >
+                    Search
+                  </Button>
                 </div>
                 <Button
                   color="primary"
                   variant="solid"
                   startContent={<PlusCircle size={16} />}
                   onPress={() => navigate({ to: "/staff/add" })}
-                  className="h-9"
+                  className="h-10 w-full max-w-full shrink-0 rounded-md @[640px]/stafflist:w-auto"
                 >
                   Add New Staff
                 </Button>
@@ -334,9 +331,9 @@ export default function Dashboard({
                   typeofschema={typeofschema}
                 />
               ) : (
-                <Card className="bg-card border border-border shadow-sm overflow-hidden">
-                  <CardContent className="p-0">
-                    <Table>
+                <Card className="min-w-0 overflow-hidden border border-border bg-card shadow-sm">
+                  <CardContent className="min-w-0 overflow-x-auto p-0">
+                    <Table className="min-w-[640px]">
                       <TableHeader>
                         <TableRow className="bg-muted/40 hover:bg-muted/40">
                           {tableColumns?.headers?.map((header, index) => (
@@ -463,7 +460,7 @@ export default function Dashboard({
                     </Table>
                   </CardContent>
 
-                  <CardFooter className="flex items-center justify-between border-t p-4">
+                  <CardFooter className="flex flex-col gap-3 border-t p-4 @[480px]/stafflist:flex-row @[480px]/stafflist:items-center @[480px]/stafflist:justify-between">
                     <div className="text-xs text-muted-foreground">
                       {tableData && (
                         <>
@@ -473,12 +470,13 @@ export default function Dashboard({
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex w-full items-center gap-2 @[480px]/stafflist:w-auto">
                       <Button
                         onPress={() => handlePrevPage()}
                         size="sm"
                         variant="flat"
                         isDisabled={currentPage <= 1}
+                        className="flex-1 @[480px]/stafflist:flex-none"
                       >
                         Previous
                       </Button>
@@ -487,6 +485,7 @@ export default function Dashboard({
                         size="sm"
                         variant="flat"
                         isDisabled={currentPage >= totalPages}
+                        className="flex-1 @[480px]/stafflist:flex-none"
                       >
                         Next
                       </Button>

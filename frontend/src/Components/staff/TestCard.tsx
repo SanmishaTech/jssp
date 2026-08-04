@@ -454,7 +454,7 @@ function ProfileForm() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-5 space-y-3">
+              <div className="grid min-w-0 grid-cols-1 gap-4 space-y-3 @[640px]/staff-form:grid-cols-2 @[1100px]/staff-form:grid-cols-5 [&>*]:min-w-0">
                 <FormField
                   control={form.control}
                   name="staff_name"
@@ -611,7 +611,7 @@ function ProfileForm() {
 />
 
                 {isTeachingStaff && (
-                  <div className="flex gap-5">
+                  <div className="col-span-full grid min-w-0 grid-cols-1 gap-4 @[640px]/staff-form:grid-cols-2 @[1100px]/staff-form:grid-cols-4 [&>*]:min-w-0">
                       <FormField
                     control={form.control}
                     name="academic_years_id"
@@ -792,19 +792,19 @@ function ProfileForm() {
 
                 <div className="space-y-2 mt-4">
                   {selectedImages.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                    <div key={index} className="flex min-w-0 items-center justify-between gap-2 rounded-md bg-gray-50 p-2">
                       <a 
                         href={previewUrls[index]} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        className="min-w-0 flex-1 truncate text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                       >
                         {file.name}
                       </a>
                       <button
                         type="button"
                         onClick={() => removeImage(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="shrink-0 text-red-500 hover:text-red-700"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -820,7 +820,7 @@ function ProfileForm() {
             <CardHeader>
               <CardTitle>Profile Details</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 ">
+            <CardContent className="grid min-w-0 grid-cols-1 gap-4 @[640px]/staff-form:grid-cols-2 [&>*]:min-w-0">
               <FormField
                 control={form.control}
                 name="email"
@@ -855,15 +855,15 @@ function ProfileForm() {
             </CardContent>
           </Card>
         </div>
-        <div className="flex justify-end w-full gap-3 ">
+        <div className="flex w-full flex-col-reverse gap-2 px-4 @[480px]/staff-form:flex-row @[480px]/staff-form:justify-end @[480px]/staff-form:gap-3">
           <Button
             onClick={() => window.history.back()}
-            className="self-center"
+            className="w-full @[480px]/staff-form:w-auto"
             type="button"
           >
             Cancel
           </Button>
-          <Button className="self-center mr-8" type="submit">
+          <Button className="w-full @[480px]/staff-form:mr-8 @[480px]/staff-form:w-auto" type="submit">
             Add Staff
           </Button>
         </div>
@@ -874,21 +874,21 @@ function ProfileForm() {
 
 export default function SettingsProfilePage() {
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+    <Card className="@container/staff-form min-w-0 w-full overflow-auto bg-light px-2 pt-4 shadow-md @[700px]/staff-form:px-0">
       <Button
         onClick={() => window.history.back()}
-        className="ml-4 flex gap-2 m-8 mb-4"
+        className="m-4 mb-4 ml-4 flex gap-2 @[700px]/staff-form:m-8 @[700px]/staff-form:mb-4"
       >
         <MoveLeft className="w-5 text-white" />
         Back
       </Button>
 
-      <CardHeader>
-        <CardTitle>Staff Master</CardTitle>
+      <CardHeader className="min-w-0 px-4 @[700px]/staff-form:px-6">
+        <CardTitle className="text-xl @[700px]/staff-form:text-2xl">Staff Master</CardTitle>
         <CardDescription>Add Staff Master</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3 ">
+      <CardContent className="min-w-0 px-2 @[700px]/staff-form:px-6">
+        <div className="min-w-0 space-y-3">
           <ProfileForm />
         </div>
       </CardContent>
